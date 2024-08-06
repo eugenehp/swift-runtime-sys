@@ -1,6 +1,10 @@
 use std::{fs, io::Write as _, path::PathBuf};
 
 fn main() {
+    // build();
+}
+
+fn build() {
     let librs_path = PathBuf::from("src").join("lib.rs");
 
     // println!("cargo:rerun-if-changed=swift");
