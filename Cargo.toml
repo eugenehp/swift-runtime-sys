@@ -4,6 +4,9 @@ description = "Rust bindings generated for the Swift Runtime"
 version = "0.0.1"
 edition = "2021"
 license = "Apache 2.0"
+repository = "https://github.com/eugenehp/swift-runtime-sys"
+keywords = ["swift", "runtime", "sys", "bindings"]
+readme = "README.md"
 
 [dependencies]
 
