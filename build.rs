@@ -1,4 +1,4 @@
-use std::{fs, path::PathBuf};
+use std::{fs, io::Write as _, path::PathBuf};
 
 fn main() {
     let librs_path = PathBuf::from("src").join("lib.rs");
@@ -39,7 +39,15 @@ fn main() {
         .generate()
         .expect("Unable to generate bindings");
 
-    bindings
-        .write_to_file(librs_path)
-        .expect("Couldn't write bindings!");
+    // bindings
+    //     .write_to_file(librs_path)
+    //     .expect("Couldn't write bindings!");
+
+    let code = bindings.to_string().replace("extern \"swift\" {", "extern \"C\" {");
+    let mut file = fs::OpenOptions::new()
+            .write(true)
+            .truncate(true)
+            .create(true)
+            .open(librs_path).unwrap();
+    file.write_all(code.as_bytes()).unwrap();
 }

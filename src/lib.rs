@@ -12866,12 +12866,12 @@ pub mod root {
             ["Offset of field: BoxPair::object"][::std::mem::offset_of!(BoxPair, object) - 0usize];
             ["Offset of field: BoxPair::buffer"][::std::mem::offset_of!(BoxPair, buffer) - 8usize];
         };
-        extern "swift" {
+        extern "C" {
             #[doc = " Allocates a heap object that can contain a value of the given type.\n Returns a Box structure containing a HeapObject* pointer to the\n allocated object, and a pointer to the value inside the heap object.\n The value pointer points to an uninitialized buffer of size and alignment\n appropriate to store a value of the given type.\n The heap object has an initial retain count of 1, and its metadata is set\n such that destroying the heap object destroys the contained value."]
             #[link_name = "\u{1}_swift_allocBox"]
             pub fn swift_allocBox(type_: *const root::swift::Metadata) -> root::swift::BoxPair;
         }
-        extern "swift" {
+        extern "C" {
             #[doc = " Performs a uniqueness check on the pointer to a box structure. If the check\n fails allocates a new box and stores the pointer in the buffer.\n\n  if (!isUnique(buffer[0]))\n    buffer[0] = swift_allocBox(type)"]
             #[link_name = "\u{1}_swift_makeBoxUnique"]
             pub fn swift_makeBoxUnique(
@@ -13417,7 +13417,7 @@ pub mod root {
             ["Offset of field: TypeNamePair::length"]
                 [::std::mem::offset_of!(TypeNamePair, length) - 8usize];
         };
-        extern "swift" {
+        extern "C" {
             #[doc = " Return the name of a Swift type represented by a metadata object.\n func _getTypeName(_ type: Any.Type, qualified: Bool)\n   -> (UnsafePointer<UInt8>, Int)"]
             #[link_name = "\u{1}_swift_getTypeName"]
             pub fn swift_getTypeName(
@@ -13425,7 +13425,7 @@ pub mod root {
                 qualified: bool,
             ) -> root::swift::TypeNamePair;
         }
-        extern "swift" {
+        extern "C" {
             #[doc = " Return the mangled name of a Swift type represented by a metadata object.\n func _getMangledTypeName(_ type: Any.Type)\n   -> (UnsafePointer<UInt8>, Int)"]
             #[link_name = "\u{1}_swift_getFunctionFullNameFromMangledName"]
             pub fn swift_getFunctionFullNameFromMangledName(
@@ -13433,7 +13433,7 @@ pub mod root {
                 mangledNameLength: usize,
             ) -> root::swift::TypeNamePair;
         }
-        extern "swift" {
+        extern "C" {
             #[doc = " Return the human-readable full name of the mangled function name passed in.\n func _getMangledTypeName(_ mangledName: UnsafePointer<UInt8>,\n                          mangledNameLength: UInt)\n   -> (UnsafePointer<UInt8>, Int)"]
             #[link_name = "\u{1}_swift_getMangledTypeName"]
             pub fn swift_getMangledTypeName(
@@ -13443,7 +13443,7 @@ pub mod root {
         extern "C" {
             pub fn swift_rootObjCDealloc(self_: *mut root::swift::HeapObject);
         }
-        extern "swift" {
+        extern "C" {
             #[link_name = "\u{1}_swift_stdlib_NSStringFromUTF8"]
             pub fn swift_stdlib_NSStringFromUTF8(
                 cstr: *const ::std::os::raw::c_char,
