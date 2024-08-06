@@ -1,7 +1,7 @@
 use std::{fs, io::Write as _, path::PathBuf};
 
 fn main() {
-    // build();
+    build();
 }
 
 fn build() {
