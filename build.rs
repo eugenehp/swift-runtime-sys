@@ -3,7 +3,7 @@ use std::{fs, io::Write as _, path::PathBuf};
 fn main() {
     let librs_path = PathBuf::from("src").join("lib.rs");
 
-    println!("cargo:rerun-if-changed=swift");
+    // println!("cargo:rerun-if-changed=swift");
     // println!("cargo:rustc-link-search=/path/to/lib");
     println!("cargo:rustc-link-lib=swiftCore");
 
