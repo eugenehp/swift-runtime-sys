@@ -9,6 +9,9 @@ keywords = ["swift", "runtime", "sys", "bindings"]
 readme = "README.md"
 exclude = ["swift"]
 
+[lib]
+name = "swift_runtime_sys"
+
 [dependencies]
 
 # [build-dependencies]

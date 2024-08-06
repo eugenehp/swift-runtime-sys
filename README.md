@@ -13,6 +13,7 @@ git checkout swift-5.10.1-RELEASE
 ## Build the bindings
 
 ```shell
+export SWIFT_RUNTIME=$(xcrun -show-sdk-path)/usr/lib/swift
 cargo build
 ```
 

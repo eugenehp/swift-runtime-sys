@@ -1,9 +1,21 @@
 use std::{fs, io::Write as _, path::PathBuf};
 
+static SWIFT_RUNTIME: &str = "SWIFT_RUNTIME";
+
 fn main() {
+    let swift_runtime = match std::env::var(SWIFT_RUNTIME) {
+        Ok(val) => val,
+        Err(_) => {
+            println!("Environment variable {} not found", SWIFT_RUNTIME);
+            "/usr/lib/swift".to_string()
+        }
+    };
+
+    println!("cargo:rerun-if-env-changed={}", SWIFT_RUNTIME);
+    println!("cargo:rustc-link-search=native={}", swift_runtime);
     // println!("cargo:rerun-if-changed=swift");
-    // println!("cargo:rustc-link-search=/path/to/lib");
-    println!("cargo:rustc-link-lib=swiftCore");
+    // println!("cargo:rustc-link-search=/usr/lib");
+    println!("cargo:rustc-link-lib=dylib=swiftCore");
 
     // build();
 }
