@@ -18,7 +18,7 @@ fn main() {
         .clang_arg("-Ifake")
         .clang_arg("-Iswift/include")
         .clang_arg("-Iswift/stdlib/public/SwiftShims/")
-        .opaque_type("SWIFTCC")
+        // .opaque_type("SWIFTCC")
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .generate()
         .expect("Unable to generate bindings");
