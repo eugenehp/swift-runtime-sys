@@ -1,9 +1,21 @@
 # swift-runtime-sys
 
-An attempt to have rust bindings generated for the swift runtime
+An attempt to have Rust bindings generated for the Swift Runtime.
 
-# Pick Swift version
+**Status**: WIP!
+
+## Pick Swift version
 
 ```shell
 git checkout swift-5.10.1-RELEASE
 ```
+
+## Build the bindings
+
+```shell
+cargo build
+```
+
+## License
+
+[Apache 2.0](/LICENSE)
