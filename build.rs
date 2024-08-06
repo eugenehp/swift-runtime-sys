@@ -18,7 +18,7 @@ fn main() {
         .clang_arg("c++")
         .clang_arg("-std=c++14")
         .header("wrapper.h")
-        .raw_line("#![allow(dead_code, non_snake_case, non_camel_case_types, non_upper_case_globals)]")
+        // .raw_line("#![allow(dead_code, non_snake_case, non_camel_case_types, non_upper_case_globals)]")
         .blocklist_item("template")
         .blocklist_item("_Pred")
         .blocklist_item("_Tp")
