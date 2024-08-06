@@ -14,6 +14,8 @@ fn main() {
         .clang_arg("c++")
         .clang_arg("-std=c++14")
         .header("wrapper.h")
+        // prevents: Unable to generate bindings: ClangDiagnostic("swift/include/swift/Runtime/Config.h:21:10: fatal error: 'swift/Runtime/CMakeConfig.h' file not found\n")
+        .clang_arg("-Ifake")
         .clang_arg("-Iswift/include")
         .clang_arg("-Iswift/stdlib/public/SwiftShims/")
         .opaque_type("SWIFTCC")
