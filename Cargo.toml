@@ -1,0 +1,12 @@
+[package]
+name = "swift-runtime-sys"
+version = "0.0.1"
+edition = "2021"
+
+[dependencies]
+
+# [build-dependencies]
+# bindgen = "0.69.4"
+
+[build-dependencies]
+bindgen = { package="bindgen", git = "https://github.com/eugenehp/rust-bindgen.git", branch = "swift", version = "0.69.4" }
