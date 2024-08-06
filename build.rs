@@ -1,17 +1,15 @@
 use std::{fs, io::Write as _, path::PathBuf};
 
 fn main() {
-    build();
-}
-
-fn build() {
-    let librs_path = PathBuf::from("src").join("lib.rs");
-
     // println!("cargo:rerun-if-changed=swift");
     // println!("cargo:rustc-link-search=/path/to/lib");
     println!("cargo:rustc-link-lib=swiftCore");
 
-    // enable-cxx11
+    // build();
+}
+
+fn build() {
+    let librs_path = PathBuf::from("src").join("lib.rs");
 
     if librs_path.exists() {
         fs::remove_file(&librs_path).unwrap();
