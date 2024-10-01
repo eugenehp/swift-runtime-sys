@@ -7,7 +7,7 @@ An attempt to have Rust bindings generated for the Swift Runtime.
 ## Pick Swift version
 
 ```shell
-git checkout swift-5.10.1-RELEASE
+cd swift && git checkout swift-6.0.1-RELEASE
 ```
 
 ## Build the bindings

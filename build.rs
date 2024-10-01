@@ -17,11 +17,45 @@ fn main() {
     // println!("cargo:rustc-link-search=/usr/lib");
     println!("cargo:rustc-link-lib=dylib=swiftCore");
 
+    let array = [
+        // "swift/include/swift/Runtime/Atomic.h",
+        // "swift/include/swift/Runtime/Atomic.h",
+        "swift/include/swift/Runtime/Config.h",
+    ];
+
+    let lines = array
+        .iter()
+        .map(|header| {
+            let filename = header
+                .split('/')
+                .last()
+                .unwrap()
+                .split(".")
+                .collect::<Vec<&str>>();
+            let filename = filename.first().unwrap();
+            let line = format!("pub mod {filename};");
+            let filename = format!("{filename}.rs");
+            let filename = filename.as_str();
+            build(header, filename);
+
+            line
+        })
+        .collect::<Vec<String>>();
     // build();
+
+    let librs_path = PathBuf::from("src").join("lib.rs");
+    let code = lines.join("\n");
+    let mut file = fs::OpenOptions::new()
+        .write(true)
+        .truncate(true)
+        .create(true)
+        .open(librs_path)
+        .unwrap();
+    file.write_all(code.as_bytes()).unwrap();
 }
 
-fn build() {
-    let librs_path = PathBuf::from("src").join("lib.rs");
+fn build(header: &str, filename: &str) {
+    let librs_path = PathBuf::from("src").join(filename);
 
     if librs_path.exists() {
         fs::remove_file(&librs_path).unwrap();
@@ -31,17 +65,21 @@ fn build() {
         .clang_arg("-x")
         .clang_arg("c++")
         .clang_arg("-std=c++14")
-        .header("wrapper.h")
+        // .header("wrapper.h")
+        .header(header)
         .raw_line("#![allow(dead_code, non_snake_case, non_camel_case_types, non_upper_case_globals, improper_ctypes)]")
         .blocklist_item("template")
-        .blocklist_item("_Pred")
-        .blocklist_item("_Tp")
+        // .blocklist_item("_Pred")
+        // .blocklist_item("_Tp")
+        // .blocklist_item("SideTableRefCountBits")
         // .blocklist_type("_Tp")
         .blocklist_type("template")
         // .blocklist_item("std_*")
         // .blocklist_item("std_char_*")
-        // .opaque_type("sizeof")
+        .opaque_type("sizeof")
         .opaque_type("_Tp")
+        .opaque_type("rep")
+        .opaque_type("std::atomic")
         .opaque_type("std::.+")
         .enable_cxx_namespaces()
         // prevents: Unable to generate bindings: ClangDiagnostic("swift/include/swift/Runtime/Config.h:21:10: fatal error: 'swift/Runtime/CMakeConfig.h' file not found\n")
@@ -49,7 +87,8 @@ fn build() {
         .clang_arg("-Iswift/include")
         .clang_arg("-Iswift/stdlib/public/SwiftShims/")
         .raw_line("pub type _Tp = ();")
-        .raw_line("pub type _Pred = ();")
+        // .raw_line("pub mod std { pub mod __1 { pub type _Tp = (); } }")
+        // .raw_line("pub type _Pred = ();")
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .generate()
         .expect("Unable to generate bindings");
@@ -58,11 +97,18 @@ fn build() {
     //     .write_to_file(librs_path)
     //     .expect("Couldn't write bindings!");
 
-    let code = bindings.to_string().replace("extern \"swift\" {", "extern \"C\" {");
+    let code = bindings
+        .to_string()
+        .replace("extern \"swift\" {", "extern \"C\" {")
+        .replace(
+            "    pub type rep = u64;\n    pub type rep = u64;",
+            "pub type rep = u64;",
+        );
     let mut file = fs::OpenOptions::new()
-            .write(true)
-            .truncate(true)
-            .create(true)
-            .open(librs_path).unwrap();
+        .write(true)
+        .truncate(true)
+        .create(true)
+        .open(librs_path)
+        .unwrap();
     file.write_all(code.as_bytes()).unwrap();
 }
