@@ -19,15 +19,15 @@ fn main() {
 
     let array = [
         // "swift/include/swift/Runtime/AccessibleFunction.h",
-       "swift/include/swift/Runtime/Atomic.h",
+        "swift/include/swift/Runtime/Atomic.h",
         // "swift/include/swift/Runtime/AtomicWaitQueue.h",
         "swift/include/swift/Runtime/Backtrace.h",
         // "swift/include/swift/Runtime/Bincompat.h",
         // "swift/include/swift/Runtime/Casting.h",
         // "swift/include/swift/Runtime/Concurrency.h",
         // "swift/include/swift/Runtime/Concurrent.h",
-       "swift/include/swift/Runtime/Config.h",
-       "swift/include/swift/Runtime/CrashInfo.h",
+        "swift/include/swift/Runtime/Config.h",
+        "swift/include/swift/Runtime/CrashInfo.h",
         "swift/include/swift/Runtime/CustomRRABI.h",
         // "swift/include/swift/Runtime/Debug.h",
         // "swift/include/swift/Runtime/DispatchShims.h",
@@ -40,22 +40,22 @@ fn main() {
         "swift/include/swift/Runtime/FoundationSupport.h",
         "swift/include/swift/Runtime/FunctionReplacement.h",
         // "swift/include/swift/Runtime/GenericMetadataBuilder.h",
-      "swift/include/swift/Runtime/Heap.h",
-//       "swift/include/swift/Runtime/HeapObject.h",
+        "swift/include/swift/Runtime/Heap.h",
+        //       "swift/include/swift/Runtime/HeapObject.h",
         "swift/include/swift/Runtime/InstrumentsSupport.h",
         // "swift/include/swift/Runtime/LibPrespecialized.h",
         // "swift/include/swift/Runtime/Metadata.h",
         // "swift/include/swift/Runtime/Numeric.h",
-//        "swift/include/swift/Runtime/ObjCBridge.h",
+        // "swift/include/swift/Runtime/ObjCBridge.h",
         // "swift/include/swift/Runtime/Once.h",
-//        "swift/include/swift/Runtime/Paths.h",
+               "swift/include/swift/Runtime/Paths.h",
         // "swift/include/swift/Runtime/Portability.h",
         // "swift/include/swift/Runtime/PrebuiltStringMap.h",
         // "swift/include/swift/Runtime/Reflection.h",
         // "swift/include/swift/Runtime/RuntimeFnWrappersGen.h",
-//        "swift/include/swift/Runtime/SwiftDtoa.h",
+        //        "swift/include/swift/Runtime/SwiftDtoa.h",
         // "swift/include/swift/Runtime/TracingCommon.h",
-//        "swift/include/swift/Runtime/VoucherShims.h",
+        //        "swift/include/swift/Runtime/VoucherShims.h",
         // "swift/include/swift/Runtime/Win32.h",
     ];
 
@@ -103,7 +103,10 @@ fn build(header: &str, filename: &str) {
         .clang_arg("-std=c++14")
         // .header("wrapper.h")
         .header(header)
+        // .blocklist_file("swift/include/swift/ABI/Metadata.h")
+        // .blocklist_file("llvm/ADT/ArrayRef.h")
         .raw_line("#![allow(dead_code, non_snake_case, non_camel_case_types, non_upper_case_globals, improper_ctypes)]")
+        // .blocklist_type("SWIFT_RUNTIME_EXPORT")
         .blocklist_item("template")
         .blocklist_item("char_type")
         // .blocklist_item("_Pred")

@@ -9,3 +9,4 @@ pub mod FoundationSupport;
 pub mod FunctionReplacement;
 pub mod Heap;
 pub mod InstrumentsSupport;
+pub mod Paths;
