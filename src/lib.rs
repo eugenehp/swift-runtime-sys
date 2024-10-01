@@ -11,3 +11,4 @@ pub mod Heap;
 pub mod InstrumentsSupport;
 pub mod Paths;
 pub mod Portability;
+pub mod PrebuiltStringMap;

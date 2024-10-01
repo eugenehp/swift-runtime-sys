@@ -50,7 +50,7 @@ fn main() {
         // "swift/include/swift/Runtime/Once.h",
         "swift/include/swift/Runtime/Paths.h",
         "swift/include/swift/Runtime/Portability.h",
-        // "swift/include/swift/Runtime/PrebuiltStringMap.h",
+        "swift/include/swift/Runtime/PrebuiltStringMap.h",
         // "swift/include/swift/Runtime/Reflection.h",
         // "swift/include/swift/Runtime/RuntimeFnWrappersGen.h",
         //        "swift/include/swift/Runtime/SwiftDtoa.h",
