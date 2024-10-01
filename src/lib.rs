@@ -4,3 +4,4 @@ pub mod Config;
 pub mod CrashInfo;
 pub mod CustomRRABI;
 pub mod Exception;
+pub mod Exclusivity;
