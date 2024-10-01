@@ -17,6 +17,11 @@ fn main() {
     // println!("cargo:rustc-link-search=/usr/lib");
     println!("cargo:rustc-link-lib=dylib=swiftCore");
 
+    // build();
+    // build_all(); // <--- builds bindings for the swift runtime
+}
+
+fn build_all() {
     let array = [
         // "swift/include/swift/Runtime/AccessibleFunction.h",
         "swift/include/swift/Runtime/Atomic.h",
@@ -78,8 +83,7 @@ fn main() {
             line
         })
         .collect::<Vec<String>>();
-    // build();
-
+    
     let librs_path = PathBuf::from("src").join("lib.rs");
     let code = lines.join("\n");
     let mut file = fs::OpenOptions::new()
