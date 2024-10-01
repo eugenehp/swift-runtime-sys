@@ -38,7 +38,7 @@ fn main() {
         "swift/include/swift/Runtime/Exclusivity.h",
         // "swift/include/swift/Runtime/ExistentialContainer.h",
         "swift/include/swift/Runtime/FoundationSupport.h",
-        // "swift/include/swift/Runtime/FunctionReplacement.h",
+        "swift/include/swift/Runtime/FunctionReplacement.h",
         // "swift/include/swift/Runtime/GenericMetadataBuilder.h",
 //       "swift/include/swift/Runtime/Heap.h",
 //       "swift/include/swift/Runtime/HeapObject.h",
