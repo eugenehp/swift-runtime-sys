@@ -56,6 +56,7 @@ fn main() {
         "swift/include/swift/Runtime/SwiftDtoa.h",
         "swift/include/swift/Runtime/TracingCommon.h",
         "swift/include/swift/Runtime/VoucherShims.h",
+        #[cfg(target_os = "windows")]
         "swift/include/swift/Runtime/Win32.h",
     ];
 
