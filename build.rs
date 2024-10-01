@@ -19,7 +19,7 @@ fn main() {
 
     let array = [
         // "swift/include/swift/Runtime/AccessibleFunction.h",
-//        "swift/include/swift/Runtime/Atomic.h",
+       "swift/include/swift/Runtime/Atomic.h",
         // "swift/include/swift/Runtime/AtomicWaitQueue.h",
         // "swift/include/swift/Runtime/Backtrace.h",
         // "swift/include/swift/Runtime/Bincompat.h",
@@ -40,8 +40,8 @@ fn main() {
         // "swift/include/swift/Runtime/FoundationSupport.h",
         // "swift/include/swift/Runtime/FunctionReplacement.h",
         // "swift/include/swift/Runtime/GenericMetadataBuilder.h",
-//        "swift/include/swift/Runtime/Heap.h",
-//        "swift/include/swift/Runtime/HeapObject.h",
+//       "swift/include/swift/Runtime/Heap.h",
+//       "swift/include/swift/Runtime/HeapObject.h",
         // "swift/include/swift/Runtime/InstrumentsSupport.h",
         // "swift/include/swift/Runtime/LibPrespecialized.h",
         // "swift/include/swift/Runtime/Metadata.h",
@@ -105,6 +105,7 @@ fn build(header: &str, filename: &str) {
         .header(header)
         .raw_line("#![allow(dead_code, non_snake_case, non_camel_case_types, non_upper_case_globals, improper_ctypes)]")
         .blocklist_item("template")
+        .blocklist_item("char_type")
         // .blocklist_item("_Pred")
         // .blocklist_item("_Tp")
         // .blocklist_item("SideTableRefCountBits")
@@ -112,12 +113,14 @@ fn build(header: &str, filename: &str) {
         .blocklist_type("template")
         // .blocklist_item("std_*")
         // .blocklist_item("std_char_*")
+        .blocklist_item("char_type")
         .opaque_type("sizeof")
         .opaque_type("_Tp")
         .opaque_type("rep")
         .opaque_type("std::atomic")
         .opaque_type("std::.+")
-        .enable_cxx_namespaces()
+        .opaque_type("char_type")
+        // .enable_cxx_namespaces()
         // prevents: Unable to generate bindings: ClangDiagnostic("swift/include/swift/Runtime/Config.h:21:10: fatal error: 'swift/Runtime/CMakeConfig.h' file not found\n")
         .clang_arg("-Ifake")
         .clang_arg("-Iswift/include")
@@ -136,6 +139,10 @@ fn build(header: &str, filename: &str) {
     let code = bindings
         .to_string()
         .replace("extern \"swift\" {", "extern \"C\" {")
+        .replace(
+            "pub type rep = u64;\npub type rep = u64;",
+            "pub type rep = u64;",
+        )
         .replace(
             "    pub type rep = u64;\n    pub type rep = u64;",
             "pub type rep = u64;",
