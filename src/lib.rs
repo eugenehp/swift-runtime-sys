@@ -8,3 +8,4 @@ pub mod Exclusivity;
 pub mod FoundationSupport;
 pub mod FunctionReplacement;
 pub mod Heap;
+pub mod InstrumentsSupport;

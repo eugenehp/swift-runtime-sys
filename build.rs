@@ -42,7 +42,7 @@ fn main() {
         // "swift/include/swift/Runtime/GenericMetadataBuilder.h",
       "swift/include/swift/Runtime/Heap.h",
 //       "swift/include/swift/Runtime/HeapObject.h",
-        // "swift/include/swift/Runtime/InstrumentsSupport.h",
+        "swift/include/swift/Runtime/InstrumentsSupport.h",
         // "swift/include/swift/Runtime/LibPrespecialized.h",
         // "swift/include/swift/Runtime/Metadata.h",
         // "swift/include/swift/Runtime/Numeric.h",
