@@ -21,7 +21,7 @@ fn main() {
         // "swift/include/swift/Runtime/AccessibleFunction.h",
        "swift/include/swift/Runtime/Atomic.h",
         // "swift/include/swift/Runtime/AtomicWaitQueue.h",
-        // "swift/include/swift/Runtime/Backtrace.h",
+        "swift/include/swift/Runtime/Backtrace.h",
         // "swift/include/swift/Runtime/Bincompat.h",
         // "swift/include/swift/Runtime/Casting.h",
         // "swift/include/swift/Runtime/Concurrency.h",
