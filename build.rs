@@ -27,7 +27,7 @@ fn main() {
         // "swift/include/swift/Runtime/Concurrency.h",
         // "swift/include/swift/Runtime/Concurrent.h",
        "swift/include/swift/Runtime/Config.h",
-//        "swift/include/swift/Runtime/CrashInfo.h",
+       "swift/include/swift/Runtime/CrashInfo.h",
         // "swift/include/swift/Runtime/CustomRRABI.h",
         // "swift/include/swift/Runtime/Debug.h",
         // "swift/include/swift/Runtime/DispatchShims.h",
