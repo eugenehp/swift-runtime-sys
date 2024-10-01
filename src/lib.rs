@@ -14,3 +14,4 @@ pub mod Portability;
 pub mod PrebuiltStringMap;
 pub mod SwiftDtoa;
 pub mod TracingCommon;
+pub mod VoucherShims;
