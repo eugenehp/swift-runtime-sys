@@ -13,3 +13,4 @@ pub mod Paths;
 pub mod Portability;
 pub mod PrebuiltStringMap;
 pub mod SwiftDtoa;
+pub mod TracingCommon;
