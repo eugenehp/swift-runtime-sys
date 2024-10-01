@@ -15,3 +15,4 @@ pub mod PrebuiltStringMap;
 pub mod SwiftDtoa;
 pub mod TracingCommon;
 pub mod VoucherShims;
+pub mod Win32;

@@ -55,8 +55,8 @@ fn main() {
         // "swift/include/swift/Runtime/RuntimeFnWrappersGen.h",
         "swift/include/swift/Runtime/SwiftDtoa.h",
         "swift/include/swift/Runtime/TracingCommon.h",
-               "swift/include/swift/Runtime/VoucherShims.h",
-        // "swift/include/swift/Runtime/Win32.h",
+        "swift/include/swift/Runtime/VoucherShims.h",
+        "swift/include/swift/Runtime/Win32.h",
     ];
 
     let lines = array
