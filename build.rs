@@ -34,7 +34,7 @@ fn main() {
         // "swift/include/swift/Runtime/Enum.h",
         // "swift/include/swift/Runtime/EnvironmentVariables.h",
         // "swift/include/swift/Runtime/Error.h",
-        // "swift/include/swift/Runtime/Exception.h",
+        "swift/include/swift/Runtime/Exception.h",
         // "swift/include/swift/Runtime/Exclusivity.h",
         // "swift/include/swift/Runtime/ExistentialContainer.h",
         // "swift/include/swift/Runtime/FoundationSupport.h",

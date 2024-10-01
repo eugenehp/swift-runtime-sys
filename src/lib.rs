@@ -3,3 +3,4 @@ pub mod Backtrace;
 pub mod Config;
 pub mod CrashInfo;
 pub mod CustomRRABI;
+pub mod Exception;
