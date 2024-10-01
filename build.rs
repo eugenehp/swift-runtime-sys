@@ -21,6 +21,7 @@ fn main() {
     // build_all(); // <--- builds bindings for the swift runtime
 }
 
+#[allow(dead_code)]
 fn build_all() {
     let array = [
         // "swift/include/swift/Runtime/AccessibleFunction.h",
@@ -95,6 +96,7 @@ fn build_all() {
     file.write_all(code.as_bytes()).unwrap();
 }
 
+#[allow(dead_code)]
 fn build(header: &str, filename: &str) {
     let librs_path = PathBuf::from("src").join(filename);
 
