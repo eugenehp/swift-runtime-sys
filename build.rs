@@ -40,7 +40,7 @@ fn main() {
         "swift/include/swift/Runtime/FoundationSupport.h",
         "swift/include/swift/Runtime/FunctionReplacement.h",
         // "swift/include/swift/Runtime/GenericMetadataBuilder.h",
-//       "swift/include/swift/Runtime/Heap.h",
+      "swift/include/swift/Runtime/Heap.h",
 //       "swift/include/swift/Runtime/HeapObject.h",
         // "swift/include/swift/Runtime/InstrumentsSupport.h",
         // "swift/include/swift/Runtime/LibPrespecialized.h",

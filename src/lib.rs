@@ -7,3 +7,4 @@ pub mod Exception;
 pub mod Exclusivity;
 pub mod FoundationSupport;
 pub mod FunctionReplacement;
+pub mod Heap;
