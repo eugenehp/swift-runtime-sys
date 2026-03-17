@@ -260,6 +260,24 @@ Claim policy:
 - Experimental features are tracked but do not block required parity unless promoted.
 - Scope changes must be documented here before parity percentages are reinterpreted.
 
+### Full parity verification (local and CI-equivalent)
+
+Local required gate sequence:
+
+```shell
+./scripts/run_parity_matrix.sh
+FUZZ_CASES=64 STOP_ON_FAIL=1 ./scripts/run_parity_stress.sh 3
+./scripts/run_protocol_dispatch_matrix.sh
+```
+
+CI-equivalent budgets used in `.github/workflows/parity.yml`:
+
+- Pull requests: `FUZZ_CASES=64 ./scripts/run_parity_stress.sh 3`
+- Pushes to `main`: `FUZZ_CASES=128 ./scripts/run_parity_stress.sh 10`
+
+A parity claim is valid only when all required gates above pass and artifacts are
+generated for matrix, stress, and protocol-dispatch runs.
+
 Artifacts:
 
 - `target/runtime-probe/probe.log`

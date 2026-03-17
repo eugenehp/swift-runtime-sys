@@ -20,7 +20,7 @@ Define and complete all work needed to claim production-grade parity between Rus
 ## Scope Lock (must be explicit)
 - [x] Freeze a v1 parity scope in writing (which APIs and ABI shapes are in/out).
 - [x] Tag each feature as one of: `required`, `optional`, `experimental`.
-- [ ] Only claim 100% against the frozen scope.
+- [x] Only claim 100% against the frozen scope.
 
 ## Functional Coverage Inventory (already covered)
 - [ ] Synthesis/language checks: keypath, property-wrapper, result-builder, opaque return.
@@ -80,9 +80,9 @@ Define and complete all work needed to claim production-grade parity between Rus
 
 ### 7) Documentation and claim policy
 - [x] Add a clear parity claim section in README: exact scope, exclusions, and quality gates.
-- [ ] Document how to reproduce full parity verification locally and in CI.
-- [ ] Exit criteria:
-- [ ] "100% parity" statement references frozen scope and passing gates, not only check count.
+- [x] Document how to reproduce full parity verification locally and in CI.
+- [x] Exit criteria:
+- [x] "100% parity" statement references frozen scope and passing gates, not only check count.
 
 ## Optional: Raise check count from 93 to 100 (if numeric target is desired)
 Add seven deterministic domains as part of functional depth:
@@ -102,12 +102,12 @@ Add seven deterministic domains as part of functional depth:
 - [ ] Stress/fuzz required gates pass at defined budget.
 - [ ] Supported version/platform matrix passes.
 - [ ] CI blocks merges on parity regressions.
-- [ ] README parity claim updated with scope and evidence.
+- [x] README parity claim updated with scope and evidence.
 
 ## Execution Order
-- [ ] Freeze scope and required ABI shape list.
+- [x] Freeze scope and required ABI shape list.
 - [ ] Stabilize experimental/crash-prone runtime paths.
 - [ ] Add missing required checks and ABI variants.
-- [ ] Promote stress/fuzz and protocol matrix to required CI gates.
+- [x] Promote stress/fuzz and protocol matrix to required CI gates.
 - [ ] Validate across support matrix.
 - [ ] Publish final parity claim backed by artifacts.
