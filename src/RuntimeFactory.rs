@@ -52,15 +52,12 @@ pub struct I32Pair {
     pub second: i32,
 }
 
-type CallThrowsI32I32 =
-    unsafe extern "C" fn(*const c_void, i32, i32, *mut *mut c_void) -> i32;
-type CallI32I32ToI32Pair =
-    unsafe extern "C" fn(*const c_void, i32, i32) -> I32Pair;
+type CallThrowsI32I32 = unsafe extern "C" fn(*const c_void, i32, i32, *mut *mut c_void) -> i32;
+type CallI32I32ToI32Pair = unsafe extern "C" fn(*const c_void, i32, i32) -> I32Pair;
 type SwiftWeakInit = unsafe extern "C" fn(*mut c_void, OpaqueSwiftRef);
 type SwiftWeakLoadStrong = unsafe extern "C" fn(*mut c_void) -> OpaqueSwiftRef;
 type SwiftWeakDestroy = unsafe extern "C" fn(*mut c_void);
-type SwiftConformsToProtocol =
-    unsafe extern "C" fn(MetadataRef, *const c_void) -> WitnessTableRef;
+type SwiftConformsToProtocol = unsafe extern "C" fn(MetadataRef, *const c_void) -> WitnessTableRef;
 
 type AllocatingInitI32 = unsafe extern "C" fn(i32) -> OpaqueSwiftRef;
 type StructInitI32I32U64 = unsafe extern "C" fn(i32, i32) -> u64;
@@ -289,11 +286,15 @@ impl RuntimeFactory {
         arg1: i32,
     ) -> Result<ThrowsResult, RuntimeFactoryError> {
         let fn_addr = self.symbol_address(symbol)?;
-        let thunk: CallThrowsI32I32 =
-            resolve_symbol_any("runtime_thunk_call_throws_i32_i32")?;
+        let thunk: CallThrowsI32I32 = resolve_symbol_any("runtime_thunk_call_throws_i32_i32")?;
         let mut error_ptr: *mut c_void = std::ptr::null_mut();
         let result = unsafe {
-            thunk(fn_addr as *const c_void, arg0, arg1, &mut error_ptr as *mut *mut c_void)
+            thunk(
+                fn_addr as *const c_void,
+                arg0,
+                arg1,
+                &mut error_ptr as *mut *mut c_void,
+            )
         };
         if error_ptr.is_null() {
             Ok(ThrowsResult::Ok(result))

@@ -299,9 +299,7 @@ fn main() {
         Ok(swift_runtime_sys::RuntimeFactory::ThrowsResult::Threw(_)) => 1,
         Err(_) => 0,
     };
-    println!(
-        "throws safeDivide => ok_result={throws_ok_result} err_null={throws_ok_err_null}"
-    );
+    println!("throws safeDivide => ok_result={throws_ok_result} err_null={throws_ok_err_null}");
     println!("throws safeDivide error => throws_nonnull={throws_err_nonnull}");
 
     // ── Generic type (TypedBox<Int32>) ────────────────────────────────────────
@@ -314,13 +312,17 @@ fn main() {
     let generic_get1_v2: i32;
     let generic_get2_v2: i32;
     unsafe {
-        let new_fn = factory.symbol_address("swift_typed_box_i32_new")
+        let new_fn = factory
+            .symbol_address("swift_typed_box_i32_new")
             .map(|p| std::mem::transmute::<*mut c_void, CdeclI32ToPtr>(p));
-        let get_fn = factory.symbol_address("swift_typed_box_i32_get")
+        let get_fn = factory
+            .symbol_address("swift_typed_box_i32_get")
             .map(|p| std::mem::transmute::<*mut c_void, CdeclPtrToI32>(p));
-        let set_fn = factory.symbol_address("swift_typed_box_i32_set")
+        let set_fn = factory
+            .symbol_address("swift_typed_box_i32_set")
             .map(|p| std::mem::transmute::<*mut c_void, CdeclPtrI32ToVoid>(p));
-        let drop_fn = factory.symbol_address("swift_typed_box_i32_drop")
+        let drop_fn = factory
+            .symbol_address("swift_typed_box_i32_drop")
             .map(|p| std::mem::transmute::<*mut c_void, CdeclPtrToVoid>(p));
         match (new_fn, get_fn, set_fn, drop_fn) {
             (Ok(new_f), Ok(get_f), Ok(set_f), Ok(drop_f)) => {
@@ -341,13 +343,17 @@ fn main() {
     // ── String (heap) ─────────────────────────────────────────────────────────
     type CdeclCStrToPtr = unsafe extern "C" fn(*const core::ffi::c_char) -> *mut c_void;
     let (str_char_len, str_utf8_len) = unsafe {
-        let new_fn = factory.symbol_address("swift_string_new")
+        let new_fn = factory
+            .symbol_address("swift_string_new")
             .map(|p| std::mem::transmute::<*mut c_void, CdeclCStrToPtr>(p));
-        let len_fn = factory.symbol_address("swift_string_length")
+        let len_fn = factory
+            .symbol_address("swift_string_length")
             .map(|p| std::mem::transmute::<*mut c_void, CdeclPtrToI32>(p));
-        let utf8_fn = factory.symbol_address("swift_string_utf8_length")
+        let utf8_fn = factory
+            .symbol_address("swift_string_utf8_length")
             .map(|p| std::mem::transmute::<*mut c_void, CdeclPtrToI32>(p));
-        let drop_fn = factory.symbol_address("swift_string_drop")
+        let drop_fn = factory
+            .symbol_address("swift_string_drop")
             .map(|p| std::mem::transmute::<*mut c_void, CdeclPtrToVoid>(p));
         match (new_fn, len_fn, utf8_fn, drop_fn) {
             (Ok(new_f), Ok(len_f), Ok(utf8_f), Ok(drop_f)) => {
@@ -377,7 +383,8 @@ fn main() {
                 .call_self_to_i32_by_address_x0(fn_addr as *const c_void, point_ptr)
                 .unwrap_or(i32::MIN);
             let prod_sym = "$s10RustBridge5PointV7products5Int32VyF";
-            let prod = factory.symbol_address(prod_sym)
+            let prod = factory
+                .symbol_address(prod_sym)
                 .and_then(|f| factory.call_self_to_i32_by_address_x0(f as *const c_void, point_ptr))
                 .unwrap_or(i32::MIN);
             (sum, prod)
@@ -397,37 +404,53 @@ fn main() {
     println!("tuple => first={tuple_first} second={tuple_second}");
 
     // ── Optional<T> layout ────────────────────────────────────────────────────
-    let opt_none = factory.call_to_i32("swift_optional_none_get").unwrap_or(i32::MIN);
-    let opt_some = factory.call_to_i32("swift_optional_some_get").unwrap_or(i32::MIN);
+    let opt_none = factory
+        .call_to_i32("swift_optional_none_get")
+        .unwrap_or(i32::MIN);
+    let opt_some = factory
+        .call_to_i32("swift_optional_some_get")
+        .unwrap_or(i32::MIN);
     // Also read raw memory layout: optionalSome global byte[0..3]=42, byte[4]=0 (.some)
     type OptionalAccessorFn = unsafe extern "C" fn() -> *mut c_void;
-    let opt_some_layout_ok = match factory.symbol_address("$s10RustBridge12optionalSomes5Int32VSgvau") {
-        Ok(accessor) => {
-            let addr = unsafe { std::mem::transmute::<*mut c_void, OptionalAccessorFn>(accessor)() };
-            let val = factory.read_i32(addr as *const _);
-            let disc = factory.read_u8_at_offset(addr as *const _, 4);
-            // For Optional<Int32> in this build, tag bit 0 means .some and 1 means .none.
-            (val == 42 && disc == 0) as i32
-        }
-        Err(_) => 0,
-    };
-    println!("optional => none_get={opt_none} some_get={opt_some} some_layout_ok={opt_some_layout_ok}");
+    let opt_some_layout_ok =
+        match factory.symbol_address("$s10RustBridge12optionalSomes5Int32VSgvau") {
+            Ok(accessor) => {
+                let addr =
+                    unsafe { std::mem::transmute::<*mut c_void, OptionalAccessorFn>(accessor)() };
+                let val = factory.read_i32(addr as *const _);
+                let disc = factory.read_u8_at_offset(addr as *const _, 4);
+                // For Optional<Int32> in this build, tag bit 0 means .some and 1 means .none.
+                (val == 42 && disc == 0) as i32
+            }
+            Err(_) => 0,
+        };
+    println!(
+        "optional => none_get={opt_none} some_get={opt_some} some_layout_ok={opt_some_layout_ok}"
+    );
 
     // ── Array<T> ──────────────────────────────────────────────────────────────
     let arr_count = factory.call_to_i32("swift_array_count").unwrap_or(i32::MIN);
-    let arr_elem2 = factory.call_i32_to_i32("swift_array_get", 2).unwrap_or(i32::MIN);
+    let arr_elem2 = factory
+        .call_i32_to_i32("swift_array_get", 2)
+        .unwrap_or(i32::MIN);
     factory.call_i32_to_i32("swift_array_append", 99).ok();
     let arr_count_after = factory.call_to_i32("swift_array_count").unwrap_or(i32::MIN);
     println!("array => count={arr_count} elem2={arr_elem2} count_after_append={arr_count_after}");
 
     // ── Closure ───────────────────────────────────────────────────────────────
     factory.call_i32_to_i32("swift_store_adder_closure", 7).ok();
-    let closure_result = factory.call_i32_to_i32("swift_invoke_stored_closure", 5).unwrap_or(i32::MIN);
+    let closure_result = factory
+        .call_i32_to_i32("swift_invoke_stored_closure", 5)
+        .unwrap_or(i32::MIN);
     println!("closure adder => result={closure_result}");
 
     // ── Reflection (Mirror) ───────────────────────────────────────────────────
-    let field_count = factory.call_to_i32("swift_point_field_count").unwrap_or(i32::MIN);
-    let first_is_x = factory.call_to_i32("swift_point_first_field_is_x").unwrap_or(i32::MIN);
+    let field_count = factory
+        .call_to_i32("swift_point_field_count")
+        .unwrap_or(i32::MIN);
+    let first_is_x = factory
+        .call_to_i32("swift_point_first_field_is_x")
+        .unwrap_or(i32::MIN);
     println!("reflection => point_fields={field_count} first_field_x={first_is_x}");
 
     // ── Error boxing ─────────────────────────────────────────────────────────
@@ -435,9 +458,11 @@ fn main() {
     let error_nonnull: i32;
     let error_rc: i32;
     unsafe {
-        let make_fn = factory.symbol_address("swift_make_math_error")
+        let make_fn = factory
+            .symbol_address("swift_make_math_error")
             .map(|p| std::mem::transmute::<*mut c_void, CdeclToPtr>(p));
-        let drop_fn = factory.symbol_address("swift_drop_error")
+        let drop_fn = factory
+            .symbol_address("swift_drop_error")
             .map(|p| std::mem::transmute::<*mut c_void, CdeclPtrToVoid>(p));
         match (make_fn, drop_fn) {
             (Ok(make_f), Ok(drop_f)) => {
@@ -446,7 +471,10 @@ fn main() {
                 error_rc = factory.retain_count(eptr).unwrap_or(0) as i32;
                 drop_f(eptr);
             }
-            _ => { error_nonnull = 0; error_rc = 0; }
+            _ => {
+                error_nonnull = 0;
+                error_rc = 0;
+            }
         }
     }
     println!("error boxing => nonnull={error_nonnull} rc={error_rc}");

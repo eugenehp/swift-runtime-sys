@@ -87,25 +87,87 @@ where
 #[repr(transparent)]
 pub struct __BindgenFloat16(pub u16);
 pub const _LIBCPP_ABI_VERSION: u32 = 1;
+pub const _LIBCPP_ABI_FORCE_ITANIUM: u32 = 0;
+pub const _LIBCPP_ABI_FORCE_MICROSOFT: u32 = 0;
+pub const _LIBCPP_HAS_THREADS: u32 = 1;
+pub const _LIBCPP_HAS_MONOTONIC_CLOCK: u32 = 1;
+pub const _LIBCPP_HAS_TERMINAL: u32 = 1;
+pub const _LIBCPP_HAS_MUSL_LIBC: u32 = 0;
+pub const _LIBCPP_HAS_THREAD_API_PTHREAD: u32 = 0;
+pub const _LIBCPP_HAS_THREAD_API_EXTERNAL: u32 = 0;
+pub const _LIBCPP_HAS_THREAD_API_WIN32: u32 = 0;
+pub const _LIBCPP_HAS_THREAD_API_C11: u32 = 0;
+pub const _LIBCPP_HAS_VENDOR_AVAILABILITY_ANNOTATIONS: u32 = 1;
+pub const _LIBCPP_HAS_FILESYSTEM: u32 = 1;
+pub const _LIBCPP_HAS_RANDOM_DEVICE: u32 = 1;
+pub const _LIBCPP_HAS_LOCALIZATION: u32 = 1;
+pub const _LIBCPP_HAS_UNICODE: u32 = 1;
+pub const _LIBCPP_HAS_WIDE_CHARACTERS: u32 = 1;
+pub const _LIBCPP_HAS_TIME_ZONE_DATABASE: u32 = 0;
+pub const _LIBCPP_INSTRUMENTED_WITH_ASAN: u32 = 0;
 pub const _LIBCPP_HARDENING_MODE_DEFAULT: u32 = 2;
-pub const _LIBCPP_VERSION: u32 = 180100;
-pub const _LIBCPP_STD_VER: u32 = 14;
 pub const _LIBCPP_OBJECT_FORMAT_MACHO: u32 = 1;
+pub const _LIBCPP_STD_VER: u32 = 17;
+pub const _LIBCPP_HAS_RTTI: u32 = 1;
+pub const _LIBCPP_HAS_EXCEPTIONS: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_20: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_19: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_18: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_16: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_15: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_14: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_12: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_11: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_9: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_4: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_BAD_OPTIONAL_ACCESS: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_BAD_VARIANT_ACCESS: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_BAD_ANY_CAST: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_FILESYSTEM_LIBRARY: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_SYNC: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_ADDITIONAL_IOSTREAM_EXPLICIT_INSTANTIATIONS_1: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_TO_CHARS_FLOATING_POINT: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_VERBOSE_ABORT: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_PMR: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_INIT_PRIMARY_EXCEPTION: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_PRINT: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_TZDB: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_BAD_FUNCTION_CALL_KEY_FUNCTION: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_BAD_EXPECTED_ACCESS_KEY_FUNCTION: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_FROM_CHARS_FLOATING_POINT: u32 = 1;
+pub const _LIBCPP_VERSION: u32 = 200100;
 pub const _LIBCPP_HARDENING_MODE_NONE: u32 = 2;
 pub const _LIBCPP_HARDENING_MODE_FAST: u32 = 4;
 pub const _LIBCPP_HARDENING_MODE_EXTENSIVE: u32 = 16;
 pub const _LIBCPP_HARDENING_MODE_DEBUG: u32 = 8;
 pub const _LIBCPP_HARDENING_MODE: u32 = 2;
+pub const _LIBCPP_HAS_EXPERIMENTAL_LIBRARY: u32 = 0;
+pub const _LIBCPP_HAS_EXPERIMENTAL_PSTL: u32 = 0;
+pub const _LIBCPP_HAS_EXPERIMENTAL_TZDB: u32 = 0;
+pub const _LIBCPP_HAS_EXPERIMENTAL_SYNCSTREAM: u32 = 0;
+pub const _LIBCPP_HAS_OPEN_WITH_WCHAR: u32 = 0;
+pub const _LIBCPP_HAS_BITSCAN64: u32 = 0;
+pub const _LIBCPP_HAS_OBJC_ARC: u32 = 0;
+pub const _LIBCPP_HAS_OBJC_ARC_WEAK: u32 = 0;
+pub const _LIBCPP_HAS_EXTENSION_BLOCKS: u32 = 1;
+pub const _LIBCPP_HAS_BLOCKS_RUNTIME: u32 = 1;
+pub const _LIBCPP_HAS_ASAN: u32 = 0;
+pub const _LIBCPP_HAS_INT128: u32 = 1;
 pub const _LIBCPP_LOCALE__L_EXTENSIONS: u32 = 1;
-pub const _LIBCPP_AVAILABILITY_HAS_INIT_PRIMARY_EXCEPTION: u32 = 0;
-pub const _LIBCPP_AVAILABILITY_HAS_FILESYSTEM_LIBRARY: u32 = 1;
-pub const _LIBCPP_AVAILABILITY_HAS_TO_CHARS_FLOATING_POINT: u32 = 1;
-pub const _LIBCPP_AVAILABILITY_HAS_SYNC: u32 = 1;
-pub const _LIBCPP_AVAILABILITY_HAS_VERBOSE_ABORT: u32 = 0;
-pub const _LIBCPP_AVAILABILITY_HAS_PMR: u32 = 1;
-pub const _LIBCPP_AVAILABILITY_HAS_TZDB: u32 = 0;
-pub const _LIBCPP_AVAILABILITY_HAS_PRINT: u32 = 0;
-pub const _LIBCPP_AVAILABILITY_HAS_ADDITIONAL_IOSTREAM_EXPLICIT_INSTANTIATIONS_1: u32 = 1;
+pub const _LIBCPP_HAS_LIBRARY_ALIGNED_ALLOCATION: u32 = 1;
+pub const _LIBCPP_HAS_ALIGNED_ALLOCATION: u32 = 1;
+pub const _LIBCPP_HAS_C11_ALIGNED_ALLOC: u32 = 1;
+pub const _LIBCPP_HAS_CHAR8_T: u32 = 0;
+pub const _LIBCPP_HAS_COND_CLOCKWAIT: u32 = 0;
+pub const _LIBCPP_HAS_TRIVIAL_MUTEX_DESTRUCTION: u32 = 0;
+pub const _LIBCPP_HAS_TRIVIAL_CONDVAR_DESTRUCTION: u32 = 0;
+pub const _LIBCPP_HAS_C_ATOMIC_IMP: u32 = 1;
+pub const _LIBCPP_HAS_GCC_ATOMIC_IMP: u32 = 0;
+pub const _LIBCPP_HAS_EXTERNAL_ATOMIC_IMP: u32 = 0;
+pub const _LIBCPP_HAS_ATOMIC_HEADER: u32 = 1;
+pub const _LIBCPP_HAS_THREAD_SAFETY_ANNOTATIONS: u32 = 0;
+pub const _LIBCPP_HAS_C8RTOMB_MBRTOC8: u32 = 0;
+pub const _LIBCPP_HAS_EXPLICIT_THIS_PARAMETER: u32 = 0;
 pub const __cpp_lib_chrono_udls: u32 = 201304;
 pub const __cpp_lib_complex_udls: u32 = 201309;
 pub const __cpp_lib_exchange_function: u32 = 201304;
@@ -126,14 +188,140 @@ pub const __cpp_lib_transformation_trait_aliases: u32 = 201304;
 pub const __cpp_lib_transparent_operators: u32 = 201210;
 pub const __cpp_lib_tuple_element_t: u32 = 201402;
 pub const __cpp_lib_tuples_by_type: u32 = 201304;
+pub const __cpp_lib_addressof_constexpr: u32 = 201603;
+pub const __cpp_lib_allocator_traits_is_always_equal: u32 = 201411;
+pub const __cpp_lib_any: u32 = 201606;
+pub const __cpp_lib_apply: u32 = 201603;
+pub const __cpp_lib_array_constexpr: u32 = 201603;
+pub const __cpp_lib_as_const: u32 = 201510;
+pub const __cpp_lib_atomic_is_always_lock_free: u32 = 201603;
+pub const __cpp_lib_bool_constant: u32 = 201505;
+pub const __cpp_lib_boyer_moore_searcher: u32 = 201603;
+pub const __cpp_lib_byte: u32 = 201603;
+pub const __cpp_lib_chrono: u32 = 201611;
+pub const __cpp_lib_clamp: u32 = 201603;
+pub const __cpp_lib_enable_shared_from_this: u32 = 201603;
+pub const __cpp_lib_filesystem: u32 = 201703;
+pub const __cpp_lib_gcd_lcm: u32 = 201606;
+pub const __cpp_lib_hardware_interference_size: u32 = 201703;
+pub const __cpp_lib_has_unique_object_representations: u32 = 201606;
+pub const __cpp_lib_hypot: u32 = 201603;
+pub const __cpp_lib_incomplete_container_elements: u32 = 201505;
+pub const __cpp_lib_invoke: u32 = 201411;
+pub const __cpp_lib_is_aggregate: u32 = 201703;
+pub const __cpp_lib_is_invocable: u32 = 201703;
+pub const __cpp_lib_is_swappable: u32 = 201603;
+pub const __cpp_lib_launder: u32 = 201606;
+pub const __cpp_lib_logical_traits: u32 = 201510;
+pub const __cpp_lib_make_from_tuple: u32 = 201606;
+pub const __cpp_lib_map_try_emplace: u32 = 201411;
+pub const __cpp_lib_memory_resource: u32 = 201603;
+pub const __cpp_lib_node_extract: u32 = 201606;
+pub const __cpp_lib_nonmember_container_access: u32 = 201411;
+pub const __cpp_lib_not_fn: u32 = 201603;
+pub const __cpp_lib_optional: u32 = 201606;
+pub const __cpp_lib_raw_memory_algorithms: u32 = 201606;
+pub const __cpp_lib_sample: u32 = 201603;
+pub const __cpp_lib_scoped_lock: u32 = 201703;
+pub const __cpp_lib_shared_mutex: u32 = 201505;
+pub const __cpp_lib_shared_ptr_arrays: u32 = 201611;
+pub const __cpp_lib_shared_ptr_weak_type: u32 = 201606;
+pub const __cpp_lib_string_view: u32 = 201606;
+pub const __cpp_lib_type_trait_variable_templates: u32 = 201510;
+pub const __cpp_lib_uncaught_exceptions: u32 = 201411;
+pub const __cpp_lib_unordered_map_try_emplace: u32 = 201411;
+pub const __cpp_lib_variant: u32 = 202102;
+pub const __cpp_lib_void_t: u32 = 201411;
+pub const __WORDSIZE: u32 = 64;
+pub const __has_safe_buffers: u32 = 1;
+pub const __DARWIN_ONLY_64_BIT_INO_T: u32 = 1;
+pub const __DARWIN_ONLY_UNIX_CONFORMANCE: u32 = 1;
+pub const __DARWIN_ONLY_VERS_1050: u32 = 1;
+pub const __DARWIN_UNIX03: u32 = 1;
+pub const __DARWIN_64_BIT_INO_T: u32 = 1;
+pub const __DARWIN_VERS_1050: u32 = 1;
+pub const __DARWIN_NON_CANCELABLE: u32 = 0;
+pub const __DARWIN_SUF_EXTSN: &[u8; 14] = b"$DARWIN_EXTSN\0";
+pub const __DARWIN_C_ANSI: u32 = 4096;
+pub const __DARWIN_C_FULL: u32 = 900000;
+pub const __DARWIN_C_LEVEL: u32 = 900000;
+pub const __DARWIN_NO_LONG_LONG: u32 = 0;
+pub const _DARWIN_FEATURE_64_BIT_INODE: u32 = 1;
+pub const _DARWIN_FEATURE_ONLY_64_BIT_INODE: u32 = 1;
+pub const _DARWIN_FEATURE_ONLY_VERS_1050: u32 = 1;
+pub const _DARWIN_FEATURE_ONLY_UNIX_CONFORMANCE: u32 = 1;
+pub const _DARWIN_FEATURE_UNIX_CONFORMANCE: u32 = 3;
+pub const __has_ptrcheck: u32 = 0;
+pub const __has_bounds_safety_attributes: u32 = 0;
+pub const USE_CLANG_TYPES: u32 = 0;
+pub const __PTHREAD_SIZE__: u32 = 8176;
+pub const __PTHREAD_ATTR_SIZE__: u32 = 56;
+pub const __PTHREAD_MUTEXATTR_SIZE__: u32 = 8;
+pub const __PTHREAD_MUTEX_SIZE__: u32 = 56;
+pub const __PTHREAD_CONDATTR_SIZE__: u32 = 8;
+pub const __PTHREAD_COND_SIZE__: u32 = 40;
+pub const __PTHREAD_ONCE_SIZE__: u32 = 8;
+pub const __PTHREAD_RWLOCK_SIZE__: u32 = 192;
+pub const __PTHREAD_RWLOCKATTR_SIZE__: u32 = 16;
+pub const INT8_MAX: u32 = 127;
+pub const INT16_MAX: u32 = 32767;
+pub const INT32_MAX: u32 = 2147483647;
+pub const INT64_MAX: u64 = 9223372036854775807;
+pub const INT8_MIN: i32 = -128;
+pub const INT16_MIN: i32 = -32768;
+pub const INT32_MIN: i32 = -2147483648;
+pub const INT64_MIN: i64 = -9223372036854775808;
+pub const UINT8_MAX: u32 = 255;
+pub const UINT16_MAX: u32 = 65535;
+pub const UINT32_MAX: u32 = 4294967295;
+pub const UINT64_MAX: i32 = -1;
+pub const INT_LEAST8_MIN: i32 = -128;
+pub const INT_LEAST16_MIN: i32 = -32768;
+pub const INT_LEAST32_MIN: i32 = -2147483648;
+pub const INT_LEAST64_MIN: i64 = -9223372036854775808;
+pub const INT_LEAST8_MAX: u32 = 127;
+pub const INT_LEAST16_MAX: u32 = 32767;
+pub const INT_LEAST32_MAX: u32 = 2147483647;
+pub const INT_LEAST64_MAX: u64 = 9223372036854775807;
+pub const UINT_LEAST8_MAX: u32 = 255;
+pub const UINT_LEAST16_MAX: u32 = 65535;
+pub const UINT_LEAST32_MAX: u32 = 4294967295;
+pub const UINT_LEAST64_MAX: i32 = -1;
+pub const INT_FAST8_MIN: i32 = -128;
+pub const INT_FAST16_MIN: i32 = -32768;
+pub const INT_FAST32_MIN: i32 = -2147483648;
+pub const INT_FAST64_MIN: i64 = -9223372036854775808;
+pub const INT_FAST8_MAX: u32 = 127;
+pub const INT_FAST16_MAX: u32 = 32767;
+pub const INT_FAST32_MAX: u32 = 2147483647;
+pub const INT_FAST64_MAX: u64 = 9223372036854775807;
+pub const UINT_FAST8_MAX: u32 = 255;
+pub const UINT_FAST16_MAX: u32 = 65535;
+pub const UINT_FAST32_MAX: u32 = 4294967295;
+pub const UINT_FAST64_MAX: i32 = -1;
+pub const INTPTR_MAX: u64 = 9223372036854775807;
+pub const INTPTR_MIN: i64 = -9223372036854775808;
+pub const UINTPTR_MAX: i32 = -1;
+pub const SIZE_MAX: i32 = -1;
+pub const WINT_MIN: i32 = -2147483648;
+pub const WINT_MAX: u32 = 2147483647;
+pub const SIG_ATOMIC_MIN: i32 = -2147483648;
+pub const SIG_ATOMIC_MAX: u32 = 2147483647;
 pub const __API_TO_BE_DEPRECATED: u32 = 100000;
 pub const __API_TO_BE_DEPRECATED_MACOS: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_MACOSAPPLICATIONEXTENSION: u32 = 100000;
 pub const __API_TO_BE_DEPRECATED_IOS: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_IOSAPPLICATIONEXTENSION: u32 = 100000;
 pub const __API_TO_BE_DEPRECATED_MACCATALYST: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_MACCATALYSTAPPLICATIONEXTENSION: u32 = 100000;
 pub const __API_TO_BE_DEPRECATED_WATCHOS: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_WATCHOSAPPLICATIONEXTENSION: u32 = 100000;
 pub const __API_TO_BE_DEPRECATED_TVOS: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_TVOSAPPLICATIONEXTENSION: u32 = 100000;
 pub const __API_TO_BE_DEPRECATED_DRIVERKIT: u32 = 100000;
 pub const __API_TO_BE_DEPRECATED_VISIONOS: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_VISIONOSAPPLICATIONEXTENSION: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_KERNELKIT: u32 = 100000;
 pub const __MAC_10_0: u32 = 1000;
 pub const __MAC_10_1: u32 = 1010;
 pub const __MAC_10_2: u32 = 1020;
@@ -189,13 +377,26 @@ pub const __MAC_13_3: u32 = 130300;
 pub const __MAC_13_4: u32 = 130400;
 pub const __MAC_13_5: u32 = 130500;
 pub const __MAC_13_6: u32 = 130600;
+pub const __MAC_13_7: u32 = 130700;
 pub const __MAC_14_0: u32 = 140000;
 pub const __MAC_14_1: u32 = 140100;
 pub const __MAC_14_2: u32 = 140200;
 pub const __MAC_14_3: u32 = 140300;
 pub const __MAC_14_4: u32 = 140400;
 pub const __MAC_14_5: u32 = 140500;
+pub const __MAC_14_6: u32 = 140600;
+pub const __MAC_14_7: u32 = 140700;
 pub const __MAC_15_0: u32 = 150000;
+pub const __MAC_15_1: u32 = 150100;
+pub const __MAC_15_2: u32 = 150200;
+pub const __MAC_15_3: u32 = 150300;
+pub const __MAC_15_4: u32 = 150400;
+pub const __MAC_15_5: u32 = 150500;
+pub const __MAC_15_6: u32 = 150600;
+pub const __MAC_16_0: u32 = 160000;
+pub const __MAC_26_0: u32 = 260000;
+pub const __MAC_26_1: u32 = 260100;
+pub const __MAC_26_2: u32 = 260200;
 pub const __IPHONE_2_0: u32 = 20000;
 pub const __IPHONE_2_1: u32 = 20100;
 pub const __IPHONE_2_2: u32 = 20200;
@@ -248,7 +449,6 @@ pub const __IPHONE_14_1: u32 = 140100;
 pub const __IPHONE_14_2: u32 = 140200;
 pub const __IPHONE_14_3: u32 = 140300;
 pub const __IPHONE_14_5: u32 = 140500;
-pub const __IPHONE_14_4: u32 = 140400;
 pub const __IPHONE_14_6: u32 = 140600;
 pub const __IPHONE_14_7: u32 = 140700;
 pub const __IPHONE_14_8: u32 = 140800;
@@ -275,7 +475,19 @@ pub const __IPHONE_17_2: u32 = 170200;
 pub const __IPHONE_17_3: u32 = 170300;
 pub const __IPHONE_17_4: u32 = 170400;
 pub const __IPHONE_17_5: u32 = 170500;
+pub const __IPHONE_17_6: u32 = 170600;
+pub const __IPHONE_17_7: u32 = 170700;
 pub const __IPHONE_18_0: u32 = 180000;
+pub const __IPHONE_18_1: u32 = 180100;
+pub const __IPHONE_18_2: u32 = 180200;
+pub const __IPHONE_18_3: u32 = 180300;
+pub const __IPHONE_18_4: u32 = 180400;
+pub const __IPHONE_18_5: u32 = 180500;
+pub const __IPHONE_18_6: u32 = 180600;
+pub const __IPHONE_19_0: u32 = 190000;
+pub const __IPHONE_26_0: u32 = 260000;
+pub const __IPHONE_26_1: u32 = 260100;
+pub const __IPHONE_26_2: u32 = 260200;
 pub const __WATCHOS_1_0: u32 = 10000;
 pub const __WATCHOS_2_0: u32 = 20000;
 pub const __WATCHOS_2_1: u32 = 20100;
@@ -323,7 +535,19 @@ pub const __WATCHOS_10_2: u32 = 100200;
 pub const __WATCHOS_10_3: u32 = 100300;
 pub const __WATCHOS_10_4: u32 = 100400;
 pub const __WATCHOS_10_5: u32 = 100500;
+pub const __WATCHOS_10_6: u32 = 100600;
+pub const __WATCHOS_10_7: u32 = 100700;
 pub const __WATCHOS_11_0: u32 = 110000;
+pub const __WATCHOS_11_1: u32 = 110100;
+pub const __WATCHOS_11_2: u32 = 110200;
+pub const __WATCHOS_11_3: u32 = 110300;
+pub const __WATCHOS_11_4: u32 = 110400;
+pub const __WATCHOS_11_5: u32 = 110500;
+pub const __WATCHOS_11_6: u32 = 110600;
+pub const __WATCHOS_12_0: u32 = 120000;
+pub const __WATCHOS_26_0: u32 = 260000;
+pub const __WATCHOS_26_1: u32 = 260100;
+pub const __WATCHOS_26_2: u32 = 260200;
 pub const __TVOS_9_0: u32 = 90000;
 pub const __TVOS_9_1: u32 = 90100;
 pub const __TVOS_9_2: u32 = 90200;
@@ -372,7 +596,18 @@ pub const __TVOS_17_2: u32 = 170200;
 pub const __TVOS_17_3: u32 = 170300;
 pub const __TVOS_17_4: u32 = 170400;
 pub const __TVOS_17_5: u32 = 170500;
+pub const __TVOS_17_6: u32 = 170600;
 pub const __TVOS_18_0: u32 = 180000;
+pub const __TVOS_18_1: u32 = 180100;
+pub const __TVOS_18_2: u32 = 180200;
+pub const __TVOS_18_3: u32 = 180300;
+pub const __TVOS_18_4: u32 = 180400;
+pub const __TVOS_18_5: u32 = 180500;
+pub const __TVOS_18_6: u32 = 180600;
+pub const __TVOS_19_0: u32 = 190000;
+pub const __TVOS_26_0: u32 = 260000;
+pub const __TVOS_26_1: u32 = 260100;
+pub const __TVOS_26_2: u32 = 260200;
 pub const __BRIDGEOS_2_0: u32 = 20000;
 pub const __BRIDGEOS_3_0: u32 = 30000;
 pub const __BRIDGEOS_3_1: u32 = 30100;
@@ -399,7 +634,17 @@ pub const __BRIDGEOS_8_2: u32 = 80200;
 pub const __BRIDGEOS_8_3: u32 = 80300;
 pub const __BRIDGEOS_8_4: u32 = 80400;
 pub const __BRIDGEOS_8_5: u32 = 80500;
+pub const __BRIDGEOS_8_6: u32 = 80600;
 pub const __BRIDGEOS_9_0: u32 = 90000;
+pub const __BRIDGEOS_9_1: u32 = 90100;
+pub const __BRIDGEOS_9_2: u32 = 90200;
+pub const __BRIDGEOS_9_3: u32 = 90300;
+pub const __BRIDGEOS_9_4: u32 = 90400;
+pub const __BRIDGEOS_9_5: u32 = 90500;
+pub const __BRIDGEOS_9_6: u32 = 90600;
+pub const __BRIDGEOS_10_0: u32 = 100000;
+pub const __BRIDGEOS_10_1: u32 = 100100;
+pub const __BRIDGEOS_10_2: u32 = 100200;
 pub const __DRIVERKIT_19_0: u32 = 190000;
 pub const __DRIVERKIT_20_0: u32 = 200000;
 pub const __DRIVERKIT_21_0: u32 = 210000;
@@ -413,11 +658,32 @@ pub const __DRIVERKIT_23_2: u32 = 230200;
 pub const __DRIVERKIT_23_3: u32 = 230300;
 pub const __DRIVERKIT_23_4: u32 = 230400;
 pub const __DRIVERKIT_23_5: u32 = 230500;
+pub const __DRIVERKIT_23_6: u32 = 230600;
 pub const __DRIVERKIT_24_0: u32 = 240000;
+pub const __DRIVERKIT_24_1: u32 = 240100;
+pub const __DRIVERKIT_24_2: u32 = 240200;
+pub const __DRIVERKIT_24_3: u32 = 240300;
+pub const __DRIVERKIT_24_4: u32 = 240400;
+pub const __DRIVERKIT_24_5: u32 = 240500;
+pub const __DRIVERKIT_24_6: u32 = 240600;
+pub const __DRIVERKIT_25_0: u32 = 250000;
+pub const __DRIVERKIT_25_1: u32 = 250100;
+pub const __DRIVERKIT_25_2: u32 = 250200;
 pub const __VISIONOS_1_0: u32 = 10000;
 pub const __VISIONOS_1_1: u32 = 10100;
 pub const __VISIONOS_1_2: u32 = 10200;
+pub const __VISIONOS_1_3: u32 = 10300;
 pub const __VISIONOS_2_0: u32 = 20000;
+pub const __VISIONOS_2_1: u32 = 20100;
+pub const __VISIONOS_2_2: u32 = 20200;
+pub const __VISIONOS_2_3: u32 = 20300;
+pub const __VISIONOS_2_4: u32 = 20400;
+pub const __VISIONOS_2_5: u32 = 20500;
+pub const __VISIONOS_2_6: u32 = 20600;
+pub const __VISIONOS_3_0: u32 = 30000;
+pub const __VISIONOS_26_0: u32 = 260000;
+pub const __VISIONOS_26_1: u32 = 260100;
+pub const __VISIONOS_26_2: u32 = 260200;
 pub const MAC_OS_X_VERSION_10_0: u32 = 1000;
 pub const MAC_OS_X_VERSION_10_1: u32 = 1010;
 pub const MAC_OS_X_VERSION_10_2: u32 = 1020;
@@ -473,44 +739,31 @@ pub const MAC_OS_VERSION_13_3: u32 = 130300;
 pub const MAC_OS_VERSION_13_4: u32 = 130400;
 pub const MAC_OS_VERSION_13_5: u32 = 130500;
 pub const MAC_OS_VERSION_13_6: u32 = 130600;
+pub const MAC_OS_VERSION_13_7: u32 = 130700;
 pub const MAC_OS_VERSION_14_0: u32 = 140000;
 pub const MAC_OS_VERSION_14_1: u32 = 140100;
 pub const MAC_OS_VERSION_14_2: u32 = 140200;
 pub const MAC_OS_VERSION_14_3: u32 = 140300;
 pub const MAC_OS_VERSION_14_4: u32 = 140400;
 pub const MAC_OS_VERSION_14_5: u32 = 140500;
+pub const MAC_OS_VERSION_14_6: u32 = 140600;
+pub const MAC_OS_VERSION_14_7: u32 = 140700;
 pub const MAC_OS_VERSION_15_0: u32 = 150000;
-pub const __MAC_OS_X_VERSION_MAX_ALLOWED: u32 = 150000;
+pub const MAC_OS_VERSION_15_1: u32 = 150100;
+pub const MAC_OS_VERSION_15_2: u32 = 150200;
+pub const MAC_OS_VERSION_15_3: u32 = 150300;
+pub const MAC_OS_VERSION_15_4: u32 = 150400;
+pub const MAC_OS_VERSION_15_5: u32 = 150500;
+pub const MAC_OS_VERSION_15_6: u32 = 150600;
+pub const MAC_OS_VERSION_16_0: u32 = 160000;
+pub const MAC_OS_VERSION_26_0: u32 = 260000;
+pub const MAC_OS_VERSION_26_1: u32 = 260100;
+pub const MAC_OS_VERSION_26_2: u32 = 260200;
+pub const __AVAILABILITY_VERSIONS_VERSION_HASH: u32 = 93585900;
+pub const __AVAILABILITY_VERSIONS_VERSION_STRING: &[u8; 6] = b"Local\0";
+pub const __AVAILABILITY_FILE: &[u8; 23] = b"AvailabilityVersions.h\0";
+pub const __MAC_OS_X_VERSION_MAX_ALLOWED: u32 = 260200;
 pub const __ENABLE_LEGACY_MAC_AVAILABILITY: u32 = 1;
-pub const __has_safe_buffers: u32 = 1;
-pub const __DARWIN_ONLY_64_BIT_INO_T: u32 = 1;
-pub const __DARWIN_ONLY_UNIX_CONFORMANCE: u32 = 1;
-pub const __DARWIN_ONLY_VERS_1050: u32 = 1;
-pub const __DARWIN_UNIX03: u32 = 1;
-pub const __DARWIN_64_BIT_INO_T: u32 = 1;
-pub const __DARWIN_VERS_1050: u32 = 1;
-pub const __DARWIN_NON_CANCELABLE: u32 = 0;
-pub const __DARWIN_SUF_EXTSN: &[u8; 14] = b"$DARWIN_EXTSN\0";
-pub const __DARWIN_C_ANSI: u32 = 4096;
-pub const __DARWIN_C_FULL: u32 = 900000;
-pub const __DARWIN_C_LEVEL: u32 = 900000;
-pub const __DARWIN_NO_LONG_LONG: u32 = 0;
-pub const _DARWIN_FEATURE_64_BIT_INODE: u32 = 1;
-pub const _DARWIN_FEATURE_ONLY_64_BIT_INODE: u32 = 1;
-pub const _DARWIN_FEATURE_ONLY_VERS_1050: u32 = 1;
-pub const _DARWIN_FEATURE_ONLY_UNIX_CONFORMANCE: u32 = 1;
-pub const _DARWIN_FEATURE_UNIX_CONFORMANCE: u32 = 3;
-pub const __has_ptrcheck: u32 = 0;
-pub const USE_CLANG_TYPES: u32 = 0;
-pub const __PTHREAD_SIZE__: u32 = 8176;
-pub const __PTHREAD_ATTR_SIZE__: u32 = 56;
-pub const __PTHREAD_MUTEXATTR_SIZE__: u32 = 8;
-pub const __PTHREAD_MUTEX_SIZE__: u32 = 56;
-pub const __PTHREAD_CONDATTR_SIZE__: u32 = 8;
-pub const __PTHREAD_COND_SIZE__: u32 = 40;
-pub const __PTHREAD_ONCE_SIZE__: u32 = 8;
-pub const __PTHREAD_RWLOCK_SIZE__: u32 = 192;
-pub const __PTHREAD_RWLOCKATTR_SIZE__: u32 = 16;
 pub const __DARWIN_WCHAR_MIN: i32 = -2147483648;
 pub const _FORTIFY_SOURCE: u32 = 2;
 pub const __DARWIN_NSIG: u32 = 32;
@@ -553,6 +806,7 @@ pub const USE_CLANG_STDDEF: u32 = 0;
 pub const SIGEV_NONE: u32 = 0;
 pub const SIGEV_SIGNAL: u32 = 1;
 pub const SIGEV_THREAD: u32 = 3;
+pub const SIGEV_KEVENT: u32 = 4;
 pub const ILL_NOOP: u32 = 0;
 pub const ILL_ILLOPC: u32 = 1;
 pub const ILL_ILLTRP: u32 = 2;
@@ -621,51 +875,6 @@ pub const SV_RESETHAND: u32 = 4;
 pub const SV_NODEFER: u32 = 16;
 pub const SV_NOCLDSTOP: u32 = 8;
 pub const SV_SIGINFO: u32 = 64;
-pub const __WORDSIZE: u32 = 64;
-pub const INT8_MAX: u32 = 127;
-pub const INT16_MAX: u32 = 32767;
-pub const INT32_MAX: u32 = 2147483647;
-pub const INT64_MAX: u64 = 9223372036854775807;
-pub const INT8_MIN: i32 = -128;
-pub const INT16_MIN: i32 = -32768;
-pub const INT32_MIN: i32 = -2147483648;
-pub const INT64_MIN: i64 = -9223372036854775808;
-pub const UINT8_MAX: u32 = 255;
-pub const UINT16_MAX: u32 = 65535;
-pub const UINT32_MAX: u32 = 4294967295;
-pub const UINT64_MAX: i32 = -1;
-pub const INT_LEAST8_MIN: i32 = -128;
-pub const INT_LEAST16_MIN: i32 = -32768;
-pub const INT_LEAST32_MIN: i32 = -2147483648;
-pub const INT_LEAST64_MIN: i64 = -9223372036854775808;
-pub const INT_LEAST8_MAX: u32 = 127;
-pub const INT_LEAST16_MAX: u32 = 32767;
-pub const INT_LEAST32_MAX: u32 = 2147483647;
-pub const INT_LEAST64_MAX: u64 = 9223372036854775807;
-pub const UINT_LEAST8_MAX: u32 = 255;
-pub const UINT_LEAST16_MAX: u32 = 65535;
-pub const UINT_LEAST32_MAX: u32 = 4294967295;
-pub const UINT_LEAST64_MAX: i32 = -1;
-pub const INT_FAST8_MIN: i32 = -128;
-pub const INT_FAST16_MIN: i32 = -32768;
-pub const INT_FAST32_MIN: i32 = -2147483648;
-pub const INT_FAST64_MIN: i64 = -9223372036854775808;
-pub const INT_FAST8_MAX: u32 = 127;
-pub const INT_FAST16_MAX: u32 = 32767;
-pub const INT_FAST32_MAX: u32 = 2147483647;
-pub const INT_FAST64_MAX: u64 = 9223372036854775807;
-pub const UINT_FAST8_MAX: u32 = 255;
-pub const UINT_FAST16_MAX: u32 = 65535;
-pub const UINT_FAST32_MAX: u32 = 4294967295;
-pub const UINT_FAST64_MAX: i32 = -1;
-pub const INTPTR_MAX: u64 = 9223372036854775807;
-pub const INTPTR_MIN: i64 = -9223372036854775808;
-pub const UINTPTR_MAX: i32 = -1;
-pub const SIZE_MAX: i32 = -1;
-pub const WINT_MIN: i32 = -2147483648;
-pub const WINT_MAX: u32 = 2147483647;
-pub const SIG_ATOMIC_MIN: i32 = -2147483648;
-pub const SIG_ATOMIC_MAX: u32 = 2147483647;
 pub const PRIO_PROCESS: u32 = 0;
 pub const PRIO_PGRP: u32 = 1;
 pub const PRIO_USER: u32 = 2;
@@ -719,6 +928,7 @@ pub const IOPOL_TYPE_VFS_IGNORE_PERMISSIONS: u32 = 7;
 pub const IOPOL_TYPE_VFS_SKIP_MTIME_UPDATE: u32 = 8;
 pub const IOPOL_TYPE_VFS_ALLOW_LOW_SPACE_WRITES: u32 = 9;
 pub const IOPOL_TYPE_VFS_DISALLOW_RW_FOR_O_EVTONLY: u32 = 10;
+pub const IOPOL_TYPE_VFS_ENTITLED_RESERVE_ACCESS: u32 = 14;
 pub const IOPOL_SCOPE_PROCESS: u32 = 0;
 pub const IOPOL_SCOPE_THREAD: u32 = 1;
 pub const IOPOL_SCOPE_DARWIN_BG: u32 = 2;
@@ -735,6 +945,8 @@ pub const IOPOL_ATIME_UPDATES_OFF: u32 = 1;
 pub const IOPOL_MATERIALIZE_DATALESS_FILES_DEFAULT: u32 = 0;
 pub const IOPOL_MATERIALIZE_DATALESS_FILES_OFF: u32 = 1;
 pub const IOPOL_MATERIALIZE_DATALESS_FILES_ON: u32 = 2;
+pub const IOPOL_MATERIALIZE_DATALESS_FILES_ORIG: u32 = 4;
+pub const IOPOL_MATERIALIZE_DATALESS_FILES_BASIC_MASK: u32 = 3;
 pub const IOPOL_VFS_STATFS_NO_DATA_VOLUME_DEFAULT: u32 = 0;
 pub const IOPOL_VFS_STATFS_FORCE_NO_DATA_VOLUME: u32 = 1;
 pub const IOPOL_VFS_TRIGGER_RESOLVE_DEFAULT: u32 = 0;
@@ -745,12 +957,15 @@ pub const IOPOL_VFS_IGNORE_PERMISSIONS_OFF: u32 = 0;
 pub const IOPOL_VFS_IGNORE_PERMISSIONS_ON: u32 = 1;
 pub const IOPOL_VFS_SKIP_MTIME_UPDATE_OFF: u32 = 0;
 pub const IOPOL_VFS_SKIP_MTIME_UPDATE_ON: u32 = 1;
+pub const IOPOL_VFS_SKIP_MTIME_UPDATE_IGNORE: u32 = 2;
 pub const IOPOL_VFS_ALLOW_LOW_SPACE_WRITES_OFF: u32 = 0;
 pub const IOPOL_VFS_ALLOW_LOW_SPACE_WRITES_ON: u32 = 1;
 pub const IOPOL_VFS_DISALLOW_RW_FOR_O_EVTONLY_DEFAULT: u32 = 0;
 pub const IOPOL_VFS_DISALLOW_RW_FOR_O_EVTONLY_ON: u32 = 1;
 pub const IOPOL_VFS_NOCACHE_WRITE_FS_BLKSIZE_DEFAULT: u32 = 0;
 pub const IOPOL_VFS_NOCACHE_WRITE_FS_BLKSIZE_ON: u32 = 1;
+pub const IOPOL_VFS_ENTITLED_RESERVE_ACCESS_OFF: u32 = 0;
+pub const IOPOL_VFS_ENTITLED_RESERVE_ACCESS_ON: u32 = 1;
 pub const WNOHANG: u32 = 1;
 pub const WUNTRACED: u32 = 2;
 pub const WCOREFLAG: u32 = 128;
@@ -774,6 +989,8 @@ pub const BYTE_ORDER: u32 = 1234;
 pub const EXIT_FAILURE: u32 = 1;
 pub const EXIT_SUCCESS: u32 = 0;
 pub const RAND_MAX: u32 = 2147483647;
+pub const _MALLOC_TYPE_MALLOC_BACKDEPLOY_PUBLIC: u32 = 1;
+pub const _LIBCPP_HAS_SIZED_DEALLOCATION: u32 = 0;
 pub const FP_NAN: u32 = 1;
 pub const FP_INFINITE: u32 = 2;
 pub const FP_ZERO: u32 = 3;
@@ -828,18 +1045,6 @@ pub const SWIFT_IMAGE_EXPORTS_swiftDistributed: u32 = 0;
 pub const SWIFT_IMAGE_EXPORTS_swift_Differentiation: u32 = 0;
 pub const SWIFT_COMPACT_ABSOLUTE_FUNCTION_POINTER: u32 = 0;
 pub const SWIFT_PTRAUTH: u32 = 0;
-pub const DYNAMIC_TARGETS_ENABLED: u32 = 0;
-pub const TARGET_OS_MAC: u32 = 1;
-pub const TARGET_OS_OSX: u32 = 1;
-pub const TARGET_OS_IPHONE: u32 = 0;
-pub const TARGET_OS_IOS: u32 = 0;
-pub const TARGET_OS_WATCH: u32 = 0;
-pub const TARGET_OS_TV: u32 = 0;
-pub const TARGET_OS_MACCATALYST: u32 = 0;
-pub const TARGET_OS_UIKITFORMAC: u32 = 0;
-pub const TARGET_OS_SIMULATOR: u32 = 0;
-pub const TARGET_OS_EMBEDDED: u32 = 0;
-pub const TARGET_OS_UNIX: u32 = 0;
 pub const TARGET_OS_RTKIT: u32 = 0;
 pub const TARGET_RT_LITTLE_ENDIAN: u32 = 1;
 pub const TARGET_RT_BIG_ENDIAN: u32 = 0;
@@ -847,11 +1052,6 @@ pub const TARGET_RT_64_BIT: u32 = 1;
 pub const TARGET_RT_MAC_CFM: u32 = 0;
 pub const TARGET_RT_MAC_MACHO: u32 = 1;
 pub const TARGET_CPU_ARM64: u32 = 1;
-pub const TARGET_OS_VISION: u32 = 0;
-pub const TARGET_OS_DRIVERKIT: u32 = 0;
-pub const TARGET_OS_WIN32: u32 = 0;
-pub const TARGET_OS_WINDOWS: u32 = 0;
-pub const TARGET_OS_LINUX: u32 = 0;
 pub const TARGET_CPU_PPC: u32 = 0;
 pub const TARGET_CPU_PPC64: u32 = 0;
 pub const TARGET_CPU_68K: u32 = 0;
@@ -861,46 +1061,18 @@ pub const TARGET_CPU_ARM: u32 = 0;
 pub const TARGET_CPU_MIPS: u32 = 0;
 pub const TARGET_CPU_SPARC: u32 = 0;
 pub const TARGET_CPU_ALPHA: u32 = 0;
-pub const TARGET_IPHONE_SIMULATOR: u32 = 0;
-pub const TARGET_OS_NANO: u32 = 0;
 pub const SWIFT_BACKTRACE_ON_CRASH_SUPPORTED: u32 = 1;
 pub const SWIFT_BACKTRACE_SECTION: &[u8; 24] = b"__DATA,swift5_backtrace\0";
 pub const SWIFT_PAGE_SIZE: u32 = 16384;
-extern "C" {
-    #[link_name = "\u{1}__ZNSt3__122__libcpp_verbose_abortEPKcz"]
-    pub fn std___1___libcpp_verbose_abort(__format: *const ::std::os::raw::c_char, ...);
-}
-extern "C" {
-    #[link_name = "\u{1}__ZNSt3__15__useEPKcz"]
-    pub fn std___1___use(arg1: *const ::std::os::raw::c_char, ...);
-}
+pub type max_align_t = f64;
 pub type std___1___enable_if_t = u8;
 pub type std___1_enable_if_t = u8;
 pub type std___1_integral_constant_value_type = u8;
 pub type std___1_integral_constant_type = u8;
-extern "C" {
-    #[link_name = "\u{1}value"]
-    pub static std___1_value: _Tp;
-}
 pub type std___1_true_type = u8;
 pub type std___1_false_type = u8;
 pub type std___1__BoolConstant = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_remove_const {
-    pub _address: u8,
-}
-pub type std___1_remove_const_type = u8;
-pub type std___1___remove_const_t = u8;
-pub type std___1_remove_const_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_remove_volatile {
-    pub _address: u8,
-}
-pub type std___1_remove_volatile_type = u8;
-pub type std___1___remove_volatile_t = u8;
-pub type std___1_remove_volatile_t = u8;
+pub type std___1_bool_constant = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct std___1_remove_cv {
@@ -921,43 +1093,45 @@ pub type std___1___libcpp_is_integral__bindgen_ty_1 = i32;
 pub struct std___1_is_integral {
     pub _address: u8,
 }
+pub type std___1_nullptr_t = u64;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1_is_const {
+pub struct std___1___libcpp_is_floating_point {
     pub _address: u8,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1_is_lvalue_reference {
+pub struct std___1_is_floating_point {
     pub _address: u8,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1_is_rvalue_reference {
+pub struct std___1_is_arithmetic {
     pub _address: u8,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1_is_reference {
+pub struct std___1_is_signed {
     pub _address: u8,
 }
+pub const std___1_float_round_style_round_indeterminate: std___1_float_round_style = -1;
+pub const std___1_float_round_style_round_toward_zero: std___1_float_round_style = 0;
+pub const std___1_float_round_style_round_to_nearest: std___1_float_round_style = 1;
+pub const std___1_float_round_style_round_toward_infinity: std___1_float_round_style = 2;
+pub const std___1_float_round_style_round_toward_neg_infinity: std___1_float_round_style = 3;
+pub type std___1_float_round_style = ::std::os::raw::c_int;
+pub const std___1_float_denorm_style_denorm_indeterminate: std___1_float_denorm_style = -1;
+pub const std___1_float_denorm_style_denorm_absent: std___1_float_denorm_style = 0;
+pub const std___1_float_denorm_style_denorm_present: std___1_float_denorm_style = 1;
+pub type std___1_float_denorm_style = ::std::os::raw::c_int;
+pub type std___1___libcpp_numeric_limits_type = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1_is_function {
+pub struct std___1_numeric_limits {
     pub _address: u8,
 }
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_same {
-    pub _address: u8,
-}
-pub type std___1__IsSame = u8;
-pub type std___1__IsNotSame = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_hash {
-    pub _address: u8,
-}
+pub type std___1_numeric_limits___base = u8;
+pub type std___1_numeric_limits_type = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct std___1_add_const {
@@ -972,6 +1146,20 @@ pub struct std___1_add_cv {
 }
 pub type std___1_add_cv_type = u8;
 pub type std___1_add_cv_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_add_volatile {
+    pub _address: u8,
+}
+pub type std___1_add_volatile_type = u8;
+pub type std___1_add_volatile_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_same {
+    pub _address: u8,
+}
+pub type std___1__IsSame = u8;
+pub type std___1__IsNotSame = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct std___1___libcpp_is_referenceable {
@@ -1016,32 +1204,14 @@ pub type std___1_add_rvalue_reference_type = u8;
 pub type std___1_add_rvalue_reference_t = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1_add_volatile {
-    pub _address: u8,
-}
-pub type std___1_add_volatile_type = u8;
-pub type std___1_add_volatile_t = u8;
-pub type std___1__If = u8;
-pub type std___1_conditional_type = u8;
-pub type std___1_conditional_t = u8;
-pub type std___1___conditional_t = u8;
-#[repr(C)]
-#[repr(align(1))]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___nat {
-    pub _bindgen_opaque_blob: u8,
-}
-const _: () = {
-    ["Size of std___1___nat"][::std::mem::size_of::<std___1___nat>() - 1usize];
-    ["Alignment of std___1___nat"][::std::mem::align_of::<std___1___nat>() - 1usize];
-};
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct std___1___type_list {
     pub _address: u8,
 }
-pub type std___1___type_list__Head = u8;
-pub type std___1___type_list__Tail = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___type_list_head {
+    pub _address: u8,
+}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct std___1___align_type {
@@ -1074,17 +1244,16 @@ const _: () = {
 pub type std___1___all_types = u8;
 extern "C" {
     #[link_name = "\u{1}__min"]
-    pub static std___1___select_align___min: ::std::os::raw::c_ulong;
+    pub static std___1___select_align___min: usize;
 }
 extern "C" {
     #[link_name = "\u{1}__max"]
-    pub static std___1___select_align___max: ::std::os::raw::c_ulong;
+    pub static std___1___select_align___max: usize;
 }
 extern "C" {
     #[link_name = "\u{1}value"]
-    pub static std___1___select_align_value: ::std::os::raw::c_ulong;
+    pub static std___1___select_align_value: usize;
 }
-pub type std___1_aligned_storage__Aligner = u8;
 #[repr(C)]
 #[repr(align(8))]
 #[derive(Copy, Clone)]
@@ -1105,63 +1274,18 @@ pub type std___1_aligned_union_t = u8;
 pub struct std___1_alignment_of {
     pub _address: u8,
 }
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_volatile {
-    pub _address: u8,
-}
-pub type std___1___apply_cv_impl___apply = u8;
-pub type std___1___apply_cv_t = u8;
-pub type std___1___remove_const_ref_t = u8;
-#[repr(C)]
-#[repr(align(1))]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___extract_key_fail_tag {
-    pub _bindgen_opaque_blob: u8,
-}
-const _: () = {
-    ["Size of std___1___extract_key_fail_tag"]
-        [::std::mem::size_of::<std___1___extract_key_fail_tag>() - 1usize];
-    ["Alignment of std___1___extract_key_fail_tag"]
-        [::std::mem::align_of::<std___1___extract_key_fail_tag>() - 1usize];
-};
-#[repr(C)]
-#[repr(align(1))]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___extract_key_self_tag {
-    pub _bindgen_opaque_blob: u8,
-}
-const _: () = {
-    ["Size of std___1___extract_key_self_tag"]
-        [::std::mem::size_of::<std___1___extract_key_self_tag>() - 1usize];
-    ["Alignment of std___1___extract_key_self_tag"]
-        [::std::mem::align_of::<std___1___extract_key_self_tag>() - 1usize];
-};
-#[repr(C)]
-#[repr(align(1))]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___extract_key_first_tag {
-    pub _bindgen_opaque_blob: u8,
-}
-const _: () = {
-    ["Size of std___1___extract_key_first_tag"]
-        [::std::mem::size_of::<std___1___extract_key_first_tag>() - 1usize];
-    ["Alignment of std___1___extract_key_first_tag"]
-        [::std::mem::align_of::<std___1___extract_key_first_tag>() - 1usize];
-};
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___can_extract_key {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___can_extract_map_key {
-    pub _address: u8,
-}
+pub type std___1__If = u8;
+pub type std___1_conditional_type = u8;
+pub type std___1_conditional_t = u8;
+pub type std___1___conditional_t = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct std___1_is_array {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_function {
     pub _address: u8,
 }
 #[repr(C)]
@@ -1181,12 +1305,26 @@ pub struct std___1_decay {
 pub type std___1_decay_type = u8;
 pub type std___1_decay_t = u8;
 pub type std___1___remove_cvref_t = u8;
+pub type std___1___is_same_uncvref = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1___is_same_uncvref {
+pub struct std___1___type_identity {
     pub _address: u8,
 }
+pub type std___1___type_identity_type = u8;
+pub type std___1___type_identity_t = u8;
+pub type std___1_void_t = u8;
 pub type std___1___void_t = u8;
+#[repr(C)]
+#[repr(align(1))]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___empty {
+    pub _bindgen_opaque_blob: u8,
+}
+const _: () = {
+    ["Size of std___1___empty"][::std::mem::size_of::<std___1___empty>() - 1usize];
+    ["Alignment of std___1___empty"][::std::mem::align_of::<std___1___empty>() - 1usize];
+};
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct std___1___common_type2_imp {
@@ -1210,26 +1348,99 @@ pub struct std___1_common_type {
 pub type std___1_common_type_t = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1___copy_cv {
+pub struct std___1_has_virtual_destructor {
     pub _address: u8,
 }
-pub type std___1___copy_cv_type = u8;
-pub type std___1___copy_cv_t = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1___copy_cvref {
+pub struct std___1_is_abstract {
     pub _address: u8,
 }
-pub type std___1___copy_cvref_type = u8;
-pub type std___1___copy_cvref_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_assignable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_copy_assignable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_move_assignable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_base_of {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_class {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_null_pointer {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_fundamental {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_compound {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_const {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_copy_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_move_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_default_constructible {
+    pub _address: u8,
+}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct std___1_is_convertible {
     pub _address: u8,
 }
-pub type std___1___expand_to_true = u8;
-pub type std___1__And = u8;
-pub type std___1__Or = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_reference {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_lvalue_reference {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_rvalue_reference {
+    pub _address: u8,
+}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct std___1_remove_all_extents {
@@ -1240,31 +1451,34 @@ pub type std___1___remove_all_extents_t = u8;
 pub type std___1_remove_all_extents_t = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1_has_virtual_destructor {
+pub struct std___1_is_destructible {
     pub _address: u8,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1_is_base_of {
+pub struct std___1_is_empty {
     pub _address: u8,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1___is_core_convertible {
+pub struct std___1_is_enum {
     pub _address: u8,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1___libcpp_is_member_pointer {
+pub struct std___1_is_literal_type {
     pub _address: u8,
 }
-pub const std___1___libcpp_is_member_pointer___is_member:
-    std___1___libcpp_is_member_pointer__bindgen_ty_1 = 0;
-pub const std___1___libcpp_is_member_pointer___is_func:
-    std___1___libcpp_is_member_pointer__bindgen_ty_1 = 0;
-pub const std___1___libcpp_is_member_pointer___is_obj:
-    std___1___libcpp_is_member_pointer__bindgen_ty_1 = 0;
-pub type std___1___libcpp_is_member_pointer__bindgen_ty_1 = i32;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_member_pointer {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_member_object_pointer {
+    pub _address: u8,
+}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct std___1_is_member_function_pointer {
@@ -1272,7 +1486,200 @@ pub struct std___1_is_member_function_pointer {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1_is_member_object_pointer {
+pub struct std___1_is_nothrow_assignable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_nothrow_copy_assignable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_nothrow_move_assignable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_nothrow_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_nothrow_copy_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_nothrow_move_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_nothrow_default_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_nothrow_destructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_object {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_pod {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_pointer {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_polymorphic {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_scalar {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_standard_layout {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_trivial {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_trivially_assignable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_trivially_copy_assignable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_trivially_move_assignable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_trivially_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_trivially_copy_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_trivially_move_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_trivially_default_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_trivially_copyable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_trivially_destructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_union {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_unsigned {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_volatile {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___copy_cv {
+    pub _address: u8,
+}
+pub type std___1___copy_cv___apply = u8;
+pub type std___1___copy_cv_t = u8;
+pub type std___1___make_signed_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_make_signed {
+    pub _address: u8,
+}
+pub type std___1_make_signed_type = u8;
+pub type std___1_make_signed_t = u8;
+pub type std___1___make_unsigned_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_make_unsigned {
+    pub _address: u8,
+}
+pub type std___1_make_unsigned_type = u8;
+pub type std___1_make_unsigned_t = u8;
+pub type std___1___copy_unsigned_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_rank {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_remove_const {
+    pub _address: u8,
+}
+pub type std___1_remove_const_type = u8;
+pub type std___1___remove_const_t = u8;
+pub type std___1_remove_const_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_remove_pointer {
+    pub _address: u8,
+}
+pub type std___1_remove_pointer_type = u8;
+pub type std___1___remove_pointer_t = u8;
+pub type std___1_remove_pointer_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_remove_volatile {
+    pub _address: u8,
+}
+pub type std___1_remove_volatile_type = u8;
+pub type std___1___remove_volatile_t = u8;
+pub type std___1_remove_volatile_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___is_core_convertible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_hash {
     pub _address: u8,
 }
 #[repr(C)]
@@ -1293,22 +1700,13 @@ pub struct std___1___is_reference_wrapper {
 #[repr(C)]
 #[repr(align(1))]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1___any {
+pub struct std___1___nat {
     pub _bindgen_opaque_blob: u8,
 }
 const _: () = {
-    ["Size of std___1___any"][::std::mem::size_of::<std___1___any>() - 1usize];
-    ["Alignment of std___1___any"][::std::mem::align_of::<std___1___any>() - 1usize];
+    ["Size of std___1___nat"][::std::mem::size_of::<std___1___nat>() - 1usize];
+    ["Alignment of std___1___nat"][::std::mem::align_of::<std___1___nat>() - 1usize];
 };
-extern "C" {
-    #[link_name = "\u{1}__ZNSt3__15__anyC1Ez"]
-    pub fn std___1___any___any(this: *mut std___1___any, ...);
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___member_pointer_traits {
-    pub _address: u8,
-}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct std___1___member_pointer_class_type {
@@ -1327,125 +1725,53 @@ pub struct std___1___invokable_r {
 }
 pub type std___1___invokable_r__Result = u8;
 pub type std___1___invokable_r_type = u8;
-pub type std___1___invokable = u8;
+pub type std___1___is_invocable = u8;
 pub type std___1___nothrow_invokable_r = u8;
 pub type std___1___nothrow_invokable = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1___invoke_of {
+pub struct std___1___invoke_result {
+    pub _address: u8,
+}
+pub type std___1___invoke_result_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_invocable {
     pub _address: u8,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1_is_abstract {
+pub struct std___1_is_invocable_r {
     pub _address: u8,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1___libcpp_is_floating_point {
+pub struct std___1_is_nothrow_invocable {
     pub _address: u8,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1_is_floating_point {
+pub struct std___1_is_nothrow_invocable_r {
     pub _address: u8,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1_is_arithmetic {
+pub struct std___1_invoke_result {
     pub _address: u8,
 }
+pub type std___1_invoke_result_t = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1_is_assignable {
+pub struct std___1_result_of {
     pub _address: u8,
 }
+pub type std___1_result_of_t = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1___libcpp_is_bounded_array {
+pub struct std___1_underlying_type {
     pub _address: u8,
 }
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___is_callable {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_standard_layout {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_trivial {
-    pub _address: u8,
-}
-pub type std___1__IsCharLikeType = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_class {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___is_nullptr_t_impl {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___is_nullptr_t {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_null_pointer {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_fundamental {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_compound {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_copy_assignable {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_copy_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_default_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_destructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_empty {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_enum {
-    pub _address: u8,
-}
+pub type std___1_underlying_type_t = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct std___1___libcpp_is_final {
@@ -1456,204 +1782,50 @@ pub struct std___1___libcpp_is_final {
 pub struct std___1_is_final {
     pub _address: u8,
 }
+pub type std___1___expand_to_true = u8;
+pub type std___1__And = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1___is_implicitly_default_constructible {
+pub struct std___1_conjunction {
+    pub _address: u8,
+}
+pub type std___1__Or = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_disjunction {
     pub _address: u8,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1_is_literal_type {
+pub struct std___1_has_unique_object_representations {
     pub _address: u8,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1_is_member_pointer {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_move_assignable {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_move_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_nothrow_assignable {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_nothrow_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1__Lazy {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_nothrow_copy_assignable {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_nothrow_copy_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_nothrow_default_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_pointer {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_scalar {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_nothrow_destructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_nothrow_move_assignable {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_nothrow_move_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_union {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_object {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_pod {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_polymorphic {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_underlying_type {
-    pub _address: u8,
-}
-pub type std___1_underlying_type_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_signed {
+pub struct std___1_is_aggregate {
     pub _address: u8,
 }
 pub type std___1___swap_result_t = u8;
-pub type std___1___detail___swappable_with___swap1 = u8;
-pub type std___1___detail___swappable_with___swap2 = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1___is_swappable {
+pub struct std___1_is_swappable_with {
     pub _address: u8,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1___is_nothrow_swappable {
+pub struct std___1_is_swappable {
     pub _address: u8,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1_is_trivially_assignable {
+pub struct std___1_is_nothrow_swappable_with {
     pub _address: u8,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1_is_trivially_constructible {
+pub struct std___1_is_nothrow_swappable {
     pub _address: u8,
 }
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_trivially_copy_assignable {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_trivially_copy_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_trivially_copyable {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_trivially_default_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_trivially_destructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_trivially_move_assignable {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_trivially_move_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___libcpp_is_unbounded_array {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_unsigned {
-    pub _address: u8,
-}
-pub type std___1___make_const_lvalue_ref = u8;
-pub type std___1___make_signed_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_make_signed {
-    pub _address: u8,
-}
-pub type std___1_make_signed_type = u8;
-pub type std___1_make_signed_t = u8;
-pub type std___1___make_unsigned_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_make_unsigned {
-    pub _address: u8,
-}
-pub type std___1_make_unsigned_type = u8;
-pub type std___1_make_unsigned_t = u8;
-pub type std___1___copy_unsigned_t = u8;
-pub type std___1___maybe_const = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct std___1__Not {
@@ -1661,240 +1833,78 @@ pub struct std___1__Not {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1_rank {
+pub struct std___1_negation {
+    pub _address: u8,
+}
+extern "C" {
+    #[link_name = "\u{1}__ZNSt3__122__libcpp_verbose_abortEPKcz"]
+    pub fn std___1___libcpp_verbose_abort(__format: *const ::std::os::raw::c_char, ...);
+}
+pub type std___1___element_count = usize;
+extern "C" {
+    #[link_name = "\u{1}__ZNSt3__138hardware_destructive_interference_sizeE"]
+    pub static std___1_hardware_destructive_interference_size: usize;
+}
+extern "C" {
+    #[link_name = "\u{1}__ZNSt3__139hardware_constructive_interference_sizeE"]
+    pub static std___1_hardware_constructive_interference_size: usize;
+}
+pub type std___1___move_if_noexcept_result_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___copy_cvref {
+    pub _address: u8,
+}
+pub type std___1___copy_cvref___apply = u8;
+pub type std___1___copy_cvref_t = u8;
+pub type std___1___make_const_lvalue_ref = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_tuple {
     pub _address: u8,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1_remove_pointer {
+pub struct std___1_tuple_size {
     pub _address: u8,
 }
-pub type std___1_remove_pointer_type = u8;
-pub type std___1___remove_pointer_t = u8;
-pub type std___1_remove_pointer_t = u8;
+pub type std___1___integer_sequence___convert = u8;
+pub type std___1___integer_sequence___to_tuple_indices = u8;
+pub type std___1___make_indices_imp = u8;
+pub type std___1_integer_sequence_value_type = u8;
+pub type std___1_index_sequence = u8;
+pub type std___1_make_integer_sequence = u8;
+pub type std___1_make_index_sequence = u8;
+pub type std___1_index_sequence_for = u8;
+pub type std___1___make_tuple_indices_type = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1_result_of {
+pub struct std___1_complex {
     pub _address: u8,
 }
-pub type std___1_result_of_t = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1___type_identity {
+pub struct std___1___tuple_types {
     pub _address: u8,
 }
-pub type std___1___type_identity_type = u8;
-pub type std___1___type_identity_t = u8;
+pub type std___1___enable_if_tuple_size_imp = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___is_implicitly_default_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___libcpp_is_trivially_relocatable {
+    pub _address: u8,
+}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct std___1___unwrap_reference {
     pub _address: u8,
 }
 pub type std___1___unwrap_reference_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___unwrap_ref_decay {
-    pub _address: u8,
-}
-pub type std___1___move_if_noexcept_result_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___libcpp_is_signed_integer {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___libcpp_is_unsigned_integer {
-    pub _address: u8,
-}
-pub const std___1_float_round_style_round_indeterminate: std___1_float_round_style = -1;
-pub const std___1_float_round_style_round_toward_zero: std___1_float_round_style = 0;
-pub const std___1_float_round_style_round_to_nearest: std___1_float_round_style = 1;
-pub const std___1_float_round_style_round_toward_infinity: std___1_float_round_style = 2;
-pub const std___1_float_round_style_round_toward_neg_infinity: std___1_float_round_style = 3;
-pub type std___1_float_round_style = ::std::os::raw::c_int;
-pub const std___1_float_denorm_style_denorm_indeterminate: std___1_float_denorm_style = -1;
-pub const std___1_float_denorm_style_denorm_absent: std___1_float_denorm_style = 0;
-pub const std___1_float_denorm_style_denorm_present: std___1_float_denorm_style = 1;
-pub type std___1_float_denorm_style = ::std::os::raw::c_int;
-pub type std___1___libcpp_numeric_limits_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_numeric_limits {
-    pub _address: u8,
-}
-pub type std___1_numeric_limits___base = u8;
-pub type std___1_numeric_limits_type = u8;
-extern "C" {
-    #[link_name = "\u{1}is_specialized"]
-    pub static std___1_is_specialized: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}digits"]
-    pub static std___1_digits: ::std::os::raw::c_int;
-}
-extern "C" {
-    #[link_name = "\u{1}digits10"]
-    pub static std___1_digits10: ::std::os::raw::c_int;
-}
-extern "C" {
-    #[link_name = "\u{1}max_digits10"]
-    pub static std___1_max_digits10: ::std::os::raw::c_int;
-}
-extern "C" {
-    #[link_name = "\u{1}is_signed"]
-    pub static std___1_is_signed: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}is_integer"]
-    pub static std___1_is_integer: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}is_exact"]
-    pub static std___1_is_exact: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}radix"]
-    pub static std___1_radix: ::std::os::raw::c_int;
-}
-extern "C" {
-    #[link_name = "\u{1}min_exponent"]
-    pub static std___1_min_exponent: ::std::os::raw::c_int;
-}
-extern "C" {
-    #[link_name = "\u{1}min_exponent10"]
-    pub static std___1_min_exponent10: ::std::os::raw::c_int;
-}
-extern "C" {
-    #[link_name = "\u{1}max_exponent"]
-    pub static std___1_max_exponent: ::std::os::raw::c_int;
-}
-extern "C" {
-    #[link_name = "\u{1}max_exponent10"]
-    pub static std___1_max_exponent10: ::std::os::raw::c_int;
-}
-extern "C" {
-    #[link_name = "\u{1}has_infinity"]
-    pub static std___1_has_infinity: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}has_quiet_NaN"]
-    pub static std___1_has_quiet_NaN: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}has_signaling_NaN"]
-    pub static std___1_has_signaling_NaN: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}has_denorm"]
-    pub static std___1_has_denorm: std___1_float_denorm_style;
-}
-extern "C" {
-    #[link_name = "\u{1}has_denorm_loss"]
-    pub static std___1_has_denorm_loss: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}is_iec559"]
-    pub static std___1_is_iec559: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}is_bounded"]
-    pub static std___1_is_bounded: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}is_modulo"]
-    pub static std___1_is_modulo: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}traps"]
-    pub static std___1_traps: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}tinyness_before"]
-    pub static std___1_tinyness_before: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}round_style"]
-    pub static std___1_round_style: std___1_float_round_style;
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___exception_guard_exceptions {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___exception_guard_noexceptions {
-    pub _address: u8,
-}
-pub type std___1___exception_guard = u8;
-pub type std___1___integer_sequence___convert = u8;
-pub type std___1___integer_sequence___to_tuple_indices = u8;
-pub type std___1___make_indices_imp = u8;
-pub type std___1_integer_sequence_value_type = u8;
-pub type std___1_index_sequence = u8;
-pub type std___1___make_integer_sequence = u8;
-pub type std___1_make_integer_sequence = u8;
-pub type std___1_make_index_sequence = u8;
-pub type std___1_index_sequence_for = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_tuple {
-    pub _address: u8,
-}
-pub type std___1___make_tuple_indices_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___tuple_types {
-    pub _address: u8,
-}
-pub type std___1_tuple_element_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_tuple_size {
-    pub _address: u8,
-}
-pub type std___1___enable_if_tuple_size_imp = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___make_tuple_types_flat {
-    pub _address: u8,
-}
-pub type std___1___make_tuple_types__RawTp = u8;
-pub type std___1___make_tuple_types__Maker = u8;
-pub type std___1___make_tuple_types_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___tuple_like_ext {
-    pub _address: u8,
-}
-#[repr(C)]
-#[repr(align(1))]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___tuple_sfinae_base {
-    pub _bindgen_opaque_blob: u8,
-}
-pub type std___1___tuple_sfinae_base___constructible = u8;
-pub type std___1___tuple_sfinae_base___convertible = u8;
-pub type std___1___tuple_sfinae_base___assignable = u8;
-const _: () = {
-    ["Size of std___1___tuple_sfinae_base"]
-        [::std::mem::size_of::<std___1___tuple_sfinae_base>() - 1usize];
-    ["Alignment of std___1___tuple_sfinae_base"]
-        [::std::mem::align_of::<std___1___tuple_sfinae_base>() - 1usize];
-};
-#[repr(C)]
-#[repr(align(1))]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___check_tuple_constructor_fail {
-    pub _bindgen_opaque_blob: u8,
-}
-const _: () = {
-    ["Size of std___1___check_tuple_constructor_fail"]
-        [::std::mem::size_of::<std___1___check_tuple_constructor_fail>() - 1usize];
-    ["Alignment of std___1___check_tuple_constructor_fail"]
-        [::std::mem::align_of::<std___1___check_tuple_constructor_fail>() - 1usize];
-};
+pub type std___1___unwrap_ref_decay_t = u8;
 #[repr(C)]
 #[repr(align(1))]
 #[derive(Debug, Copy, Clone)]
@@ -1908,7 +1918,7 @@ const _: () = {
         [::std::mem::align_of::<std___1_piecewise_construct_t>() - 1usize];
 };
 extern "C" {
-    #[link_name = "\u{1}__ZNSt3__1L19piecewise_constructE"]
+    #[link_name = "\u{1}__ZNSt3__119piecewise_constructE"]
     pub static std___1_piecewise_construct: std___1_piecewise_construct_t;
 }
 #[repr(C)]
@@ -1923,6 +1933,7 @@ pub struct std___1_pair {
 }
 pub type std___1_pair_first_type = u8;
 pub type std___1_pair_second_type = u8;
+pub type std___1_pair___trivially_relocatable = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct std___1_pair__CheckArgs {
@@ -1930,14 +1941,66 @@ pub struct std___1_pair__CheckArgs {
 }
 pub type std___1_pair__CheckArgsDep = u8;
 #[repr(C)]
+#[repr(align(1))]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1___numeric_type {
+pub struct std___1_in_place_t {
+    pub _bindgen_opaque_blob: u8,
+}
+const _: () = {
+    ["Size of std___1_in_place_t"][::std::mem::size_of::<std___1_in_place_t>() - 1usize];
+    ["Alignment of std___1_in_place_t"][::std::mem::align_of::<std___1_in_place_t>() - 1usize];
+};
+extern "C" {
+    #[link_name = "\u{1}__ZNSt3__18in_placeE"]
+    pub static std___1_in_place: std___1_in_place_t;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_in_place_type_t {
     pub _address: u8,
 }
-pub type std___1___numeric_type_type = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___is_inplace_type_imp {
+    pub _address: u8,
+}
+pub type std___1___is_inplace_type = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___is_inplace_index_imp {
+    pub _address: u8,
+}
+pub type std___1___is_inplace_index = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct std___1___promote {
+    pub _address: u8,
+}
+pub type std___1___promote_type = u8;
+#[repr(C)]
+#[repr(align(1))]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___ignore_type {
+    pub _bindgen_opaque_blob: u8,
+}
+const _: () = {
+    ["Size of std___1___ignore_type"][::std::mem::size_of::<std___1___ignore_type>() - 1usize];
+    ["Alignment of std___1___ignore_type"]
+        [::std::mem::align_of::<std___1___ignore_type>() - 1usize];
+};
+extern "C" {
+    #[link_name = "\u{1}__ZNSt3__16ignoreE"]
+    pub static std___1_ignore: std___1___ignore_type;
+}
+pub type std___1_tuple_element_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_allocator {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_shared_ptr {
     pub _address: u8,
 }
 #[repr(C)]
@@ -1945,14 +2008,14 @@ pub struct std___1___promote {
 pub struct std___1_pmr_polymorphic_allocator {
     pub _address: u8,
 }
+pub type std___1_pmr_basic_string = u8;
+pub type std___1_pmr_string = u8;
+pub type std___1_pmr_wstring = u8;
+pub type std___1_pmr_u16string = u8;
+pub type std___1_pmr_u32string = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct std___1_char_traits {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_allocator {
     pub _address: u8,
 }
 #[repr(C)]
@@ -1992,6 +2055,11 @@ pub type std___1_wfilebuf = u8;
 pub type std___1_wifstream = u8;
 pub type std___1_wofstream = u8;
 pub type std___1_wfstream = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_ios_base {
+    _unused: [u8; 0],
+}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct std___1_basic_ios {
@@ -2058,11 +2126,6 @@ pub type std___1_streambuf = u8;
 pub type std___1_wstreambuf = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1_ios_base {
-    _unused: [u8; 0],
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct std___1_istreambuf_iterator {
     pub _address: u8,
 }
@@ -2082,16 +2145,13 @@ pub type std___1_u16streampos = u8;
 pub type std___1_u32streampos = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct std___1_vector {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct std___1___save_flags {
     pub _address: u8,
 }
 pub type std___1___save_flags___stream_type = u8;
 pub type std___1___save_flags_fmtflags = u8;
+pub type std_byte = ::std::os::raw::c_uchar;
+pub type std_align_val_t = usize;
 #[repr(C)]
 #[repr(align(8))]
 #[derive(Debug, Copy, Clone)]
@@ -2129,20 +2189,6 @@ extern "C" {
     pub fn std_bad_exception_what(
         this: *mut ::std::os::raw::c_void,
     ) -> *const ::std::os::raw::c_char;
-}
-#[repr(C)]
-#[repr(align(1))]
-#[derive(Debug, Copy, Clone)]
-pub struct std_nothrow_t {
-    pub _bindgen_opaque_blob: u8,
-}
-const _: () = {
-    ["Size of std_nothrow_t"][::std::mem::size_of::<std_nothrow_t>() - 1usize];
-    ["Alignment of std_nothrow_t"][::std::mem::align_of::<std_nothrow_t>() - 1usize];
-};
-extern "C" {
-    #[link_name = "\u{1}__ZSt7nothrow"]
-    pub static std_nothrow: std_nothrow_t;
 }
 #[repr(C)]
 #[repr(align(8))]
@@ -2210,6 +2256,24 @@ extern "C" {
         this: *mut ::std::os::raw::c_void,
     ) -> *const ::std::os::raw::c_char;
 }
+extern "C" {
+    #[link_name = "\u{1}__ZSt17__throw_bad_allocv"]
+    pub fn std___throw_bad_alloc();
+}
+#[repr(C)]
+#[repr(align(1))]
+#[derive(Debug, Copy, Clone)]
+pub struct std_nothrow_t {
+    pub _bindgen_opaque_blob: u8,
+}
+const _: () = {
+    ["Size of std_nothrow_t"][::std::mem::size_of::<std_nothrow_t>() - 1usize];
+    ["Alignment of std_nothrow_t"][::std::mem::align_of::<std_nothrow_t>() - 1usize];
+};
+extern "C" {
+    #[link_name = "\u{1}__ZSt7nothrow"]
+    pub static std_nothrow: std_nothrow_t;
+}
 pub type std_new_handler = u64;
 extern "C" {
     #[link_name = "\u{1}__ZSt15set_new_handlerPFvvE"]
@@ -2219,11 +2283,6 @@ extern "C" {
     #[link_name = "\u{1}__ZSt15get_new_handlerv"]
     pub fn std_get_new_handler() -> std_new_handler;
 }
-extern "C" {
-    #[link_name = "\u{1}__ZSt17__throw_bad_allocv"]
-    pub fn std___throw_bad_alloc();
-}
-pub type std_align_val_t = ::std::os::raw::c_ulong;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct std_initializer_list {
@@ -2235,7 +2294,22 @@ pub type std_initializer_list_const_reference = u8;
 pub type std_initializer_list_size_type = u64;
 pub type std_initializer_list_iterator = u8;
 pub type std_initializer_list_const_iterator = u8;
-pub type max_align_t = f64;
+pub type int_least8_t = i8;
+pub type int_least16_t = i16;
+pub type int_least32_t = i32;
+pub type int_least64_t = i64;
+pub type uint_least8_t = u8;
+pub type uint_least16_t = u16;
+pub type uint_least32_t = u32;
+pub type uint_least64_t = u64;
+pub type int_fast8_t = i8;
+pub type int_fast16_t = i16;
+pub type int_fast32_t = i32;
+pub type int_fast64_t = i64;
+pub type uint_fast8_t = u8;
+pub type uint_fast16_t = u16;
+pub type uint_fast32_t = u32;
+pub type uint_fast64_t = u64;
 pub type __int8_t = ::std::os::raw::c_schar;
 pub type __uint8_t = ::std::os::raw::c_uchar;
 pub type __int16_t = ::std::os::raw::c_short;
@@ -2462,6 +2536,8 @@ pub type __darwin_pthread_once_t = _opaque_pthread_once_t;
 pub type __darwin_pthread_rwlock_t = _opaque_pthread_rwlock_t;
 pub type __darwin_pthread_rwlockattr_t = _opaque_pthread_rwlockattr_t;
 pub type __darwin_pthread_t = *mut _opaque_pthread_t;
+pub type intmax_t = ::std::os::raw::c_long;
+pub type uintmax_t = ::std::os::raw::c_ulong;
 pub type __darwin_nl_item = ::std::os::raw::c_int;
 pub type __darwin_wctrans_t = ::std::os::raw::c_int;
 pub type __darwin_wctype_t = __uint32_t;
@@ -2660,6 +2736,79 @@ const _: () = {
     ["Alignment of __arm_pagein_state"][::std::mem::align_of::<__arm_pagein_state>() - 4usize];
     ["Offset of field: __arm_pagein_state::__pagein_error"]
         [::std::mem::offset_of!(__arm_pagein_state, __pagein_error) - 0usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct __darwin_arm_sme_state {
+    pub __svcr: __uint64_t,
+    pub __tpidr2_el0: __uint64_t,
+    pub __svl_b: __uint16_t,
+}
+const _: () = {
+    ["Size of __darwin_arm_sme_state"][::std::mem::size_of::<__darwin_arm_sme_state>() - 24usize];
+    ["Alignment of __darwin_arm_sme_state"]
+        [::std::mem::align_of::<__darwin_arm_sme_state>() - 8usize];
+    ["Offset of field: __darwin_arm_sme_state::__svcr"]
+        [::std::mem::offset_of!(__darwin_arm_sme_state, __svcr) - 0usize];
+    ["Offset of field: __darwin_arm_sme_state::__tpidr2_el0"]
+        [::std::mem::offset_of!(__darwin_arm_sme_state, __tpidr2_el0) - 8usize];
+    ["Offset of field: __darwin_arm_sme_state::__svl_b"]
+        [::std::mem::offset_of!(__darwin_arm_sme_state, __svl_b) - 16usize];
+};
+#[repr(C)]
+#[repr(align(4))]
+#[derive(Debug, Copy, Clone)]
+pub struct __darwin_arm_sve_z_state {
+    pub __z: [[::std::os::raw::c_char; 256usize]; 16usize],
+}
+const _: () = {
+    ["Size of __darwin_arm_sve_z_state"]
+        [::std::mem::size_of::<__darwin_arm_sve_z_state>() - 4096usize];
+    ["Alignment of __darwin_arm_sve_z_state"]
+        [::std::mem::align_of::<__darwin_arm_sve_z_state>() - 4usize];
+    ["Offset of field: __darwin_arm_sve_z_state::__z"]
+        [::std::mem::offset_of!(__darwin_arm_sve_z_state, __z) - 0usize];
+};
+#[repr(C)]
+#[repr(align(4))]
+#[derive(Debug, Copy, Clone)]
+pub struct __darwin_arm_sve_p_state {
+    pub __p: [[::std::os::raw::c_char; 32usize]; 16usize],
+}
+const _: () = {
+    ["Size of __darwin_arm_sve_p_state"]
+        [::std::mem::size_of::<__darwin_arm_sve_p_state>() - 512usize];
+    ["Alignment of __darwin_arm_sve_p_state"]
+        [::std::mem::align_of::<__darwin_arm_sve_p_state>() - 4usize];
+    ["Offset of field: __darwin_arm_sve_p_state::__p"]
+        [::std::mem::offset_of!(__darwin_arm_sve_p_state, __p) - 0usize];
+};
+#[repr(C)]
+#[repr(align(4))]
+#[derive(Debug, Copy, Clone)]
+pub struct __darwin_arm_sme_za_state {
+    pub __za: [::std::os::raw::c_char; 4096usize],
+}
+const _: () = {
+    ["Size of __darwin_arm_sme_za_state"]
+        [::std::mem::size_of::<__darwin_arm_sme_za_state>() - 4096usize];
+    ["Alignment of __darwin_arm_sme_za_state"]
+        [::std::mem::align_of::<__darwin_arm_sme_za_state>() - 4usize];
+    ["Offset of field: __darwin_arm_sme_za_state::__za"]
+        [::std::mem::offset_of!(__darwin_arm_sme_za_state, __za) - 0usize];
+};
+#[repr(C)]
+#[repr(align(4))]
+#[derive(Debug, Copy, Clone)]
+pub struct __darwin_arm_sme2_state {
+    pub __zt0: [::std::os::raw::c_char; 64usize],
+}
+const _: () = {
+    ["Size of __darwin_arm_sme2_state"][::std::mem::size_of::<__darwin_arm_sme2_state>() - 64usize];
+    ["Alignment of __darwin_arm_sme2_state"]
+        [::std::mem::align_of::<__darwin_arm_sme2_state>() - 4usize];
+    ["Offset of field: __darwin_arm_sme2_state::__zt0"]
+        [::std::mem::offset_of!(__darwin_arm_sme2_state, __zt0) - 0usize];
 };
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -2997,24 +3146,6 @@ extern "C" {
         ),
     >;
 }
-pub type int_least8_t = i8;
-pub type int_least16_t = i16;
-pub type int_least32_t = i32;
-pub type int_least64_t = i64;
-pub type uint_least8_t = u8;
-pub type uint_least16_t = u16;
-pub type uint_least32_t = u32;
-pub type uint_least64_t = u64;
-pub type int_fast8_t = i8;
-pub type int_fast16_t = i16;
-pub type int_fast32_t = i32;
-pub type int_fast64_t = i64;
-pub type uint_fast8_t = u8;
-pub type uint_fast16_t = u16;
-pub type uint_fast32_t = u32;
-pub type uint_fast64_t = u64;
-pub type intmax_t = ::std::os::raw::c_long;
-pub type uintmax_t = ::std::os::raw::c_ulong;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct timeval {
@@ -3976,7 +4107,7 @@ extern "C" {
     ) -> pid_t;
 }
 extern "C" {
-    pub fn alloca(arg1: usize) -> *mut ::std::os::raw::c_void;
+    pub fn alloca(__size: usize) -> *mut ::std::os::raw::c_void;
 }
 pub type ct_rune_t = __darwin_ct_rune_t;
 pub type rune_t = __darwin_rune_t;
@@ -4214,13 +4345,13 @@ extern "C" {
     pub fn mblen(__s: *const ::std::os::raw::c_char, __n: usize) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn mbstowcs(arg1: *mut u32, arg2: *const ::std::os::raw::c_char, arg3: usize) -> usize;
+    pub fn mbstowcs(arg1: *mut u32, arg2: *const ::std::os::raw::c_char, __n: usize) -> usize;
 }
 extern "C" {
     pub fn mbtowc(
         arg1: *mut u32,
         arg2: *const ::std::os::raw::c_char,
-        arg3: usize,
+        __n: usize,
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
@@ -4295,7 +4426,7 @@ extern "C" {
     pub fn system(arg1: *const ::std::os::raw::c_char) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn wcstombs(arg1: *mut ::std::os::raw::c_char, arg2: *const u32, arg3: usize) -> usize;
+    pub fn wcstombs(arg1: *mut ::std::os::raw::c_char, arg2: *const u32, __n: usize) -> usize;
 }
 extern "C" {
     pub fn wctomb(arg1: *mut ::std::os::raw::c_char, arg2: u32) -> ::std::os::raw::c_int;
@@ -4349,7 +4480,7 @@ extern "C" {
     pub fn initstate(
         arg1: ::std::os::raw::c_uint,
         arg2: *mut ::std::os::raw::c_char,
-        arg3: usize,
+        __size: usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
@@ -4439,7 +4570,10 @@ extern "C" {
     pub fn arc4random() -> u32;
 }
 extern "C" {
-    pub fn arc4random_addrandom(arg1: *mut ::std::os::raw::c_uchar, arg2: ::std::os::raw::c_int);
+    pub fn arc4random_addrandom(
+        arg1: *mut ::std::os::raw::c_uchar,
+        __datlen: ::std::os::raw::c_int,
+    );
 }
 extern "C" {
     pub fn arc4random_buf(__buf: *mut ::std::os::raw::c_void, __nbytes: usize);
@@ -4545,7 +4679,7 @@ extern "C" {
     ) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn getloadavg(arg1: *mut f64, arg2: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    pub fn getloadavg(arg1: *mut f64, __nelem: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn getprogname() -> *const ::std::os::raw::c_char;
@@ -5373,6 +5507,13 @@ extern "C" {
     ) -> *mut ::std::os::raw::c_void;
 }
 extern "C" {
+    #[link_name = "\u{1}_swift_coroFrameAlloc"]
+    pub fn swift_swift_coroFrameAlloc(
+        bytes: usize,
+        typeId: swift_MallocTypeId,
+    ) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
     #[link_name = "\u{1}_swift_slowDealloc"]
     pub fn swift_swift_slowDealloc(
         ptr: *mut ::std::os::raw::c_void,
@@ -5380,10 +5521,29 @@ extern "C" {
         alignMask: usize,
     );
 }
-pub type __builtin_va_list = *mut ::std::os::raw::c_char;
-pub type __uint128_t = u128;
+extern "C" {
+    #[link_name = "\u{1}_swift_clearSensitive"]
+    pub fn swift_swift_clearSensitive(ptr: *mut ::std::os::raw::c_void, bytes: usize);
+}
+#[doc = " A C++ Allocator that uses the above functions instead of operator new\n and operator delete.  This lets us use STL containers without pulling\n in global operator new and global operator delete."]
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct _bindgen_ty_1 {
+#[derive(Debug)]
+pub struct swift_cxx_allocator {
     pub _address: u8,
 }
+pub type swift_cxx_allocator_value_type<T> = T;
+pub type swift_cxx_allocator_pointer<T> = *mut T;
+pub type swift_cxx_allocator_const_pointer<T> = *const T;
+pub type swift_cxx_allocator_reference<T> = *mut T;
+pub type swift_cxx_allocator_const_reference<T> = *const T;
+pub type swift_cxx_allocator_size_type = usize;
+pub type swift_cxx_allocator_difference_type = isize;
+pub type swift_cxx_allocator_propagate_on_container_move_assignment = std___1_true_type;
+pub type swift_cxx_allocator_is_always_equal = std___1_true_type;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct swift_cxx_allocator_rebind {
+    pub _address: u8,
+}
+pub type __builtin_va_list = *mut ::std::os::raw::c_char;
+pub type __uint128_t = u128;

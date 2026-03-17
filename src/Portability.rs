@@ -84,25 +84,87 @@ where
     }
 }
 pub const _LIBCPP_ABI_VERSION: u32 = 1;
+pub const _LIBCPP_ABI_FORCE_ITANIUM: u32 = 0;
+pub const _LIBCPP_ABI_FORCE_MICROSOFT: u32 = 0;
+pub const _LIBCPP_HAS_THREADS: u32 = 1;
+pub const _LIBCPP_HAS_MONOTONIC_CLOCK: u32 = 1;
+pub const _LIBCPP_HAS_TERMINAL: u32 = 1;
+pub const _LIBCPP_HAS_MUSL_LIBC: u32 = 0;
+pub const _LIBCPP_HAS_THREAD_API_PTHREAD: u32 = 0;
+pub const _LIBCPP_HAS_THREAD_API_EXTERNAL: u32 = 0;
+pub const _LIBCPP_HAS_THREAD_API_WIN32: u32 = 0;
+pub const _LIBCPP_HAS_THREAD_API_C11: u32 = 0;
+pub const _LIBCPP_HAS_VENDOR_AVAILABILITY_ANNOTATIONS: u32 = 1;
+pub const _LIBCPP_HAS_FILESYSTEM: u32 = 1;
+pub const _LIBCPP_HAS_RANDOM_DEVICE: u32 = 1;
+pub const _LIBCPP_HAS_LOCALIZATION: u32 = 1;
+pub const _LIBCPP_HAS_UNICODE: u32 = 1;
+pub const _LIBCPP_HAS_WIDE_CHARACTERS: u32 = 1;
+pub const _LIBCPP_HAS_TIME_ZONE_DATABASE: u32 = 0;
+pub const _LIBCPP_INSTRUMENTED_WITH_ASAN: u32 = 0;
 pub const _LIBCPP_HARDENING_MODE_DEFAULT: u32 = 2;
-pub const _LIBCPP_VERSION: u32 = 180100;
-pub const _LIBCPP_STD_VER: u32 = 14;
 pub const _LIBCPP_OBJECT_FORMAT_MACHO: u32 = 1;
+pub const _LIBCPP_STD_VER: u32 = 17;
+pub const _LIBCPP_HAS_RTTI: u32 = 1;
+pub const _LIBCPP_HAS_EXCEPTIONS: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_20: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_19: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_18: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_16: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_15: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_14: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_12: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_11: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_9: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_4: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_BAD_OPTIONAL_ACCESS: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_BAD_VARIANT_ACCESS: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_BAD_ANY_CAST: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_FILESYSTEM_LIBRARY: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_SYNC: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_ADDITIONAL_IOSTREAM_EXPLICIT_INSTANTIATIONS_1: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_TO_CHARS_FLOATING_POINT: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_VERBOSE_ABORT: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_PMR: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_INIT_PRIMARY_EXCEPTION: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_PRINT: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_TZDB: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_BAD_FUNCTION_CALL_KEY_FUNCTION: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_BAD_EXPECTED_ACCESS_KEY_FUNCTION: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_FROM_CHARS_FLOATING_POINT: u32 = 1;
+pub const _LIBCPP_VERSION: u32 = 200100;
 pub const _LIBCPP_HARDENING_MODE_NONE: u32 = 2;
 pub const _LIBCPP_HARDENING_MODE_FAST: u32 = 4;
 pub const _LIBCPP_HARDENING_MODE_EXTENSIVE: u32 = 16;
 pub const _LIBCPP_HARDENING_MODE_DEBUG: u32 = 8;
 pub const _LIBCPP_HARDENING_MODE: u32 = 2;
+pub const _LIBCPP_HAS_EXPERIMENTAL_LIBRARY: u32 = 0;
+pub const _LIBCPP_HAS_EXPERIMENTAL_PSTL: u32 = 0;
+pub const _LIBCPP_HAS_EXPERIMENTAL_TZDB: u32 = 0;
+pub const _LIBCPP_HAS_EXPERIMENTAL_SYNCSTREAM: u32 = 0;
+pub const _LIBCPP_HAS_OPEN_WITH_WCHAR: u32 = 0;
+pub const _LIBCPP_HAS_BITSCAN64: u32 = 0;
+pub const _LIBCPP_HAS_OBJC_ARC: u32 = 0;
+pub const _LIBCPP_HAS_OBJC_ARC_WEAK: u32 = 0;
+pub const _LIBCPP_HAS_EXTENSION_BLOCKS: u32 = 1;
+pub const _LIBCPP_HAS_BLOCKS_RUNTIME: u32 = 1;
+pub const _LIBCPP_HAS_ASAN: u32 = 0;
+pub const _LIBCPP_HAS_INT128: u32 = 1;
 pub const _LIBCPP_LOCALE__L_EXTENSIONS: u32 = 1;
-pub const _LIBCPP_AVAILABILITY_HAS_INIT_PRIMARY_EXCEPTION: u32 = 0;
-pub const _LIBCPP_AVAILABILITY_HAS_FILESYSTEM_LIBRARY: u32 = 1;
-pub const _LIBCPP_AVAILABILITY_HAS_TO_CHARS_FLOATING_POINT: u32 = 1;
-pub const _LIBCPP_AVAILABILITY_HAS_SYNC: u32 = 1;
-pub const _LIBCPP_AVAILABILITY_HAS_VERBOSE_ABORT: u32 = 0;
-pub const _LIBCPP_AVAILABILITY_HAS_PMR: u32 = 1;
-pub const _LIBCPP_AVAILABILITY_HAS_TZDB: u32 = 0;
-pub const _LIBCPP_AVAILABILITY_HAS_PRINT: u32 = 0;
-pub const _LIBCPP_AVAILABILITY_HAS_ADDITIONAL_IOSTREAM_EXPLICIT_INSTANTIATIONS_1: u32 = 1;
+pub const _LIBCPP_HAS_LIBRARY_ALIGNED_ALLOCATION: u32 = 1;
+pub const _LIBCPP_HAS_ALIGNED_ALLOCATION: u32 = 1;
+pub const _LIBCPP_HAS_C11_ALIGNED_ALLOC: u32 = 1;
+pub const _LIBCPP_HAS_CHAR8_T: u32 = 0;
+pub const _LIBCPP_HAS_COND_CLOCKWAIT: u32 = 0;
+pub const _LIBCPP_HAS_TRIVIAL_MUTEX_DESTRUCTION: u32 = 0;
+pub const _LIBCPP_HAS_TRIVIAL_CONDVAR_DESTRUCTION: u32 = 0;
+pub const _LIBCPP_HAS_C_ATOMIC_IMP: u32 = 1;
+pub const _LIBCPP_HAS_GCC_ATOMIC_IMP: u32 = 0;
+pub const _LIBCPP_HAS_EXTERNAL_ATOMIC_IMP: u32 = 0;
+pub const _LIBCPP_HAS_ATOMIC_HEADER: u32 = 1;
+pub const _LIBCPP_HAS_THREAD_SAFETY_ANNOTATIONS: u32 = 0;
+pub const _LIBCPP_HAS_C8RTOMB_MBRTOC8: u32 = 0;
+pub const _LIBCPP_HAS_EXPLICIT_THIS_PARAMETER: u32 = 0;
 pub const __cpp_lib_chrono_udls: u32 = 201304;
 pub const __cpp_lib_complex_udls: u32 = 201309;
 pub const __cpp_lib_exchange_function: u32 = 201304;
@@ -123,6 +185,50 @@ pub const __cpp_lib_transformation_trait_aliases: u32 = 201304;
 pub const __cpp_lib_transparent_operators: u32 = 201210;
 pub const __cpp_lib_tuple_element_t: u32 = 201402;
 pub const __cpp_lib_tuples_by_type: u32 = 201304;
+pub const __cpp_lib_addressof_constexpr: u32 = 201603;
+pub const __cpp_lib_allocator_traits_is_always_equal: u32 = 201411;
+pub const __cpp_lib_any: u32 = 201606;
+pub const __cpp_lib_apply: u32 = 201603;
+pub const __cpp_lib_array_constexpr: u32 = 201603;
+pub const __cpp_lib_as_const: u32 = 201510;
+pub const __cpp_lib_atomic_is_always_lock_free: u32 = 201603;
+pub const __cpp_lib_bool_constant: u32 = 201505;
+pub const __cpp_lib_boyer_moore_searcher: u32 = 201603;
+pub const __cpp_lib_byte: u32 = 201603;
+pub const __cpp_lib_chrono: u32 = 201611;
+pub const __cpp_lib_clamp: u32 = 201603;
+pub const __cpp_lib_enable_shared_from_this: u32 = 201603;
+pub const __cpp_lib_filesystem: u32 = 201703;
+pub const __cpp_lib_gcd_lcm: u32 = 201606;
+pub const __cpp_lib_hardware_interference_size: u32 = 201703;
+pub const __cpp_lib_has_unique_object_representations: u32 = 201606;
+pub const __cpp_lib_hypot: u32 = 201603;
+pub const __cpp_lib_incomplete_container_elements: u32 = 201505;
+pub const __cpp_lib_invoke: u32 = 201411;
+pub const __cpp_lib_is_aggregate: u32 = 201703;
+pub const __cpp_lib_is_invocable: u32 = 201703;
+pub const __cpp_lib_is_swappable: u32 = 201603;
+pub const __cpp_lib_launder: u32 = 201606;
+pub const __cpp_lib_logical_traits: u32 = 201510;
+pub const __cpp_lib_make_from_tuple: u32 = 201606;
+pub const __cpp_lib_map_try_emplace: u32 = 201411;
+pub const __cpp_lib_memory_resource: u32 = 201603;
+pub const __cpp_lib_node_extract: u32 = 201606;
+pub const __cpp_lib_nonmember_container_access: u32 = 201411;
+pub const __cpp_lib_not_fn: u32 = 201603;
+pub const __cpp_lib_optional: u32 = 201606;
+pub const __cpp_lib_raw_memory_algorithms: u32 = 201606;
+pub const __cpp_lib_sample: u32 = 201603;
+pub const __cpp_lib_scoped_lock: u32 = 201703;
+pub const __cpp_lib_shared_mutex: u32 = 201505;
+pub const __cpp_lib_shared_ptr_arrays: u32 = 201611;
+pub const __cpp_lib_shared_ptr_weak_type: u32 = 201606;
+pub const __cpp_lib_string_view: u32 = 201606;
+pub const __cpp_lib_type_trait_variable_templates: u32 = 201510;
+pub const __cpp_lib_uncaught_exceptions: u32 = 201411;
+pub const __cpp_lib_unordered_map_try_emplace: u32 = 201411;
+pub const __cpp_lib_variant: u32 = 202102;
+pub const __cpp_lib_void_t: u32 = 201411;
 pub const __has_safe_buffers: u32 = 1;
 pub const __DARWIN_ONLY_64_BIT_INO_T: u32 = 1;
 pub const __DARWIN_ONLY_UNIX_CONFORMANCE: u32 = 1;
@@ -142,14 +248,22 @@ pub const _DARWIN_FEATURE_ONLY_VERS_1050: u32 = 1;
 pub const _DARWIN_FEATURE_ONLY_UNIX_CONFORMANCE: u32 = 1;
 pub const _DARWIN_FEATURE_UNIX_CONFORMANCE: u32 = 3;
 pub const __has_ptrcheck: u32 = 0;
+pub const __has_bounds_safety_attributes: u32 = 0;
 pub const __API_TO_BE_DEPRECATED: u32 = 100000;
 pub const __API_TO_BE_DEPRECATED_MACOS: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_MACOSAPPLICATIONEXTENSION: u32 = 100000;
 pub const __API_TO_BE_DEPRECATED_IOS: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_IOSAPPLICATIONEXTENSION: u32 = 100000;
 pub const __API_TO_BE_DEPRECATED_MACCATALYST: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_MACCATALYSTAPPLICATIONEXTENSION: u32 = 100000;
 pub const __API_TO_BE_DEPRECATED_WATCHOS: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_WATCHOSAPPLICATIONEXTENSION: u32 = 100000;
 pub const __API_TO_BE_DEPRECATED_TVOS: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_TVOSAPPLICATIONEXTENSION: u32 = 100000;
 pub const __API_TO_BE_DEPRECATED_DRIVERKIT: u32 = 100000;
 pub const __API_TO_BE_DEPRECATED_VISIONOS: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_VISIONOSAPPLICATIONEXTENSION: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_KERNELKIT: u32 = 100000;
 pub const __MAC_10_0: u32 = 1000;
 pub const __MAC_10_1: u32 = 1010;
 pub const __MAC_10_2: u32 = 1020;
@@ -205,13 +319,26 @@ pub const __MAC_13_3: u32 = 130300;
 pub const __MAC_13_4: u32 = 130400;
 pub const __MAC_13_5: u32 = 130500;
 pub const __MAC_13_6: u32 = 130600;
+pub const __MAC_13_7: u32 = 130700;
 pub const __MAC_14_0: u32 = 140000;
 pub const __MAC_14_1: u32 = 140100;
 pub const __MAC_14_2: u32 = 140200;
 pub const __MAC_14_3: u32 = 140300;
 pub const __MAC_14_4: u32 = 140400;
 pub const __MAC_14_5: u32 = 140500;
+pub const __MAC_14_6: u32 = 140600;
+pub const __MAC_14_7: u32 = 140700;
 pub const __MAC_15_0: u32 = 150000;
+pub const __MAC_15_1: u32 = 150100;
+pub const __MAC_15_2: u32 = 150200;
+pub const __MAC_15_3: u32 = 150300;
+pub const __MAC_15_4: u32 = 150400;
+pub const __MAC_15_5: u32 = 150500;
+pub const __MAC_15_6: u32 = 150600;
+pub const __MAC_16_0: u32 = 160000;
+pub const __MAC_26_0: u32 = 260000;
+pub const __MAC_26_1: u32 = 260100;
+pub const __MAC_26_2: u32 = 260200;
 pub const __IPHONE_2_0: u32 = 20000;
 pub const __IPHONE_2_1: u32 = 20100;
 pub const __IPHONE_2_2: u32 = 20200;
@@ -264,7 +391,6 @@ pub const __IPHONE_14_1: u32 = 140100;
 pub const __IPHONE_14_2: u32 = 140200;
 pub const __IPHONE_14_3: u32 = 140300;
 pub const __IPHONE_14_5: u32 = 140500;
-pub const __IPHONE_14_4: u32 = 140400;
 pub const __IPHONE_14_6: u32 = 140600;
 pub const __IPHONE_14_7: u32 = 140700;
 pub const __IPHONE_14_8: u32 = 140800;
@@ -291,7 +417,19 @@ pub const __IPHONE_17_2: u32 = 170200;
 pub const __IPHONE_17_3: u32 = 170300;
 pub const __IPHONE_17_4: u32 = 170400;
 pub const __IPHONE_17_5: u32 = 170500;
+pub const __IPHONE_17_6: u32 = 170600;
+pub const __IPHONE_17_7: u32 = 170700;
 pub const __IPHONE_18_0: u32 = 180000;
+pub const __IPHONE_18_1: u32 = 180100;
+pub const __IPHONE_18_2: u32 = 180200;
+pub const __IPHONE_18_3: u32 = 180300;
+pub const __IPHONE_18_4: u32 = 180400;
+pub const __IPHONE_18_5: u32 = 180500;
+pub const __IPHONE_18_6: u32 = 180600;
+pub const __IPHONE_19_0: u32 = 190000;
+pub const __IPHONE_26_0: u32 = 260000;
+pub const __IPHONE_26_1: u32 = 260100;
+pub const __IPHONE_26_2: u32 = 260200;
 pub const __WATCHOS_1_0: u32 = 10000;
 pub const __WATCHOS_2_0: u32 = 20000;
 pub const __WATCHOS_2_1: u32 = 20100;
@@ -339,7 +477,19 @@ pub const __WATCHOS_10_2: u32 = 100200;
 pub const __WATCHOS_10_3: u32 = 100300;
 pub const __WATCHOS_10_4: u32 = 100400;
 pub const __WATCHOS_10_5: u32 = 100500;
+pub const __WATCHOS_10_6: u32 = 100600;
+pub const __WATCHOS_10_7: u32 = 100700;
 pub const __WATCHOS_11_0: u32 = 110000;
+pub const __WATCHOS_11_1: u32 = 110100;
+pub const __WATCHOS_11_2: u32 = 110200;
+pub const __WATCHOS_11_3: u32 = 110300;
+pub const __WATCHOS_11_4: u32 = 110400;
+pub const __WATCHOS_11_5: u32 = 110500;
+pub const __WATCHOS_11_6: u32 = 110600;
+pub const __WATCHOS_12_0: u32 = 120000;
+pub const __WATCHOS_26_0: u32 = 260000;
+pub const __WATCHOS_26_1: u32 = 260100;
+pub const __WATCHOS_26_2: u32 = 260200;
 pub const __TVOS_9_0: u32 = 90000;
 pub const __TVOS_9_1: u32 = 90100;
 pub const __TVOS_9_2: u32 = 90200;
@@ -388,7 +538,18 @@ pub const __TVOS_17_2: u32 = 170200;
 pub const __TVOS_17_3: u32 = 170300;
 pub const __TVOS_17_4: u32 = 170400;
 pub const __TVOS_17_5: u32 = 170500;
+pub const __TVOS_17_6: u32 = 170600;
 pub const __TVOS_18_0: u32 = 180000;
+pub const __TVOS_18_1: u32 = 180100;
+pub const __TVOS_18_2: u32 = 180200;
+pub const __TVOS_18_3: u32 = 180300;
+pub const __TVOS_18_4: u32 = 180400;
+pub const __TVOS_18_5: u32 = 180500;
+pub const __TVOS_18_6: u32 = 180600;
+pub const __TVOS_19_0: u32 = 190000;
+pub const __TVOS_26_0: u32 = 260000;
+pub const __TVOS_26_1: u32 = 260100;
+pub const __TVOS_26_2: u32 = 260200;
 pub const __BRIDGEOS_2_0: u32 = 20000;
 pub const __BRIDGEOS_3_0: u32 = 30000;
 pub const __BRIDGEOS_3_1: u32 = 30100;
@@ -415,7 +576,17 @@ pub const __BRIDGEOS_8_2: u32 = 80200;
 pub const __BRIDGEOS_8_3: u32 = 80300;
 pub const __BRIDGEOS_8_4: u32 = 80400;
 pub const __BRIDGEOS_8_5: u32 = 80500;
+pub const __BRIDGEOS_8_6: u32 = 80600;
 pub const __BRIDGEOS_9_0: u32 = 90000;
+pub const __BRIDGEOS_9_1: u32 = 90100;
+pub const __BRIDGEOS_9_2: u32 = 90200;
+pub const __BRIDGEOS_9_3: u32 = 90300;
+pub const __BRIDGEOS_9_4: u32 = 90400;
+pub const __BRIDGEOS_9_5: u32 = 90500;
+pub const __BRIDGEOS_9_6: u32 = 90600;
+pub const __BRIDGEOS_10_0: u32 = 100000;
+pub const __BRIDGEOS_10_1: u32 = 100100;
+pub const __BRIDGEOS_10_2: u32 = 100200;
 pub const __DRIVERKIT_19_0: u32 = 190000;
 pub const __DRIVERKIT_20_0: u32 = 200000;
 pub const __DRIVERKIT_21_0: u32 = 210000;
@@ -429,11 +600,32 @@ pub const __DRIVERKIT_23_2: u32 = 230200;
 pub const __DRIVERKIT_23_3: u32 = 230300;
 pub const __DRIVERKIT_23_4: u32 = 230400;
 pub const __DRIVERKIT_23_5: u32 = 230500;
+pub const __DRIVERKIT_23_6: u32 = 230600;
 pub const __DRIVERKIT_24_0: u32 = 240000;
+pub const __DRIVERKIT_24_1: u32 = 240100;
+pub const __DRIVERKIT_24_2: u32 = 240200;
+pub const __DRIVERKIT_24_3: u32 = 240300;
+pub const __DRIVERKIT_24_4: u32 = 240400;
+pub const __DRIVERKIT_24_5: u32 = 240500;
+pub const __DRIVERKIT_24_6: u32 = 240600;
+pub const __DRIVERKIT_25_0: u32 = 250000;
+pub const __DRIVERKIT_25_1: u32 = 250100;
+pub const __DRIVERKIT_25_2: u32 = 250200;
 pub const __VISIONOS_1_0: u32 = 10000;
 pub const __VISIONOS_1_1: u32 = 10100;
 pub const __VISIONOS_1_2: u32 = 10200;
+pub const __VISIONOS_1_3: u32 = 10300;
 pub const __VISIONOS_2_0: u32 = 20000;
+pub const __VISIONOS_2_1: u32 = 20100;
+pub const __VISIONOS_2_2: u32 = 20200;
+pub const __VISIONOS_2_3: u32 = 20300;
+pub const __VISIONOS_2_4: u32 = 20400;
+pub const __VISIONOS_2_5: u32 = 20500;
+pub const __VISIONOS_2_6: u32 = 20600;
+pub const __VISIONOS_3_0: u32 = 30000;
+pub const __VISIONOS_26_0: u32 = 260000;
+pub const __VISIONOS_26_1: u32 = 260100;
+pub const __VISIONOS_26_2: u32 = 260200;
 pub const MAC_OS_X_VERSION_10_0: u32 = 1000;
 pub const MAC_OS_X_VERSION_10_1: u32 = 1010;
 pub const MAC_OS_X_VERSION_10_2: u32 = 1020;
@@ -489,14 +681,30 @@ pub const MAC_OS_VERSION_13_3: u32 = 130300;
 pub const MAC_OS_VERSION_13_4: u32 = 130400;
 pub const MAC_OS_VERSION_13_5: u32 = 130500;
 pub const MAC_OS_VERSION_13_6: u32 = 130600;
+pub const MAC_OS_VERSION_13_7: u32 = 130700;
 pub const MAC_OS_VERSION_14_0: u32 = 140000;
 pub const MAC_OS_VERSION_14_1: u32 = 140100;
 pub const MAC_OS_VERSION_14_2: u32 = 140200;
 pub const MAC_OS_VERSION_14_3: u32 = 140300;
 pub const MAC_OS_VERSION_14_4: u32 = 140400;
 pub const MAC_OS_VERSION_14_5: u32 = 140500;
+pub const MAC_OS_VERSION_14_6: u32 = 140600;
+pub const MAC_OS_VERSION_14_7: u32 = 140700;
 pub const MAC_OS_VERSION_15_0: u32 = 150000;
-pub const __MAC_OS_X_VERSION_MAX_ALLOWED: u32 = 150000;
+pub const MAC_OS_VERSION_15_1: u32 = 150100;
+pub const MAC_OS_VERSION_15_2: u32 = 150200;
+pub const MAC_OS_VERSION_15_3: u32 = 150300;
+pub const MAC_OS_VERSION_15_4: u32 = 150400;
+pub const MAC_OS_VERSION_15_5: u32 = 150500;
+pub const MAC_OS_VERSION_15_6: u32 = 150600;
+pub const MAC_OS_VERSION_16_0: u32 = 160000;
+pub const MAC_OS_VERSION_26_0: u32 = 260000;
+pub const MAC_OS_VERSION_26_1: u32 = 260100;
+pub const MAC_OS_VERSION_26_2: u32 = 260200;
+pub const __AVAILABILITY_VERSIONS_VERSION_HASH: u32 = 93585900;
+pub const __AVAILABILITY_VERSIONS_VERSION_STRING: &[u8; 6] = b"Local\0";
+pub const __AVAILABILITY_FILE: &[u8; 23] = b"AvailabilityVersions.h\0";
+pub const __MAC_OS_X_VERSION_MAX_ALLOWED: u32 = 260200;
 pub const __ENABLE_LEGACY_MAC_AVAILABILITY: u32 = 1;
 pub const USE_CLANG_TYPES: u32 = 0;
 pub const __PTHREAD_SIZE__: u32 = 8176;
@@ -517,6 +725,7 @@ pub const RENAME_SWAP: u32 = 2;
 pub const RENAME_EXCL: u32 = 4;
 pub const RENAME_RESERVED1: u32 = 8;
 pub const RENAME_NOFOLLOW_ANY: u32 = 16;
+pub const RENAME_RESOLVE_BENEATH: u32 = 32;
 pub const SEEK_SET: u32 = 0;
 pub const SEEK_CUR: u32 = 1;
 pub const SEEK_END: u32 = 2;
@@ -588,6 +797,7 @@ pub const __DARWIN_OPAQUE_ARM_THREAD_STATE64: u32 = 0;
 pub const SIGEV_NONE: u32 = 0;
 pub const SIGEV_SIGNAL: u32 = 1;
 pub const SIGEV_THREAD: u32 = 3;
+pub const SIGEV_KEVENT: u32 = 4;
 pub const ILL_NOOP: u32 = 0;
 pub const ILL_ILLOPC: u32 = 1;
 pub const ILL_ILLTRP: u32 = 2;
@@ -754,6 +964,7 @@ pub const IOPOL_TYPE_VFS_IGNORE_PERMISSIONS: u32 = 7;
 pub const IOPOL_TYPE_VFS_SKIP_MTIME_UPDATE: u32 = 8;
 pub const IOPOL_TYPE_VFS_ALLOW_LOW_SPACE_WRITES: u32 = 9;
 pub const IOPOL_TYPE_VFS_DISALLOW_RW_FOR_O_EVTONLY: u32 = 10;
+pub const IOPOL_TYPE_VFS_ENTITLED_RESERVE_ACCESS: u32 = 14;
 pub const IOPOL_SCOPE_PROCESS: u32 = 0;
 pub const IOPOL_SCOPE_THREAD: u32 = 1;
 pub const IOPOL_SCOPE_DARWIN_BG: u32 = 2;
@@ -770,6 +981,8 @@ pub const IOPOL_ATIME_UPDATES_OFF: u32 = 1;
 pub const IOPOL_MATERIALIZE_DATALESS_FILES_DEFAULT: u32 = 0;
 pub const IOPOL_MATERIALIZE_DATALESS_FILES_OFF: u32 = 1;
 pub const IOPOL_MATERIALIZE_DATALESS_FILES_ON: u32 = 2;
+pub const IOPOL_MATERIALIZE_DATALESS_FILES_ORIG: u32 = 4;
+pub const IOPOL_MATERIALIZE_DATALESS_FILES_BASIC_MASK: u32 = 3;
 pub const IOPOL_VFS_STATFS_NO_DATA_VOLUME_DEFAULT: u32 = 0;
 pub const IOPOL_VFS_STATFS_FORCE_NO_DATA_VOLUME: u32 = 1;
 pub const IOPOL_VFS_TRIGGER_RESOLVE_DEFAULT: u32 = 0;
@@ -780,12 +993,15 @@ pub const IOPOL_VFS_IGNORE_PERMISSIONS_OFF: u32 = 0;
 pub const IOPOL_VFS_IGNORE_PERMISSIONS_ON: u32 = 1;
 pub const IOPOL_VFS_SKIP_MTIME_UPDATE_OFF: u32 = 0;
 pub const IOPOL_VFS_SKIP_MTIME_UPDATE_ON: u32 = 1;
+pub const IOPOL_VFS_SKIP_MTIME_UPDATE_IGNORE: u32 = 2;
 pub const IOPOL_VFS_ALLOW_LOW_SPACE_WRITES_OFF: u32 = 0;
 pub const IOPOL_VFS_ALLOW_LOW_SPACE_WRITES_ON: u32 = 1;
 pub const IOPOL_VFS_DISALLOW_RW_FOR_O_EVTONLY_DEFAULT: u32 = 0;
 pub const IOPOL_VFS_DISALLOW_RW_FOR_O_EVTONLY_ON: u32 = 1;
 pub const IOPOL_VFS_NOCACHE_WRITE_FS_BLKSIZE_DEFAULT: u32 = 0;
 pub const IOPOL_VFS_NOCACHE_WRITE_FS_BLKSIZE_ON: u32 = 1;
+pub const IOPOL_VFS_ENTITLED_RESERVE_ACCESS_OFF: u32 = 0;
+pub const IOPOL_VFS_ENTITLED_RESERVE_ACCESS_ON: u32 = 1;
 pub const WNOHANG: u32 = 1;
 pub const WUNTRACED: u32 = 2;
 pub const WCOREFLAG: u32 = 128;
@@ -809,41 +1025,17 @@ pub const BYTE_ORDER: u32 = 1234;
 pub const EXIT_FAILURE: u32 = 1;
 pub const EXIT_SUCCESS: u32 = 0;
 pub const RAND_MAX: u32 = 2147483647;
-extern "C" {
-    #[link_name = "\u{1}__ZNSt3__122__libcpp_verbose_abortEPKcz"]
-    pub fn std___1___libcpp_verbose_abort(__format: *const ::std::os::raw::c_char, ...);
-}
-extern "C" {
-    #[link_name = "\u{1}__ZNSt3__15__useEPKcz"]
-    pub fn std___1___use(arg1: *const ::std::os::raw::c_char, ...);
-}
+pub const _MALLOC_TYPE_MALLOC_BACKDEPLOY_PUBLIC: u32 = 1;
+pub type __gnuc_va_list = __builtin_va_list;
+pub type va_list = __builtin_va_list;
 pub type std___1___enable_if_t = u8;
 pub type std___1_enable_if_t = u8;
 pub type std___1_integral_constant_value_type = u8;
 pub type std___1_integral_constant_type = u8;
-extern "C" {
-    #[link_name = "\u{1}value"]
-    pub static std___1_value: _Tp;
-}
 pub type std___1_true_type = u8;
 pub type std___1_false_type = u8;
 pub type std___1__BoolConstant = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_remove_const {
-    pub _address: u8,
-}
-pub type std___1_remove_const_type = u8;
-pub type std___1___remove_const_t = u8;
-pub type std___1_remove_const_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_remove_volatile {
-    pub _address: u8,
-}
-pub type std___1_remove_volatile_type = u8;
-pub type std___1___remove_volatile_t = u8;
-pub type std___1_remove_volatile_t = u8;
+pub type std___1_bool_constant = u8;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct std___1_remove_cv {
@@ -864,8 +1056,8 @@ pub type std___1___libcpp_is_integral__bindgen_ty_1 = i32;
 pub struct std___1_is_integral {
     pub _address: u8,
 }
-pub type __gnuc_va_list = __builtin_va_list;
-pub type va_list = __builtin_va_list;
+pub type std___1_nullptr_t = u64;
+pub type std_byte = ::std::os::raw::c_uchar;
 pub type max_align_t = f64;
 pub type __int8_t = ::std::os::raw::c_schar;
 pub type __uint8_t = ::std::os::raw::c_uchar;
@@ -1172,7 +1364,7 @@ pub struct __sFILE {
         unsafe extern "C" fn(
             arg1: *mut ::std::os::raw::c_void,
             arg2: *mut ::std::os::raw::c_char,
-            arg3: ::std::os::raw::c_int,
+            __n: ::std::os::raw::c_int,
         ) -> ::std::os::raw::c_int,
     >,
     pub _seek: ::std::option::Option<
@@ -1186,7 +1378,7 @@ pub struct __sFILE {
         unsafe extern "C" fn(
             arg1: *mut ::std::os::raw::c_void,
             arg2: *const ::std::os::raw::c_char,
-            arg3: ::std::os::raw::c_int,
+            __n: ::std::os::raw::c_int,
         ) -> ::std::os::raw::c_int,
     >,
     pub _ub: __sbuf,
@@ -1256,8 +1448,8 @@ extern "C" {
 extern "C" {
     pub fn fgets(
         arg1: *mut ::std::os::raw::c_char,
-        arg2: ::std::os::raw::c_int,
-        arg3: *mut FILE,
+        __size: ::std::os::raw::c_int,
+        arg2: *mut FILE,
     ) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
@@ -1366,7 +1558,7 @@ extern "C" {
         arg1: *mut FILE,
         arg2: *mut ::std::os::raw::c_char,
         arg3: ::std::os::raw::c_int,
-        arg4: usize,
+        __size: usize,
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
@@ -1576,7 +1768,7 @@ extern "C" {
     pub fn ctermid_r(arg1: *mut ::std::os::raw::c_char) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn fgetln(arg1: *mut FILE, arg2: *mut usize) -> *mut ::std::os::raw::c_char;
+    pub fn fgetln(arg1: *mut FILE, __len: *mut usize) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
     pub fn fmtcheck(
@@ -1591,7 +1783,7 @@ extern "C" {
     pub fn setbuffer(
         arg1: *mut FILE,
         arg2: *mut ::std::os::raw::c_char,
-        arg3: ::std::os::raw::c_int,
+        __size: ::std::os::raw::c_int,
     );
 }
 extern "C" {
@@ -1611,14 +1803,14 @@ extern "C" {
             unsafe extern "C" fn(
                 arg1: *mut ::std::os::raw::c_void,
                 arg2: *mut ::std::os::raw::c_char,
-                arg3: ::std::os::raw::c_int,
+                __n: ::std::os::raw::c_int,
             ) -> ::std::os::raw::c_int,
         >,
         arg3: ::std::option::Option<
             unsafe extern "C" fn(
                 arg1: *mut ::std::os::raw::c_void,
                 arg2: *const ::std::os::raw::c_char,
-                arg3: ::std::os::raw::c_int,
+                __n: ::std::os::raw::c_int,
             ) -> ::std::os::raw::c_int,
         >,
         arg4: ::std::option::Option<
@@ -1815,6 +2007,79 @@ const _: () = {
     ["Alignment of __arm_pagein_state"][::std::mem::align_of::<__arm_pagein_state>() - 4usize];
     ["Offset of field: __arm_pagein_state::__pagein_error"]
         [::std::mem::offset_of!(__arm_pagein_state, __pagein_error) - 0usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct __darwin_arm_sme_state {
+    pub __svcr: __uint64_t,
+    pub __tpidr2_el0: __uint64_t,
+    pub __svl_b: __uint16_t,
+}
+const _: () = {
+    ["Size of __darwin_arm_sme_state"][::std::mem::size_of::<__darwin_arm_sme_state>() - 24usize];
+    ["Alignment of __darwin_arm_sme_state"]
+        [::std::mem::align_of::<__darwin_arm_sme_state>() - 8usize];
+    ["Offset of field: __darwin_arm_sme_state::__svcr"]
+        [::std::mem::offset_of!(__darwin_arm_sme_state, __svcr) - 0usize];
+    ["Offset of field: __darwin_arm_sme_state::__tpidr2_el0"]
+        [::std::mem::offset_of!(__darwin_arm_sme_state, __tpidr2_el0) - 8usize];
+    ["Offset of field: __darwin_arm_sme_state::__svl_b"]
+        [::std::mem::offset_of!(__darwin_arm_sme_state, __svl_b) - 16usize];
+};
+#[repr(C)]
+#[repr(align(4))]
+#[derive(Debug, Copy, Clone)]
+pub struct __darwin_arm_sve_z_state {
+    pub __z: [[::std::os::raw::c_char; 256usize]; 16usize],
+}
+const _: () = {
+    ["Size of __darwin_arm_sve_z_state"]
+        [::std::mem::size_of::<__darwin_arm_sve_z_state>() - 4096usize];
+    ["Alignment of __darwin_arm_sve_z_state"]
+        [::std::mem::align_of::<__darwin_arm_sve_z_state>() - 4usize];
+    ["Offset of field: __darwin_arm_sve_z_state::__z"]
+        [::std::mem::offset_of!(__darwin_arm_sve_z_state, __z) - 0usize];
+};
+#[repr(C)]
+#[repr(align(4))]
+#[derive(Debug, Copy, Clone)]
+pub struct __darwin_arm_sve_p_state {
+    pub __p: [[::std::os::raw::c_char; 32usize]; 16usize],
+}
+const _: () = {
+    ["Size of __darwin_arm_sve_p_state"]
+        [::std::mem::size_of::<__darwin_arm_sve_p_state>() - 512usize];
+    ["Alignment of __darwin_arm_sve_p_state"]
+        [::std::mem::align_of::<__darwin_arm_sve_p_state>() - 4usize];
+    ["Offset of field: __darwin_arm_sve_p_state::__p"]
+        [::std::mem::offset_of!(__darwin_arm_sve_p_state, __p) - 0usize];
+};
+#[repr(C)]
+#[repr(align(4))]
+#[derive(Debug, Copy, Clone)]
+pub struct __darwin_arm_sme_za_state {
+    pub __za: [::std::os::raw::c_char; 4096usize],
+}
+const _: () = {
+    ["Size of __darwin_arm_sme_za_state"]
+        [::std::mem::size_of::<__darwin_arm_sme_za_state>() - 4096usize];
+    ["Alignment of __darwin_arm_sme_za_state"]
+        [::std::mem::align_of::<__darwin_arm_sme_za_state>() - 4usize];
+    ["Offset of field: __darwin_arm_sme_za_state::__za"]
+        [::std::mem::offset_of!(__darwin_arm_sme_za_state, __za) - 0usize];
+};
+#[repr(C)]
+#[repr(align(4))]
+#[derive(Debug, Copy, Clone)]
+pub struct __darwin_arm_sme2_state {
+    pub __zt0: [::std::os::raw::c_char; 64usize],
+}
+const _: () = {
+    ["Size of __darwin_arm_sme2_state"][::std::mem::size_of::<__darwin_arm_sme2_state>() - 64usize];
+    ["Alignment of __darwin_arm_sme2_state"]
+        [::std::mem::align_of::<__darwin_arm_sme2_state>() - 4usize];
+    ["Offset of field: __darwin_arm_sme2_state::__zt0"]
+        [::std::mem::offset_of!(__darwin_arm_sme2_state, __zt0) - 0usize];
 };
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -3131,7 +3396,7 @@ extern "C" {
     ) -> pid_t;
 }
 extern "C" {
-    pub fn alloca(arg1: usize) -> *mut ::std::os::raw::c_void;
+    pub fn alloca(__size: usize) -> *mut ::std::os::raw::c_void;
 }
 pub type ct_rune_t = __darwin_ct_rune_t;
 pub type rune_t = __darwin_rune_t;
@@ -3369,13 +3634,13 @@ extern "C" {
     pub fn mblen(__s: *const ::std::os::raw::c_char, __n: usize) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn mbstowcs(arg1: *mut u32, arg2: *const ::std::os::raw::c_char, arg3: usize) -> usize;
+    pub fn mbstowcs(arg1: *mut u32, arg2: *const ::std::os::raw::c_char, __n: usize) -> usize;
 }
 extern "C" {
     pub fn mbtowc(
         arg1: *mut u32,
         arg2: *const ::std::os::raw::c_char,
-        arg3: usize,
+        __n: usize,
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
@@ -3450,7 +3715,7 @@ extern "C" {
     pub fn system(arg1: *const ::std::os::raw::c_char) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn wcstombs(arg1: *mut ::std::os::raw::c_char, arg2: *const u32, arg3: usize) -> usize;
+    pub fn wcstombs(arg1: *mut ::std::os::raw::c_char, arg2: *const u32, __n: usize) -> usize;
 }
 extern "C" {
     pub fn wctomb(arg1: *mut ::std::os::raw::c_char, arg2: u32) -> ::std::os::raw::c_int;
@@ -3504,7 +3769,7 @@ extern "C" {
     pub fn initstate(
         arg1: ::std::os::raw::c_uint,
         arg2: *mut ::std::os::raw::c_char,
-        arg3: usize,
+        __size: usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
@@ -3594,7 +3859,10 @@ extern "C" {
     pub fn arc4random() -> u32;
 }
 extern "C" {
-    pub fn arc4random_addrandom(arg1: *mut ::std::os::raw::c_uchar, arg2: ::std::os::raw::c_int);
+    pub fn arc4random_addrandom(
+        arg1: *mut ::std::os::raw::c_uchar,
+        __datlen: ::std::os::raw::c_int,
+    );
 }
 extern "C" {
     pub fn arc4random_buf(__buf: *mut ::std::os::raw::c_void, __nbytes: usize);
@@ -3700,7 +3968,7 @@ extern "C" {
     ) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn getloadavg(arg1: *mut f64, arg2: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    pub fn getloadavg(arg1: *mut f64, __nelem: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn getprogname() -> *const ::std::os::raw::c_char;

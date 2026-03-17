@@ -1,6 +1,7 @@
 use std::{fs, io::Write as _, path::PathBuf};
 
 static SWIFT_RUNTIME: &str = "SWIFT_RUNTIME";
+static GENERATE_BINDINGS: &str = "SWIFT_RUNTIME_SYS_GENERATE_BINDINGS";
 
 fn main() {
     let swift_runtime = match std::env::var(SWIFT_RUNTIME) {
@@ -12,13 +13,15 @@ fn main() {
     };
 
     println!("cargo:rerun-if-env-changed={}", SWIFT_RUNTIME);
+    println!("cargo:rerun-if-env-changed={}", GENERATE_BINDINGS);
     println!("cargo:rustc-link-search=native={}", swift_runtime);
     // println!("cargo:rerun-if-changed=swift");
     // println!("cargo:rustc-link-search=/usr/lib");
     println!("cargo:rustc-link-lib=dylib=swiftCore");
 
-    // build();
-    // build_all(); // <--- builds bindings for the swift runtime
+    if std::env::var_os(GENERATE_BINDINGS).is_some() {
+        build_all();
+    }
 }
 
 #[allow(dead_code)]
@@ -84,7 +87,7 @@ fn build_all() {
             line
         })
         .collect::<Vec<String>>();
-    
+
     let librs_path = PathBuf::from("src").join("lib.rs");
     let code = lines.join("\n");
     let mut file = fs::OpenOptions::new()
@@ -107,7 +110,7 @@ fn build(header: &str, filename: &str) {
     let bindings = bindgen::Builder::default()
         .clang_arg("-x")
         .clang_arg("c++")
-        .clang_arg("-std=c++14")
+        .clang_arg("-std=c++17")
         // .header("wrapper.h")
         .header(header)
         // .blocklist_file("swift/include/swift/ABI/Metadata.h")

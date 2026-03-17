@@ -87,16 +87,87 @@ where
 #[repr(transparent)]
 pub struct __BindgenFloat16(pub u16);
 pub const _LIBCPP_ABI_VERSION: u32 = 1;
+pub const _LIBCPP_ABI_FORCE_ITANIUM: u32 = 0;
+pub const _LIBCPP_ABI_FORCE_MICROSOFT: u32 = 0;
+pub const _LIBCPP_HAS_THREADS: u32 = 1;
+pub const _LIBCPP_HAS_MONOTONIC_CLOCK: u32 = 1;
+pub const _LIBCPP_HAS_TERMINAL: u32 = 1;
+pub const _LIBCPP_HAS_MUSL_LIBC: u32 = 0;
+pub const _LIBCPP_HAS_THREAD_API_PTHREAD: u32 = 0;
+pub const _LIBCPP_HAS_THREAD_API_EXTERNAL: u32 = 0;
+pub const _LIBCPP_HAS_THREAD_API_WIN32: u32 = 0;
+pub const _LIBCPP_HAS_THREAD_API_C11: u32 = 0;
+pub const _LIBCPP_HAS_VENDOR_AVAILABILITY_ANNOTATIONS: u32 = 1;
+pub const _LIBCPP_HAS_FILESYSTEM: u32 = 1;
+pub const _LIBCPP_HAS_RANDOM_DEVICE: u32 = 1;
+pub const _LIBCPP_HAS_LOCALIZATION: u32 = 1;
+pub const _LIBCPP_HAS_UNICODE: u32 = 1;
+pub const _LIBCPP_HAS_WIDE_CHARACTERS: u32 = 1;
+pub const _LIBCPP_HAS_TIME_ZONE_DATABASE: u32 = 0;
+pub const _LIBCPP_INSTRUMENTED_WITH_ASAN: u32 = 0;
 pub const _LIBCPP_HARDENING_MODE_DEFAULT: u32 = 2;
-pub const _LIBCPP_VERSION: u32 = 180100;
-pub const _LIBCPP_STD_VER: u32 = 14;
 pub const _LIBCPP_OBJECT_FORMAT_MACHO: u32 = 1;
+pub const _LIBCPP_STD_VER: u32 = 17;
+pub const _LIBCPP_HAS_RTTI: u32 = 1;
+pub const _LIBCPP_HAS_EXCEPTIONS: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_20: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_19: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_18: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_16: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_15: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_14: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_12: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_11: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_9: u32 = 1;
+pub const _LIBCPP_INTRODUCED_IN_LLVM_4: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_BAD_OPTIONAL_ACCESS: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_BAD_VARIANT_ACCESS: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_BAD_ANY_CAST: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_FILESYSTEM_LIBRARY: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_SYNC: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_ADDITIONAL_IOSTREAM_EXPLICIT_INSTANTIATIONS_1: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_TO_CHARS_FLOATING_POINT: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_VERBOSE_ABORT: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_PMR: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_INIT_PRIMARY_EXCEPTION: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_PRINT: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_TZDB: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_BAD_FUNCTION_CALL_KEY_FUNCTION: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_BAD_EXPECTED_ACCESS_KEY_FUNCTION: u32 = 1;
+pub const _LIBCPP_AVAILABILITY_HAS_FROM_CHARS_FLOATING_POINT: u32 = 1;
+pub const _LIBCPP_VERSION: u32 = 200100;
 pub const _LIBCPP_HARDENING_MODE_NONE: u32 = 2;
 pub const _LIBCPP_HARDENING_MODE_FAST: u32 = 4;
 pub const _LIBCPP_HARDENING_MODE_EXTENSIVE: u32 = 16;
 pub const _LIBCPP_HARDENING_MODE_DEBUG: u32 = 8;
 pub const _LIBCPP_HARDENING_MODE: u32 = 2;
+pub const _LIBCPP_HAS_EXPERIMENTAL_LIBRARY: u32 = 0;
+pub const _LIBCPP_HAS_EXPERIMENTAL_PSTL: u32 = 0;
+pub const _LIBCPP_HAS_EXPERIMENTAL_TZDB: u32 = 0;
+pub const _LIBCPP_HAS_EXPERIMENTAL_SYNCSTREAM: u32 = 0;
+pub const _LIBCPP_HAS_OPEN_WITH_WCHAR: u32 = 0;
+pub const _LIBCPP_HAS_BITSCAN64: u32 = 0;
+pub const _LIBCPP_HAS_OBJC_ARC: u32 = 0;
+pub const _LIBCPP_HAS_OBJC_ARC_WEAK: u32 = 0;
+pub const _LIBCPP_HAS_EXTENSION_BLOCKS: u32 = 1;
+pub const _LIBCPP_HAS_BLOCKS_RUNTIME: u32 = 1;
+pub const _LIBCPP_HAS_ASAN: u32 = 0;
+pub const _LIBCPP_HAS_INT128: u32 = 1;
 pub const _LIBCPP_LOCALE__L_EXTENSIONS: u32 = 1;
+pub const _LIBCPP_HAS_LIBRARY_ALIGNED_ALLOCATION: u32 = 1;
+pub const _LIBCPP_HAS_ALIGNED_ALLOCATION: u32 = 1;
+pub const _LIBCPP_HAS_C11_ALIGNED_ALLOC: u32 = 1;
+pub const _LIBCPP_HAS_CHAR8_T: u32 = 0;
+pub const _LIBCPP_HAS_COND_CLOCKWAIT: u32 = 0;
+pub const _LIBCPP_HAS_TRIVIAL_MUTEX_DESTRUCTION: u32 = 0;
+pub const _LIBCPP_HAS_TRIVIAL_CONDVAR_DESTRUCTION: u32 = 0;
+pub const _LIBCPP_HAS_C_ATOMIC_IMP: u32 = 1;
+pub const _LIBCPP_HAS_GCC_ATOMIC_IMP: u32 = 0;
+pub const _LIBCPP_HAS_EXTERNAL_ATOMIC_IMP: u32 = 0;
+pub const _LIBCPP_HAS_ATOMIC_HEADER: u32 = 1;
+pub const _LIBCPP_HAS_THREAD_SAFETY_ANNOTATIONS: u32 = 0;
+pub const _LIBCPP_HAS_C8RTOMB_MBRTOC8: u32 = 0;
+pub const _LIBCPP_HAS_EXPLICIT_THIS_PARAMETER: u32 = 0;
 pub const SWIFT_COMPILER_IS_MSVC: u32 = 0;
 pub const SWIFT_BUG_REPORT_URL: &[u8; 47] = b"https://swift.org/contributing/#reporting-bugs\0";
 pub const SWIFT_BUG_REPORT_MESSAGE_BASE: &[u8; 69] =
@@ -117,18 +188,6 @@ pub const SWIFT_IMAGE_EXPORTS_swiftDistributed: u32 = 0;
 pub const SWIFT_IMAGE_EXPORTS_swift_Differentiation: u32 = 0;
 pub const SWIFT_COMPACT_ABSOLUTE_FUNCTION_POINTER: u32 = 0;
 pub const SWIFT_PTRAUTH: u32 = 0;
-pub const DYNAMIC_TARGETS_ENABLED: u32 = 0;
-pub const TARGET_OS_MAC: u32 = 1;
-pub const TARGET_OS_OSX: u32 = 1;
-pub const TARGET_OS_IPHONE: u32 = 0;
-pub const TARGET_OS_IOS: u32 = 0;
-pub const TARGET_OS_WATCH: u32 = 0;
-pub const TARGET_OS_TV: u32 = 0;
-pub const TARGET_OS_MACCATALYST: u32 = 0;
-pub const TARGET_OS_UIKITFORMAC: u32 = 0;
-pub const TARGET_OS_SIMULATOR: u32 = 0;
-pub const TARGET_OS_EMBEDDED: u32 = 0;
-pub const TARGET_OS_UNIX: u32 = 0;
 pub const TARGET_OS_RTKIT: u32 = 0;
 pub const TARGET_RT_LITTLE_ENDIAN: u32 = 1;
 pub const TARGET_RT_BIG_ENDIAN: u32 = 0;
@@ -136,11 +195,6 @@ pub const TARGET_RT_64_BIT: u32 = 1;
 pub const TARGET_RT_MAC_CFM: u32 = 0;
 pub const TARGET_RT_MAC_MACHO: u32 = 1;
 pub const TARGET_CPU_ARM64: u32 = 1;
-pub const TARGET_OS_VISION: u32 = 0;
-pub const TARGET_OS_DRIVERKIT: u32 = 0;
-pub const TARGET_OS_WIN32: u32 = 0;
-pub const TARGET_OS_WINDOWS: u32 = 0;
-pub const TARGET_OS_LINUX: u32 = 0;
 pub const TARGET_CPU_PPC: u32 = 0;
 pub const TARGET_CPU_PPC64: u32 = 0;
 pub const TARGET_CPU_68K: u32 = 0;
@@ -150,8 +204,6 @@ pub const TARGET_CPU_ARM: u32 = 0;
 pub const TARGET_CPU_MIPS: u32 = 0;
 pub const TARGET_CPU_SPARC: u32 = 0;
 pub const TARGET_CPU_ALPHA: u32 = 0;
-pub const TARGET_IPHONE_SIMULATOR: u32 = 0;
-pub const TARGET_OS_NANO: u32 = 0;
 pub const SWIFT_BACKTRACE_ON_CRASH_SUPPORTED: u32 = 1;
 pub const SWIFT_BACKTRACE_SECTION: &[u8; 24] = b"__DATA,swift5_backtrace\0";
 pub const SWIFT_PAGE_SIZE: u32 = 16384;
@@ -174,362 +226,9 @@ pub const _DARWIN_FEATURE_ONLY_VERS_1050: u32 = 1;
 pub const _DARWIN_FEATURE_ONLY_UNIX_CONFORMANCE: u32 = 1;
 pub const _DARWIN_FEATURE_UNIX_CONFORMANCE: u32 = 3;
 pub const __has_ptrcheck: u32 = 0;
-pub const __API_TO_BE_DEPRECATED: u32 = 100000;
-pub const __API_TO_BE_DEPRECATED_MACOS: u32 = 100000;
-pub const __API_TO_BE_DEPRECATED_IOS: u32 = 100000;
-pub const __API_TO_BE_DEPRECATED_MACCATALYST: u32 = 100000;
-pub const __API_TO_BE_DEPRECATED_WATCHOS: u32 = 100000;
-pub const __API_TO_BE_DEPRECATED_TVOS: u32 = 100000;
-pub const __API_TO_BE_DEPRECATED_DRIVERKIT: u32 = 100000;
-pub const __API_TO_BE_DEPRECATED_VISIONOS: u32 = 100000;
-pub const __MAC_10_0: u32 = 1000;
-pub const __MAC_10_1: u32 = 1010;
-pub const __MAC_10_2: u32 = 1020;
-pub const __MAC_10_3: u32 = 1030;
-pub const __MAC_10_4: u32 = 1040;
-pub const __MAC_10_5: u32 = 1050;
-pub const __MAC_10_6: u32 = 1060;
-pub const __MAC_10_7: u32 = 1070;
-pub const __MAC_10_8: u32 = 1080;
-pub const __MAC_10_9: u32 = 1090;
-pub const __MAC_10_10: u32 = 101000;
-pub const __MAC_10_10_2: u32 = 101002;
-pub const __MAC_10_10_3: u32 = 101003;
-pub const __MAC_10_11: u32 = 101100;
-pub const __MAC_10_11_2: u32 = 101102;
-pub const __MAC_10_11_3: u32 = 101103;
-pub const __MAC_10_11_4: u32 = 101104;
-pub const __MAC_10_12: u32 = 101200;
-pub const __MAC_10_12_1: u32 = 101201;
-pub const __MAC_10_12_2: u32 = 101202;
-pub const __MAC_10_12_4: u32 = 101204;
-pub const __MAC_10_13: u32 = 101300;
-pub const __MAC_10_13_1: u32 = 101301;
-pub const __MAC_10_13_2: u32 = 101302;
-pub const __MAC_10_13_4: u32 = 101304;
-pub const __MAC_10_14: u32 = 101400;
-pub const __MAC_10_14_1: u32 = 101401;
-pub const __MAC_10_14_4: u32 = 101404;
-pub const __MAC_10_14_5: u32 = 101405;
-pub const __MAC_10_14_6: u32 = 101406;
-pub const __MAC_10_15: u32 = 101500;
-pub const __MAC_10_15_1: u32 = 101501;
-pub const __MAC_10_15_4: u32 = 101504;
-pub const __MAC_10_16: u32 = 101600;
-pub const __MAC_11_0: u32 = 110000;
-pub const __MAC_11_1: u32 = 110100;
-pub const __MAC_11_3: u32 = 110300;
-pub const __MAC_11_4: u32 = 110400;
-pub const __MAC_11_5: u32 = 110500;
-pub const __MAC_11_6: u32 = 110600;
-pub const __MAC_12_0: u32 = 120000;
-pub const __MAC_12_1: u32 = 120100;
-pub const __MAC_12_2: u32 = 120200;
-pub const __MAC_12_3: u32 = 120300;
-pub const __MAC_12_4: u32 = 120400;
-pub const __MAC_12_5: u32 = 120500;
-pub const __MAC_12_6: u32 = 120600;
-pub const __MAC_12_7: u32 = 120700;
-pub const __MAC_13_0: u32 = 130000;
-pub const __MAC_13_1: u32 = 130100;
-pub const __MAC_13_2: u32 = 130200;
-pub const __MAC_13_3: u32 = 130300;
-pub const __MAC_13_4: u32 = 130400;
-pub const __MAC_13_5: u32 = 130500;
-pub const __MAC_13_6: u32 = 130600;
-pub const __MAC_14_0: u32 = 140000;
-pub const __MAC_14_1: u32 = 140100;
-pub const __MAC_14_2: u32 = 140200;
-pub const __MAC_14_3: u32 = 140300;
-pub const __MAC_14_4: u32 = 140400;
-pub const __MAC_14_5: u32 = 140500;
-pub const __MAC_15_0: u32 = 150000;
-pub const __IPHONE_2_0: u32 = 20000;
-pub const __IPHONE_2_1: u32 = 20100;
-pub const __IPHONE_2_2: u32 = 20200;
-pub const __IPHONE_3_0: u32 = 30000;
-pub const __IPHONE_3_1: u32 = 30100;
-pub const __IPHONE_3_2: u32 = 30200;
-pub const __IPHONE_4_0: u32 = 40000;
-pub const __IPHONE_4_1: u32 = 40100;
-pub const __IPHONE_4_2: u32 = 40200;
-pub const __IPHONE_4_3: u32 = 40300;
-pub const __IPHONE_5_0: u32 = 50000;
-pub const __IPHONE_5_1: u32 = 50100;
-pub const __IPHONE_6_0: u32 = 60000;
-pub const __IPHONE_6_1: u32 = 60100;
-pub const __IPHONE_7_0: u32 = 70000;
-pub const __IPHONE_7_1: u32 = 70100;
-pub const __IPHONE_8_0: u32 = 80000;
-pub const __IPHONE_8_1: u32 = 80100;
-pub const __IPHONE_8_2: u32 = 80200;
-pub const __IPHONE_8_3: u32 = 80300;
-pub const __IPHONE_8_4: u32 = 80400;
-pub const __IPHONE_9_0: u32 = 90000;
-pub const __IPHONE_9_1: u32 = 90100;
-pub const __IPHONE_9_2: u32 = 90200;
-pub const __IPHONE_9_3: u32 = 90300;
-pub const __IPHONE_10_0: u32 = 100000;
-pub const __IPHONE_10_1: u32 = 100100;
-pub const __IPHONE_10_2: u32 = 100200;
-pub const __IPHONE_10_3: u32 = 100300;
-pub const __IPHONE_11_0: u32 = 110000;
-pub const __IPHONE_11_1: u32 = 110100;
-pub const __IPHONE_11_2: u32 = 110200;
-pub const __IPHONE_11_3: u32 = 110300;
-pub const __IPHONE_11_4: u32 = 110400;
-pub const __IPHONE_12_0: u32 = 120000;
-pub const __IPHONE_12_1: u32 = 120100;
-pub const __IPHONE_12_2: u32 = 120200;
-pub const __IPHONE_12_3: u32 = 120300;
-pub const __IPHONE_12_4: u32 = 120400;
-pub const __IPHONE_13_0: u32 = 130000;
-pub const __IPHONE_13_1: u32 = 130100;
-pub const __IPHONE_13_2: u32 = 130200;
-pub const __IPHONE_13_3: u32 = 130300;
-pub const __IPHONE_13_4: u32 = 130400;
-pub const __IPHONE_13_5: u32 = 130500;
-pub const __IPHONE_13_6: u32 = 130600;
-pub const __IPHONE_13_7: u32 = 130700;
-pub const __IPHONE_14_0: u32 = 140000;
-pub const __IPHONE_14_1: u32 = 140100;
-pub const __IPHONE_14_2: u32 = 140200;
-pub const __IPHONE_14_3: u32 = 140300;
-pub const __IPHONE_14_5: u32 = 140500;
-pub const __IPHONE_14_4: u32 = 140400;
-pub const __IPHONE_14_6: u32 = 140600;
-pub const __IPHONE_14_7: u32 = 140700;
-pub const __IPHONE_14_8: u32 = 140800;
-pub const __IPHONE_15_0: u32 = 150000;
-pub const __IPHONE_15_1: u32 = 150100;
-pub const __IPHONE_15_2: u32 = 150200;
-pub const __IPHONE_15_3: u32 = 150300;
-pub const __IPHONE_15_4: u32 = 150400;
-pub const __IPHONE_15_5: u32 = 150500;
-pub const __IPHONE_15_6: u32 = 150600;
-pub const __IPHONE_15_7: u32 = 150700;
-pub const __IPHONE_15_8: u32 = 150800;
-pub const __IPHONE_16_0: u32 = 160000;
-pub const __IPHONE_16_1: u32 = 160100;
-pub const __IPHONE_16_2: u32 = 160200;
-pub const __IPHONE_16_3: u32 = 160300;
-pub const __IPHONE_16_4: u32 = 160400;
-pub const __IPHONE_16_5: u32 = 160500;
-pub const __IPHONE_16_6: u32 = 160600;
-pub const __IPHONE_16_7: u32 = 160700;
-pub const __IPHONE_17_0: u32 = 170000;
-pub const __IPHONE_17_1: u32 = 170100;
-pub const __IPHONE_17_2: u32 = 170200;
-pub const __IPHONE_17_3: u32 = 170300;
-pub const __IPHONE_17_4: u32 = 170400;
-pub const __IPHONE_17_5: u32 = 170500;
-pub const __IPHONE_18_0: u32 = 180000;
-pub const __WATCHOS_1_0: u32 = 10000;
-pub const __WATCHOS_2_0: u32 = 20000;
-pub const __WATCHOS_2_1: u32 = 20100;
-pub const __WATCHOS_2_2: u32 = 20200;
-pub const __WATCHOS_3_0: u32 = 30000;
-pub const __WATCHOS_3_1: u32 = 30100;
-pub const __WATCHOS_3_1_1: u32 = 30101;
-pub const __WATCHOS_3_2: u32 = 30200;
-pub const __WATCHOS_4_0: u32 = 40000;
-pub const __WATCHOS_4_1: u32 = 40100;
-pub const __WATCHOS_4_2: u32 = 40200;
-pub const __WATCHOS_4_3: u32 = 40300;
-pub const __WATCHOS_5_0: u32 = 50000;
-pub const __WATCHOS_5_1: u32 = 50100;
-pub const __WATCHOS_5_2: u32 = 50200;
-pub const __WATCHOS_5_3: u32 = 50300;
-pub const __WATCHOS_6_0: u32 = 60000;
-pub const __WATCHOS_6_1: u32 = 60100;
-pub const __WATCHOS_6_2: u32 = 60200;
-pub const __WATCHOS_7_0: u32 = 70000;
-pub const __WATCHOS_7_1: u32 = 70100;
-pub const __WATCHOS_7_2: u32 = 70200;
-pub const __WATCHOS_7_3: u32 = 70300;
-pub const __WATCHOS_7_4: u32 = 70400;
-pub const __WATCHOS_7_5: u32 = 70500;
-pub const __WATCHOS_7_6: u32 = 70600;
-pub const __WATCHOS_8_0: u32 = 80000;
-pub const __WATCHOS_8_1: u32 = 80100;
-pub const __WATCHOS_8_3: u32 = 80300;
-pub const __WATCHOS_8_4: u32 = 80400;
-pub const __WATCHOS_8_5: u32 = 80500;
-pub const __WATCHOS_8_6: u32 = 80600;
-pub const __WATCHOS_8_7: u32 = 80700;
-pub const __WATCHOS_8_8: u32 = 80800;
-pub const __WATCHOS_9_0: u32 = 90000;
-pub const __WATCHOS_9_1: u32 = 90100;
-pub const __WATCHOS_9_2: u32 = 90200;
-pub const __WATCHOS_9_3: u32 = 90300;
-pub const __WATCHOS_9_4: u32 = 90400;
-pub const __WATCHOS_9_5: u32 = 90500;
-pub const __WATCHOS_9_6: u32 = 90600;
-pub const __WATCHOS_10_0: u32 = 100000;
-pub const __WATCHOS_10_1: u32 = 100100;
-pub const __WATCHOS_10_2: u32 = 100200;
-pub const __WATCHOS_10_3: u32 = 100300;
-pub const __WATCHOS_10_4: u32 = 100400;
-pub const __WATCHOS_10_5: u32 = 100500;
-pub const __WATCHOS_11_0: u32 = 110000;
-pub const __TVOS_9_0: u32 = 90000;
-pub const __TVOS_9_1: u32 = 90100;
-pub const __TVOS_9_2: u32 = 90200;
-pub const __TVOS_10_0: u32 = 100000;
-pub const __TVOS_10_0_1: u32 = 100001;
-pub const __TVOS_10_1: u32 = 100100;
-pub const __TVOS_10_2: u32 = 100200;
-pub const __TVOS_11_0: u32 = 110000;
-pub const __TVOS_11_1: u32 = 110100;
-pub const __TVOS_11_2: u32 = 110200;
-pub const __TVOS_11_3: u32 = 110300;
-pub const __TVOS_11_4: u32 = 110400;
-pub const __TVOS_12_0: u32 = 120000;
-pub const __TVOS_12_1: u32 = 120100;
-pub const __TVOS_12_2: u32 = 120200;
-pub const __TVOS_12_3: u32 = 120300;
-pub const __TVOS_12_4: u32 = 120400;
-pub const __TVOS_13_0: u32 = 130000;
-pub const __TVOS_13_2: u32 = 130200;
-pub const __TVOS_13_3: u32 = 130300;
-pub const __TVOS_13_4: u32 = 130400;
-pub const __TVOS_14_0: u32 = 140000;
-pub const __TVOS_14_1: u32 = 140100;
-pub const __TVOS_14_2: u32 = 140200;
-pub const __TVOS_14_3: u32 = 140300;
-pub const __TVOS_14_5: u32 = 140500;
-pub const __TVOS_14_6: u32 = 140600;
-pub const __TVOS_14_7: u32 = 140700;
-pub const __TVOS_15_0: u32 = 150000;
-pub const __TVOS_15_1: u32 = 150100;
-pub const __TVOS_15_2: u32 = 150200;
-pub const __TVOS_15_3: u32 = 150300;
-pub const __TVOS_15_4: u32 = 150400;
-pub const __TVOS_15_5: u32 = 150500;
-pub const __TVOS_15_6: u32 = 150600;
-pub const __TVOS_16_0: u32 = 160000;
-pub const __TVOS_16_1: u32 = 160100;
-pub const __TVOS_16_2: u32 = 160200;
-pub const __TVOS_16_3: u32 = 160300;
-pub const __TVOS_16_4: u32 = 160400;
-pub const __TVOS_16_5: u32 = 160500;
-pub const __TVOS_16_6: u32 = 160600;
-pub const __TVOS_17_0: u32 = 170000;
-pub const __TVOS_17_1: u32 = 170100;
-pub const __TVOS_17_2: u32 = 170200;
-pub const __TVOS_17_3: u32 = 170300;
-pub const __TVOS_17_4: u32 = 170400;
-pub const __TVOS_17_5: u32 = 170500;
-pub const __TVOS_18_0: u32 = 180000;
-pub const __BRIDGEOS_2_0: u32 = 20000;
-pub const __BRIDGEOS_3_0: u32 = 30000;
-pub const __BRIDGEOS_3_1: u32 = 30100;
-pub const __BRIDGEOS_3_4: u32 = 30400;
-pub const __BRIDGEOS_4_0: u32 = 40000;
-pub const __BRIDGEOS_4_1: u32 = 40100;
-pub const __BRIDGEOS_5_0: u32 = 50000;
-pub const __BRIDGEOS_5_1: u32 = 50100;
-pub const __BRIDGEOS_5_3: u32 = 50300;
-pub const __BRIDGEOS_6_0: u32 = 60000;
-pub const __BRIDGEOS_6_2: u32 = 60200;
-pub const __BRIDGEOS_6_4: u32 = 60400;
-pub const __BRIDGEOS_6_5: u32 = 60500;
-pub const __BRIDGEOS_6_6: u32 = 60600;
-pub const __BRIDGEOS_7_0: u32 = 70000;
-pub const __BRIDGEOS_7_1: u32 = 70100;
-pub const __BRIDGEOS_7_2: u32 = 70200;
-pub const __BRIDGEOS_7_3: u32 = 70300;
-pub const __BRIDGEOS_7_4: u32 = 70400;
-pub const __BRIDGEOS_7_6: u32 = 70600;
-pub const __BRIDGEOS_8_0: u32 = 80000;
-pub const __BRIDGEOS_8_1: u32 = 80100;
-pub const __BRIDGEOS_8_2: u32 = 80200;
-pub const __BRIDGEOS_8_3: u32 = 80300;
-pub const __BRIDGEOS_8_4: u32 = 80400;
-pub const __BRIDGEOS_8_5: u32 = 80500;
-pub const __BRIDGEOS_9_0: u32 = 90000;
-pub const __DRIVERKIT_19_0: u32 = 190000;
-pub const __DRIVERKIT_20_0: u32 = 200000;
-pub const __DRIVERKIT_21_0: u32 = 210000;
-pub const __DRIVERKIT_22_0: u32 = 220000;
-pub const __DRIVERKIT_22_4: u32 = 220400;
-pub const __DRIVERKIT_22_5: u32 = 220500;
-pub const __DRIVERKIT_22_6: u32 = 220600;
-pub const __DRIVERKIT_23_0: u32 = 230000;
-pub const __DRIVERKIT_23_1: u32 = 230100;
-pub const __DRIVERKIT_23_2: u32 = 230200;
-pub const __DRIVERKIT_23_3: u32 = 230300;
-pub const __DRIVERKIT_23_4: u32 = 230400;
-pub const __DRIVERKIT_23_5: u32 = 230500;
-pub const __DRIVERKIT_24_0: u32 = 240000;
-pub const __VISIONOS_1_0: u32 = 10000;
-pub const __VISIONOS_1_1: u32 = 10100;
-pub const __VISIONOS_1_2: u32 = 10200;
-pub const __VISIONOS_2_0: u32 = 20000;
-pub const MAC_OS_X_VERSION_10_0: u32 = 1000;
-pub const MAC_OS_X_VERSION_10_1: u32 = 1010;
-pub const MAC_OS_X_VERSION_10_2: u32 = 1020;
-pub const MAC_OS_X_VERSION_10_3: u32 = 1030;
-pub const MAC_OS_X_VERSION_10_4: u32 = 1040;
-pub const MAC_OS_X_VERSION_10_5: u32 = 1050;
-pub const MAC_OS_X_VERSION_10_6: u32 = 1060;
-pub const MAC_OS_X_VERSION_10_7: u32 = 1070;
-pub const MAC_OS_X_VERSION_10_8: u32 = 1080;
-pub const MAC_OS_X_VERSION_10_9: u32 = 1090;
-pub const MAC_OS_X_VERSION_10_10: u32 = 101000;
-pub const MAC_OS_X_VERSION_10_10_2: u32 = 101002;
-pub const MAC_OS_X_VERSION_10_10_3: u32 = 101003;
-pub const MAC_OS_X_VERSION_10_11: u32 = 101100;
-pub const MAC_OS_X_VERSION_10_11_2: u32 = 101102;
-pub const MAC_OS_X_VERSION_10_11_3: u32 = 101103;
-pub const MAC_OS_X_VERSION_10_11_4: u32 = 101104;
-pub const MAC_OS_X_VERSION_10_12: u32 = 101200;
-pub const MAC_OS_X_VERSION_10_12_1: u32 = 101201;
-pub const MAC_OS_X_VERSION_10_12_2: u32 = 101202;
-pub const MAC_OS_X_VERSION_10_12_4: u32 = 101204;
-pub const MAC_OS_X_VERSION_10_13: u32 = 101300;
-pub const MAC_OS_X_VERSION_10_13_1: u32 = 101301;
-pub const MAC_OS_X_VERSION_10_13_2: u32 = 101302;
-pub const MAC_OS_X_VERSION_10_13_4: u32 = 101304;
-pub const MAC_OS_X_VERSION_10_14: u32 = 101400;
-pub const MAC_OS_X_VERSION_10_14_1: u32 = 101401;
-pub const MAC_OS_X_VERSION_10_14_4: u32 = 101404;
-pub const MAC_OS_X_VERSION_10_14_5: u32 = 101405;
-pub const MAC_OS_X_VERSION_10_14_6: u32 = 101406;
-pub const MAC_OS_X_VERSION_10_15: u32 = 101500;
-pub const MAC_OS_X_VERSION_10_15_1: u32 = 101501;
-pub const MAC_OS_X_VERSION_10_15_4: u32 = 101504;
-pub const MAC_OS_X_VERSION_10_16: u32 = 101600;
-pub const MAC_OS_VERSION_11_0: u32 = 110000;
-pub const MAC_OS_VERSION_11_1: u32 = 110100;
-pub const MAC_OS_VERSION_11_3: u32 = 110300;
-pub const MAC_OS_VERSION_11_4: u32 = 110400;
-pub const MAC_OS_VERSION_11_5: u32 = 110500;
-pub const MAC_OS_VERSION_11_6: u32 = 110600;
-pub const MAC_OS_VERSION_12_0: u32 = 120000;
-pub const MAC_OS_VERSION_12_1: u32 = 120100;
-pub const MAC_OS_VERSION_12_2: u32 = 120200;
-pub const MAC_OS_VERSION_12_3: u32 = 120300;
-pub const MAC_OS_VERSION_12_4: u32 = 120400;
-pub const MAC_OS_VERSION_12_5: u32 = 120500;
-pub const MAC_OS_VERSION_12_6: u32 = 120600;
-pub const MAC_OS_VERSION_12_7: u32 = 120700;
-pub const MAC_OS_VERSION_13_0: u32 = 130000;
-pub const MAC_OS_VERSION_13_1: u32 = 130100;
-pub const MAC_OS_VERSION_13_2: u32 = 130200;
-pub const MAC_OS_VERSION_13_3: u32 = 130300;
-pub const MAC_OS_VERSION_13_4: u32 = 130400;
-pub const MAC_OS_VERSION_13_5: u32 = 130500;
-pub const MAC_OS_VERSION_13_6: u32 = 130600;
-pub const MAC_OS_VERSION_14_0: u32 = 140000;
-pub const MAC_OS_VERSION_14_1: u32 = 140100;
-pub const MAC_OS_VERSION_14_2: u32 = 140200;
-pub const MAC_OS_VERSION_14_3: u32 = 140300;
-pub const MAC_OS_VERSION_14_4: u32 = 140400;
-pub const MAC_OS_VERSION_14_5: u32 = 140500;
-pub const MAC_OS_VERSION_15_0: u32 = 150000;
-pub const __MAC_OS_X_VERSION_MAX_ALLOWED: u32 = 150000;
-pub const __ENABLE_LEGACY_MAC_AVAILABILITY: u32 = 1;
+pub const __has_bounds_safety_attributes: u32 = 0;
+pub const _LIBCPP_STDATOMIC_H_HAS_DEFINITELY_BEEN_INCLUDED: u32 = 0;
+pub const __WORDSIZE: u32 = 64;
 pub const USE_CLANG_TYPES: u32 = 0;
 pub const __PTHREAD_SIZE__: u32 = 8176;
 pub const __PTHREAD_ATTR_SIZE__: u32 = 56;
@@ -540,117 +239,6 @@ pub const __PTHREAD_COND_SIZE__: u32 = 40;
 pub const __PTHREAD_ONCE_SIZE__: u32 = 8;
 pub const __PTHREAD_RWLOCK_SIZE__: u32 = 192;
 pub const __PTHREAD_RWLOCKATTR_SIZE__: u32 = 16;
-pub const __DARWIN_WCHAR_MIN: i32 = -2147483648;
-pub const _FORTIFY_SOURCE: u32 = 2;
-pub const __DARWIN_NSIG: u32 = 32;
-pub const NSIG: u32 = 32;
-pub const _ARM_SIGNAL_: u32 = 1;
-pub const SIGHUP: u32 = 1;
-pub const SIGINT: u32 = 2;
-pub const SIGQUIT: u32 = 3;
-pub const SIGILL: u32 = 4;
-pub const SIGTRAP: u32 = 5;
-pub const SIGABRT: u32 = 6;
-pub const SIGIOT: u32 = 6;
-pub const SIGEMT: u32 = 7;
-pub const SIGFPE: u32 = 8;
-pub const SIGKILL: u32 = 9;
-pub const SIGBUS: u32 = 10;
-pub const SIGSEGV: u32 = 11;
-pub const SIGSYS: u32 = 12;
-pub const SIGPIPE: u32 = 13;
-pub const SIGALRM: u32 = 14;
-pub const SIGTERM: u32 = 15;
-pub const SIGURG: u32 = 16;
-pub const SIGSTOP: u32 = 17;
-pub const SIGTSTP: u32 = 18;
-pub const SIGCONT: u32 = 19;
-pub const SIGCHLD: u32 = 20;
-pub const SIGTTIN: u32 = 21;
-pub const SIGTTOU: u32 = 22;
-pub const SIGIO: u32 = 23;
-pub const SIGXCPU: u32 = 24;
-pub const SIGXFSZ: u32 = 25;
-pub const SIGVTALRM: u32 = 26;
-pub const SIGPROF: u32 = 27;
-pub const SIGWINCH: u32 = 28;
-pub const SIGINFO: u32 = 29;
-pub const SIGUSR1: u32 = 30;
-pub const SIGUSR2: u32 = 31;
-pub const __DARWIN_OPAQUE_ARM_THREAD_STATE64: u32 = 0;
-pub const USE_CLANG_STDDEF: u32 = 0;
-pub const SIGEV_NONE: u32 = 0;
-pub const SIGEV_SIGNAL: u32 = 1;
-pub const SIGEV_THREAD: u32 = 3;
-pub const ILL_NOOP: u32 = 0;
-pub const ILL_ILLOPC: u32 = 1;
-pub const ILL_ILLTRP: u32 = 2;
-pub const ILL_PRVOPC: u32 = 3;
-pub const ILL_ILLOPN: u32 = 4;
-pub const ILL_ILLADR: u32 = 5;
-pub const ILL_PRVREG: u32 = 6;
-pub const ILL_COPROC: u32 = 7;
-pub const ILL_BADSTK: u32 = 8;
-pub const FPE_NOOP: u32 = 0;
-pub const FPE_FLTDIV: u32 = 1;
-pub const FPE_FLTOVF: u32 = 2;
-pub const FPE_FLTUND: u32 = 3;
-pub const FPE_FLTRES: u32 = 4;
-pub const FPE_FLTINV: u32 = 5;
-pub const FPE_FLTSUB: u32 = 6;
-pub const FPE_INTDIV: u32 = 7;
-pub const FPE_INTOVF: u32 = 8;
-pub const SEGV_NOOP: u32 = 0;
-pub const SEGV_MAPERR: u32 = 1;
-pub const SEGV_ACCERR: u32 = 2;
-pub const BUS_NOOP: u32 = 0;
-pub const BUS_ADRALN: u32 = 1;
-pub const BUS_ADRERR: u32 = 2;
-pub const BUS_OBJERR: u32 = 3;
-pub const TRAP_BRKPT: u32 = 1;
-pub const TRAP_TRACE: u32 = 2;
-pub const CLD_NOOP: u32 = 0;
-pub const CLD_EXITED: u32 = 1;
-pub const CLD_KILLED: u32 = 2;
-pub const CLD_DUMPED: u32 = 3;
-pub const CLD_TRAPPED: u32 = 4;
-pub const CLD_STOPPED: u32 = 5;
-pub const CLD_CONTINUED: u32 = 6;
-pub const POLL_IN: u32 = 1;
-pub const POLL_OUT: u32 = 2;
-pub const POLL_MSG: u32 = 3;
-pub const POLL_ERR: u32 = 4;
-pub const POLL_PRI: u32 = 5;
-pub const POLL_HUP: u32 = 6;
-pub const SA_ONSTACK: u32 = 1;
-pub const SA_RESTART: u32 = 2;
-pub const SA_RESETHAND: u32 = 4;
-pub const SA_NOCLDSTOP: u32 = 8;
-pub const SA_NODEFER: u32 = 16;
-pub const SA_NOCLDWAIT: u32 = 32;
-pub const SA_SIGINFO: u32 = 64;
-pub const SA_USERTRAMP: u32 = 256;
-pub const SA_64REGSET: u32 = 512;
-pub const SA_USERSPACE_MASK: u32 = 127;
-pub const SIG_BLOCK: u32 = 1;
-pub const SIG_UNBLOCK: u32 = 2;
-pub const SIG_SETMASK: u32 = 3;
-pub const SI_USER: u32 = 65537;
-pub const SI_QUEUE: u32 = 65538;
-pub const SI_TIMER: u32 = 65539;
-pub const SI_ASYNCIO: u32 = 65540;
-pub const SI_MESGQ: u32 = 65541;
-pub const SS_ONSTACK: u32 = 1;
-pub const SS_DISABLE: u32 = 4;
-pub const MINSIGSTKSZ: u32 = 32768;
-pub const SIGSTKSZ: u32 = 131072;
-pub const SV_ONSTACK: u32 = 1;
-pub const SV_INTERRUPT: u32 = 2;
-pub const SV_RESETHAND: u32 = 4;
-pub const SV_NODEFER: u32 = 16;
-pub const SV_NOCLDSTOP: u32 = 8;
-pub const SV_SIGINFO: u32 = 64;
-pub const __WORDSIZE: u32 = 64;
 pub const INT8_MAX: u32 = 127;
 pub const INT16_MAX: u32 = 32767;
 pub const INT32_MAX: u32 = 2147483647;
@@ -695,123 +283,6 @@ pub const WINT_MIN: i32 = -2147483648;
 pub const WINT_MAX: u32 = 2147483647;
 pub const SIG_ATOMIC_MIN: i32 = -2147483648;
 pub const SIG_ATOMIC_MAX: u32 = 2147483647;
-pub const PRIO_PROCESS: u32 = 0;
-pub const PRIO_PGRP: u32 = 1;
-pub const PRIO_USER: u32 = 2;
-pub const PRIO_DARWIN_THREAD: u32 = 3;
-pub const PRIO_DARWIN_PROCESS: u32 = 4;
-pub const PRIO_MIN: i32 = -20;
-pub const PRIO_MAX: u32 = 20;
-pub const PRIO_DARWIN_BG: u32 = 4096;
-pub const PRIO_DARWIN_NONUI: u32 = 4097;
-pub const RUSAGE_SELF: u32 = 0;
-pub const RUSAGE_CHILDREN: i32 = -1;
-pub const RUSAGE_INFO_V0: u32 = 0;
-pub const RUSAGE_INFO_V1: u32 = 1;
-pub const RUSAGE_INFO_V2: u32 = 2;
-pub const RUSAGE_INFO_V3: u32 = 3;
-pub const RUSAGE_INFO_V4: u32 = 4;
-pub const RUSAGE_INFO_V5: u32 = 5;
-pub const RUSAGE_INFO_V6: u32 = 6;
-pub const RUSAGE_INFO_CURRENT: u32 = 6;
-pub const RU_PROC_RUNS_RESLIDE: u32 = 1;
-pub const RLIMIT_CPU: u32 = 0;
-pub const RLIMIT_FSIZE: u32 = 1;
-pub const RLIMIT_DATA: u32 = 2;
-pub const RLIMIT_STACK: u32 = 3;
-pub const RLIMIT_CORE: u32 = 4;
-pub const RLIMIT_AS: u32 = 5;
-pub const RLIMIT_RSS: u32 = 5;
-pub const RLIMIT_MEMLOCK: u32 = 6;
-pub const RLIMIT_NPROC: u32 = 7;
-pub const RLIMIT_NOFILE: u32 = 8;
-pub const RLIM_NLIMITS: u32 = 9;
-pub const _RLIMIT_POSIX_FLAG: u32 = 4096;
-pub const RLIMIT_WAKEUPS_MONITOR: u32 = 1;
-pub const RLIMIT_CPU_USAGE_MONITOR: u32 = 2;
-pub const RLIMIT_THREAD_CPULIMITS: u32 = 3;
-pub const RLIMIT_FOOTPRINT_INTERVAL: u32 = 4;
-pub const WAKEMON_ENABLE: u32 = 1;
-pub const WAKEMON_DISABLE: u32 = 2;
-pub const WAKEMON_GET_PARAMS: u32 = 4;
-pub const WAKEMON_SET_DEFAULTS: u32 = 8;
-pub const WAKEMON_MAKE_FATAL: u32 = 16;
-pub const CPUMON_MAKE_FATAL: u32 = 4096;
-pub const FOOTPRINT_INTERVAL_RESET: u32 = 1;
-pub const IOPOL_TYPE_DISK: u32 = 0;
-pub const IOPOL_TYPE_VFS_ATIME_UPDATES: u32 = 2;
-pub const IOPOL_TYPE_VFS_MATERIALIZE_DATALESS_FILES: u32 = 3;
-pub const IOPOL_TYPE_VFS_STATFS_NO_DATA_VOLUME: u32 = 4;
-pub const IOPOL_TYPE_VFS_TRIGGER_RESOLVE: u32 = 5;
-pub const IOPOL_TYPE_VFS_IGNORE_CONTENT_PROTECTION: u32 = 6;
-pub const IOPOL_TYPE_VFS_IGNORE_PERMISSIONS: u32 = 7;
-pub const IOPOL_TYPE_VFS_SKIP_MTIME_UPDATE: u32 = 8;
-pub const IOPOL_TYPE_VFS_ALLOW_LOW_SPACE_WRITES: u32 = 9;
-pub const IOPOL_TYPE_VFS_DISALLOW_RW_FOR_O_EVTONLY: u32 = 10;
-pub const IOPOL_SCOPE_PROCESS: u32 = 0;
-pub const IOPOL_SCOPE_THREAD: u32 = 1;
-pub const IOPOL_SCOPE_DARWIN_BG: u32 = 2;
-pub const IOPOL_DEFAULT: u32 = 0;
-pub const IOPOL_IMPORTANT: u32 = 1;
-pub const IOPOL_PASSIVE: u32 = 2;
-pub const IOPOL_THROTTLE: u32 = 3;
-pub const IOPOL_UTILITY: u32 = 4;
-pub const IOPOL_STANDARD: u32 = 5;
-pub const IOPOL_APPLICATION: u32 = 5;
-pub const IOPOL_NORMAL: u32 = 1;
-pub const IOPOL_ATIME_UPDATES_DEFAULT: u32 = 0;
-pub const IOPOL_ATIME_UPDATES_OFF: u32 = 1;
-pub const IOPOL_MATERIALIZE_DATALESS_FILES_DEFAULT: u32 = 0;
-pub const IOPOL_MATERIALIZE_DATALESS_FILES_OFF: u32 = 1;
-pub const IOPOL_MATERIALIZE_DATALESS_FILES_ON: u32 = 2;
-pub const IOPOL_VFS_STATFS_NO_DATA_VOLUME_DEFAULT: u32 = 0;
-pub const IOPOL_VFS_STATFS_FORCE_NO_DATA_VOLUME: u32 = 1;
-pub const IOPOL_VFS_TRIGGER_RESOLVE_DEFAULT: u32 = 0;
-pub const IOPOL_VFS_TRIGGER_RESOLVE_OFF: u32 = 1;
-pub const IOPOL_VFS_CONTENT_PROTECTION_DEFAULT: u32 = 0;
-pub const IOPOL_VFS_CONTENT_PROTECTION_IGNORE: u32 = 1;
-pub const IOPOL_VFS_IGNORE_PERMISSIONS_OFF: u32 = 0;
-pub const IOPOL_VFS_IGNORE_PERMISSIONS_ON: u32 = 1;
-pub const IOPOL_VFS_SKIP_MTIME_UPDATE_OFF: u32 = 0;
-pub const IOPOL_VFS_SKIP_MTIME_UPDATE_ON: u32 = 1;
-pub const IOPOL_VFS_ALLOW_LOW_SPACE_WRITES_OFF: u32 = 0;
-pub const IOPOL_VFS_ALLOW_LOW_SPACE_WRITES_ON: u32 = 1;
-pub const IOPOL_VFS_DISALLOW_RW_FOR_O_EVTONLY_DEFAULT: u32 = 0;
-pub const IOPOL_VFS_DISALLOW_RW_FOR_O_EVTONLY_ON: u32 = 1;
-pub const IOPOL_VFS_NOCACHE_WRITE_FS_BLKSIZE_DEFAULT: u32 = 0;
-pub const IOPOL_VFS_NOCACHE_WRITE_FS_BLKSIZE_ON: u32 = 1;
-pub const WNOHANG: u32 = 1;
-pub const WUNTRACED: u32 = 2;
-pub const WCOREFLAG: u32 = 128;
-pub const _WSTOPPED: u32 = 127;
-pub const WEXITED: u32 = 4;
-pub const WSTOPPED: u32 = 8;
-pub const WCONTINUED: u32 = 16;
-pub const WNOWAIT: u32 = 32;
-pub const WAIT_ANY: i32 = -1;
-pub const WAIT_MYPGRP: u32 = 0;
-pub const _QUAD_HIGHWORD: u32 = 1;
-pub const _QUAD_LOWWORD: u32 = 0;
-pub const __DARWIN_LITTLE_ENDIAN: u32 = 1234;
-pub const __DARWIN_BIG_ENDIAN: u32 = 4321;
-pub const __DARWIN_PDP_ENDIAN: u32 = 3412;
-pub const LITTLE_ENDIAN: u32 = 1234;
-pub const BIG_ENDIAN: u32 = 4321;
-pub const PDP_ENDIAN: u32 = 3412;
-pub const __DARWIN_BYTE_ORDER: u32 = 1234;
-pub const BYTE_ORDER: u32 = 1234;
-pub const EXIT_FAILURE: u32 = 1;
-pub const EXIT_SUCCESS: u32 = 0;
-pub const RAND_MAX: u32 = 2147483647;
-pub const _LIBCPP_AVAILABILITY_HAS_INIT_PRIMARY_EXCEPTION: u32 = 0;
-pub const _LIBCPP_AVAILABILITY_HAS_FILESYSTEM_LIBRARY: u32 = 1;
-pub const _LIBCPP_AVAILABILITY_HAS_TO_CHARS_FLOATING_POINT: u32 = 1;
-pub const _LIBCPP_AVAILABILITY_HAS_SYNC: u32 = 1;
-pub const _LIBCPP_AVAILABILITY_HAS_VERBOSE_ABORT: u32 = 0;
-pub const _LIBCPP_AVAILABILITY_HAS_PMR: u32 = 1;
-pub const _LIBCPP_AVAILABILITY_HAS_TZDB: u32 = 0;
-pub const _LIBCPP_AVAILABILITY_HAS_PRINT: u32 = 0;
-pub const _LIBCPP_AVAILABILITY_HAS_ADDITIONAL_IOSTREAM_EXPLICIT_INSTANTIATIONS_1: u32 = 1;
 pub const __cpp_lib_chrono_udls: u32 = 201304;
 pub const __cpp_lib_complex_udls: u32 = 201309;
 pub const __cpp_lib_exchange_function: u32 = 201304;
@@ -832,6 +303,50 @@ pub const __cpp_lib_transformation_trait_aliases: u32 = 201304;
 pub const __cpp_lib_transparent_operators: u32 = 201210;
 pub const __cpp_lib_tuple_element_t: u32 = 201402;
 pub const __cpp_lib_tuples_by_type: u32 = 201304;
+pub const __cpp_lib_addressof_constexpr: u32 = 201603;
+pub const __cpp_lib_allocator_traits_is_always_equal: u32 = 201411;
+pub const __cpp_lib_any: u32 = 201606;
+pub const __cpp_lib_apply: u32 = 201603;
+pub const __cpp_lib_array_constexpr: u32 = 201603;
+pub const __cpp_lib_as_const: u32 = 201510;
+pub const __cpp_lib_atomic_is_always_lock_free: u32 = 201603;
+pub const __cpp_lib_bool_constant: u32 = 201505;
+pub const __cpp_lib_boyer_moore_searcher: u32 = 201603;
+pub const __cpp_lib_byte: u32 = 201603;
+pub const __cpp_lib_chrono: u32 = 201611;
+pub const __cpp_lib_clamp: u32 = 201603;
+pub const __cpp_lib_enable_shared_from_this: u32 = 201603;
+pub const __cpp_lib_filesystem: u32 = 201703;
+pub const __cpp_lib_gcd_lcm: u32 = 201606;
+pub const __cpp_lib_hardware_interference_size: u32 = 201703;
+pub const __cpp_lib_has_unique_object_representations: u32 = 201606;
+pub const __cpp_lib_hypot: u32 = 201603;
+pub const __cpp_lib_incomplete_container_elements: u32 = 201505;
+pub const __cpp_lib_invoke: u32 = 201411;
+pub const __cpp_lib_is_aggregate: u32 = 201703;
+pub const __cpp_lib_is_invocable: u32 = 201703;
+pub const __cpp_lib_is_swappable: u32 = 201603;
+pub const __cpp_lib_launder: u32 = 201606;
+pub const __cpp_lib_logical_traits: u32 = 201510;
+pub const __cpp_lib_make_from_tuple: u32 = 201606;
+pub const __cpp_lib_map_try_emplace: u32 = 201411;
+pub const __cpp_lib_memory_resource: u32 = 201603;
+pub const __cpp_lib_node_extract: u32 = 201606;
+pub const __cpp_lib_nonmember_container_access: u32 = 201411;
+pub const __cpp_lib_not_fn: u32 = 201603;
+pub const __cpp_lib_optional: u32 = 201606;
+pub const __cpp_lib_raw_memory_algorithms: u32 = 201606;
+pub const __cpp_lib_sample: u32 = 201603;
+pub const __cpp_lib_scoped_lock: u32 = 201703;
+pub const __cpp_lib_shared_mutex: u32 = 201505;
+pub const __cpp_lib_shared_ptr_arrays: u32 = 201611;
+pub const __cpp_lib_shared_ptr_weak_type: u32 = 201606;
+pub const __cpp_lib_string_view: u32 = 201606;
+pub const __cpp_lib_type_trait_variable_templates: u32 = 201510;
+pub const __cpp_lib_uncaught_exceptions: u32 = 201411;
+pub const __cpp_lib_unordered_map_try_emplace: u32 = 201411;
+pub const __cpp_lib_variant: u32 = 202102;
+pub const __cpp_lib_void_t: u32 = 201411;
 pub const __DARWIN_CLK_TCK: u32 = 100;
 pub const USE_CLANG_LIMITS: u32 = 0;
 pub const MB_LEN_MAX: u32 = 6;
@@ -948,6 +463,466 @@ pub const _XOPEN_IOV_MAX: u32 = 16;
 pub const IOV_MAX: u32 = 1024;
 pub const _XOPEN_NAME_MAX: u32 = 255;
 pub const _XOPEN_PATH_MAX: u32 = 1024;
+pub const __DARWIN_WCHAR_MIN: i32 = -2147483648;
+pub const _FORTIFY_SOURCE: u32 = 2;
+pub const __API_TO_BE_DEPRECATED: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_MACOS: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_MACOSAPPLICATIONEXTENSION: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_IOS: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_IOSAPPLICATIONEXTENSION: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_MACCATALYST: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_MACCATALYSTAPPLICATIONEXTENSION: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_WATCHOS: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_WATCHOSAPPLICATIONEXTENSION: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_TVOS: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_TVOSAPPLICATIONEXTENSION: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_DRIVERKIT: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_VISIONOS: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_VISIONOSAPPLICATIONEXTENSION: u32 = 100000;
+pub const __API_TO_BE_DEPRECATED_KERNELKIT: u32 = 100000;
+pub const __MAC_10_0: u32 = 1000;
+pub const __MAC_10_1: u32 = 1010;
+pub const __MAC_10_2: u32 = 1020;
+pub const __MAC_10_3: u32 = 1030;
+pub const __MAC_10_4: u32 = 1040;
+pub const __MAC_10_5: u32 = 1050;
+pub const __MAC_10_6: u32 = 1060;
+pub const __MAC_10_7: u32 = 1070;
+pub const __MAC_10_8: u32 = 1080;
+pub const __MAC_10_9: u32 = 1090;
+pub const __MAC_10_10: u32 = 101000;
+pub const __MAC_10_10_2: u32 = 101002;
+pub const __MAC_10_10_3: u32 = 101003;
+pub const __MAC_10_11: u32 = 101100;
+pub const __MAC_10_11_2: u32 = 101102;
+pub const __MAC_10_11_3: u32 = 101103;
+pub const __MAC_10_11_4: u32 = 101104;
+pub const __MAC_10_12: u32 = 101200;
+pub const __MAC_10_12_1: u32 = 101201;
+pub const __MAC_10_12_2: u32 = 101202;
+pub const __MAC_10_12_4: u32 = 101204;
+pub const __MAC_10_13: u32 = 101300;
+pub const __MAC_10_13_1: u32 = 101301;
+pub const __MAC_10_13_2: u32 = 101302;
+pub const __MAC_10_13_4: u32 = 101304;
+pub const __MAC_10_14: u32 = 101400;
+pub const __MAC_10_14_1: u32 = 101401;
+pub const __MAC_10_14_4: u32 = 101404;
+pub const __MAC_10_14_5: u32 = 101405;
+pub const __MAC_10_14_6: u32 = 101406;
+pub const __MAC_10_15: u32 = 101500;
+pub const __MAC_10_15_1: u32 = 101501;
+pub const __MAC_10_15_4: u32 = 101504;
+pub const __MAC_10_16: u32 = 101600;
+pub const __MAC_11_0: u32 = 110000;
+pub const __MAC_11_1: u32 = 110100;
+pub const __MAC_11_3: u32 = 110300;
+pub const __MAC_11_4: u32 = 110400;
+pub const __MAC_11_5: u32 = 110500;
+pub const __MAC_11_6: u32 = 110600;
+pub const __MAC_12_0: u32 = 120000;
+pub const __MAC_12_1: u32 = 120100;
+pub const __MAC_12_2: u32 = 120200;
+pub const __MAC_12_3: u32 = 120300;
+pub const __MAC_12_4: u32 = 120400;
+pub const __MAC_12_5: u32 = 120500;
+pub const __MAC_12_6: u32 = 120600;
+pub const __MAC_12_7: u32 = 120700;
+pub const __MAC_13_0: u32 = 130000;
+pub const __MAC_13_1: u32 = 130100;
+pub const __MAC_13_2: u32 = 130200;
+pub const __MAC_13_3: u32 = 130300;
+pub const __MAC_13_4: u32 = 130400;
+pub const __MAC_13_5: u32 = 130500;
+pub const __MAC_13_6: u32 = 130600;
+pub const __MAC_13_7: u32 = 130700;
+pub const __MAC_14_0: u32 = 140000;
+pub const __MAC_14_1: u32 = 140100;
+pub const __MAC_14_2: u32 = 140200;
+pub const __MAC_14_3: u32 = 140300;
+pub const __MAC_14_4: u32 = 140400;
+pub const __MAC_14_5: u32 = 140500;
+pub const __MAC_14_6: u32 = 140600;
+pub const __MAC_14_7: u32 = 140700;
+pub const __MAC_15_0: u32 = 150000;
+pub const __MAC_15_1: u32 = 150100;
+pub const __MAC_15_2: u32 = 150200;
+pub const __MAC_15_3: u32 = 150300;
+pub const __MAC_15_4: u32 = 150400;
+pub const __MAC_15_5: u32 = 150500;
+pub const __MAC_15_6: u32 = 150600;
+pub const __MAC_16_0: u32 = 160000;
+pub const __MAC_26_0: u32 = 260000;
+pub const __MAC_26_1: u32 = 260100;
+pub const __MAC_26_2: u32 = 260200;
+pub const __IPHONE_2_0: u32 = 20000;
+pub const __IPHONE_2_1: u32 = 20100;
+pub const __IPHONE_2_2: u32 = 20200;
+pub const __IPHONE_3_0: u32 = 30000;
+pub const __IPHONE_3_1: u32 = 30100;
+pub const __IPHONE_3_2: u32 = 30200;
+pub const __IPHONE_4_0: u32 = 40000;
+pub const __IPHONE_4_1: u32 = 40100;
+pub const __IPHONE_4_2: u32 = 40200;
+pub const __IPHONE_4_3: u32 = 40300;
+pub const __IPHONE_5_0: u32 = 50000;
+pub const __IPHONE_5_1: u32 = 50100;
+pub const __IPHONE_6_0: u32 = 60000;
+pub const __IPHONE_6_1: u32 = 60100;
+pub const __IPHONE_7_0: u32 = 70000;
+pub const __IPHONE_7_1: u32 = 70100;
+pub const __IPHONE_8_0: u32 = 80000;
+pub const __IPHONE_8_1: u32 = 80100;
+pub const __IPHONE_8_2: u32 = 80200;
+pub const __IPHONE_8_3: u32 = 80300;
+pub const __IPHONE_8_4: u32 = 80400;
+pub const __IPHONE_9_0: u32 = 90000;
+pub const __IPHONE_9_1: u32 = 90100;
+pub const __IPHONE_9_2: u32 = 90200;
+pub const __IPHONE_9_3: u32 = 90300;
+pub const __IPHONE_10_0: u32 = 100000;
+pub const __IPHONE_10_1: u32 = 100100;
+pub const __IPHONE_10_2: u32 = 100200;
+pub const __IPHONE_10_3: u32 = 100300;
+pub const __IPHONE_11_0: u32 = 110000;
+pub const __IPHONE_11_1: u32 = 110100;
+pub const __IPHONE_11_2: u32 = 110200;
+pub const __IPHONE_11_3: u32 = 110300;
+pub const __IPHONE_11_4: u32 = 110400;
+pub const __IPHONE_12_0: u32 = 120000;
+pub const __IPHONE_12_1: u32 = 120100;
+pub const __IPHONE_12_2: u32 = 120200;
+pub const __IPHONE_12_3: u32 = 120300;
+pub const __IPHONE_12_4: u32 = 120400;
+pub const __IPHONE_13_0: u32 = 130000;
+pub const __IPHONE_13_1: u32 = 130100;
+pub const __IPHONE_13_2: u32 = 130200;
+pub const __IPHONE_13_3: u32 = 130300;
+pub const __IPHONE_13_4: u32 = 130400;
+pub const __IPHONE_13_5: u32 = 130500;
+pub const __IPHONE_13_6: u32 = 130600;
+pub const __IPHONE_13_7: u32 = 130700;
+pub const __IPHONE_14_0: u32 = 140000;
+pub const __IPHONE_14_1: u32 = 140100;
+pub const __IPHONE_14_2: u32 = 140200;
+pub const __IPHONE_14_3: u32 = 140300;
+pub const __IPHONE_14_5: u32 = 140500;
+pub const __IPHONE_14_6: u32 = 140600;
+pub const __IPHONE_14_7: u32 = 140700;
+pub const __IPHONE_14_8: u32 = 140800;
+pub const __IPHONE_15_0: u32 = 150000;
+pub const __IPHONE_15_1: u32 = 150100;
+pub const __IPHONE_15_2: u32 = 150200;
+pub const __IPHONE_15_3: u32 = 150300;
+pub const __IPHONE_15_4: u32 = 150400;
+pub const __IPHONE_15_5: u32 = 150500;
+pub const __IPHONE_15_6: u32 = 150600;
+pub const __IPHONE_15_7: u32 = 150700;
+pub const __IPHONE_15_8: u32 = 150800;
+pub const __IPHONE_16_0: u32 = 160000;
+pub const __IPHONE_16_1: u32 = 160100;
+pub const __IPHONE_16_2: u32 = 160200;
+pub const __IPHONE_16_3: u32 = 160300;
+pub const __IPHONE_16_4: u32 = 160400;
+pub const __IPHONE_16_5: u32 = 160500;
+pub const __IPHONE_16_6: u32 = 160600;
+pub const __IPHONE_16_7: u32 = 160700;
+pub const __IPHONE_17_0: u32 = 170000;
+pub const __IPHONE_17_1: u32 = 170100;
+pub const __IPHONE_17_2: u32 = 170200;
+pub const __IPHONE_17_3: u32 = 170300;
+pub const __IPHONE_17_4: u32 = 170400;
+pub const __IPHONE_17_5: u32 = 170500;
+pub const __IPHONE_17_6: u32 = 170600;
+pub const __IPHONE_17_7: u32 = 170700;
+pub const __IPHONE_18_0: u32 = 180000;
+pub const __IPHONE_18_1: u32 = 180100;
+pub const __IPHONE_18_2: u32 = 180200;
+pub const __IPHONE_18_3: u32 = 180300;
+pub const __IPHONE_18_4: u32 = 180400;
+pub const __IPHONE_18_5: u32 = 180500;
+pub const __IPHONE_18_6: u32 = 180600;
+pub const __IPHONE_19_0: u32 = 190000;
+pub const __IPHONE_26_0: u32 = 260000;
+pub const __IPHONE_26_1: u32 = 260100;
+pub const __IPHONE_26_2: u32 = 260200;
+pub const __WATCHOS_1_0: u32 = 10000;
+pub const __WATCHOS_2_0: u32 = 20000;
+pub const __WATCHOS_2_1: u32 = 20100;
+pub const __WATCHOS_2_2: u32 = 20200;
+pub const __WATCHOS_3_0: u32 = 30000;
+pub const __WATCHOS_3_1: u32 = 30100;
+pub const __WATCHOS_3_1_1: u32 = 30101;
+pub const __WATCHOS_3_2: u32 = 30200;
+pub const __WATCHOS_4_0: u32 = 40000;
+pub const __WATCHOS_4_1: u32 = 40100;
+pub const __WATCHOS_4_2: u32 = 40200;
+pub const __WATCHOS_4_3: u32 = 40300;
+pub const __WATCHOS_5_0: u32 = 50000;
+pub const __WATCHOS_5_1: u32 = 50100;
+pub const __WATCHOS_5_2: u32 = 50200;
+pub const __WATCHOS_5_3: u32 = 50300;
+pub const __WATCHOS_6_0: u32 = 60000;
+pub const __WATCHOS_6_1: u32 = 60100;
+pub const __WATCHOS_6_2: u32 = 60200;
+pub const __WATCHOS_7_0: u32 = 70000;
+pub const __WATCHOS_7_1: u32 = 70100;
+pub const __WATCHOS_7_2: u32 = 70200;
+pub const __WATCHOS_7_3: u32 = 70300;
+pub const __WATCHOS_7_4: u32 = 70400;
+pub const __WATCHOS_7_5: u32 = 70500;
+pub const __WATCHOS_7_6: u32 = 70600;
+pub const __WATCHOS_8_0: u32 = 80000;
+pub const __WATCHOS_8_1: u32 = 80100;
+pub const __WATCHOS_8_3: u32 = 80300;
+pub const __WATCHOS_8_4: u32 = 80400;
+pub const __WATCHOS_8_5: u32 = 80500;
+pub const __WATCHOS_8_6: u32 = 80600;
+pub const __WATCHOS_8_7: u32 = 80700;
+pub const __WATCHOS_8_8: u32 = 80800;
+pub const __WATCHOS_9_0: u32 = 90000;
+pub const __WATCHOS_9_1: u32 = 90100;
+pub const __WATCHOS_9_2: u32 = 90200;
+pub const __WATCHOS_9_3: u32 = 90300;
+pub const __WATCHOS_9_4: u32 = 90400;
+pub const __WATCHOS_9_5: u32 = 90500;
+pub const __WATCHOS_9_6: u32 = 90600;
+pub const __WATCHOS_10_0: u32 = 100000;
+pub const __WATCHOS_10_1: u32 = 100100;
+pub const __WATCHOS_10_2: u32 = 100200;
+pub const __WATCHOS_10_3: u32 = 100300;
+pub const __WATCHOS_10_4: u32 = 100400;
+pub const __WATCHOS_10_5: u32 = 100500;
+pub const __WATCHOS_10_6: u32 = 100600;
+pub const __WATCHOS_10_7: u32 = 100700;
+pub const __WATCHOS_11_0: u32 = 110000;
+pub const __WATCHOS_11_1: u32 = 110100;
+pub const __WATCHOS_11_2: u32 = 110200;
+pub const __WATCHOS_11_3: u32 = 110300;
+pub const __WATCHOS_11_4: u32 = 110400;
+pub const __WATCHOS_11_5: u32 = 110500;
+pub const __WATCHOS_11_6: u32 = 110600;
+pub const __WATCHOS_12_0: u32 = 120000;
+pub const __WATCHOS_26_0: u32 = 260000;
+pub const __WATCHOS_26_1: u32 = 260100;
+pub const __WATCHOS_26_2: u32 = 260200;
+pub const __TVOS_9_0: u32 = 90000;
+pub const __TVOS_9_1: u32 = 90100;
+pub const __TVOS_9_2: u32 = 90200;
+pub const __TVOS_10_0: u32 = 100000;
+pub const __TVOS_10_0_1: u32 = 100001;
+pub const __TVOS_10_1: u32 = 100100;
+pub const __TVOS_10_2: u32 = 100200;
+pub const __TVOS_11_0: u32 = 110000;
+pub const __TVOS_11_1: u32 = 110100;
+pub const __TVOS_11_2: u32 = 110200;
+pub const __TVOS_11_3: u32 = 110300;
+pub const __TVOS_11_4: u32 = 110400;
+pub const __TVOS_12_0: u32 = 120000;
+pub const __TVOS_12_1: u32 = 120100;
+pub const __TVOS_12_2: u32 = 120200;
+pub const __TVOS_12_3: u32 = 120300;
+pub const __TVOS_12_4: u32 = 120400;
+pub const __TVOS_13_0: u32 = 130000;
+pub const __TVOS_13_2: u32 = 130200;
+pub const __TVOS_13_3: u32 = 130300;
+pub const __TVOS_13_4: u32 = 130400;
+pub const __TVOS_14_0: u32 = 140000;
+pub const __TVOS_14_1: u32 = 140100;
+pub const __TVOS_14_2: u32 = 140200;
+pub const __TVOS_14_3: u32 = 140300;
+pub const __TVOS_14_5: u32 = 140500;
+pub const __TVOS_14_6: u32 = 140600;
+pub const __TVOS_14_7: u32 = 140700;
+pub const __TVOS_15_0: u32 = 150000;
+pub const __TVOS_15_1: u32 = 150100;
+pub const __TVOS_15_2: u32 = 150200;
+pub const __TVOS_15_3: u32 = 150300;
+pub const __TVOS_15_4: u32 = 150400;
+pub const __TVOS_15_5: u32 = 150500;
+pub const __TVOS_15_6: u32 = 150600;
+pub const __TVOS_16_0: u32 = 160000;
+pub const __TVOS_16_1: u32 = 160100;
+pub const __TVOS_16_2: u32 = 160200;
+pub const __TVOS_16_3: u32 = 160300;
+pub const __TVOS_16_4: u32 = 160400;
+pub const __TVOS_16_5: u32 = 160500;
+pub const __TVOS_16_6: u32 = 160600;
+pub const __TVOS_17_0: u32 = 170000;
+pub const __TVOS_17_1: u32 = 170100;
+pub const __TVOS_17_2: u32 = 170200;
+pub const __TVOS_17_3: u32 = 170300;
+pub const __TVOS_17_4: u32 = 170400;
+pub const __TVOS_17_5: u32 = 170500;
+pub const __TVOS_17_6: u32 = 170600;
+pub const __TVOS_18_0: u32 = 180000;
+pub const __TVOS_18_1: u32 = 180100;
+pub const __TVOS_18_2: u32 = 180200;
+pub const __TVOS_18_3: u32 = 180300;
+pub const __TVOS_18_4: u32 = 180400;
+pub const __TVOS_18_5: u32 = 180500;
+pub const __TVOS_18_6: u32 = 180600;
+pub const __TVOS_19_0: u32 = 190000;
+pub const __TVOS_26_0: u32 = 260000;
+pub const __TVOS_26_1: u32 = 260100;
+pub const __TVOS_26_2: u32 = 260200;
+pub const __BRIDGEOS_2_0: u32 = 20000;
+pub const __BRIDGEOS_3_0: u32 = 30000;
+pub const __BRIDGEOS_3_1: u32 = 30100;
+pub const __BRIDGEOS_3_4: u32 = 30400;
+pub const __BRIDGEOS_4_0: u32 = 40000;
+pub const __BRIDGEOS_4_1: u32 = 40100;
+pub const __BRIDGEOS_5_0: u32 = 50000;
+pub const __BRIDGEOS_5_1: u32 = 50100;
+pub const __BRIDGEOS_5_3: u32 = 50300;
+pub const __BRIDGEOS_6_0: u32 = 60000;
+pub const __BRIDGEOS_6_2: u32 = 60200;
+pub const __BRIDGEOS_6_4: u32 = 60400;
+pub const __BRIDGEOS_6_5: u32 = 60500;
+pub const __BRIDGEOS_6_6: u32 = 60600;
+pub const __BRIDGEOS_7_0: u32 = 70000;
+pub const __BRIDGEOS_7_1: u32 = 70100;
+pub const __BRIDGEOS_7_2: u32 = 70200;
+pub const __BRIDGEOS_7_3: u32 = 70300;
+pub const __BRIDGEOS_7_4: u32 = 70400;
+pub const __BRIDGEOS_7_6: u32 = 70600;
+pub const __BRIDGEOS_8_0: u32 = 80000;
+pub const __BRIDGEOS_8_1: u32 = 80100;
+pub const __BRIDGEOS_8_2: u32 = 80200;
+pub const __BRIDGEOS_8_3: u32 = 80300;
+pub const __BRIDGEOS_8_4: u32 = 80400;
+pub const __BRIDGEOS_8_5: u32 = 80500;
+pub const __BRIDGEOS_8_6: u32 = 80600;
+pub const __BRIDGEOS_9_0: u32 = 90000;
+pub const __BRIDGEOS_9_1: u32 = 90100;
+pub const __BRIDGEOS_9_2: u32 = 90200;
+pub const __BRIDGEOS_9_3: u32 = 90300;
+pub const __BRIDGEOS_9_4: u32 = 90400;
+pub const __BRIDGEOS_9_5: u32 = 90500;
+pub const __BRIDGEOS_9_6: u32 = 90600;
+pub const __BRIDGEOS_10_0: u32 = 100000;
+pub const __BRIDGEOS_10_1: u32 = 100100;
+pub const __BRIDGEOS_10_2: u32 = 100200;
+pub const __DRIVERKIT_19_0: u32 = 190000;
+pub const __DRIVERKIT_20_0: u32 = 200000;
+pub const __DRIVERKIT_21_0: u32 = 210000;
+pub const __DRIVERKIT_22_0: u32 = 220000;
+pub const __DRIVERKIT_22_4: u32 = 220400;
+pub const __DRIVERKIT_22_5: u32 = 220500;
+pub const __DRIVERKIT_22_6: u32 = 220600;
+pub const __DRIVERKIT_23_0: u32 = 230000;
+pub const __DRIVERKIT_23_1: u32 = 230100;
+pub const __DRIVERKIT_23_2: u32 = 230200;
+pub const __DRIVERKIT_23_3: u32 = 230300;
+pub const __DRIVERKIT_23_4: u32 = 230400;
+pub const __DRIVERKIT_23_5: u32 = 230500;
+pub const __DRIVERKIT_23_6: u32 = 230600;
+pub const __DRIVERKIT_24_0: u32 = 240000;
+pub const __DRIVERKIT_24_1: u32 = 240100;
+pub const __DRIVERKIT_24_2: u32 = 240200;
+pub const __DRIVERKIT_24_3: u32 = 240300;
+pub const __DRIVERKIT_24_4: u32 = 240400;
+pub const __DRIVERKIT_24_5: u32 = 240500;
+pub const __DRIVERKIT_24_6: u32 = 240600;
+pub const __DRIVERKIT_25_0: u32 = 250000;
+pub const __DRIVERKIT_25_1: u32 = 250100;
+pub const __DRIVERKIT_25_2: u32 = 250200;
+pub const __VISIONOS_1_0: u32 = 10000;
+pub const __VISIONOS_1_1: u32 = 10100;
+pub const __VISIONOS_1_2: u32 = 10200;
+pub const __VISIONOS_1_3: u32 = 10300;
+pub const __VISIONOS_2_0: u32 = 20000;
+pub const __VISIONOS_2_1: u32 = 20100;
+pub const __VISIONOS_2_2: u32 = 20200;
+pub const __VISIONOS_2_3: u32 = 20300;
+pub const __VISIONOS_2_4: u32 = 20400;
+pub const __VISIONOS_2_5: u32 = 20500;
+pub const __VISIONOS_2_6: u32 = 20600;
+pub const __VISIONOS_3_0: u32 = 30000;
+pub const __VISIONOS_26_0: u32 = 260000;
+pub const __VISIONOS_26_1: u32 = 260100;
+pub const __VISIONOS_26_2: u32 = 260200;
+pub const MAC_OS_X_VERSION_10_0: u32 = 1000;
+pub const MAC_OS_X_VERSION_10_1: u32 = 1010;
+pub const MAC_OS_X_VERSION_10_2: u32 = 1020;
+pub const MAC_OS_X_VERSION_10_3: u32 = 1030;
+pub const MAC_OS_X_VERSION_10_4: u32 = 1040;
+pub const MAC_OS_X_VERSION_10_5: u32 = 1050;
+pub const MAC_OS_X_VERSION_10_6: u32 = 1060;
+pub const MAC_OS_X_VERSION_10_7: u32 = 1070;
+pub const MAC_OS_X_VERSION_10_8: u32 = 1080;
+pub const MAC_OS_X_VERSION_10_9: u32 = 1090;
+pub const MAC_OS_X_VERSION_10_10: u32 = 101000;
+pub const MAC_OS_X_VERSION_10_10_2: u32 = 101002;
+pub const MAC_OS_X_VERSION_10_10_3: u32 = 101003;
+pub const MAC_OS_X_VERSION_10_11: u32 = 101100;
+pub const MAC_OS_X_VERSION_10_11_2: u32 = 101102;
+pub const MAC_OS_X_VERSION_10_11_3: u32 = 101103;
+pub const MAC_OS_X_VERSION_10_11_4: u32 = 101104;
+pub const MAC_OS_X_VERSION_10_12: u32 = 101200;
+pub const MAC_OS_X_VERSION_10_12_1: u32 = 101201;
+pub const MAC_OS_X_VERSION_10_12_2: u32 = 101202;
+pub const MAC_OS_X_VERSION_10_12_4: u32 = 101204;
+pub const MAC_OS_X_VERSION_10_13: u32 = 101300;
+pub const MAC_OS_X_VERSION_10_13_1: u32 = 101301;
+pub const MAC_OS_X_VERSION_10_13_2: u32 = 101302;
+pub const MAC_OS_X_VERSION_10_13_4: u32 = 101304;
+pub const MAC_OS_X_VERSION_10_14: u32 = 101400;
+pub const MAC_OS_X_VERSION_10_14_1: u32 = 101401;
+pub const MAC_OS_X_VERSION_10_14_4: u32 = 101404;
+pub const MAC_OS_X_VERSION_10_14_5: u32 = 101405;
+pub const MAC_OS_X_VERSION_10_14_6: u32 = 101406;
+pub const MAC_OS_X_VERSION_10_15: u32 = 101500;
+pub const MAC_OS_X_VERSION_10_15_1: u32 = 101501;
+pub const MAC_OS_X_VERSION_10_15_4: u32 = 101504;
+pub const MAC_OS_X_VERSION_10_16: u32 = 101600;
+pub const MAC_OS_VERSION_11_0: u32 = 110000;
+pub const MAC_OS_VERSION_11_1: u32 = 110100;
+pub const MAC_OS_VERSION_11_3: u32 = 110300;
+pub const MAC_OS_VERSION_11_4: u32 = 110400;
+pub const MAC_OS_VERSION_11_5: u32 = 110500;
+pub const MAC_OS_VERSION_11_6: u32 = 110600;
+pub const MAC_OS_VERSION_12_0: u32 = 120000;
+pub const MAC_OS_VERSION_12_1: u32 = 120100;
+pub const MAC_OS_VERSION_12_2: u32 = 120200;
+pub const MAC_OS_VERSION_12_3: u32 = 120300;
+pub const MAC_OS_VERSION_12_4: u32 = 120400;
+pub const MAC_OS_VERSION_12_5: u32 = 120500;
+pub const MAC_OS_VERSION_12_6: u32 = 120600;
+pub const MAC_OS_VERSION_12_7: u32 = 120700;
+pub const MAC_OS_VERSION_13_0: u32 = 130000;
+pub const MAC_OS_VERSION_13_1: u32 = 130100;
+pub const MAC_OS_VERSION_13_2: u32 = 130200;
+pub const MAC_OS_VERSION_13_3: u32 = 130300;
+pub const MAC_OS_VERSION_13_4: u32 = 130400;
+pub const MAC_OS_VERSION_13_5: u32 = 130500;
+pub const MAC_OS_VERSION_13_6: u32 = 130600;
+pub const MAC_OS_VERSION_13_7: u32 = 130700;
+pub const MAC_OS_VERSION_14_0: u32 = 140000;
+pub const MAC_OS_VERSION_14_1: u32 = 140100;
+pub const MAC_OS_VERSION_14_2: u32 = 140200;
+pub const MAC_OS_VERSION_14_3: u32 = 140300;
+pub const MAC_OS_VERSION_14_4: u32 = 140400;
+pub const MAC_OS_VERSION_14_5: u32 = 140500;
+pub const MAC_OS_VERSION_14_6: u32 = 140600;
+pub const MAC_OS_VERSION_14_7: u32 = 140700;
+pub const MAC_OS_VERSION_15_0: u32 = 150000;
+pub const MAC_OS_VERSION_15_1: u32 = 150100;
+pub const MAC_OS_VERSION_15_2: u32 = 150200;
+pub const MAC_OS_VERSION_15_3: u32 = 150300;
+pub const MAC_OS_VERSION_15_4: u32 = 150400;
+pub const MAC_OS_VERSION_15_5: u32 = 150500;
+pub const MAC_OS_VERSION_15_6: u32 = 150600;
+pub const MAC_OS_VERSION_16_0: u32 = 160000;
+pub const MAC_OS_VERSION_26_0: u32 = 260000;
+pub const MAC_OS_VERSION_26_1: u32 = 260100;
+pub const MAC_OS_VERSION_26_2: u32 = 260200;
+pub const __AVAILABILITY_VERSIONS_VERSION_HASH: u32 = 93585900;
+pub const __AVAILABILITY_VERSIONS_VERSION_STRING: &[u8; 6] = b"Local\0";
+pub const __AVAILABILITY_FILE: &[u8; 23] = b"AvailabilityVersions.h\0";
+pub const __MAC_OS_X_VERSION_MAX_ALLOWED: u32 = 260200;
+pub const __ENABLE_LEGACY_MAC_AVAILABILITY: u32 = 1;
+pub const USE_CLANG_STDDEF: u32 = 0;
 pub const TIME_UTC: u32 = 1;
 pub const EPERM: u32 = 1;
 pub const ENOENT: u32 = 2;
@@ -1056,7 +1031,41 @@ pub const ENOPOLICY: u32 = 103;
 pub const ENOTRECOVERABLE: u32 = 104;
 pub const EOWNERDEAD: u32 = 105;
 pub const EQFULL: u32 = 106;
-pub const ELAST: u32 = 106;
+pub const ENOTCAPABLE: u32 = 107;
+pub const ELAST: u32 = 107;
+pub const _PTHREAD_MUTEX_SIG_init: u32 = 850045863;
+pub const _PTHREAD_ERRORCHECK_MUTEX_SIG_init: u32 = 850045857;
+pub const _PTHREAD_RECURSIVE_MUTEX_SIG_init: u32 = 850045858;
+pub const _PTHREAD_FIRSTFIT_MUTEX_SIG_init: u32 = 850045859;
+pub const _PTHREAD_COND_SIG_init: u32 = 1018212795;
+pub const _PTHREAD_ONCE_SIG_init: u32 = 816954554;
+pub const _PTHREAD_RWLOCK_SIG_init: u32 = 766030772;
+pub const SCHED_OTHER: u32 = 1;
+pub const SCHED_FIFO: u32 = 4;
+pub const SCHED_RR: u32 = 2;
+pub const __SCHED_PARAM_SIZE__: u32 = 4;
+pub const QOS_MIN_RELATIVE_PRIORITY: i32 = -15;
+pub const PTHREAD_CREATE_JOINABLE: u32 = 1;
+pub const PTHREAD_CREATE_DETACHED: u32 = 2;
+pub const PTHREAD_INHERIT_SCHED: u32 = 1;
+pub const PTHREAD_EXPLICIT_SCHED: u32 = 2;
+pub const PTHREAD_CANCEL_ENABLE: u32 = 1;
+pub const PTHREAD_CANCEL_DISABLE: u32 = 0;
+pub const PTHREAD_CANCEL_DEFERRED: u32 = 2;
+pub const PTHREAD_CANCEL_ASYNCHRONOUS: u32 = 0;
+pub const PTHREAD_SCOPE_SYSTEM: u32 = 1;
+pub const PTHREAD_SCOPE_PROCESS: u32 = 2;
+pub const PTHREAD_PROCESS_SHARED: u32 = 1;
+pub const PTHREAD_PROCESS_PRIVATE: u32 = 2;
+pub const PTHREAD_PRIO_NONE: u32 = 0;
+pub const PTHREAD_PRIO_INHERIT: u32 = 1;
+pub const PTHREAD_PRIO_PROTECT: u32 = 2;
+pub const PTHREAD_MUTEX_NORMAL: u32 = 0;
+pub const PTHREAD_MUTEX_ERRORCHECK: u32 = 1;
+pub const PTHREAD_MUTEX_RECURSIVE: u32 = 2;
+pub const PTHREAD_MUTEX_DEFAULT: u32 = 0;
+pub const PTHREAD_MUTEX_POLICY_FAIRSHARE_NP: u32 = 1;
+pub const PTHREAD_MUTEX_POLICY_FIRSTFIT_NP: u32 = 3;
 pub const FP_NAN: u32 = 1;
 pub const FP_INFINITE: u32 = 2;
 pub const FP_ZERO: u32 = 3;
@@ -1091,41 +1100,1415 @@ pub const OVERFLOW: u32 = 3;
 pub const UNDERFLOW: u32 = 4;
 pub const TLOSS: u32 = 5;
 pub const PLOSS: u32 = 6;
-pub const _PTHREAD_MUTEX_SIG_init: u32 = 850045863;
-pub const _PTHREAD_ERRORCHECK_MUTEX_SIG_init: u32 = 850045857;
-pub const _PTHREAD_RECURSIVE_MUTEX_SIG_init: u32 = 850045858;
-pub const _PTHREAD_FIRSTFIT_MUTEX_SIG_init: u32 = 850045859;
-pub const _PTHREAD_COND_SIG_init: u32 = 1018212795;
-pub const _PTHREAD_ONCE_SIG_init: u32 = 816954554;
-pub const _PTHREAD_RWLOCK_SIG_init: u32 = 766030772;
-pub const SCHED_OTHER: u32 = 1;
-pub const SCHED_FIFO: u32 = 4;
-pub const SCHED_RR: u32 = 2;
-pub const __SCHED_PARAM_SIZE__: u32 = 4;
-pub const QOS_MIN_RELATIVE_PRIORITY: i32 = -15;
-pub const PTHREAD_CREATE_JOINABLE: u32 = 1;
-pub const PTHREAD_CREATE_DETACHED: u32 = 2;
-pub const PTHREAD_INHERIT_SCHED: u32 = 1;
-pub const PTHREAD_EXPLICIT_SCHED: u32 = 2;
-pub const PTHREAD_CANCEL_ENABLE: u32 = 1;
-pub const PTHREAD_CANCEL_DISABLE: u32 = 0;
-pub const PTHREAD_CANCEL_DEFERRED: u32 = 2;
-pub const PTHREAD_CANCEL_ASYNCHRONOUS: u32 = 0;
-pub const PTHREAD_SCOPE_SYSTEM: u32 = 1;
-pub const PTHREAD_SCOPE_PROCESS: u32 = 2;
-pub const PTHREAD_PROCESS_SHARED: u32 = 1;
-pub const PTHREAD_PROCESS_PRIVATE: u32 = 2;
-pub const PTHREAD_PRIO_NONE: u32 = 0;
-pub const PTHREAD_PRIO_INHERIT: u32 = 1;
-pub const PTHREAD_PRIO_PROTECT: u32 = 2;
-pub const PTHREAD_MUTEX_NORMAL: u32 = 0;
-pub const PTHREAD_MUTEX_ERRORCHECK: u32 = 1;
-pub const PTHREAD_MUTEX_RECURSIVE: u32 = 2;
-pub const PTHREAD_MUTEX_DEFAULT: u32 = 0;
-pub const PTHREAD_MUTEX_POLICY_FAIRSHARE_NP: u32 = 1;
-pub const PTHREAD_MUTEX_POLICY_FIRSTFIT_NP: u32 = 3;
+pub const __DARWIN_NSIG: u32 = 32;
+pub const NSIG: u32 = 32;
+pub const _ARM_SIGNAL_: u32 = 1;
+pub const SIGHUP: u32 = 1;
+pub const SIGINT: u32 = 2;
+pub const SIGQUIT: u32 = 3;
+pub const SIGILL: u32 = 4;
+pub const SIGTRAP: u32 = 5;
+pub const SIGABRT: u32 = 6;
+pub const SIGIOT: u32 = 6;
+pub const SIGEMT: u32 = 7;
+pub const SIGFPE: u32 = 8;
+pub const SIGKILL: u32 = 9;
+pub const SIGBUS: u32 = 10;
+pub const SIGSEGV: u32 = 11;
+pub const SIGSYS: u32 = 12;
+pub const SIGPIPE: u32 = 13;
+pub const SIGALRM: u32 = 14;
+pub const SIGTERM: u32 = 15;
+pub const SIGURG: u32 = 16;
+pub const SIGSTOP: u32 = 17;
+pub const SIGTSTP: u32 = 18;
+pub const SIGCONT: u32 = 19;
+pub const SIGCHLD: u32 = 20;
+pub const SIGTTIN: u32 = 21;
+pub const SIGTTOU: u32 = 22;
+pub const SIGIO: u32 = 23;
+pub const SIGXCPU: u32 = 24;
+pub const SIGXFSZ: u32 = 25;
+pub const SIGVTALRM: u32 = 26;
+pub const SIGPROF: u32 = 27;
+pub const SIGWINCH: u32 = 28;
+pub const SIGINFO: u32 = 29;
+pub const SIGUSR1: u32 = 30;
+pub const SIGUSR2: u32 = 31;
+pub const __DARWIN_OPAQUE_ARM_THREAD_STATE64: u32 = 0;
+pub const SIGEV_NONE: u32 = 0;
+pub const SIGEV_SIGNAL: u32 = 1;
+pub const SIGEV_THREAD: u32 = 3;
+pub const SIGEV_KEVENT: u32 = 4;
+pub const ILL_NOOP: u32 = 0;
+pub const ILL_ILLOPC: u32 = 1;
+pub const ILL_ILLTRP: u32 = 2;
+pub const ILL_PRVOPC: u32 = 3;
+pub const ILL_ILLOPN: u32 = 4;
+pub const ILL_ILLADR: u32 = 5;
+pub const ILL_PRVREG: u32 = 6;
+pub const ILL_COPROC: u32 = 7;
+pub const ILL_BADSTK: u32 = 8;
+pub const FPE_NOOP: u32 = 0;
+pub const FPE_FLTDIV: u32 = 1;
+pub const FPE_FLTOVF: u32 = 2;
+pub const FPE_FLTUND: u32 = 3;
+pub const FPE_FLTRES: u32 = 4;
+pub const FPE_FLTINV: u32 = 5;
+pub const FPE_FLTSUB: u32 = 6;
+pub const FPE_INTDIV: u32 = 7;
+pub const FPE_INTOVF: u32 = 8;
+pub const SEGV_NOOP: u32 = 0;
+pub const SEGV_MAPERR: u32 = 1;
+pub const SEGV_ACCERR: u32 = 2;
+pub const BUS_NOOP: u32 = 0;
+pub const BUS_ADRALN: u32 = 1;
+pub const BUS_ADRERR: u32 = 2;
+pub const BUS_OBJERR: u32 = 3;
+pub const TRAP_BRKPT: u32 = 1;
+pub const TRAP_TRACE: u32 = 2;
+pub const CLD_NOOP: u32 = 0;
+pub const CLD_EXITED: u32 = 1;
+pub const CLD_KILLED: u32 = 2;
+pub const CLD_DUMPED: u32 = 3;
+pub const CLD_TRAPPED: u32 = 4;
+pub const CLD_STOPPED: u32 = 5;
+pub const CLD_CONTINUED: u32 = 6;
+pub const POLL_IN: u32 = 1;
+pub const POLL_OUT: u32 = 2;
+pub const POLL_MSG: u32 = 3;
+pub const POLL_ERR: u32 = 4;
+pub const POLL_PRI: u32 = 5;
+pub const POLL_HUP: u32 = 6;
+pub const SA_ONSTACK: u32 = 1;
+pub const SA_RESTART: u32 = 2;
+pub const SA_RESETHAND: u32 = 4;
+pub const SA_NOCLDSTOP: u32 = 8;
+pub const SA_NODEFER: u32 = 16;
+pub const SA_NOCLDWAIT: u32 = 32;
+pub const SA_SIGINFO: u32 = 64;
+pub const SA_USERTRAMP: u32 = 256;
+pub const SA_64REGSET: u32 = 512;
+pub const SA_USERSPACE_MASK: u32 = 127;
+pub const SIG_BLOCK: u32 = 1;
+pub const SIG_UNBLOCK: u32 = 2;
+pub const SIG_SETMASK: u32 = 3;
+pub const SI_USER: u32 = 65537;
+pub const SI_QUEUE: u32 = 65538;
+pub const SI_TIMER: u32 = 65539;
+pub const SI_ASYNCIO: u32 = 65540;
+pub const SI_MESGQ: u32 = 65541;
+pub const SS_ONSTACK: u32 = 1;
+pub const SS_DISABLE: u32 = 4;
+pub const MINSIGSTKSZ: u32 = 32768;
+pub const SIGSTKSZ: u32 = 131072;
+pub const SV_ONSTACK: u32 = 1;
+pub const SV_INTERRUPT: u32 = 2;
+pub const SV_RESETHAND: u32 = 4;
+pub const SV_NODEFER: u32 = 16;
+pub const SV_NOCLDSTOP: u32 = 8;
+pub const SV_SIGINFO: u32 = 64;
+pub const PRIO_PROCESS: u32 = 0;
+pub const PRIO_PGRP: u32 = 1;
+pub const PRIO_USER: u32 = 2;
+pub const PRIO_DARWIN_THREAD: u32 = 3;
+pub const PRIO_DARWIN_PROCESS: u32 = 4;
+pub const PRIO_MIN: i32 = -20;
+pub const PRIO_MAX: u32 = 20;
+pub const PRIO_DARWIN_BG: u32 = 4096;
+pub const PRIO_DARWIN_NONUI: u32 = 4097;
+pub const RUSAGE_SELF: u32 = 0;
+pub const RUSAGE_CHILDREN: i32 = -1;
+pub const RUSAGE_INFO_V0: u32 = 0;
+pub const RUSAGE_INFO_V1: u32 = 1;
+pub const RUSAGE_INFO_V2: u32 = 2;
+pub const RUSAGE_INFO_V3: u32 = 3;
+pub const RUSAGE_INFO_V4: u32 = 4;
+pub const RUSAGE_INFO_V5: u32 = 5;
+pub const RUSAGE_INFO_V6: u32 = 6;
+pub const RUSAGE_INFO_CURRENT: u32 = 6;
+pub const RU_PROC_RUNS_RESLIDE: u32 = 1;
+pub const RLIMIT_CPU: u32 = 0;
+pub const RLIMIT_FSIZE: u32 = 1;
+pub const RLIMIT_DATA: u32 = 2;
+pub const RLIMIT_STACK: u32 = 3;
+pub const RLIMIT_CORE: u32 = 4;
+pub const RLIMIT_AS: u32 = 5;
+pub const RLIMIT_RSS: u32 = 5;
+pub const RLIMIT_MEMLOCK: u32 = 6;
+pub const RLIMIT_NPROC: u32 = 7;
+pub const RLIMIT_NOFILE: u32 = 8;
+pub const RLIM_NLIMITS: u32 = 9;
+pub const _RLIMIT_POSIX_FLAG: u32 = 4096;
+pub const RLIMIT_WAKEUPS_MONITOR: u32 = 1;
+pub const RLIMIT_CPU_USAGE_MONITOR: u32 = 2;
+pub const RLIMIT_THREAD_CPULIMITS: u32 = 3;
+pub const RLIMIT_FOOTPRINT_INTERVAL: u32 = 4;
+pub const WAKEMON_ENABLE: u32 = 1;
+pub const WAKEMON_DISABLE: u32 = 2;
+pub const WAKEMON_GET_PARAMS: u32 = 4;
+pub const WAKEMON_SET_DEFAULTS: u32 = 8;
+pub const WAKEMON_MAKE_FATAL: u32 = 16;
+pub const CPUMON_MAKE_FATAL: u32 = 4096;
+pub const FOOTPRINT_INTERVAL_RESET: u32 = 1;
+pub const IOPOL_TYPE_DISK: u32 = 0;
+pub const IOPOL_TYPE_VFS_ATIME_UPDATES: u32 = 2;
+pub const IOPOL_TYPE_VFS_MATERIALIZE_DATALESS_FILES: u32 = 3;
+pub const IOPOL_TYPE_VFS_STATFS_NO_DATA_VOLUME: u32 = 4;
+pub const IOPOL_TYPE_VFS_TRIGGER_RESOLVE: u32 = 5;
+pub const IOPOL_TYPE_VFS_IGNORE_CONTENT_PROTECTION: u32 = 6;
+pub const IOPOL_TYPE_VFS_IGNORE_PERMISSIONS: u32 = 7;
+pub const IOPOL_TYPE_VFS_SKIP_MTIME_UPDATE: u32 = 8;
+pub const IOPOL_TYPE_VFS_ALLOW_LOW_SPACE_WRITES: u32 = 9;
+pub const IOPOL_TYPE_VFS_DISALLOW_RW_FOR_O_EVTONLY: u32 = 10;
+pub const IOPOL_TYPE_VFS_ENTITLED_RESERVE_ACCESS: u32 = 14;
+pub const IOPOL_SCOPE_PROCESS: u32 = 0;
+pub const IOPOL_SCOPE_THREAD: u32 = 1;
+pub const IOPOL_SCOPE_DARWIN_BG: u32 = 2;
+pub const IOPOL_DEFAULT: u32 = 0;
+pub const IOPOL_IMPORTANT: u32 = 1;
+pub const IOPOL_PASSIVE: u32 = 2;
+pub const IOPOL_THROTTLE: u32 = 3;
+pub const IOPOL_UTILITY: u32 = 4;
+pub const IOPOL_STANDARD: u32 = 5;
+pub const IOPOL_APPLICATION: u32 = 5;
+pub const IOPOL_NORMAL: u32 = 1;
+pub const IOPOL_ATIME_UPDATES_DEFAULT: u32 = 0;
+pub const IOPOL_ATIME_UPDATES_OFF: u32 = 1;
+pub const IOPOL_MATERIALIZE_DATALESS_FILES_DEFAULT: u32 = 0;
+pub const IOPOL_MATERIALIZE_DATALESS_FILES_OFF: u32 = 1;
+pub const IOPOL_MATERIALIZE_DATALESS_FILES_ON: u32 = 2;
+pub const IOPOL_MATERIALIZE_DATALESS_FILES_ORIG: u32 = 4;
+pub const IOPOL_MATERIALIZE_DATALESS_FILES_BASIC_MASK: u32 = 3;
+pub const IOPOL_VFS_STATFS_NO_DATA_VOLUME_DEFAULT: u32 = 0;
+pub const IOPOL_VFS_STATFS_FORCE_NO_DATA_VOLUME: u32 = 1;
+pub const IOPOL_VFS_TRIGGER_RESOLVE_DEFAULT: u32 = 0;
+pub const IOPOL_VFS_TRIGGER_RESOLVE_OFF: u32 = 1;
+pub const IOPOL_VFS_CONTENT_PROTECTION_DEFAULT: u32 = 0;
+pub const IOPOL_VFS_CONTENT_PROTECTION_IGNORE: u32 = 1;
+pub const IOPOL_VFS_IGNORE_PERMISSIONS_OFF: u32 = 0;
+pub const IOPOL_VFS_IGNORE_PERMISSIONS_ON: u32 = 1;
+pub const IOPOL_VFS_SKIP_MTIME_UPDATE_OFF: u32 = 0;
+pub const IOPOL_VFS_SKIP_MTIME_UPDATE_ON: u32 = 1;
+pub const IOPOL_VFS_SKIP_MTIME_UPDATE_IGNORE: u32 = 2;
+pub const IOPOL_VFS_ALLOW_LOW_SPACE_WRITES_OFF: u32 = 0;
+pub const IOPOL_VFS_ALLOW_LOW_SPACE_WRITES_ON: u32 = 1;
+pub const IOPOL_VFS_DISALLOW_RW_FOR_O_EVTONLY_DEFAULT: u32 = 0;
+pub const IOPOL_VFS_DISALLOW_RW_FOR_O_EVTONLY_ON: u32 = 1;
+pub const IOPOL_VFS_NOCACHE_WRITE_FS_BLKSIZE_DEFAULT: u32 = 0;
+pub const IOPOL_VFS_NOCACHE_WRITE_FS_BLKSIZE_ON: u32 = 1;
+pub const IOPOL_VFS_ENTITLED_RESERVE_ACCESS_OFF: u32 = 0;
+pub const IOPOL_VFS_ENTITLED_RESERVE_ACCESS_ON: u32 = 1;
+pub const WNOHANG: u32 = 1;
+pub const WUNTRACED: u32 = 2;
+pub const WCOREFLAG: u32 = 128;
+pub const _WSTOPPED: u32 = 127;
+pub const WEXITED: u32 = 4;
+pub const WSTOPPED: u32 = 8;
+pub const WCONTINUED: u32 = 16;
+pub const WNOWAIT: u32 = 32;
+pub const WAIT_ANY: i32 = -1;
+pub const WAIT_MYPGRP: u32 = 0;
+pub const _QUAD_HIGHWORD: u32 = 1;
+pub const _QUAD_LOWWORD: u32 = 0;
+pub const __DARWIN_LITTLE_ENDIAN: u32 = 1234;
+pub const __DARWIN_BIG_ENDIAN: u32 = 4321;
+pub const __DARWIN_PDP_ENDIAN: u32 = 3412;
+pub const LITTLE_ENDIAN: u32 = 1234;
+pub const BIG_ENDIAN: u32 = 4321;
+pub const PDP_ENDIAN: u32 = 3412;
+pub const __DARWIN_BYTE_ORDER: u32 = 1234;
+pub const BYTE_ORDER: u32 = 1234;
+pub const EXIT_FAILURE: u32 = 1;
+pub const EXIT_SUCCESS: u32 = 0;
+pub const RAND_MAX: u32 = 2147483647;
+pub const _MALLOC_TYPE_MALLOC_BACKDEPLOY_PUBLIC: u32 = 1;
 pub const SWIFT_HAS_MSVC_ARM_ATOMICS: u32 = 1;
 pub type max_align_t = f64;
+extern "C" {
+    pub fn __assert_rtn(
+        arg1: *const ::std::os::raw::c_char,
+        arg2: *const ::std::os::raw::c_char,
+        arg3: ::std::os::raw::c_int,
+        arg4: *const ::std::os::raw::c_char,
+    ) -> !;
+}
+pub type std___1_integral_constant_value_type = u8;
+pub type std___1_integral_constant_type = u8;
+pub type std___1_true_type = u8;
+pub type std___1_false_type = u8;
+pub type std___1__BoolConstant = u8;
+pub type std___1_bool_constant = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_trivially_copyable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_same {
+    pub _address: u8,
+}
+pub type std___1__IsSame = u8;
+pub type std___1__IsNotSame = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_enum {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_underlying_type {
+    pub _address: u8,
+}
+pub type std___1_underlying_type_t = u8;
+pub const std___1___legacy_memory_order___mo_relaxed: std___1___legacy_memory_order = 0;
+pub const std___1___legacy_memory_order___mo_consume: std___1___legacy_memory_order = 1;
+pub const std___1___legacy_memory_order___mo_acquire: std___1___legacy_memory_order = 2;
+pub const std___1___legacy_memory_order___mo_release: std___1___legacy_memory_order = 3;
+pub const std___1___legacy_memory_order___mo_acq_rel: std___1___legacy_memory_order = 4;
+pub const std___1___legacy_memory_order___mo_seq_cst: std___1___legacy_memory_order = 5;
+pub type std___1___legacy_memory_order = ::std::os::raw::c_uint;
+pub type std___1___memory_order_underlying_t = u32;
+pub const std___1_memory_order_memory_order_relaxed: std___1_memory_order = 0;
+pub const std___1_memory_order_memory_order_consume: std___1_memory_order = 1;
+pub const std___1_memory_order_memory_order_acquire: std___1_memory_order = 2;
+pub const std___1_memory_order_memory_order_release: std___1_memory_order = 3;
+pub const std___1_memory_order_memory_order_acq_rel: std___1_memory_order = 4;
+pub const std___1_memory_order_memory_order_seq_cst: std___1_memory_order = 5;
+pub type std___1_memory_order = ::std::os::raw::c_uint;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_remove_const {
+    pub _address: u8,
+}
+pub type std___1_remove_const_type = u8;
+pub type std___1___remove_const_t = u8;
+pub type std___1_remove_const_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___cxx_atomic_base_impl {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___cxx_atomic_impl {
+    pub _address: u8,
+}
+pub type std___1___cxx_contention_t = u64;
+pub type std___1___cxx_atomic_contention_t = u8;
+pub type std___1___enable_if_t = u8;
+pub type std___1_enable_if_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_convertible {
+    pub _address: u8,
+}
+pub type std___1__If = u8;
+pub type std___1_conditional_type = u8;
+pub type std___1_conditional_t = u8;
+pub type std___1___conditional_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___libcpp_is_referenceable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_void {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_remove_reference {
+    pub _address: u8,
+}
+pub type std___1_remove_reference_type = u8;
+pub type std___1___libcpp_remove_reference_t = u8;
+pub type std___1_remove_reference_t = u8;
+pub type std___1___add_pointer_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_add_pointer {
+    pub _address: u8,
+}
+pub type std___1_add_pointer_type = u8;
+pub type std___1_add_pointer_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_array {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_function {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_remove_cv {
+    pub _address: u8,
+}
+pub type std___1_remove_cv_type = u8;
+pub type std___1___remove_cv_t = u8;
+pub type std___1_remove_cv_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_remove_extent {
+    pub _address: u8,
+}
+pub type std___1_remove_extent_type = u8;
+pub type std___1___remove_extent_t = u8;
+pub type std___1_remove_extent_t = u8;
+pub type std___1___decay_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_decay {
+    pub _address: u8,
+}
+pub type std___1_decay_type = u8;
+pub type std___1_decay_t = u8;
+pub type std___1___remove_cvref_t = u8;
+pub type std___1___is_same_uncvref = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___type_identity {
+    pub _address: u8,
+}
+pub type std___1___type_identity_type = u8;
+pub type std___1___type_identity_t = u8;
+pub type std___1_void_t = u8;
+pub type std___1___void_t = u8;
+#[repr(C)]
+#[repr(align(1))]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___empty {
+    pub _bindgen_opaque_blob: u8,
+}
+const _: () = {
+    ["Size of std___1___empty"][::std::mem::size_of::<std___1___empty>() - 1usize];
+    ["Alignment of std___1___empty"][::std::mem::align_of::<std___1___empty>() - 1usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___common_type2_imp {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___common_type_impl {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___common_types {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_common_type {
+    pub _address: u8,
+}
+pub type std___1_common_type_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___copy_cv {
+    pub _address: u8,
+}
+pub type std___1___copy_cv___apply = u8;
+pub type std___1___copy_cv_t = u8;
+pub type std___1___add_lvalue_reference_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_add_lvalue_reference {
+    pub _address: u8,
+}
+pub type std___1_add_lvalue_reference_type = u8;
+pub type std___1_add_lvalue_reference_t = u8;
+pub type std___1___add_rvalue_reference_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_add_rvalue_reference {
+    pub _address: u8,
+}
+pub type std___1_add_rvalue_reference_type = u8;
+pub type std___1_add_rvalue_reference_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___copy_cvref {
+    pub _address: u8,
+}
+pub type std___1___copy_cvref___apply = u8;
+pub type std___1___copy_cvref_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_reference {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_lvalue_reference {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_rvalue_reference {
+    pub _address: u8,
+}
+pub type std___1___make_const_lvalue_ref = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___libcpp_is_floating_point {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_floating_point {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___libcpp_is_integral {
+    pub _address: u8,
+}
+pub const std___1___libcpp_is_integral_value: std___1___libcpp_is_integral__bindgen_ty_1 = 0;
+pub type std___1___libcpp_is_integral__bindgen_ty_1 = i32;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_integral {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_arithmetic {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_signed {
+    pub _address: u8,
+}
+pub const std___1_float_round_style_round_indeterminate: std___1_float_round_style = -1;
+pub const std___1_float_round_style_round_toward_zero: std___1_float_round_style = 0;
+pub const std___1_float_round_style_round_to_nearest: std___1_float_round_style = 1;
+pub const std___1_float_round_style_round_toward_infinity: std___1_float_round_style = 2;
+pub const std___1_float_round_style_round_toward_neg_infinity: std___1_float_round_style = 3;
+pub type std___1_float_round_style = ::std::os::raw::c_int;
+pub const std___1_float_denorm_style_denorm_indeterminate: std___1_float_denorm_style = -1;
+pub const std___1_float_denorm_style_denorm_absent: std___1_float_denorm_style = 0;
+pub const std___1_float_denorm_style_denorm_present: std___1_float_denorm_style = 1;
+pub type std___1_float_denorm_style = ::std::os::raw::c_int;
+pub type std___1___libcpp_numeric_limits_type = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_numeric_limits {
+    pub _address: u8,
+}
+pub type std___1_numeric_limits___base = u8;
+pub type std___1_numeric_limits_type = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_add_const {
+    pub _address: u8,
+}
+pub type std___1_add_const_type = u8;
+pub type std___1_add_const_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_add_cv {
+    pub _address: u8,
+}
+pub type std___1_add_cv_type = u8;
+pub type std___1_add_cv_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_add_volatile {
+    pub _address: u8,
+}
+pub type std___1_add_volatile_type = u8;
+pub type std___1_add_volatile_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___type_list {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___type_list_head {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___align_type {
+    pub _address: u8,
+}
+pub type std___1___align_type_type = u8;
+#[repr(C)]
+#[repr(align(8))]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___struct_double {
+    pub _bindgen_opaque_blob: u64,
+}
+const _: () = {
+    ["Size of std___1___struct_double"][::std::mem::size_of::<std___1___struct_double>() - 8usize];
+    ["Alignment of std___1___struct_double"]
+        [::std::mem::align_of::<std___1___struct_double>() - 8usize];
+};
+#[repr(C)]
+#[repr(align(8))]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___struct_double4 {
+    pub _bindgen_opaque_blob: [u64; 4usize],
+}
+const _: () = {
+    ["Size of std___1___struct_double4"]
+        [::std::mem::size_of::<std___1___struct_double4>() - 32usize];
+    ["Alignment of std___1___struct_double4"]
+        [::std::mem::align_of::<std___1___struct_double4>() - 8usize];
+};
+pub type std___1___all_types = u8;
+extern "C" {
+    #[link_name = "\u{1}__min"]
+    pub static std___1___select_align___min: usize;
+}
+extern "C" {
+    #[link_name = "\u{1}__max"]
+    pub static std___1___select_align___max: usize;
+}
+extern "C" {
+    #[link_name = "\u{1}value"]
+    pub static std___1___select_align_value: usize;
+}
+#[repr(C)]
+#[repr(align(8))]
+#[derive(Copy, Clone)]
+pub union std___1_aligned_storage_type {
+    pub _bindgen_opaque_blob: u64,
+}
+const _: () = {
+    ["Size of std___1_aligned_storage_type"]
+        [::std::mem::size_of::<std___1_aligned_storage_type>() - 8usize];
+    ["Alignment of std___1_aligned_storage_type"]
+        [::std::mem::align_of::<std___1_aligned_storage_type>() - 8usize];
+};
+pub type std___1_aligned_storage_t = u8;
+pub type std___1_aligned_union_type = u8;
+pub type std___1_aligned_union_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_alignment_of {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_has_virtual_destructor {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_abstract {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_assignable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_copy_assignable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_move_assignable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_base_of {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_class {
+    pub _address: u8,
+}
+pub type std___1_nullptr_t = u64;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_null_pointer {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_fundamental {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_compound {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_const {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_copy_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_move_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_default_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_remove_all_extents {
+    pub _address: u8,
+}
+pub type std___1_remove_all_extents_type = u8;
+pub type std___1___remove_all_extents_t = u8;
+pub type std___1_remove_all_extents_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_destructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_empty {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_literal_type {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_member_pointer {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_member_object_pointer {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_member_function_pointer {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_nothrow_assignable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_nothrow_copy_assignable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_nothrow_move_assignable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_nothrow_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_nothrow_copy_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_nothrow_move_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_nothrow_default_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_nothrow_destructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_object {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_pod {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_pointer {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_polymorphic {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_scalar {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_standard_layout {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_trivial {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_trivially_assignable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_trivially_copy_assignable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_trivially_move_assignable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_trivially_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_trivially_copy_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_trivially_move_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_trivially_default_constructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_trivially_destructible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_union {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_unsigned {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_volatile {
+    pub _address: u8,
+}
+pub type std___1___make_signed_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_make_signed {
+    pub _address: u8,
+}
+pub type std___1_make_signed_type = u8;
+pub type std___1_make_signed_t = u8;
+pub type std___1___make_unsigned_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_make_unsigned {
+    pub _address: u8,
+}
+pub type std___1_make_unsigned_type = u8;
+pub type std___1_make_unsigned_t = u8;
+pub type std___1___copy_unsigned_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_rank {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_remove_pointer {
+    pub _address: u8,
+}
+pub type std___1_remove_pointer_type = u8;
+pub type std___1___remove_pointer_t = u8;
+pub type std___1_remove_pointer_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_remove_volatile {
+    pub _address: u8,
+}
+pub type std___1_remove_volatile_type = u8;
+pub type std___1___remove_volatile_t = u8;
+pub type std___1_remove_volatile_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___is_core_convertible {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_hash {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_reference_wrapper {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___is_reference_wrapper_impl {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___is_reference_wrapper {
+    pub _address: u8,
+}
+#[repr(C)]
+#[repr(align(1))]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___nat {
+    pub _bindgen_opaque_blob: u8,
+}
+const _: () = {
+    ["Size of std___1___nat"][::std::mem::size_of::<std___1___nat>() - 1usize];
+    ["Alignment of std___1___nat"][::std::mem::align_of::<std___1___nat>() - 1usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___member_pointer_class_type {
+    pub _address: u8,
+}
+pub type std___1___enable_if_bullet1 = u8;
+pub type std___1___enable_if_bullet2 = u8;
+pub type std___1___enable_if_bullet3 = u8;
+pub type std___1___enable_if_bullet4 = u8;
+pub type std___1___enable_if_bullet5 = u8;
+pub type std___1___enable_if_bullet6 = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___invokable_r {
+    pub _address: u8,
+}
+pub type std___1___invokable_r__Result = u8;
+pub type std___1___invokable_r_type = u8;
+pub type std___1___is_invocable = u8;
+pub type std___1___nothrow_invokable_r = u8;
+pub type std___1___nothrow_invokable = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___invoke_result {
+    pub _address: u8,
+}
+pub type std___1___invoke_result_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_invocable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_invocable_r {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_nothrow_invocable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_nothrow_invocable_r {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_invoke_result {
+    pub _address: u8,
+}
+pub type std___1_invoke_result_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_result_of {
+    pub _address: u8,
+}
+pub type std___1_result_of_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___libcpp_is_final {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_final {
+    pub _address: u8,
+}
+pub type std___1___expand_to_true = u8;
+pub type std___1__And = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_conjunction {
+    pub _address: u8,
+}
+pub type std___1__Or = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_disjunction {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_has_unique_object_representations {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_aggregate {
+    pub _address: u8,
+}
+pub type std___1___swap_result_t = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_swappable_with {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_swappable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_nothrow_swappable_with {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_is_nothrow_swappable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1__Not {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_negation {
+    pub _address: u8,
+}
+pub const std___1___ll_mul_nan: ::std::os::raw::c_long = -9223372036854775808;
+pub const std___1___ll_mul_min: ::std::os::raw::c_long = -9223372036854775807;
+pub const std___1___ll_mul_max: ::std::os::raw::c_long = 9223372036854775807;
+extern "C" {
+    #[link_name = "\u{1}__a_x"]
+    pub static std___1___ll_mul___a_x: ::std::os::raw::c_long;
+}
+extern "C" {
+    #[link_name = "\u{1}__a_y"]
+    pub static std___1___ll_mul___a_y: ::std::os::raw::c_long;
+}
+extern "C" {
+    #[link_name = "\u{1}value"]
+    pub static std___1___ll_mul_value: ::std::os::raw::c_long;
+}
+pub const std___1___ll_div_nan: ::std::os::raw::c_long = -9223372036854775808;
+pub const std___1___ll_div_min: ::std::os::raw::c_long = -9223372036854775807;
+pub const std___1___ll_div_max: ::std::os::raw::c_long = 9223372036854775807;
+extern "C" {
+    #[link_name = "\u{1}value"]
+    pub static std___1___ll_div_value: ::std::os::raw::c_long;
+}
+extern "C" {
+    #[link_name = "\u{1}__na"]
+    pub static std___1_ratio___na: ::std::os::raw::c_long;
+}
+extern "C" {
+    #[link_name = "\u{1}__da"]
+    pub static std___1_ratio___da: ::std::os::raw::c_long;
+}
+extern "C" {
+    #[link_name = "\u{1}__s"]
+    pub static std___1_ratio___s: ::std::os::raw::c_long;
+}
+extern "C" {
+    #[link_name = "\u{1}__gcd"]
+    pub static std___1_ratio___gcd: ::std::os::raw::c_long;
+}
+extern "C" {
+    #[link_name = "\u{1}num"]
+    pub static std___1_ratio_num: ::std::os::raw::c_long;
+}
+extern "C" {
+    #[link_name = "\u{1}den"]
+    pub static std___1_ratio_den: ::std::os::raw::c_long;
+}
+pub type std___1_atto = u8;
+pub type std___1_femto = u8;
+pub type std___1_pico = u8;
+pub type std___1_nano = u8;
+pub type std___1_micro = u8;
+pub type std___1_milli = u8;
+pub type std___1_centi = u8;
+pub type std___1_deci = u8;
+pub type std___1_deca = u8;
+pub type std___1_hecto = u8;
+pub type std___1_kilo = u8;
+pub type std___1_mega = u8;
+pub type std___1_giga = u8;
+pub type std___1_tera = u8;
+pub type std___1_peta = u8;
+pub type std___1_exa = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___ratio_multiply {
+    pub _address: u8,
+}
+pub type std___1___ratio_multiply_type = u8;
+pub type std___1_ratio_multiply = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___ratio_divide {
+    pub _address: u8,
+}
+pub type std___1___ratio_divide_type = u8;
+pub type std___1_ratio_divide = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___ratio_add {
+    pub _address: u8,
+}
+pub type std___1___ratio_add_type = u8;
+pub type std___1_ratio_add = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___ratio_subtract {
+    pub _address: u8,
+}
+pub type std___1___ratio_subtract_type = u8;
+pub type std___1_ratio_subtract = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_ratio_equal {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_ratio_not_equal {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_ratio_less {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_ratio_less_equal {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_ratio_greater {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_ratio_greater_equal {
+    pub _address: u8,
+}
+pub type std___1___ratio_gcd = u8;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_chrono_treat_as_floating_point {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_chrono_duration_values {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_chrono_duration {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_chrono_duration___no_overflow {
+    pub _address: u8,
+}
+pub type std___1_chrono_duration___no_overflow_type = u8;
+pub type std___1_chrono_duration_rep = u8;
+pub type std___1_chrono_duration_period = u8;
+pub type std___1_chrono_nanoseconds = u64;
+pub type std___1_chrono_microseconds = u64;
+pub type std___1_chrono_milliseconds = u64;
+pub type std___1_chrono_seconds = u64;
+pub type std___1_chrono_minutes = u64;
+pub type std___1_chrono_hours = u64;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_chrono___duration_eq {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_chrono___duration_lt {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_chrono_time_point {
+    pub _address: u8,
+}
+pub type std___1_chrono_time_point_clock = u8;
+pub type std___1_chrono_time_point_duration = u8;
+pub type std___1_chrono_time_point_rep = u8;
+pub type std___1_chrono_time_point_period = u8;
+#[repr(C)]
+#[repr(align(1))]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_chrono_steady_clock {
+    pub _bindgen_opaque_blob: u8,
+}
+pub type std___1_chrono_steady_clock_duration = u64;
+pub type std___1_chrono_steady_clock_rep = u64;
+pub type std___1_chrono_steady_clock_period = u8;
+pub type std___1_chrono_steady_clock_time_point = u64;
+const _: () = {
+    ["Size of std___1_chrono_steady_clock"]
+        [::std::mem::size_of::<std___1_chrono_steady_clock>() - 1usize];
+    ["Alignment of std___1_chrono_steady_clock"]
+        [::std::mem::align_of::<std___1_chrono_steady_clock>() - 1usize];
+};
+extern "C" {
+    #[link_name = "\u{1}__ZNSt3__16chrono12steady_clock3nowEv"]
+    pub fn std___1_chrono_steady_clock_now() -> std___1_chrono_steady_clock_time_point;
+}
+impl std___1_chrono_steady_clock {
+    #[inline]
+    pub unsafe fn now() -> std___1_chrono_steady_clock_time_point {
+        std___1_chrono_steady_clock_now()
+    }
+}
+pub const std___1_chrono_steady_clock_is_steady: bool = true;
+#[repr(C)]
+#[repr(align(1))]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_chrono_system_clock {
+    pub _bindgen_opaque_blob: u8,
+}
+pub type std___1_chrono_system_clock_duration = u64;
+pub type std___1_chrono_system_clock_rep = u64;
+pub type std___1_chrono_system_clock_period = u8;
+pub type std___1_chrono_system_clock_time_point = u8;
+const _: () = {
+    ["Size of std___1_chrono_system_clock"]
+        [::std::mem::size_of::<std___1_chrono_system_clock>() - 1usize];
+    ["Alignment of std___1_chrono_system_clock"]
+        [::std::mem::align_of::<std___1_chrono_system_clock>() - 1usize];
+};
+extern "C" {
+    #[link_name = "\u{1}__ZNSt3__16chrono12system_clock3nowEv"]
+    pub fn std___1_chrono_system_clock_now() -> std___1_chrono_system_clock_time_point;
+}
+extern "C" {
+    #[link_name = "\u{1}__ZNSt3__16chrono12system_clock9to_time_tERKNS0_10time_pointIS1_NS0_8durationIxNS_5ratioILl1ELl1000000EEEEEEE"]
+    pub fn std___1_chrono_system_clock_to_time_t(
+        __t: *const std___1_chrono_system_clock_time_point,
+    ) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    #[link_name = "\u{1}__ZNSt3__16chrono12system_clock11from_time_tEl"]
+    pub fn std___1_chrono_system_clock_from_time_t(
+        __t: ::std::os::raw::c_long,
+    ) -> std___1_chrono_system_clock_time_point;
+}
+impl std___1_chrono_system_clock {
+    #[inline]
+    pub unsafe fn now() -> std___1_chrono_system_clock_time_point {
+        std___1_chrono_system_clock_now()
+    }
+    #[inline]
+    pub unsafe fn to_time_t(
+        __t: *const std___1_chrono_system_clock_time_point,
+    ) -> ::std::os::raw::c_long {
+        std___1_chrono_system_clock_to_time_t(__t)
+    }
+    #[inline]
+    pub unsafe fn from_time_t(
+        __t: ::std::os::raw::c_long,
+    ) -> std___1_chrono_system_clock_time_point {
+        std___1_chrono_system_clock_from_time_t(__t)
+    }
+}
+pub const std___1_chrono_system_clock_is_steady: bool = false;
+pub type std___1_chrono_high_resolution_clock = u8;
+pub const std___1___libcpp_polling_count: ::std::os::raw::c_int = 64;
+#[repr(C)]
+#[repr(align(1))]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___spinning_backoff_policy {
+    pub _bindgen_opaque_blob: u8,
+}
+const _: () = {
+    ["Size of std___1___spinning_backoff_policy"]
+        [::std::mem::size_of::<std___1___spinning_backoff_policy>() - 1usize];
+    ["Alignment of std___1___spinning_backoff_policy"]
+        [::std::mem::align_of::<std___1___spinning_backoff_policy>() - 1usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___atomic_waitable_traits {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___atomic_waitable {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___libcpp_is_always_lock_free {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_atomic {
+    pub _address: u8,
+}
+pub type std___1_atomic___base = u8;
+pub type std___1_atomic_value_type = u8;
+pub type std___1_atomic_difference_type = u8;
+pub type std___1_atomic_bool = u8;
+pub type std___1_atomic_char = u8;
+pub type std___1_atomic_schar = u8;
+pub type std___1_atomic_uchar = u8;
+pub type std___1_atomic_short = u8;
+pub type std___1_atomic_ushort = u8;
+pub type std___1_atomic_int = u8;
+pub type std___1_atomic_uint = u8;
+pub type std___1_atomic_long = u8;
+pub type std___1_atomic_ulong = u8;
+pub type std___1_atomic_llong = u8;
+pub type std___1_atomic_ullong = u8;
+pub type std___1_atomic_char16_t = u8;
+pub type std___1_atomic_char32_t = u8;
+pub type std___1_atomic_wchar_t = u8;
+pub type std___1_atomic_int_least8_t = u8;
+pub type std___1_atomic_uint_least8_t = u8;
+pub type std___1_atomic_int_least16_t = u8;
+pub type std___1_atomic_uint_least16_t = u8;
+pub type std___1_atomic_int_least32_t = u8;
+pub type std___1_atomic_uint_least32_t = u8;
+pub type std___1_atomic_int_least64_t = u8;
+pub type std___1_atomic_uint_least64_t = u8;
+pub type std___1_atomic_int_fast8_t = u8;
+pub type std___1_atomic_uint_fast8_t = u8;
+pub type std___1_atomic_int_fast16_t = u8;
+pub type std___1_atomic_uint_fast16_t = u8;
+pub type std___1_atomic_int_fast32_t = u8;
+pub type std___1_atomic_uint_fast32_t = u8;
+pub type std___1_atomic_int_fast64_t = u8;
+pub type std___1_atomic_uint_fast64_t = u8;
+pub type std___1_atomic_int8_t = u8;
+pub type std___1_atomic_uint8_t = u8;
+pub type std___1_atomic_int16_t = u8;
+pub type std___1_atomic_uint16_t = u8;
+pub type std___1_atomic_int32_t = u8;
+pub type std___1_atomic_uint32_t = u8;
+pub type std___1_atomic_int64_t = u8;
+pub type std___1_atomic_uint64_t = u8;
+pub type std___1_atomic_intptr_t = u8;
+pub type std___1_atomic_uintptr_t = u8;
+pub type std___1_atomic_size_t = u8;
+pub type std___1_atomic_ptrdiff_t = u8;
+pub type std___1_atomic_intmax_t = u8;
+pub type std___1_atomic_uintmax_t = u8;
+pub type std___1___libcpp_timespec_t = [u64; 2usize];
+pub type std___1___libcpp_mutex_t = [u64; 8usize];
+pub type std___1___libcpp_recursive_mutex_t = [u64; 8usize];
+pub type std___1___libcpp_condvar_t = [u64; 6usize];
+pub type std___1___libcpp_exec_once_flag = [u64; 2usize];
+pub type std___1___libcpp_thread_id = u64;
+pub type std___1___libcpp_thread_t = u64;
+pub type std___1___libcpp_tls_key = u64;
+#[repr(C)]
+#[repr(align(1))]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1_atomic_flag {
+    pub _bindgen_opaque_blob: u8,
+}
+const _: () = {
+    ["Size of std___1_atomic_flag"][::std::mem::size_of::<std___1_atomic_flag>() - 1usize];
+    ["Alignment of std___1_atomic_flag"][::std::mem::align_of::<std___1_atomic_flag>() - 1usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct std___1___promote {
+    pub _address: u8,
+}
+pub type std___1___promote_type = u8;
+pub type std_byte = ::std::os::raw::c_uchar;
+pub type int_least8_t = i8;
+pub type int_least16_t = i16;
+pub type int_least32_t = i32;
+pub type int_least64_t = i64;
+pub type uint_least8_t = u8;
+pub type uint_least16_t = u16;
+pub type uint_least32_t = u32;
+pub type uint_least64_t = u64;
+pub type int_fast8_t = i8;
+pub type int_fast16_t = i16;
+pub type int_fast32_t = i32;
+pub type int_fast64_t = i64;
+pub type uint_fast8_t = u8;
+pub type uint_fast16_t = u16;
+pub type uint_fast32_t = u32;
+pub type uint_fast64_t = u64;
 pub type __int8_t = ::std::os::raw::c_schar;
 pub type __uint8_t = ::std::os::raw::c_uchar;
 pub type __int16_t = ::std::os::raw::c_short;
@@ -1352,16 +2735,11 @@ pub type __darwin_pthread_once_t = _opaque_pthread_once_t;
 pub type __darwin_pthread_rwlock_t = _opaque_pthread_rwlock_t;
 pub type __darwin_pthread_rwlockattr_t = _opaque_pthread_rwlockattr_t;
 pub type __darwin_pthread_t = *mut _opaque_pthread_t;
+pub type intmax_t = ::std::os::raw::c_long;
+pub type uintmax_t = ::std::os::raw::c_ulong;
 pub type __darwin_nl_item = ::std::os::raw::c_int;
 pub type __darwin_wctrans_t = ::std::os::raw::c_int;
 pub type __darwin_wctype_t = __uint32_t;
-pub const idtype_t_P_ALL: idtype_t = 0;
-pub const idtype_t_P_PID: idtype_t = 1;
-pub const idtype_t_P_PGID: idtype_t = 2;
-pub type idtype_t = ::std::os::raw::c_uint;
-pub type pid_t = __darwin_pid_t;
-pub type id_t = __darwin_id_t;
-pub type sig_atomic_t = ::std::os::raw::c_int;
 pub type u_int8_t = ::std::os::raw::c_uchar;
 pub type u_int16_t = ::std::os::raw::c_ushort;
 pub type u_int32_t = ::std::os::raw::c_uint;
@@ -1375,6 +2753,1744 @@ pub type user_ulong_t = u_int64_t;
 pub type user_time_t = i64;
 pub type user_off_t = i64;
 pub type syscall_arg_t = u_int64_t;
+pub type clock_t = __darwin_clock_t;
+pub type time_t = __darwin_time_t;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct timespec {
+    pub tv_sec: __darwin_time_t,
+    pub tv_nsec: ::std::os::raw::c_long,
+}
+const _: () = {
+    ["Size of timespec"][::std::mem::size_of::<timespec>() - 16usize];
+    ["Alignment of timespec"][::std::mem::align_of::<timespec>() - 8usize];
+    ["Offset of field: timespec::tv_sec"][::std::mem::offset_of!(timespec, tv_sec) - 0usize];
+    ["Offset of field: timespec::tv_nsec"][::std::mem::offset_of!(timespec, tv_nsec) - 8usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct tm {
+    pub tm_sec: ::std::os::raw::c_int,
+    pub tm_min: ::std::os::raw::c_int,
+    pub tm_hour: ::std::os::raw::c_int,
+    pub tm_mday: ::std::os::raw::c_int,
+    pub tm_mon: ::std::os::raw::c_int,
+    pub tm_year: ::std::os::raw::c_int,
+    pub tm_wday: ::std::os::raw::c_int,
+    pub tm_yday: ::std::os::raw::c_int,
+    pub tm_isdst: ::std::os::raw::c_int,
+    pub tm_gmtoff: ::std::os::raw::c_long,
+    pub tm_zone: *mut ::std::os::raw::c_char,
+}
+const _: () = {
+    ["Size of tm"][::std::mem::size_of::<tm>() - 56usize];
+    ["Alignment of tm"][::std::mem::align_of::<tm>() - 8usize];
+    ["Offset of field: tm::tm_sec"][::std::mem::offset_of!(tm, tm_sec) - 0usize];
+    ["Offset of field: tm::tm_min"][::std::mem::offset_of!(tm, tm_min) - 4usize];
+    ["Offset of field: tm::tm_hour"][::std::mem::offset_of!(tm, tm_hour) - 8usize];
+    ["Offset of field: tm::tm_mday"][::std::mem::offset_of!(tm, tm_mday) - 12usize];
+    ["Offset of field: tm::tm_mon"][::std::mem::offset_of!(tm, tm_mon) - 16usize];
+    ["Offset of field: tm::tm_year"][::std::mem::offset_of!(tm, tm_year) - 20usize];
+    ["Offset of field: tm::tm_wday"][::std::mem::offset_of!(tm, tm_wday) - 24usize];
+    ["Offset of field: tm::tm_yday"][::std::mem::offset_of!(tm, tm_yday) - 28usize];
+    ["Offset of field: tm::tm_isdst"][::std::mem::offset_of!(tm, tm_isdst) - 32usize];
+    ["Offset of field: tm::tm_gmtoff"][::std::mem::offset_of!(tm, tm_gmtoff) - 40usize];
+    ["Offset of field: tm::tm_zone"][::std::mem::offset_of!(tm, tm_zone) - 48usize];
+};
+extern "C" {
+    pub static mut tzname: [*mut ::std::os::raw::c_char; 0usize];
+}
+extern "C" {
+    pub static mut getdate_err: ::std::os::raw::c_int;
+}
+extern "C" {
+    pub static mut timezone: ::std::os::raw::c_long;
+}
+extern "C" {
+    pub static mut daylight: ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn asctime(arg1: *const tm) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn clock() -> clock_t;
+}
+extern "C" {
+    pub fn ctime(arg1: *const time_t) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn difftime(arg1: time_t, arg2: time_t) -> f64;
+}
+extern "C" {
+    pub fn getdate(arg1: *const ::std::os::raw::c_char) -> *mut tm;
+}
+extern "C" {
+    pub fn gmtime(arg1: *const time_t) -> *mut tm;
+}
+extern "C" {
+    pub fn localtime(arg1: *const time_t) -> *mut tm;
+}
+extern "C" {
+    pub fn mktime(arg1: *mut tm) -> time_t;
+}
+extern "C" {
+    pub fn strftime(
+        arg1: *mut ::std::os::raw::c_char,
+        __maxsize: usize,
+        arg2: *const ::std::os::raw::c_char,
+        arg3: *const tm,
+    ) -> usize;
+}
+extern "C" {
+    pub fn strptime(
+        arg1: *const ::std::os::raw::c_char,
+        arg2: *const ::std::os::raw::c_char,
+        arg3: *mut tm,
+    ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn time(arg1: *mut time_t) -> time_t;
+}
+extern "C" {
+    pub fn tzset();
+}
+extern "C" {
+    pub fn asctime_r(
+        arg1: *const tm,
+        arg2: *mut ::std::os::raw::c_char,
+    ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn ctime_r(
+        arg1: *const time_t,
+        arg2: *mut ::std::os::raw::c_char,
+    ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn gmtime_r(arg1: *const time_t, arg2: *mut tm) -> *mut tm;
+}
+extern "C" {
+    pub fn localtime_r(arg1: *const time_t, arg2: *mut tm) -> *mut tm;
+}
+extern "C" {
+    pub fn posix2time(arg1: time_t) -> time_t;
+}
+extern "C" {
+    pub fn tzsetwall();
+}
+extern "C" {
+    pub fn time2posix(arg1: time_t) -> time_t;
+}
+extern "C" {
+    pub fn timelocal(arg1: *mut tm) -> time_t;
+}
+extern "C" {
+    pub fn timegm(arg1: *mut tm) -> time_t;
+}
+extern "C" {
+    pub fn nanosleep(__rqtp: *const timespec, __rmtp: *mut timespec) -> ::std::os::raw::c_int;
+}
+pub const clockid_t__CLOCK_REALTIME: clockid_t = 0;
+pub const clockid_t__CLOCK_MONOTONIC: clockid_t = 6;
+pub const clockid_t__CLOCK_MONOTONIC_RAW: clockid_t = 4;
+pub const clockid_t__CLOCK_MONOTONIC_RAW_APPROX: clockid_t = 5;
+pub const clockid_t__CLOCK_UPTIME_RAW: clockid_t = 8;
+pub const clockid_t__CLOCK_UPTIME_RAW_APPROX: clockid_t = 9;
+pub const clockid_t__CLOCK_PROCESS_CPUTIME_ID: clockid_t = 12;
+pub const clockid_t__CLOCK_THREAD_CPUTIME_ID: clockid_t = 16;
+pub type clockid_t = ::std::os::raw::c_uint;
+extern "C" {
+    pub fn clock_getres(__clock_id: clockid_t, __res: *mut timespec) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn clock_gettime(__clock_id: clockid_t, __tp: *mut timespec) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn clock_gettime_nsec_np(__clock_id: clockid_t) -> __uint64_t;
+}
+extern "C" {
+    pub fn clock_settime(__clock_id: clockid_t, __tp: *const timespec) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn timespec_get(ts: *mut timespec, base: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn memchr(
+        __s: *const ::std::os::raw::c_void,
+        __c: ::std::os::raw::c_int,
+        __n: usize,
+    ) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn memcmp(
+        __s1: *const ::std::os::raw::c_void,
+        __s2: *const ::std::os::raw::c_void,
+        __n: usize,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn memcpy(
+        __dst: *mut ::std::os::raw::c_void,
+        __src: *const ::std::os::raw::c_void,
+        __n: usize,
+    ) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn memmove(
+        __dst: *mut ::std::os::raw::c_void,
+        __src: *const ::std::os::raw::c_void,
+        __len: usize,
+    ) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn memset(
+        __b: *mut ::std::os::raw::c_void,
+        __c: ::std::os::raw::c_int,
+        __len: usize,
+    ) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn strcat(
+        __s1: *mut ::std::os::raw::c_char,
+        __s2: *const ::std::os::raw::c_char,
+    ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn strchr(
+        __s: *const ::std::os::raw::c_char,
+        __c: ::std::os::raw::c_int,
+    ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn strcmp(
+        __s1: *const ::std::os::raw::c_char,
+        __s2: *const ::std::os::raw::c_char,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn strcoll(
+        __s1: *const ::std::os::raw::c_char,
+        __s2: *const ::std::os::raw::c_char,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn strcpy(
+        __dst: *mut ::std::os::raw::c_char,
+        __src: *const ::std::os::raw::c_char,
+    ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn strcspn(
+        __s: *const ::std::os::raw::c_char,
+        __charset: *const ::std::os::raw::c_char,
+    ) -> usize;
+}
+extern "C" {
+    pub fn strerror(__errnum: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn strlen(__s: *const ::std::os::raw::c_char) -> usize;
+}
+extern "C" {
+    pub fn strncat(
+        __s1: *mut ::std::os::raw::c_char,
+        __s2: *const ::std::os::raw::c_char,
+        __n: usize,
+    ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn strncmp(
+        __s1: *const ::std::os::raw::c_char,
+        __s2: *const ::std::os::raw::c_char,
+        __n: usize,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn strncpy(
+        __dst: *mut ::std::os::raw::c_char,
+        __src: *const ::std::os::raw::c_char,
+        __n: usize,
+    ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn strpbrk(
+        __s: *const ::std::os::raw::c_char,
+        __charset: *const ::std::os::raw::c_char,
+    ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn strrchr(
+        __s: *const ::std::os::raw::c_char,
+        __c: ::std::os::raw::c_int,
+    ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn strspn(
+        __s: *const ::std::os::raw::c_char,
+        __charset: *const ::std::os::raw::c_char,
+    ) -> usize;
+}
+extern "C" {
+    pub fn strstr(
+        __big: *const ::std::os::raw::c_char,
+        __little: *const ::std::os::raw::c_char,
+    ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn strtok(
+        __str: *mut ::std::os::raw::c_char,
+        __sep: *const ::std::os::raw::c_char,
+    ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn strxfrm(
+        __s1: *mut ::std::os::raw::c_char,
+        __s2: *const ::std::os::raw::c_char,
+        __n: usize,
+    ) -> usize;
+}
+extern "C" {
+    pub fn strtok_r(
+        __str: *mut ::std::os::raw::c_char,
+        __sep: *const ::std::os::raw::c_char,
+        __lasts: *mut *mut ::std::os::raw::c_char,
+    ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn strerror_r(
+        __errnum: ::std::os::raw::c_int,
+        __strerrbuf: *mut ::std::os::raw::c_char,
+        __buflen: usize,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn strdup(__s1: *const ::std::os::raw::c_char) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn memccpy(
+        __dst: *mut ::std::os::raw::c_void,
+        __src: *const ::std::os::raw::c_void,
+        __c: ::std::os::raw::c_int,
+        __n: usize,
+    ) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn stpcpy(
+        __dst: *mut ::std::os::raw::c_char,
+        __src: *const ::std::os::raw::c_char,
+    ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn stpncpy(
+        __dst: *mut ::std::os::raw::c_char,
+        __src: *const ::std::os::raw::c_char,
+        __n: usize,
+    ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn strndup(__s1: *const ::std::os::raw::c_char, __n: usize) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn strnlen(__s1: *const ::std::os::raw::c_char, __n: usize) -> usize;
+}
+extern "C" {
+    pub fn strsignal(__sig: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn memmem(
+        __big: *const ::std::os::raw::c_void,
+        __big_len: usize,
+        __little: *const ::std::os::raw::c_void,
+        __little_len: usize,
+    ) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn memset_pattern4(
+        __b: *mut ::std::os::raw::c_void,
+        __pattern4: *const ::std::os::raw::c_void,
+        __len: usize,
+    );
+}
+extern "C" {
+    pub fn memset_pattern8(
+        __b: *mut ::std::os::raw::c_void,
+        __pattern8: *const ::std::os::raw::c_void,
+        __len: usize,
+    );
+}
+extern "C" {
+    pub fn memset_pattern16(
+        __b: *mut ::std::os::raw::c_void,
+        __pattern16: *const ::std::os::raw::c_void,
+        __len: usize,
+    );
+}
+extern "C" {
+    pub fn strcasestr(
+        __big: *const ::std::os::raw::c_char,
+        __little: *const ::std::os::raw::c_char,
+    ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn strchrnul(
+        __s: *const ::std::os::raw::c_char,
+        __c: ::std::os::raw::c_int,
+    ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn strnstr(
+        __big: *const ::std::os::raw::c_char,
+        __little: *const ::std::os::raw::c_char,
+        __len: usize,
+    ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn strlcat(
+        __dst: *mut ::std::os::raw::c_char,
+        __source: *const ::std::os::raw::c_char,
+        __size: usize,
+    ) -> usize;
+}
+extern "C" {
+    pub fn strlcpy(
+        __dst: *mut ::std::os::raw::c_char,
+        __source: *const ::std::os::raw::c_char,
+        __size: usize,
+    ) -> usize;
+}
+extern "C" {
+    pub fn strmode(__mode: ::std::os::raw::c_int, __bp: *mut ::std::os::raw::c_char);
+}
+extern "C" {
+    pub fn strsep(
+        __stringp: *mut *mut ::std::os::raw::c_char,
+        __delim: *const ::std::os::raw::c_char,
+    ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn swab(
+        arg1: *const ::std::os::raw::c_void,
+        arg2: *mut ::std::os::raw::c_void,
+        __len: isize,
+    );
+}
+extern "C" {
+    pub fn timingsafe_bcmp(
+        __b1: *const ::std::os::raw::c_void,
+        __b2: *const ::std::os::raw::c_void,
+        __len: usize,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn strsignal_r(
+        __sig: ::std::os::raw::c_int,
+        __strsignalbuf: *mut ::std::os::raw::c_char,
+        __buflen: usize,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn bcmp(
+        arg1: *const ::std::os::raw::c_void,
+        arg2: *const ::std::os::raw::c_void,
+        __n: usize,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn bcopy(
+        arg1: *const ::std::os::raw::c_void,
+        arg2: *mut ::std::os::raw::c_void,
+        __n: usize,
+    );
+}
+extern "C" {
+    pub fn bzero(arg1: *mut ::std::os::raw::c_void, __n: usize);
+}
+extern "C" {
+    pub fn index(
+        arg1: *const ::std::os::raw::c_char,
+        arg2: ::std::os::raw::c_int,
+    ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn rindex(
+        arg1: *const ::std::os::raw::c_char,
+        arg2: ::std::os::raw::c_int,
+    ) -> *mut ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn ffs(arg1: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn strcasecmp(
+        arg1: *const ::std::os::raw::c_char,
+        arg2: *const ::std::os::raw::c_char,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn strncasecmp(
+        arg1: *const ::std::os::raw::c_char,
+        arg2: *const ::std::os::raw::c_char,
+        arg3: usize,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ffsl(arg1: ::std::os::raw::c_long) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ffsll(arg1: ::std::os::raw::c_longlong) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn fls(arg1: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn flsl(arg1: ::std::os::raw::c_long) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn flsll(arg1: ::std::os::raw::c_longlong) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn __error() -> *mut ::std::os::raw::c_int;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct sched_param {
+    pub sched_priority: ::std::os::raw::c_int,
+    pub __opaque: [::std::os::raw::c_char; 4usize],
+}
+const _: () = {
+    ["Size of sched_param"][::std::mem::size_of::<sched_param>() - 8usize];
+    ["Alignment of sched_param"][::std::mem::align_of::<sched_param>() - 4usize];
+    ["Offset of field: sched_param::sched_priority"]
+        [::std::mem::offset_of!(sched_param, sched_priority) - 0usize];
+    ["Offset of field: sched_param::__opaque"]
+        [::std::mem::offset_of!(sched_param, __opaque) - 4usize];
+};
+extern "C" {
+    pub fn sched_yield() -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn sched_get_priority_min(arg1: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn sched_get_priority_max(arg1: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+}
+pub type pthread_attr_t = __darwin_pthread_attr_t;
+pub type pthread_cond_t = __darwin_pthread_cond_t;
+pub type pthread_condattr_t = __darwin_pthread_condattr_t;
+pub type pthread_key_t = __darwin_pthread_key_t;
+pub type pthread_mutex_t = __darwin_pthread_mutex_t;
+pub type pthread_mutexattr_t = __darwin_pthread_mutexattr_t;
+pub type pthread_once_t = __darwin_pthread_once_t;
+pub type pthread_rwlock_t = __darwin_pthread_rwlock_t;
+pub type pthread_rwlockattr_t = __darwin_pthread_rwlockattr_t;
+pub type pthread_t = __darwin_pthread_t;
+pub const qos_class_t_QOS_CLASS_USER_INTERACTIVE: qos_class_t = 33;
+pub const qos_class_t_QOS_CLASS_USER_INITIATED: qos_class_t = 25;
+pub const qos_class_t_QOS_CLASS_DEFAULT: qos_class_t = 21;
+pub const qos_class_t_QOS_CLASS_UTILITY: qos_class_t = 17;
+pub const qos_class_t_QOS_CLASS_BACKGROUND: qos_class_t = 9;
+pub const qos_class_t_QOS_CLASS_UNSPECIFIED: qos_class_t = 0;
+pub type qos_class_t = ::std::os::raw::c_uint;
+extern "C" {
+    pub fn qos_class_self() -> qos_class_t;
+}
+extern "C" {
+    pub fn qos_class_main() -> qos_class_t;
+}
+extern "C" {
+    pub fn pthread_attr_set_qos_class_np(
+        __attr: *mut pthread_attr_t,
+        __qos_class: qos_class_t,
+        __relative_priority: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_attr_get_qos_class_np(
+        __attr: *mut pthread_attr_t,
+        __qos_class: *mut qos_class_t,
+        __relative_priority: *mut ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_set_qos_class_self_np(
+        __qos_class: qos_class_t,
+        __relative_priority: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_get_qos_class_np(
+        __pthread: pthread_t,
+        __qos_class: *mut qos_class_t,
+        __relative_priority: *mut ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct pthread_override_s {
+    _unused: [u8; 0],
+}
+pub type pthread_override_t = *mut pthread_override_s;
+extern "C" {
+    pub fn pthread_override_qos_class_start_np(
+        __pthread: pthread_t,
+        __qos_class: qos_class_t,
+        __relative_priority: ::std::os::raw::c_int,
+    ) -> pthread_override_t;
+}
+extern "C" {
+    pub fn pthread_override_qos_class_end_np(
+        __override: pthread_override_t,
+    ) -> ::std::os::raw::c_int;
+}
+pub type mach_port_t = __darwin_mach_port_t;
+pub type sigset_t = __darwin_sigset_t;
+extern "C" {
+    pub fn pthread_atfork(
+        arg1: ::std::option::Option<unsafe extern "C" fn()>,
+        arg2: ::std::option::Option<unsafe extern "C" fn()>,
+        arg3: ::std::option::Option<unsafe extern "C" fn()>,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_attr_destroy(arg1: *mut pthread_attr_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_attr_getdetachstate(
+        arg1: *const pthread_attr_t,
+        arg2: *mut ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_attr_getguardsize(
+        arg1: *const pthread_attr_t,
+        arg2: *mut usize,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_attr_getinheritsched(
+        arg1: *const pthread_attr_t,
+        arg2: *mut ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_attr_getschedparam(
+        arg1: *const pthread_attr_t,
+        arg2: *mut sched_param,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_attr_getschedpolicy(
+        arg1: *const pthread_attr_t,
+        arg2: *mut ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_attr_getscope(
+        arg1: *const pthread_attr_t,
+        arg2: *mut ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_attr_getstack(
+        arg1: *const pthread_attr_t,
+        arg2: *mut *mut ::std::os::raw::c_void,
+        arg3: *mut usize,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_attr_getstackaddr(
+        arg1: *const pthread_attr_t,
+        arg2: *mut *mut ::std::os::raw::c_void,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_attr_getstacksize(
+        arg1: *const pthread_attr_t,
+        arg2: *mut usize,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_attr_init(arg1: *mut pthread_attr_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_attr_setdetachstate(
+        arg1: *mut pthread_attr_t,
+        arg2: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_attr_setguardsize(
+        arg1: *mut pthread_attr_t,
+        arg2: usize,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_attr_setinheritsched(
+        arg1: *mut pthread_attr_t,
+        arg2: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_attr_setschedparam(
+        arg1: *mut pthread_attr_t,
+        arg2: *const sched_param,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_attr_setschedpolicy(
+        arg1: *mut pthread_attr_t,
+        arg2: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_attr_setscope(
+        arg1: *mut pthread_attr_t,
+        arg2: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_attr_setstack(
+        arg1: *mut pthread_attr_t,
+        arg2: *mut ::std::os::raw::c_void,
+        arg3: usize,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_attr_setstackaddr(
+        arg1: *mut pthread_attr_t,
+        arg2: *mut ::std::os::raw::c_void,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_attr_setstacksize(
+        arg1: *mut pthread_attr_t,
+        arg2: usize,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_cancel(arg1: pthread_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_cond_broadcast(arg1: *mut pthread_cond_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_cond_destroy(arg1: *mut pthread_cond_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_cond_init(
+        arg1: *mut pthread_cond_t,
+        arg2: *const pthread_condattr_t,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_cond_signal(arg1: *mut pthread_cond_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_cond_timedwait(
+        arg1: *mut pthread_cond_t,
+        arg2: *mut pthread_mutex_t,
+        arg3: *const timespec,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_cond_wait(
+        arg1: *mut pthread_cond_t,
+        arg2: *mut pthread_mutex_t,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_condattr_destroy(arg1: *mut pthread_condattr_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_condattr_init(arg1: *mut pthread_condattr_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_condattr_getpshared(
+        arg1: *const pthread_condattr_t,
+        arg2: *mut ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_condattr_setpshared(
+        arg1: *mut pthread_condattr_t,
+        arg2: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_create(
+        arg1: *mut pthread_t,
+        arg2: *const pthread_attr_t,
+        arg3: ::std::option::Option<
+            unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void,
+        >,
+        arg4: *mut ::std::os::raw::c_void,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_detach(arg1: pthread_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_equal(arg1: pthread_t, arg2: pthread_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_exit(arg1: *mut ::std::os::raw::c_void) -> !;
+}
+extern "C" {
+    pub fn pthread_getconcurrency() -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_getschedparam(
+        arg1: pthread_t,
+        arg2: *mut ::std::os::raw::c_int,
+        arg3: *mut sched_param,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_getspecific(arg1: pthread_key_t) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pthread_join(
+        arg1: pthread_t,
+        arg2: *mut *mut ::std::os::raw::c_void,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_key_create(
+        arg1: *mut pthread_key_t,
+        arg2: ::std::option::Option<unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void)>,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_key_delete(arg1: pthread_key_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_mutex_destroy(arg1: *mut pthread_mutex_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_mutex_getprioceiling(
+        arg1: *const pthread_mutex_t,
+        arg2: *mut ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_mutex_init(
+        arg1: *mut pthread_mutex_t,
+        arg2: *const pthread_mutexattr_t,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_mutex_lock(arg1: *mut pthread_mutex_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_mutex_setprioceiling(
+        arg1: *mut pthread_mutex_t,
+        arg2: ::std::os::raw::c_int,
+        arg3: *mut ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_mutex_trylock(arg1: *mut pthread_mutex_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_mutex_unlock(arg1: *mut pthread_mutex_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_mutexattr_destroy(arg1: *mut pthread_mutexattr_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_mutexattr_getprioceiling(
+        arg1: *const pthread_mutexattr_t,
+        arg2: *mut ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_mutexattr_getprotocol(
+        arg1: *const pthread_mutexattr_t,
+        arg2: *mut ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_mutexattr_getpshared(
+        arg1: *const pthread_mutexattr_t,
+        arg2: *mut ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_mutexattr_gettype(
+        arg1: *const pthread_mutexattr_t,
+        arg2: *mut ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_mutexattr_getpolicy_np(
+        arg1: *const pthread_mutexattr_t,
+        arg2: *mut ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_mutexattr_init(arg1: *mut pthread_mutexattr_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_mutexattr_setprioceiling(
+        arg1: *mut pthread_mutexattr_t,
+        arg2: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_mutexattr_setprotocol(
+        arg1: *mut pthread_mutexattr_t,
+        arg2: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_mutexattr_setpshared(
+        arg1: *mut pthread_mutexattr_t,
+        arg2: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_mutexattr_settype(
+        arg1: *mut pthread_mutexattr_t,
+        arg2: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_mutexattr_setpolicy_np(
+        arg1: *mut pthread_mutexattr_t,
+        arg2: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_once(
+        arg1: *mut pthread_once_t,
+        arg2: ::std::option::Option<unsafe extern "C" fn()>,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_rwlock_destroy(arg1: *mut pthread_rwlock_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_rwlock_init(
+        arg1: *mut pthread_rwlock_t,
+        arg2: *const pthread_rwlockattr_t,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_rwlock_rdlock(arg1: *mut pthread_rwlock_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_rwlock_tryrdlock(arg1: *mut pthread_rwlock_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_rwlock_trywrlock(arg1: *mut pthread_rwlock_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_rwlock_wrlock(arg1: *mut pthread_rwlock_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_rwlock_unlock(arg1: *mut pthread_rwlock_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_rwlockattr_destroy(arg1: *mut pthread_rwlockattr_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_rwlockattr_getpshared(
+        arg1: *const pthread_rwlockattr_t,
+        arg2: *mut ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_rwlockattr_init(arg1: *mut pthread_rwlockattr_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_rwlockattr_setpshared(
+        arg1: *mut pthread_rwlockattr_t,
+        arg2: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_self() -> pthread_t;
+}
+extern "C" {
+    pub fn pthread_setcancelstate(
+        arg1: ::std::os::raw::c_int,
+        arg2: *mut ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_setcanceltype(
+        arg1: ::std::os::raw::c_int,
+        arg2: *mut ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_setconcurrency(arg1: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_setschedparam(
+        arg1: pthread_t,
+        arg2: ::std::os::raw::c_int,
+        arg3: *const sched_param,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_setspecific(
+        arg1: pthread_key_t,
+        arg2: *const ::std::os::raw::c_void,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_testcancel();
+}
+extern "C" {
+    pub fn pthread_is_threaded_np() -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_threadid_np(arg1: pthread_t, arg2: *mut __uint64_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_getname_np(
+        arg1: pthread_t,
+        arg2: *mut ::std::os::raw::c_char,
+        arg3: usize,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_setname_np(arg1: *const ::std::os::raw::c_char) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_main_np() -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_mach_thread_np(arg1: pthread_t) -> mach_port_t;
+}
+extern "C" {
+    pub fn pthread_get_stacksize_np(arg1: pthread_t) -> usize;
+}
+extern "C" {
+    pub fn pthread_get_stackaddr_np(arg1: pthread_t) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn pthread_cond_signal_thread_np(
+        arg1: *mut pthread_cond_t,
+        arg2: pthread_t,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_cond_timedwait_relative_np(
+        arg1: *mut pthread_cond_t,
+        arg2: *mut pthread_mutex_t,
+        arg3: *const timespec,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_create_suspended_np(
+        arg1: *mut pthread_t,
+        arg2: *const pthread_attr_t,
+        arg3: ::std::option::Option<
+            unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void,
+        >,
+        arg4: *mut ::std::os::raw::c_void,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_kill(arg1: pthread_t, arg2: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_from_mach_thread_np(arg1: mach_port_t) -> pthread_t;
+}
+extern "C" {
+    pub fn pthread_sigmask(
+        arg1: ::std::os::raw::c_int,
+        arg2: *const sigset_t,
+        arg3: *mut sigset_t,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_yield_np();
+}
+extern "C" {
+    pub fn pthread_jit_write_protect_np(enabled: ::std::os::raw::c_int);
+}
+extern "C" {
+    pub fn pthread_jit_write_protect_supported_np() -> ::std::os::raw::c_int;
+}
+pub type pthread_jit_write_callback_t = ::std::option::Option<
+    unsafe extern "C" fn(ctx: *mut ::std::os::raw::c_void) -> ::std::os::raw::c_int,
+>;
+extern "C" {
+    pub fn pthread_jit_write_with_callback_np(
+        callback: pthread_jit_write_callback_t,
+        ctx: *mut ::std::os::raw::c_void,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn pthread_jit_write_freeze_callbacks_np();
+}
+extern "C" {
+    pub fn pthread_cpu_number_np(cpu_number_out: *mut usize) -> ::std::os::raw::c_int;
+}
+pub type float_t = f32;
+pub type double_t = f64;
+extern "C" {
+    pub fn __math_errhandling() -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn __fpclassifyf(arg1: f32) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn __fpclassifyd(arg1: f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn __fpclassifyl(arg1: f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn acosf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn acos(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn acosl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn asinf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn asin(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn asinl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn atanf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn atan(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn atanl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn atan2f(arg1: f32, arg2: f32) -> f32;
+}
+extern "C" {
+    pub fn atan2(arg1: f64, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn atan2l(arg1: f64, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn cosf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn cos(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn cosl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn sinf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn sin(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn sinl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn tanf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn tan(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn tanl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn acoshf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn acosh(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn acoshl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn asinhf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn asinh(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn asinhl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn atanhf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn atanh(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn atanhl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn coshf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn cosh(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn coshl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn sinhf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn sinh(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn sinhl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn tanhf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn tanh(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn tanhl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn expf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn exp(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn expl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn exp2f(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn exp2(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn exp2l(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn expm1f(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn expm1(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn expm1l(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn logf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn log(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn logl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn log10f(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn log10(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn log10l(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn log2f(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn log2(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn log2l(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn log1pf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn log1p(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn log1pl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn logbf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn logb(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn logbl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn modff(arg1: f32, arg2: *mut f32) -> f32;
+}
+extern "C" {
+    pub fn modf(arg1: f64, arg2: *mut f64) -> f64;
+}
+extern "C" {
+    pub fn modfl(arg1: f64, arg2: *mut f64) -> f64;
+}
+extern "C" {
+    pub fn ldexpf(arg1: f32, arg2: ::std::os::raw::c_int) -> f32;
+}
+extern "C" {
+    pub fn ldexp(arg1: f64, arg2: ::std::os::raw::c_int) -> f64;
+}
+extern "C" {
+    pub fn ldexpl(arg1: f64, arg2: ::std::os::raw::c_int) -> f64;
+}
+extern "C" {
+    pub fn frexpf(arg1: f32, arg2: *mut ::std::os::raw::c_int) -> f32;
+}
+extern "C" {
+    pub fn frexp(arg1: f64, arg2: *mut ::std::os::raw::c_int) -> f64;
+}
+extern "C" {
+    pub fn frexpl(arg1: f64, arg2: *mut ::std::os::raw::c_int) -> f64;
+}
+extern "C" {
+    pub fn ilogbf(arg1: f32) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ilogb(arg1: f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ilogbl(arg1: f64) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn scalbnf(arg1: f32, arg2: ::std::os::raw::c_int) -> f32;
+}
+extern "C" {
+    pub fn scalbn(arg1: f64, arg2: ::std::os::raw::c_int) -> f64;
+}
+extern "C" {
+    pub fn scalbnl(arg1: f64, arg2: ::std::os::raw::c_int) -> f64;
+}
+extern "C" {
+    pub fn scalblnf(arg1: f32, arg2: ::std::os::raw::c_long) -> f32;
+}
+extern "C" {
+    pub fn scalbln(arg1: f64, arg2: ::std::os::raw::c_long) -> f64;
+}
+extern "C" {
+    pub fn scalblnl(arg1: f64, arg2: ::std::os::raw::c_long) -> f64;
+}
+extern "C" {
+    pub fn fabsf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn fabs(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn fabsl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn cbrtf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn cbrt(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn cbrtl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn hypotf(arg1: f32, arg2: f32) -> f32;
+}
+extern "C" {
+    pub fn hypot(arg1: f64, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn hypotl(arg1: f64, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn powf(arg1: f32, arg2: f32) -> f32;
+}
+extern "C" {
+    pub fn pow(arg1: f64, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn powl(arg1: f64, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn sqrtf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn sqrt(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn sqrtl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn erff(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn erf(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn erfl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn erfcf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn erfc(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn erfcl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn lgammaf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn lgamma(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn lgammal(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn tgammaf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn tgamma(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn tgammal(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn ceilf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn ceil(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn ceill(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn floorf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn floor(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn floorl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn nearbyintf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn nearbyint(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn nearbyintl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn rintf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn rint(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn rintl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn lrintf(arg1: f32) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn lrint(arg1: f64) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn lrintl(arg1: f64) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn roundf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn round(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn roundl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn lroundf(arg1: f32) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn lround(arg1: f64) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn lroundl(arg1: f64) -> ::std::os::raw::c_long;
+}
+extern "C" {
+    pub fn llrintf(arg1: f32) -> ::std::os::raw::c_longlong;
+}
+extern "C" {
+    pub fn llrint(arg1: f64) -> ::std::os::raw::c_longlong;
+}
+extern "C" {
+    pub fn llrintl(arg1: f64) -> ::std::os::raw::c_longlong;
+}
+extern "C" {
+    pub fn llroundf(arg1: f32) -> ::std::os::raw::c_longlong;
+}
+extern "C" {
+    pub fn llround(arg1: f64) -> ::std::os::raw::c_longlong;
+}
+extern "C" {
+    pub fn llroundl(arg1: f64) -> ::std::os::raw::c_longlong;
+}
+extern "C" {
+    pub fn truncf(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn trunc(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn truncl(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn fmodf(arg1: f32, arg2: f32) -> f32;
+}
+extern "C" {
+    pub fn fmod(arg1: f64, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn fmodl(arg1: f64, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn remainderf(arg1: f32, arg2: f32) -> f32;
+}
+extern "C" {
+    pub fn remainder(arg1: f64, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn remainderl(arg1: f64, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn remquof(arg1: f32, arg2: f32, arg3: *mut ::std::os::raw::c_int) -> f32;
+}
+extern "C" {
+    pub fn remquo(arg1: f64, arg2: f64, arg3: *mut ::std::os::raw::c_int) -> f64;
+}
+extern "C" {
+    pub fn remquol(arg1: f64, arg2: f64, arg3: *mut ::std::os::raw::c_int) -> f64;
+}
+extern "C" {
+    pub fn copysignf(arg1: f32, arg2: f32) -> f32;
+}
+extern "C" {
+    pub fn copysign(arg1: f64, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn copysignl(arg1: f64, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn nanf(arg1: *const ::std::os::raw::c_char) -> f32;
+}
+extern "C" {
+    pub fn nan(arg1: *const ::std::os::raw::c_char) -> f64;
+}
+extern "C" {
+    pub fn nanl(arg1: *const ::std::os::raw::c_char) -> f64;
+}
+extern "C" {
+    pub fn nextafterf(arg1: f32, arg2: f32) -> f32;
+}
+extern "C" {
+    pub fn nextafter(arg1: f64, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn nextafterl(arg1: f64, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn nexttoward(arg1: f64, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn nexttowardf(arg1: f32, arg2: f64) -> f32;
+}
+extern "C" {
+    pub fn nexttowardl(arg1: f64, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn fdimf(arg1: f32, arg2: f32) -> f32;
+}
+extern "C" {
+    pub fn fdim(arg1: f64, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn fdiml(arg1: f64, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn fmaxf(arg1: f32, arg2: f32) -> f32;
+}
+extern "C" {
+    pub fn fmax(arg1: f64, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn fmaxl(arg1: f64, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn fminf(arg1: f32, arg2: f32) -> f32;
+}
+extern "C" {
+    pub fn fmin(arg1: f64, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn fminl(arg1: f64, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn fmaf(arg1: f32, arg2: f32, arg3: f32) -> f32;
+}
+extern "C" {
+    pub fn fma(arg1: f64, arg2: f64, arg3: f64) -> f64;
+}
+extern "C" {
+    pub fn fmal(arg1: f64, arg2: f64, arg3: f64) -> f64;
+}
+extern "C" {
+    pub fn __exp10f(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn __exp10(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn __cospif(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn __cospi(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn __sinpif(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn __sinpi(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn __tanpif(arg1: f32) -> f32;
+}
+extern "C" {
+    pub fn __tanpi(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn __fabsf16(arg1: __BindgenFloat16) -> __BindgenFloat16;
+}
+extern "C" {
+    pub fn __hypotf16(arg1: __BindgenFloat16, arg2: __BindgenFloat16) -> __BindgenFloat16;
+}
+extern "C" {
+    pub fn __sqrtf16(arg1: __BindgenFloat16) -> __BindgenFloat16;
+}
+extern "C" {
+    pub fn __ceilf16(arg1: __BindgenFloat16) -> __BindgenFloat16;
+}
+extern "C" {
+    pub fn __floorf16(arg1: __BindgenFloat16) -> __BindgenFloat16;
+}
+extern "C" {
+    pub fn __rintf16(arg1: __BindgenFloat16) -> __BindgenFloat16;
+}
+extern "C" {
+    pub fn __roundf16(arg1: __BindgenFloat16) -> __BindgenFloat16;
+}
+extern "C" {
+    pub fn __truncf16(arg1: __BindgenFloat16) -> __BindgenFloat16;
+}
+extern "C" {
+    pub fn __copysignf16(arg1: __BindgenFloat16, arg2: __BindgenFloat16) -> __BindgenFloat16;
+}
+extern "C" {
+    pub fn __nextafterf16(arg1: __BindgenFloat16, arg2: __BindgenFloat16) -> __BindgenFloat16;
+}
+extern "C" {
+    pub fn __fmaxf16(arg1: __BindgenFloat16, arg2: __BindgenFloat16) -> __BindgenFloat16;
+}
+extern "C" {
+    pub fn __fminf16(arg1: __BindgenFloat16, arg2: __BindgenFloat16) -> __BindgenFloat16;
+}
+extern "C" {
+    pub fn __fmaf16(
+        arg1: __BindgenFloat16,
+        arg2: __BindgenFloat16,
+        arg3: __BindgenFloat16,
+    ) -> __BindgenFloat16;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct __float2 {
+    pub __sinval: f32,
+    pub __cosval: f32,
+}
+const _: () = {
+    ["Size of __float2"][::std::mem::size_of::<__float2>() - 8usize];
+    ["Alignment of __float2"][::std::mem::align_of::<__float2>() - 4usize];
+    ["Offset of field: __float2::__sinval"][::std::mem::offset_of!(__float2, __sinval) - 0usize];
+    ["Offset of field: __float2::__cosval"][::std::mem::offset_of!(__float2, __cosval) - 4usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct __double2 {
+    pub __sinval: f64,
+    pub __cosval: f64,
+}
+const _: () = {
+    ["Size of __double2"][::std::mem::size_of::<__double2>() - 16usize];
+    ["Alignment of __double2"][::std::mem::align_of::<__double2>() - 8usize];
+    ["Offset of field: __double2::__sinval"][::std::mem::offset_of!(__double2, __sinval) - 0usize];
+    ["Offset of field: __double2::__cosval"][::std::mem::offset_of!(__double2, __cosval) - 8usize];
+};
+extern "C" {
+    pub fn __sincosf_stret(arg1: f32) -> __float2;
+}
+extern "C" {
+    pub fn __sincos_stret(arg1: f64) -> __double2;
+}
+extern "C" {
+    pub fn __sincospif_stret(arg1: f32) -> __float2;
+}
+extern "C" {
+    pub fn __sincospi_stret(arg1: f64) -> __double2;
+}
+extern "C" {
+    pub fn j0(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn j1(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn jn(arg1: ::std::os::raw::c_int, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn y0(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn y1(arg1: f64) -> f64;
+}
+extern "C" {
+    pub fn yn(arg1: ::std::os::raw::c_int, arg2: f64) -> f64;
+}
+extern "C" {
+    pub fn scalb(arg1: f64, arg2: f64) -> f64;
+}
+extern "C" {
+    pub static mut signgam: ::std::os::raw::c_int;
+}
+pub const idtype_t_P_ALL: idtype_t = 0;
+pub const idtype_t_P_PID: idtype_t = 1;
+pub const idtype_t_P_PGID: idtype_t = 2;
+pub type idtype_t = ::std::os::raw::c_uint;
+pub type pid_t = __darwin_pid_t;
+pub type id_t = __darwin_id_t;
+pub type sig_atomic_t = ::std::os::raw::c_int;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct __darwin_arm_exception_state {
@@ -1553,6 +4669,79 @@ const _: () = {
 };
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
+pub struct __darwin_arm_sme_state {
+    pub __svcr: __uint64_t,
+    pub __tpidr2_el0: __uint64_t,
+    pub __svl_b: __uint16_t,
+}
+const _: () = {
+    ["Size of __darwin_arm_sme_state"][::std::mem::size_of::<__darwin_arm_sme_state>() - 24usize];
+    ["Alignment of __darwin_arm_sme_state"]
+        [::std::mem::align_of::<__darwin_arm_sme_state>() - 8usize];
+    ["Offset of field: __darwin_arm_sme_state::__svcr"]
+        [::std::mem::offset_of!(__darwin_arm_sme_state, __svcr) - 0usize];
+    ["Offset of field: __darwin_arm_sme_state::__tpidr2_el0"]
+        [::std::mem::offset_of!(__darwin_arm_sme_state, __tpidr2_el0) - 8usize];
+    ["Offset of field: __darwin_arm_sme_state::__svl_b"]
+        [::std::mem::offset_of!(__darwin_arm_sme_state, __svl_b) - 16usize];
+};
+#[repr(C)]
+#[repr(align(4))]
+#[derive(Debug, Copy, Clone)]
+pub struct __darwin_arm_sve_z_state {
+    pub __z: [[::std::os::raw::c_char; 256usize]; 16usize],
+}
+const _: () = {
+    ["Size of __darwin_arm_sve_z_state"]
+        [::std::mem::size_of::<__darwin_arm_sve_z_state>() - 4096usize];
+    ["Alignment of __darwin_arm_sve_z_state"]
+        [::std::mem::align_of::<__darwin_arm_sve_z_state>() - 4usize];
+    ["Offset of field: __darwin_arm_sve_z_state::__z"]
+        [::std::mem::offset_of!(__darwin_arm_sve_z_state, __z) - 0usize];
+};
+#[repr(C)]
+#[repr(align(4))]
+#[derive(Debug, Copy, Clone)]
+pub struct __darwin_arm_sve_p_state {
+    pub __p: [[::std::os::raw::c_char; 32usize]; 16usize],
+}
+const _: () = {
+    ["Size of __darwin_arm_sve_p_state"]
+        [::std::mem::size_of::<__darwin_arm_sve_p_state>() - 512usize];
+    ["Alignment of __darwin_arm_sve_p_state"]
+        [::std::mem::align_of::<__darwin_arm_sve_p_state>() - 4usize];
+    ["Offset of field: __darwin_arm_sve_p_state::__p"]
+        [::std::mem::offset_of!(__darwin_arm_sve_p_state, __p) - 0usize];
+};
+#[repr(C)]
+#[repr(align(4))]
+#[derive(Debug, Copy, Clone)]
+pub struct __darwin_arm_sme_za_state {
+    pub __za: [::std::os::raw::c_char; 4096usize],
+}
+const _: () = {
+    ["Size of __darwin_arm_sme_za_state"]
+        [::std::mem::size_of::<__darwin_arm_sme_za_state>() - 4096usize];
+    ["Alignment of __darwin_arm_sme_za_state"]
+        [::std::mem::align_of::<__darwin_arm_sme_za_state>() - 4usize];
+    ["Offset of field: __darwin_arm_sme_za_state::__za"]
+        [::std::mem::offset_of!(__darwin_arm_sme_za_state, __za) - 0usize];
+};
+#[repr(C)]
+#[repr(align(4))]
+#[derive(Debug, Copy, Clone)]
+pub struct __darwin_arm_sme2_state {
+    pub __zt0: [::std::os::raw::c_char; 64usize],
+}
+const _: () = {
+    ["Size of __darwin_arm_sme2_state"][::std::mem::size_of::<__darwin_arm_sme2_state>() - 64usize];
+    ["Alignment of __darwin_arm_sme2_state"]
+        [::std::mem::align_of::<__darwin_arm_sme2_state>() - 4usize];
+    ["Offset of field: __darwin_arm_sme2_state::__zt0"]
+        [::std::mem::offset_of!(__darwin_arm_sme2_state, __zt0) - 0usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct __arm_legacy_debug_state {
     pub __bvr: [__uint32_t; 16usize],
     pub __bcr: [__uint32_t; 16usize],
@@ -1672,7 +4861,6 @@ const _: () = {
         [::std::mem::offset_of!(__darwin_mcontext64, __ns) - 288usize];
 };
 pub type mcontext_t = *mut __darwin_mcontext64;
-pub type pthread_attr_t = __darwin_pthread_attr_t;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct __darwin_sigaltstack {
@@ -1718,7 +4906,6 @@ const _: () = {
         [::std::mem::offset_of!(__darwin_ucontext, uc_mcontext) - 48usize];
 };
 pub type ucontext_t = __darwin_ucontext;
-pub type sigset_t = __darwin_sigset_t;
 pub type uid_t = __darwin_uid_t;
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -1887,24 +5074,6 @@ extern "C" {
         ),
     >;
 }
-pub type int_least8_t = i8;
-pub type int_least16_t = i16;
-pub type int_least32_t = i32;
-pub type int_least64_t = i64;
-pub type uint_least8_t = u8;
-pub type uint_least16_t = u16;
-pub type uint_least32_t = u32;
-pub type uint_least64_t = u64;
-pub type int_fast8_t = i8;
-pub type int_fast16_t = i16;
-pub type int_fast32_t = i32;
-pub type int_fast64_t = i64;
-pub type uint_fast8_t = u8;
-pub type uint_fast16_t = u16;
-pub type uint_fast32_t = u32;
-pub type uint_fast64_t = u64;
-pub type intmax_t = ::std::os::raw::c_long;
-pub type uintmax_t = ::std::os::raw::c_ulong;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct timeval {
@@ -2866,7 +6035,7 @@ extern "C" {
     ) -> pid_t;
 }
 extern "C" {
-    pub fn alloca(arg1: usize) -> *mut ::std::os::raw::c_void;
+    pub fn alloca(__size: usize) -> *mut ::std::os::raw::c_void;
 }
 pub type ct_rune_t = __darwin_ct_rune_t;
 pub type rune_t = __darwin_rune_t;
@@ -3104,13 +6273,13 @@ extern "C" {
     pub fn mblen(__s: *const ::std::os::raw::c_char, __n: usize) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn mbstowcs(arg1: *mut u32, arg2: *const ::std::os::raw::c_char, arg3: usize) -> usize;
+    pub fn mbstowcs(arg1: *mut u32, arg2: *const ::std::os::raw::c_char, __n: usize) -> usize;
 }
 extern "C" {
     pub fn mbtowc(
         arg1: *mut u32,
         arg2: *const ::std::os::raw::c_char,
-        arg3: usize,
+        __n: usize,
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
@@ -3185,7 +6354,7 @@ extern "C" {
     pub fn system(arg1: *const ::std::os::raw::c_char) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn wcstombs(arg1: *mut ::std::os::raw::c_char, arg2: *const u32, arg3: usize) -> usize;
+    pub fn wcstombs(arg1: *mut ::std::os::raw::c_char, arg2: *const u32, __n: usize) -> usize;
 }
 extern "C" {
     pub fn wctomb(arg1: *mut ::std::os::raw::c_char, arg2: u32) -> ::std::os::raw::c_int;
@@ -3239,7 +6408,7 @@ extern "C" {
     pub fn initstate(
         arg1: ::std::os::raw::c_uint,
         arg2: *mut ::std::os::raw::c_char,
-        arg3: usize,
+        __size: usize,
     ) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
@@ -3329,7 +6498,10 @@ extern "C" {
     pub fn arc4random() -> u32;
 }
 extern "C" {
-    pub fn arc4random_addrandom(arg1: *mut ::std::os::raw::c_uchar, arg2: ::std::os::raw::c_int);
+    pub fn arc4random_addrandom(
+        arg1: *mut ::std::os::raw::c_uchar,
+        __datlen: ::std::os::raw::c_int,
+    );
 }
 extern "C" {
     pub fn arc4random_buf(__buf: *mut ::std::os::raw::c_void, __nbytes: usize);
@@ -3435,7 +6607,7 @@ extern "C" {
     ) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
-    pub fn getloadavg(arg1: *mut f64, arg2: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    pub fn getloadavg(arg1: *mut f64, __nelem: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn getprogname() -> *const ::std::os::raw::c_char;
@@ -3594,3318 +6766,6 @@ extern "C" {
 extern "C" {
     pub static mut suboptarg: *mut ::std::os::raw::c_char;
 }
-extern "C" {
-    pub fn __assert_rtn(
-        arg1: *const ::std::os::raw::c_char,
-        arg2: *const ::std::os::raw::c_char,
-        arg3: ::std::os::raw::c_int,
-        arg4: *const ::std::os::raw::c_char,
-    ) -> !;
-}
-extern "C" {
-    #[link_name = "\u{1}__ZNSt3__122__libcpp_verbose_abortEPKcz"]
-    pub fn std___1___libcpp_verbose_abort(__format: *const ::std::os::raw::c_char, ...);
-}
-extern "C" {
-    #[link_name = "\u{1}__ZNSt3__15__useEPKcz"]
-    pub fn std___1___use(arg1: *const ::std::os::raw::c_char, ...);
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___libcpp_is_always_lock_free {
-    pub _address: u8,
-}
-pub type std___1_integral_constant_value_type = u8;
-pub type std___1_integral_constant_type = u8;
-extern "C" {
-    #[link_name = "\u{1}value"]
-    pub static std___1_value: _Tp;
-}
-pub type std___1_true_type = u8;
-pub type std___1_false_type = u8;
-pub type std___1__BoolConstant = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_same {
-    pub _address: u8,
-}
-pub type std___1__IsSame = u8;
-pub type std___1__IsNotSame = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_enum {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_underlying_type {
-    pub _address: u8,
-}
-pub type std___1_underlying_type_t = u8;
-pub const std___1___legacy_memory_order___mo_relaxed: std___1___legacy_memory_order = 0;
-pub const std___1___legacy_memory_order___mo_consume: std___1___legacy_memory_order = 1;
-pub const std___1___legacy_memory_order___mo_acquire: std___1___legacy_memory_order = 2;
-pub const std___1___legacy_memory_order___mo_release: std___1___legacy_memory_order = 3;
-pub const std___1___legacy_memory_order___mo_acq_rel: std___1___legacy_memory_order = 4;
-pub const std___1___legacy_memory_order___mo_seq_cst: std___1___legacy_memory_order = 5;
-pub type std___1___legacy_memory_order = ::std::os::raw::c_uint;
-pub type std___1___memory_order_underlying_t = u32;
-pub const std___1_memory_order_memory_order_relaxed: std___1_memory_order = 0;
-pub const std___1_memory_order_memory_order_consume: std___1_memory_order = 1;
-pub const std___1_memory_order_memory_order_acquire: std___1_memory_order = 2;
-pub const std___1_memory_order_memory_order_release: std___1_memory_order = 3;
-pub const std___1_memory_order_memory_order_acq_rel: std___1_memory_order = 4;
-pub const std___1_memory_order_memory_order_seq_cst: std___1_memory_order = 5;
-pub type std___1_memory_order = ::std::os::raw::c_uint;
-pub type std___1__If = u8;
-pub type std___1_conditional_type = u8;
-pub type std___1_conditional_t = u8;
-pub type std___1___conditional_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_assignable {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_trivially_copyable {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_remove_const {
-    pub _address: u8,
-}
-pub type std___1_remove_const_type = u8;
-pub type std___1___remove_const_t = u8;
-pub type std___1_remove_const_t = u8;
-pub type std___1___enable_if_t = u8;
-pub type std___1_enable_if_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_remove_volatile {
-    pub _address: u8,
-}
-pub type std___1_remove_volatile_type = u8;
-pub type std___1___remove_volatile_t = u8;
-pub type std___1_remove_volatile_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_remove_cv {
-    pub _address: u8,
-}
-pub type std___1_remove_cv_type = u8;
-pub type std___1___remove_cv_t = u8;
-pub type std___1_remove_cv_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___libcpp_is_integral {
-    pub _address: u8,
-}
-pub const std___1___libcpp_is_integral_value: std___1___libcpp_is_integral__bindgen_ty_1 = 0;
-pub type std___1___libcpp_is_integral__bindgen_ty_1 = i32;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_integral {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___cxx_atomic_base_impl {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___cxx_atomic_impl {
-    pub _address: u8,
-}
-pub type std___1___cxx_contention_t = u64;
-pub type std___1___cxx_atomic_contention_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_array {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_const {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_lvalue_reference {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_rvalue_reference {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_reference {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_function {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_void {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_remove_reference {
-    pub _address: u8,
-}
-pub type std___1_remove_reference_type = u8;
-pub type std___1___libcpp_remove_reference_t = u8;
-pub type std___1_remove_reference_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_convertible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___libcpp_is_referenceable {
-    pub _address: u8,
-}
-pub type std___1___add_pointer_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_add_pointer {
-    pub _address: u8,
-}
-pub type std___1_add_pointer_type = u8;
-pub type std___1_add_pointer_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_remove_extent {
-    pub _address: u8,
-}
-pub type std___1_remove_extent_type = u8;
-pub type std___1___remove_extent_t = u8;
-pub type std___1_remove_extent_t = u8;
-pub type std___1___decay_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_decay {
-    pub _address: u8,
-}
-pub type std___1_decay_type = u8;
-pub type std___1_decay_t = u8;
-pub type std___1___remove_cvref_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___is_same_uncvref {
-    pub _address: u8,
-}
-pub type std___1___void_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___common_type2_imp {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___common_type_impl {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___common_types {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_common_type {
-    pub _address: u8,
-}
-pub type std___1_common_type_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_add_const {
-    pub _address: u8,
-}
-pub type std___1_add_const_type = u8;
-pub type std___1_add_const_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_add_cv {
-    pub _address: u8,
-}
-pub type std___1_add_cv_type = u8;
-pub type std___1_add_cv_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_add_volatile {
-    pub _address: u8,
-}
-pub type std___1_add_volatile_type = u8;
-pub type std___1_add_volatile_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___copy_cv {
-    pub _address: u8,
-}
-pub type std___1___copy_cv_type = u8;
-pub type std___1___copy_cv_t = u8;
-pub type std___1___add_lvalue_reference_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_add_lvalue_reference {
-    pub _address: u8,
-}
-pub type std___1_add_lvalue_reference_type = u8;
-pub type std___1_add_lvalue_reference_t = u8;
-pub type std___1___add_rvalue_reference_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_add_rvalue_reference {
-    pub _address: u8,
-}
-pub type std___1_add_rvalue_reference_type = u8;
-pub type std___1_add_rvalue_reference_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___copy_cvref {
-    pub _address: u8,
-}
-pub type std___1___copy_cvref_type = u8;
-pub type std___1___copy_cvref_t = u8;
-pub type std___1___make_const_lvalue_ref = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___libcpp_is_floating_point {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_floating_point {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_arithmetic {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_signed {
-    pub _address: u8,
-}
-pub const std___1_float_round_style_round_indeterminate: std___1_float_round_style = -1;
-pub const std___1_float_round_style_round_toward_zero: std___1_float_round_style = 0;
-pub const std___1_float_round_style_round_to_nearest: std___1_float_round_style = 1;
-pub const std___1_float_round_style_round_toward_infinity: std___1_float_round_style = 2;
-pub const std___1_float_round_style_round_toward_neg_infinity: std___1_float_round_style = 3;
-pub type std___1_float_round_style = ::std::os::raw::c_int;
-pub const std___1_float_denorm_style_denorm_indeterminate: std___1_float_denorm_style = -1;
-pub const std___1_float_denorm_style_denorm_absent: std___1_float_denorm_style = 0;
-pub const std___1_float_denorm_style_denorm_present: std___1_float_denorm_style = 1;
-pub type std___1_float_denorm_style = ::std::os::raw::c_int;
-pub type std___1___libcpp_numeric_limits_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_numeric_limits {
-    pub _address: u8,
-}
-pub type std___1_numeric_limits___base = u8;
-pub type std___1_numeric_limits_type = u8;
-extern "C" {
-    #[link_name = "\u{1}is_specialized"]
-    pub static std___1_is_specialized: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}digits"]
-    pub static std___1_digits: ::std::os::raw::c_int;
-}
-extern "C" {
-    #[link_name = "\u{1}digits10"]
-    pub static std___1_digits10: ::std::os::raw::c_int;
-}
-extern "C" {
-    #[link_name = "\u{1}max_digits10"]
-    pub static std___1_max_digits10: ::std::os::raw::c_int;
-}
-extern "C" {
-    #[link_name = "\u{1}is_signed"]
-    pub static std___1_is_signed: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}is_integer"]
-    pub static std___1_is_integer: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}is_exact"]
-    pub static std___1_is_exact: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}radix"]
-    pub static std___1_radix: ::std::os::raw::c_int;
-}
-extern "C" {
-    #[link_name = "\u{1}min_exponent"]
-    pub static std___1_min_exponent: ::std::os::raw::c_int;
-}
-extern "C" {
-    #[link_name = "\u{1}min_exponent10"]
-    pub static std___1_min_exponent10: ::std::os::raw::c_int;
-}
-extern "C" {
-    #[link_name = "\u{1}max_exponent"]
-    pub static std___1_max_exponent: ::std::os::raw::c_int;
-}
-extern "C" {
-    #[link_name = "\u{1}max_exponent10"]
-    pub static std___1_max_exponent10: ::std::os::raw::c_int;
-}
-extern "C" {
-    #[link_name = "\u{1}has_infinity"]
-    pub static std___1_has_infinity: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}has_quiet_NaN"]
-    pub static std___1_has_quiet_NaN: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}has_signaling_NaN"]
-    pub static std___1_has_signaling_NaN: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}has_denorm"]
-    pub static std___1_has_denorm: std___1_float_denorm_style;
-}
-extern "C" {
-    #[link_name = "\u{1}has_denorm_loss"]
-    pub static std___1_has_denorm_loss: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}is_iec559"]
-    pub static std___1_is_iec559: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}is_bounded"]
-    pub static std___1_is_bounded: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}is_modulo"]
-    pub static std___1_is_modulo: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}traps"]
-    pub static std___1_traps: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}tinyness_before"]
-    pub static std___1_tinyness_before: bool;
-}
-extern "C" {
-    #[link_name = "\u{1}round_style"]
-    pub static std___1_round_style: std___1_float_round_style;
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_hash {
-    pub _address: u8,
-}
-#[repr(C)]
-#[repr(align(1))]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___nat {
-    pub _bindgen_opaque_blob: u8,
-}
-const _: () = {
-    ["Size of std___1___nat"][::std::mem::size_of::<std___1___nat>() - 1usize];
-    ["Alignment of std___1___nat"][::std::mem::align_of::<std___1___nat>() - 1usize];
-};
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___type_list {
-    pub _address: u8,
-}
-pub type std___1___type_list__Head = u8;
-pub type std___1___type_list__Tail = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___align_type {
-    pub _address: u8,
-}
-pub type std___1___align_type_type = u8;
-#[repr(C)]
-#[repr(align(8))]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___struct_double {
-    pub _bindgen_opaque_blob: u64,
-}
-const _: () = {
-    ["Size of std___1___struct_double"][::std::mem::size_of::<std___1___struct_double>() - 8usize];
-    ["Alignment of std___1___struct_double"]
-        [::std::mem::align_of::<std___1___struct_double>() - 8usize];
-};
-#[repr(C)]
-#[repr(align(8))]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___struct_double4 {
-    pub _bindgen_opaque_blob: [u64; 4usize],
-}
-const _: () = {
-    ["Size of std___1___struct_double4"]
-        [::std::mem::size_of::<std___1___struct_double4>() - 32usize];
-    ["Alignment of std___1___struct_double4"]
-        [::std::mem::align_of::<std___1___struct_double4>() - 8usize];
-};
-pub type std___1___all_types = u8;
-extern "C" {
-    #[link_name = "\u{1}__min"]
-    pub static std___1___select_align___min: ::std::os::raw::c_ulong;
-}
-extern "C" {
-    #[link_name = "\u{1}__max"]
-    pub static std___1___select_align___max: ::std::os::raw::c_ulong;
-}
-extern "C" {
-    #[link_name = "\u{1}value"]
-    pub static std___1___select_align_value: ::std::os::raw::c_ulong;
-}
-pub type std___1_aligned_storage__Aligner = u8;
-#[repr(C)]
-#[repr(align(8))]
-#[derive(Copy, Clone)]
-pub union std___1_aligned_storage_type {
-    pub _bindgen_opaque_blob: u64,
-}
-const _: () = {
-    ["Size of std___1_aligned_storage_type"]
-        [::std::mem::size_of::<std___1_aligned_storage_type>() - 8usize];
-    ["Alignment of std___1_aligned_storage_type"]
-        [::std::mem::align_of::<std___1_aligned_storage_type>() - 8usize];
-};
-pub type std___1_aligned_storage_t = u8;
-pub type std___1_aligned_union_type = u8;
-pub type std___1_aligned_union_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_alignment_of {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_volatile {
-    pub _address: u8,
-}
-pub type std___1___apply_cv_impl___apply = u8;
-pub type std___1___apply_cv_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_pair {
-    pub _address: u8,
-}
-pub type std___1___remove_const_ref_t = u8;
-#[repr(C)]
-#[repr(align(1))]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___extract_key_fail_tag {
-    pub _bindgen_opaque_blob: u8,
-}
-const _: () = {
-    ["Size of std___1___extract_key_fail_tag"]
-        [::std::mem::size_of::<std___1___extract_key_fail_tag>() - 1usize];
-    ["Alignment of std___1___extract_key_fail_tag"]
-        [::std::mem::align_of::<std___1___extract_key_fail_tag>() - 1usize];
-};
-#[repr(C)]
-#[repr(align(1))]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___extract_key_self_tag {
-    pub _bindgen_opaque_blob: u8,
-}
-const _: () = {
-    ["Size of std___1___extract_key_self_tag"]
-        [::std::mem::size_of::<std___1___extract_key_self_tag>() - 1usize];
-    ["Alignment of std___1___extract_key_self_tag"]
-        [::std::mem::align_of::<std___1___extract_key_self_tag>() - 1usize];
-};
-#[repr(C)]
-#[repr(align(1))]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___extract_key_first_tag {
-    pub _bindgen_opaque_blob: u8,
-}
-const _: () = {
-    ["Size of std___1___extract_key_first_tag"]
-        [::std::mem::size_of::<std___1___extract_key_first_tag>() - 1usize];
-    ["Alignment of std___1___extract_key_first_tag"]
-        [::std::mem::align_of::<std___1___extract_key_first_tag>() - 1usize];
-};
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___can_extract_key {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___can_extract_map_key {
-    pub _address: u8,
-}
-pub type std___1___expand_to_true = u8;
-pub type std___1__And = u8;
-pub type std___1__Or = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_remove_all_extents {
-    pub _address: u8,
-}
-pub type std___1_remove_all_extents_type = u8;
-pub type std___1___remove_all_extents_t = u8;
-pub type std___1_remove_all_extents_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_has_virtual_destructor {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_base_of {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___is_core_convertible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___libcpp_is_member_pointer {
-    pub _address: u8,
-}
-pub const std___1___libcpp_is_member_pointer___is_member:
-    std___1___libcpp_is_member_pointer__bindgen_ty_1 = 0;
-pub const std___1___libcpp_is_member_pointer___is_func:
-    std___1___libcpp_is_member_pointer__bindgen_ty_1 = 0;
-pub const std___1___libcpp_is_member_pointer___is_obj:
-    std___1___libcpp_is_member_pointer__bindgen_ty_1 = 0;
-pub type std___1___libcpp_is_member_pointer__bindgen_ty_1 = i32;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_member_function_pointer {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_member_object_pointer {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_reference_wrapper {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___is_reference_wrapper_impl {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___is_reference_wrapper {
-    pub _address: u8,
-}
-#[repr(C)]
-#[repr(align(1))]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___any {
-    pub _bindgen_opaque_blob: u8,
-}
-const _: () = {
-    ["Size of std___1___any"][::std::mem::size_of::<std___1___any>() - 1usize];
-    ["Alignment of std___1___any"][::std::mem::align_of::<std___1___any>() - 1usize];
-};
-extern "C" {
-    #[link_name = "\u{1}__ZNSt3__15__anyC1Ez"]
-    pub fn std___1___any___any(this: *mut std___1___any, ...);
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___member_pointer_traits {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___member_pointer_class_type {
-    pub _address: u8,
-}
-pub type std___1___enable_if_bullet1 = u8;
-pub type std___1___enable_if_bullet2 = u8;
-pub type std___1___enable_if_bullet3 = u8;
-pub type std___1___enable_if_bullet4 = u8;
-pub type std___1___enable_if_bullet5 = u8;
-pub type std___1___enable_if_bullet6 = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___invokable_r {
-    pub _address: u8,
-}
-pub type std___1___invokable_r__Result = u8;
-pub type std___1___invokable_r_type = u8;
-pub type std___1___invokable = u8;
-pub type std___1___nothrow_invokable_r = u8;
-pub type std___1___nothrow_invokable = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___invoke_of {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_abstract {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___libcpp_is_bounded_array {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___is_callable {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_standard_layout {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_trivial {
-    pub _address: u8,
-}
-pub type std___1__IsCharLikeType = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_class {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___is_nullptr_t_impl {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___is_nullptr_t {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_null_pointer {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_fundamental {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_compound {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_copy_assignable {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_copy_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_default_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_destructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_empty {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___libcpp_is_final {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_final {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___is_implicitly_default_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_literal_type {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_member_pointer {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_move_assignable {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_move_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_nothrow_assignable {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_nothrow_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1__Lazy {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_nothrow_copy_assignable {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_nothrow_copy_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_nothrow_default_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_pointer {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_scalar {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_nothrow_destructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_nothrow_move_assignable {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_nothrow_move_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_union {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_object {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_pod {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_polymorphic {
-    pub _address: u8,
-}
-pub type std___1___swap_result_t = u8;
-pub type std___1___detail___swappable_with___swap1 = u8;
-pub type std___1___detail___swappable_with___swap2 = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___is_swappable {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___is_nothrow_swappable {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_trivially_assignable {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_trivially_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_trivially_copy_assignable {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_trivially_copy_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_trivially_default_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_trivially_destructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_trivially_move_assignable {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_trivially_move_constructible {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___libcpp_is_unbounded_array {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_is_unsigned {
-    pub _address: u8,
-}
-pub type std___1___make_signed_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_make_signed {
-    pub _address: u8,
-}
-pub type std___1_make_signed_type = u8;
-pub type std___1_make_signed_t = u8;
-pub type std___1___make_unsigned_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_make_unsigned {
-    pub _address: u8,
-}
-pub type std___1_make_unsigned_type = u8;
-pub type std___1_make_unsigned_t = u8;
-pub type std___1___copy_unsigned_t = u8;
-pub type std___1___maybe_const = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1__Not {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_rank {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_remove_pointer {
-    pub _address: u8,
-}
-pub type std___1_remove_pointer_type = u8;
-pub type std___1___remove_pointer_t = u8;
-pub type std___1_remove_pointer_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_result_of {
-    pub _address: u8,
-}
-pub type std___1_result_of_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___type_identity {
-    pub _address: u8,
-}
-pub type std___1___type_identity_type = u8;
-pub type std___1___type_identity_t = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___unwrap_reference {
-    pub _address: u8,
-}
-pub type std___1___unwrap_reference_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___unwrap_ref_decay {
-    pub _address: u8,
-}
-extern "C" {
-    #[link_name = "\u{1}value"]
-    pub static std___1___static_gcd_value: ::std::os::raw::c_long;
-}
-extern "C" {
-    #[link_name = "\u{1}value"]
-    pub static std___1___static_lcm_value: ::std::os::raw::c_long;
-}
-extern "C" {
-    #[link_name = "\u{1}value"]
-    pub static std___1___static_abs_value: ::std::os::raw::c_long;
-}
-extern "C" {
-    #[link_name = "\u{1}value"]
-    pub static std___1___static_sign_value: ::std::os::raw::c_long;
-}
-pub const std___1___ll_mul_nan: ::std::os::raw::c_long = -9223372036854775808;
-pub const std___1___ll_mul_min: ::std::os::raw::c_long = -9223372036854775807;
-pub const std___1___ll_mul_max: ::std::os::raw::c_long = 9223372036854775807;
-extern "C" {
-    #[link_name = "\u{1}__a_x"]
-    pub static std___1___ll_mul___a_x: ::std::os::raw::c_long;
-}
-extern "C" {
-    #[link_name = "\u{1}__a_y"]
-    pub static std___1___ll_mul___a_y: ::std::os::raw::c_long;
-}
-extern "C" {
-    #[link_name = "\u{1}value"]
-    pub static std___1___ll_mul_value: ::std::os::raw::c_long;
-}
-pub const std___1___ll_div_nan: ::std::os::raw::c_long = -9223372036854775808;
-pub const std___1___ll_div_min: ::std::os::raw::c_long = -9223372036854775807;
-pub const std___1___ll_div_max: ::std::os::raw::c_long = 9223372036854775807;
-extern "C" {
-    #[link_name = "\u{1}value"]
-    pub static std___1___ll_div_value: ::std::os::raw::c_long;
-}
-extern "C" {
-    #[link_name = "\u{1}__na"]
-    pub static std___1_ratio___na: ::std::os::raw::c_long;
-}
-extern "C" {
-    #[link_name = "\u{1}__da"]
-    pub static std___1_ratio___da: ::std::os::raw::c_long;
-}
-extern "C" {
-    #[link_name = "\u{1}__s"]
-    pub static std___1_ratio___s: ::std::os::raw::c_long;
-}
-extern "C" {
-    #[link_name = "\u{1}__gcd"]
-    pub static std___1_ratio___gcd: ::std::os::raw::c_long;
-}
-extern "C" {
-    #[link_name = "\u{1}num"]
-    pub static std___1_ratio_num: ::std::os::raw::c_long;
-}
-extern "C" {
-    #[link_name = "\u{1}den"]
-    pub static std___1_ratio_den: ::std::os::raw::c_long;
-}
-extern "C" {
-    #[link_name = "\u{1}num"]
-    pub static std___1_num: ::std::os::raw::c_long;
-}
-extern "C" {
-    #[link_name = "\u{1}den"]
-    pub static std___1_den: ::std::os::raw::c_long;
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___is_ratio {
-    pub _address: u8,
-}
-pub type std___1_atto = u8;
-pub type std___1_femto = u8;
-pub type std___1_pico = u8;
-pub type std___1_nano = u8;
-pub type std___1_micro = u8;
-pub type std___1_milli = u8;
-pub type std___1_centi = u8;
-pub type std___1_deci = u8;
-pub type std___1_deca = u8;
-pub type std___1_hecto = u8;
-pub type std___1_kilo = u8;
-pub type std___1_mega = u8;
-pub type std___1_giga = u8;
-pub type std___1_tera = u8;
-pub type std___1_peta = u8;
-pub type std___1_exa = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___ratio_multiply {
-    pub _address: u8,
-}
-pub type std___1___ratio_multiply_type = u8;
-pub type std___1_ratio_multiply = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___ratio_divide {
-    pub _address: u8,
-}
-pub type std___1___ratio_divide_type = u8;
-pub type std___1_ratio_divide = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___ratio_add {
-    pub _address: u8,
-}
-pub type std___1___ratio_add_type = u8;
-pub type std___1_ratio_add = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___ratio_subtract {
-    pub _address: u8,
-}
-pub type std___1___ratio_subtract_type = u8;
-pub type std___1_ratio_subtract = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_ratio_equal {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_ratio_not_equal {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_ratio_less {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_ratio_less_equal {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_ratio_greater {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_ratio_greater_equal {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___ratio_gcd {
-    pub _address: u8,
-}
-pub type std___1___ratio_gcd_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_chrono___is_duration {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_chrono_treat_as_floating_point {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_chrono_duration_values {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_chrono_duration {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_chrono_duration___no_overflow {
-    pub _address: u8,
-}
-pub type std___1_chrono_duration___no_overflow_type = u8;
-pub type std___1_chrono_duration_rep = u8;
-pub type std___1_chrono_duration_period = u8;
-pub type std___1_chrono_nanoseconds = u64;
-pub type std___1_chrono_microseconds = u64;
-pub type std___1_chrono_milliseconds = u64;
-pub type std___1_chrono_seconds = u64;
-pub type std___1_chrono_minutes = u64;
-pub type std___1_chrono_hours = u64;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_chrono___duration_eq {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_chrono___duration_lt {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_chrono_time_point {
-    pub _address: u8,
-}
-pub type std___1_chrono_time_point_clock = u8;
-pub type std___1_chrono_time_point_duration = u8;
-pub type std___1_chrono_time_point_rep = u8;
-pub type std___1_chrono_time_point_period = u8;
-#[repr(C)]
-#[repr(align(1))]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_chrono_steady_clock {
-    pub _bindgen_opaque_blob: u8,
-}
-pub type std___1_chrono_steady_clock_duration = u64;
-pub type std___1_chrono_steady_clock_rep = u64;
-pub type std___1_chrono_steady_clock_period = u8;
-pub type std___1_chrono_steady_clock_time_point = u64;
-const _: () = {
-    ["Size of std___1_chrono_steady_clock"]
-        [::std::mem::size_of::<std___1_chrono_steady_clock>() - 1usize];
-    ["Alignment of std___1_chrono_steady_clock"]
-        [::std::mem::align_of::<std___1_chrono_steady_clock>() - 1usize];
-};
-extern "C" {
-    #[link_name = "\u{1}__ZNSt3__16chrono12steady_clock3nowEv"]
-    pub fn std___1_chrono_steady_clock_now() -> std___1_chrono_steady_clock_time_point;
-}
-impl std___1_chrono_steady_clock {
-    #[inline]
-    pub unsafe fn now() -> std___1_chrono_steady_clock_time_point {
-        std___1_chrono_steady_clock_now()
-    }
-}
-pub const std___1_chrono_steady_clock_is_steady: bool = true;
-#[repr(C)]
-#[repr(align(1))]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_chrono_system_clock {
-    pub _bindgen_opaque_blob: u8,
-}
-pub type std___1_chrono_system_clock_duration = u64;
-pub type std___1_chrono_system_clock_rep = u64;
-pub type std___1_chrono_system_clock_period = u8;
-pub type std___1_chrono_system_clock_time_point = u8;
-const _: () = {
-    ["Size of std___1_chrono_system_clock"]
-        [::std::mem::size_of::<std___1_chrono_system_clock>() - 1usize];
-    ["Alignment of std___1_chrono_system_clock"]
-        [::std::mem::align_of::<std___1_chrono_system_clock>() - 1usize];
-};
-extern "C" {
-    #[link_name = "\u{1}__ZNSt3__16chrono12system_clock3nowEv"]
-    pub fn std___1_chrono_system_clock_now() -> std___1_chrono_system_clock_time_point;
-}
-extern "C" {
-    #[link_name = "\u{1}__ZNSt3__16chrono12system_clock9to_time_tERKNS0_10time_pointIS1_NS0_8durationIxNS_5ratioILl1ELl1000000EEEEEEE"]
-    pub fn std___1_chrono_system_clock_to_time_t(
-        __t: *const std___1_chrono_system_clock_time_point,
-    ) -> ::std::os::raw::c_long;
-}
-extern "C" {
-    #[link_name = "\u{1}__ZNSt3__16chrono12system_clock11from_time_tEl"]
-    pub fn std___1_chrono_system_clock_from_time_t(
-        __t: ::std::os::raw::c_long,
-    ) -> std___1_chrono_system_clock_time_point;
-}
-impl std___1_chrono_system_clock {
-    #[inline]
-    pub unsafe fn now() -> std___1_chrono_system_clock_time_point {
-        std___1_chrono_system_clock_now()
-    }
-    #[inline]
-    pub unsafe fn to_time_t(
-        __t: *const std___1_chrono_system_clock_time_point,
-    ) -> ::std::os::raw::c_long {
-        std___1_chrono_system_clock_to_time_t(__t)
-    }
-    #[inline]
-    pub unsafe fn from_time_t(
-        __t: ::std::os::raw::c_long,
-    ) -> std___1_chrono_system_clock_time_point {
-        std___1_chrono_system_clock_from_time_t(__t)
-    }
-}
-pub const std___1_chrono_system_clock_is_steady: bool = false;
-pub type std___1_chrono_high_resolution_clock = u8;
-pub const std___1___libcpp_polling_count: ::std::os::raw::c_int = 64;
-#[repr(C)]
-#[repr(align(1))]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___spinning_backoff_policy {
-    pub _bindgen_opaque_blob: u8,
-}
-const _: () = {
-    ["Size of std___1___spinning_backoff_policy"]
-        [::std::mem::size_of::<std___1___spinning_backoff_policy>() - 1usize];
-    ["Alignment of std___1___spinning_backoff_policy"]
-        [::std::mem::align_of::<std___1___spinning_backoff_policy>() - 1usize];
-};
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___numeric_type {
-    pub _address: u8,
-}
-pub type std___1___numeric_type_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___promote {
-    pub _address: u8,
-}
-pub type std___1___libcpp_mutex_t = [u64; 8usize];
-pub type std___1___libcpp_recursive_mutex_t = [u64; 8usize];
-pub type std___1___libcpp_condvar_t = [u64; 6usize];
-pub type std___1___libcpp_exec_once_flag = [u64; 2usize];
-pub type std___1___libcpp_thread_id = u64;
-pub type std___1___libcpp_thread_t = u64;
-pub type std___1___libcpp_tls_key = u64;
-extern "C" {
-    #[link_name = "\u{1}__ZNSt3__123__cxx_atomic_notify_oneEPVKv"]
-    pub fn std___1___cxx_atomic_notify_one(arg1: *const ::std::os::raw::c_void);
-}
-extern "C" {
-    #[link_name = "\u{1}__ZNSt3__123__cxx_atomic_notify_allEPVKv"]
-    pub fn std___1___cxx_atomic_notify_all(arg1: *const ::std::os::raw::c_void);
-}
-extern "C" {
-    #[link_name = "\u{1}__ZNSt3__123__libcpp_atomic_monitorEPVKv"]
-    pub fn std___1___libcpp_atomic_monitor(
-        arg1: *const ::std::os::raw::c_void,
-    ) -> std___1___cxx_contention_t;
-}
-extern "C" {
-    #[link_name = "\u{1}__ZNSt3__120__libcpp_atomic_waitEPVKvx"]
-    pub fn std___1___libcpp_atomic_wait(
-        arg1: *const ::std::os::raw::c_void,
-        arg2: std___1___cxx_contention_t,
-    );
-}
-extern "C" {
-    #[link_name = "\u{1}__ZNSt3__123__cxx_atomic_notify_oneEPVKNS_17__cxx_atomic_implIxNS_22__cxx_atomic_base_implIxEEEE"]
-    pub fn std___1___cxx_atomic_notify_one1(arg1: *const std___1___cxx_atomic_contention_t);
-}
-extern "C" {
-    #[link_name = "\u{1}__ZNSt3__123__cxx_atomic_notify_allEPVKNS_17__cxx_atomic_implIxNS_22__cxx_atomic_base_implIxEEEE"]
-    pub fn std___1___cxx_atomic_notify_all1(arg1: *const std___1___cxx_atomic_contention_t);
-}
-extern "C" {
-    #[link_name = "\u{1}__ZNSt3__123__libcpp_atomic_monitorEPVKNS_17__cxx_atomic_implIxNS_22__cxx_atomic_base_implIxEEEE"]
-    pub fn std___1___libcpp_atomic_monitor1(
-        arg1: *const std___1___cxx_atomic_contention_t,
-    ) -> std___1___cxx_contention_t;
-}
-extern "C" {
-    #[link_name = "\u{1}__ZNSt3__120__libcpp_atomic_waitEPVKNS_17__cxx_atomic_implIxNS_22__cxx_atomic_base_implIxEEEEx"]
-    pub fn std___1___libcpp_atomic_wait1(
-        arg1: *const std___1___cxx_atomic_contention_t,
-        arg2: std___1___cxx_contention_t,
-    );
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___libcpp_atomic_wait_backoff_impl {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___cxx_atomic_wait_test_fn_impl {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_binary_function {
-    pub _address: u8,
-}
-pub type std___1_binary_function_first_argument_type = u8;
-pub type std___1_binary_function_second_argument_type = u8;
-pub type std___1_binary_function_result_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___binary_function_keep_layout_base {
-    pub _address: u8,
-}
-pub type std___1___binary_function_keep_layout_base_first_argument_type = u8;
-pub type std___1___binary_function_keep_layout_base_second_argument_type = u8;
-pub type std___1___binary_function_keep_layout_base_result_type = u8;
-pub type std___1___binary_function = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_unary_function {
-    pub _address: u8,
-}
-pub type std___1_unary_function_argument_type = u8;
-pub type std___1_unary_function_result_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___unary_function_keep_layout_base {
-    pub _address: u8,
-}
-pub type std___1___unary_function_keep_layout_base_argument_type = u8;
-pub type std___1___unary_function_keep_layout_base_result_type = u8;
-pub type std___1___unary_function = u8;
-#[repr(C)]
-#[repr(align(1))]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___equal_tag {
-    pub _bindgen_opaque_blob: u8,
-}
-const _: () = {
-    ["Size of std___1___equal_tag"][::std::mem::size_of::<std___1___equal_tag>() - 1usize];
-    ["Alignment of std___1___equal_tag"][::std::mem::align_of::<std___1___equal_tag>() - 1usize];
-};
-#[repr(C)]
-#[repr(align(1))]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___plus_tag {
-    pub _bindgen_opaque_blob: u8,
-}
-const _: () = {
-    ["Size of std___1___plus_tag"][::std::mem::size_of::<std___1___plus_tag>() - 1usize];
-    ["Alignment of std___1___plus_tag"][::std::mem::align_of::<std___1___plus_tag>() - 1usize];
-};
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1___desugars_to {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_plus {
-    pub _address: u8,
-}
-pub type std___1_plus___result_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_minus {
-    pub _address: u8,
-}
-pub type std___1_minus___result_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_multiplies {
-    pub _address: u8,
-}
-pub type std___1_multiplies___result_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_divides {
-    pub _address: u8,
-}
-pub type std___1_divides___result_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_modulus {
-    pub _address: u8,
-}
-pub type std___1_modulus___result_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_negate {
-    pub _address: u8,
-}
-pub type std___1_negate___result_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_bit_and {
-    pub _address: u8,
-}
-pub type std___1_bit_and___result_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_bit_not {
-    pub _address: u8,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_bit_or {
-    pub _address: u8,
-}
-pub type std___1_bit_or___result_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_bit_xor {
-    pub _address: u8,
-}
-pub type std___1_bit_xor___result_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_equal_to {
-    pub _address: u8,
-}
-pub type std___1_equal_to___result_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_not_equal_to {
-    pub _address: u8,
-}
-pub type std___1_not_equal_to___result_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_less {
-    pub _address: u8,
-}
-pub type std___1_less___result_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_less_equal {
-    pub _address: u8,
-}
-pub type std___1_less_equal___result_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_greater_equal {
-    pub _address: u8,
-}
-pub type std___1_greater_equal___result_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_greater {
-    pub _address: u8,
-}
-pub type std___1_greater___result_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_logical_and {
-    pub _address: u8,
-}
-pub type std___1_logical_and___result_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_logical_not {
-    pub _address: u8,
-}
-pub type std___1_logical_not___result_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_logical_or {
-    pub _address: u8,
-}
-pub type std___1_logical_or___result_type = u8;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_atomic {
-    pub _address: u8,
-}
-pub type std___1_atomic___base = u8;
-pub type std___1_atomic_value_type = u8;
-pub type std___1_atomic_difference_type = u8;
-pub type std___1_atomic_bool = u8;
-pub type std___1_atomic_char = u8;
-pub type std___1_atomic_schar = u8;
-pub type std___1_atomic_uchar = u8;
-pub type std___1_atomic_short = u8;
-pub type std___1_atomic_ushort = u8;
-pub type std___1_atomic_int = u8;
-pub type std___1_atomic_uint = u8;
-pub type std___1_atomic_long = u8;
-pub type std___1_atomic_ulong = u8;
-pub type std___1_atomic_llong = u8;
-pub type std___1_atomic_ullong = u8;
-pub type std___1_atomic_char16_t = u8;
-pub type std___1_atomic_char32_t = u8;
-pub type std___1_atomic_wchar_t = u8;
-pub type std___1_atomic_int_least8_t = u8;
-pub type std___1_atomic_uint_least8_t = u8;
-pub type std___1_atomic_int_least16_t = u8;
-pub type std___1_atomic_uint_least16_t = u8;
-pub type std___1_atomic_int_least32_t = u8;
-pub type std___1_atomic_uint_least32_t = u8;
-pub type std___1_atomic_int_least64_t = u8;
-pub type std___1_atomic_uint_least64_t = u8;
-pub type std___1_atomic_int_fast8_t = u8;
-pub type std___1_atomic_uint_fast8_t = u8;
-pub type std___1_atomic_int_fast16_t = u8;
-pub type std___1_atomic_uint_fast16_t = u8;
-pub type std___1_atomic_int_fast32_t = u8;
-pub type std___1_atomic_uint_fast32_t = u8;
-pub type std___1_atomic_int_fast64_t = u8;
-pub type std___1_atomic_uint_fast64_t = u8;
-pub type std___1_atomic_int8_t = u8;
-pub type std___1_atomic_uint8_t = u8;
-pub type std___1_atomic_int16_t = u8;
-pub type std___1_atomic_uint16_t = u8;
-pub type std___1_atomic_int32_t = u8;
-pub type std___1_atomic_uint32_t = u8;
-pub type std___1_atomic_int64_t = u8;
-pub type std___1_atomic_uint64_t = u8;
-pub type std___1_atomic_intptr_t = u8;
-pub type std___1_atomic_uintptr_t = u8;
-pub type std___1_atomic_size_t = u8;
-pub type std___1_atomic_ptrdiff_t = u8;
-pub type std___1_atomic_intmax_t = u8;
-pub type std___1_atomic_uintmax_t = u8;
-#[repr(C)]
-#[repr(align(1))]
-#[derive(Debug, Copy, Clone)]
-pub struct std___1_atomic_flag {
-    pub _bindgen_opaque_blob: u8,
-}
-const _: () = {
-    ["Size of std___1_atomic_flag"][::std::mem::size_of::<std___1_atomic_flag>() - 1usize];
-    ["Alignment of std___1_atomic_flag"][::std::mem::align_of::<std___1_atomic_flag>() - 1usize];
-};
-extern "C" {
-    pub fn memchr(
-        __s: *const ::std::os::raw::c_void,
-        __c: ::std::os::raw::c_int,
-        __n: usize,
-    ) -> *mut ::std::os::raw::c_void;
-}
-extern "C" {
-    pub fn memcmp(
-        __s1: *const ::std::os::raw::c_void,
-        __s2: *const ::std::os::raw::c_void,
-        __n: usize,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn memcpy(
-        __dst: *mut ::std::os::raw::c_void,
-        __src: *const ::std::os::raw::c_void,
-        __n: usize,
-    ) -> *mut ::std::os::raw::c_void;
-}
-extern "C" {
-    pub fn memmove(
-        __dst: *mut ::std::os::raw::c_void,
-        __src: *const ::std::os::raw::c_void,
-        __len: usize,
-    ) -> *mut ::std::os::raw::c_void;
-}
-extern "C" {
-    pub fn memset(
-        __b: *mut ::std::os::raw::c_void,
-        __c: ::std::os::raw::c_int,
-        __len: usize,
-    ) -> *mut ::std::os::raw::c_void;
-}
-extern "C" {
-    pub fn strcat(
-        __s1: *mut ::std::os::raw::c_char,
-        __s2: *const ::std::os::raw::c_char,
-    ) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn strchr(
-        __s: *const ::std::os::raw::c_char,
-        __c: ::std::os::raw::c_int,
-    ) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn strcmp(
-        __s1: *const ::std::os::raw::c_char,
-        __s2: *const ::std::os::raw::c_char,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn strcoll(
-        __s1: *const ::std::os::raw::c_char,
-        __s2: *const ::std::os::raw::c_char,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn strcpy(
-        __dst: *mut ::std::os::raw::c_char,
-        __src: *const ::std::os::raw::c_char,
-    ) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn strcspn(
-        __s: *const ::std::os::raw::c_char,
-        __charset: *const ::std::os::raw::c_char,
-    ) -> usize;
-}
-extern "C" {
-    pub fn strerror(__errnum: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn strlen(__s: *const ::std::os::raw::c_char) -> usize;
-}
-extern "C" {
-    pub fn strncat(
-        __s1: *mut ::std::os::raw::c_char,
-        __s2: *const ::std::os::raw::c_char,
-        __n: usize,
-    ) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn strncmp(
-        __s1: *const ::std::os::raw::c_char,
-        __s2: *const ::std::os::raw::c_char,
-        __n: usize,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn strncpy(
-        __dst: *mut ::std::os::raw::c_char,
-        __src: *const ::std::os::raw::c_char,
-        __n: usize,
-    ) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn strpbrk(
-        __s: *const ::std::os::raw::c_char,
-        __charset: *const ::std::os::raw::c_char,
-    ) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn strrchr(
-        __s: *const ::std::os::raw::c_char,
-        __c: ::std::os::raw::c_int,
-    ) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn strspn(
-        __s: *const ::std::os::raw::c_char,
-        __charset: *const ::std::os::raw::c_char,
-    ) -> usize;
-}
-extern "C" {
-    pub fn strstr(
-        __big: *const ::std::os::raw::c_char,
-        __little: *const ::std::os::raw::c_char,
-    ) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn strtok(
-        __str: *mut ::std::os::raw::c_char,
-        __sep: *const ::std::os::raw::c_char,
-    ) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn strxfrm(
-        __s1: *mut ::std::os::raw::c_char,
-        __s2: *const ::std::os::raw::c_char,
-        __n: usize,
-    ) -> usize;
-}
-extern "C" {
-    pub fn strtok_r(
-        __str: *mut ::std::os::raw::c_char,
-        __sep: *const ::std::os::raw::c_char,
-        __lasts: *mut *mut ::std::os::raw::c_char,
-    ) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn strerror_r(
-        __errnum: ::std::os::raw::c_int,
-        __strerrbuf: *mut ::std::os::raw::c_char,
-        __buflen: usize,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn strdup(__s1: *const ::std::os::raw::c_char) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn memccpy(
-        __dst: *mut ::std::os::raw::c_void,
-        __src: *const ::std::os::raw::c_void,
-        __c: ::std::os::raw::c_int,
-        __n: usize,
-    ) -> *mut ::std::os::raw::c_void;
-}
-extern "C" {
-    pub fn stpcpy(
-        __dst: *mut ::std::os::raw::c_char,
-        __src: *const ::std::os::raw::c_char,
-    ) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn stpncpy(
-        __dst: *mut ::std::os::raw::c_char,
-        __src: *const ::std::os::raw::c_char,
-        __n: usize,
-    ) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn strndup(__s1: *const ::std::os::raw::c_char, __n: usize) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn strnlen(__s1: *const ::std::os::raw::c_char, __n: usize) -> usize;
-}
-extern "C" {
-    pub fn strsignal(__sig: ::std::os::raw::c_int) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn memmem(
-        __big: *const ::std::os::raw::c_void,
-        __big_len: usize,
-        __little: *const ::std::os::raw::c_void,
-        __little_len: usize,
-    ) -> *mut ::std::os::raw::c_void;
-}
-extern "C" {
-    pub fn memset_pattern4(
-        __b: *mut ::std::os::raw::c_void,
-        __pattern4: *const ::std::os::raw::c_void,
-        __len: usize,
-    );
-}
-extern "C" {
-    pub fn memset_pattern8(
-        __b: *mut ::std::os::raw::c_void,
-        __pattern8: *const ::std::os::raw::c_void,
-        __len: usize,
-    );
-}
-extern "C" {
-    pub fn memset_pattern16(
-        __b: *mut ::std::os::raw::c_void,
-        __pattern16: *const ::std::os::raw::c_void,
-        __len: usize,
-    );
-}
-extern "C" {
-    pub fn strcasestr(
-        __big: *const ::std::os::raw::c_char,
-        __little: *const ::std::os::raw::c_char,
-    ) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn strnstr(
-        __big: *const ::std::os::raw::c_char,
-        __little: *const ::std::os::raw::c_char,
-        __len: usize,
-    ) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn strlcat(
-        __dst: *mut ::std::os::raw::c_char,
-        __source: *const ::std::os::raw::c_char,
-        __size: usize,
-    ) -> usize;
-}
-extern "C" {
-    pub fn strlcpy(
-        __dst: *mut ::std::os::raw::c_char,
-        __source: *const ::std::os::raw::c_char,
-        __size: usize,
-    ) -> usize;
-}
-extern "C" {
-    pub fn strmode(__mode: ::std::os::raw::c_int, __bp: *mut ::std::os::raw::c_char);
-}
-extern "C" {
-    pub fn strsep(
-        __stringp: *mut *mut ::std::os::raw::c_char,
-        __delim: *const ::std::os::raw::c_char,
-    ) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn swab(
-        arg1: *const ::std::os::raw::c_void,
-        arg2: *mut ::std::os::raw::c_void,
-        arg3: isize,
-    );
-}
-extern "C" {
-    pub fn timingsafe_bcmp(
-        __b1: *const ::std::os::raw::c_void,
-        __b2: *const ::std::os::raw::c_void,
-        __len: usize,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn strsignal_r(
-        __sig: ::std::os::raw::c_int,
-        __strsignalbuf: *mut ::std::os::raw::c_char,
-        __buflen: usize,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn bcmp(
-        arg1: *const ::std::os::raw::c_void,
-        arg2: *const ::std::os::raw::c_void,
-        arg3: usize,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn bcopy(
-        arg1: *const ::std::os::raw::c_void,
-        arg2: *mut ::std::os::raw::c_void,
-        arg3: usize,
-    );
-}
-extern "C" {
-    pub fn bzero(arg1: *mut ::std::os::raw::c_void, arg2: usize);
-}
-extern "C" {
-    pub fn index(
-        arg1: *const ::std::os::raw::c_char,
-        arg2: ::std::os::raw::c_int,
-    ) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn rindex(
-        arg1: *const ::std::os::raw::c_char,
-        arg2: ::std::os::raw::c_int,
-    ) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn ffs(arg1: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn strcasecmp(
-        arg1: *const ::std::os::raw::c_char,
-        arg2: *const ::std::os::raw::c_char,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn strncasecmp(
-        arg1: *const ::std::os::raw::c_char,
-        arg2: *const ::std::os::raw::c_char,
-        arg3: usize,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn ffsl(arg1: ::std::os::raw::c_long) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn ffsll(arg1: ::std::os::raw::c_longlong) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn fls(arg1: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn flsl(arg1: ::std::os::raw::c_long) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn flsll(arg1: ::std::os::raw::c_longlong) -> ::std::os::raw::c_int;
-}
-pub type clock_t = __darwin_clock_t;
-pub type time_t = __darwin_time_t;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct timespec {
-    pub tv_sec: __darwin_time_t,
-    pub tv_nsec: ::std::os::raw::c_long,
-}
-const _: () = {
-    ["Size of timespec"][::std::mem::size_of::<timespec>() - 16usize];
-    ["Alignment of timespec"][::std::mem::align_of::<timespec>() - 8usize];
-    ["Offset of field: timespec::tv_sec"][::std::mem::offset_of!(timespec, tv_sec) - 0usize];
-    ["Offset of field: timespec::tv_nsec"][::std::mem::offset_of!(timespec, tv_nsec) - 8usize];
-};
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct tm {
-    pub tm_sec: ::std::os::raw::c_int,
-    pub tm_min: ::std::os::raw::c_int,
-    pub tm_hour: ::std::os::raw::c_int,
-    pub tm_mday: ::std::os::raw::c_int,
-    pub tm_mon: ::std::os::raw::c_int,
-    pub tm_year: ::std::os::raw::c_int,
-    pub tm_wday: ::std::os::raw::c_int,
-    pub tm_yday: ::std::os::raw::c_int,
-    pub tm_isdst: ::std::os::raw::c_int,
-    pub tm_gmtoff: ::std::os::raw::c_long,
-    pub tm_zone: *mut ::std::os::raw::c_char,
-}
-const _: () = {
-    ["Size of tm"][::std::mem::size_of::<tm>() - 56usize];
-    ["Alignment of tm"][::std::mem::align_of::<tm>() - 8usize];
-    ["Offset of field: tm::tm_sec"][::std::mem::offset_of!(tm, tm_sec) - 0usize];
-    ["Offset of field: tm::tm_min"][::std::mem::offset_of!(tm, tm_min) - 4usize];
-    ["Offset of field: tm::tm_hour"][::std::mem::offset_of!(tm, tm_hour) - 8usize];
-    ["Offset of field: tm::tm_mday"][::std::mem::offset_of!(tm, tm_mday) - 12usize];
-    ["Offset of field: tm::tm_mon"][::std::mem::offset_of!(tm, tm_mon) - 16usize];
-    ["Offset of field: tm::tm_year"][::std::mem::offset_of!(tm, tm_year) - 20usize];
-    ["Offset of field: tm::tm_wday"][::std::mem::offset_of!(tm, tm_wday) - 24usize];
-    ["Offset of field: tm::tm_yday"][::std::mem::offset_of!(tm, tm_yday) - 28usize];
-    ["Offset of field: tm::tm_isdst"][::std::mem::offset_of!(tm, tm_isdst) - 32usize];
-    ["Offset of field: tm::tm_gmtoff"][::std::mem::offset_of!(tm, tm_gmtoff) - 40usize];
-    ["Offset of field: tm::tm_zone"][::std::mem::offset_of!(tm, tm_zone) - 48usize];
-};
-extern "C" {
-    pub static mut tzname: [*mut ::std::os::raw::c_char; 0usize];
-}
-extern "C" {
-    pub static mut getdate_err: ::std::os::raw::c_int;
-}
-extern "C" {
-    pub static mut timezone: ::std::os::raw::c_long;
-}
-extern "C" {
-    pub static mut daylight: ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn asctime(arg1: *const tm) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn clock() -> clock_t;
-}
-extern "C" {
-    pub fn ctime(arg1: *const time_t) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn difftime(arg1: time_t, arg2: time_t) -> f64;
-}
-extern "C" {
-    pub fn getdate(arg1: *const ::std::os::raw::c_char) -> *mut tm;
-}
-extern "C" {
-    pub fn gmtime(arg1: *const time_t) -> *mut tm;
-}
-extern "C" {
-    pub fn localtime(arg1: *const time_t) -> *mut tm;
-}
-extern "C" {
-    pub fn mktime(arg1: *mut tm) -> time_t;
-}
-extern "C" {
-    pub fn strftime(
-        arg1: *mut ::std::os::raw::c_char,
-        arg2: usize,
-        arg3: *const ::std::os::raw::c_char,
-        arg4: *const tm,
-    ) -> usize;
-}
-extern "C" {
-    pub fn strptime(
-        arg1: *const ::std::os::raw::c_char,
-        arg2: *const ::std::os::raw::c_char,
-        arg3: *mut tm,
-    ) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn time(arg1: *mut time_t) -> time_t;
-}
-extern "C" {
-    pub fn tzset();
-}
-extern "C" {
-    pub fn asctime_r(
-        arg1: *const tm,
-        arg2: *mut ::std::os::raw::c_char,
-    ) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn ctime_r(
-        arg1: *const time_t,
-        arg2: *mut ::std::os::raw::c_char,
-    ) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn gmtime_r(arg1: *const time_t, arg2: *mut tm) -> *mut tm;
-}
-extern "C" {
-    pub fn localtime_r(arg1: *const time_t, arg2: *mut tm) -> *mut tm;
-}
-extern "C" {
-    pub fn posix2time(arg1: time_t) -> time_t;
-}
-extern "C" {
-    pub fn tzsetwall();
-}
-extern "C" {
-    pub fn time2posix(arg1: time_t) -> time_t;
-}
-extern "C" {
-    pub fn timelocal(arg1: *mut tm) -> time_t;
-}
-extern "C" {
-    pub fn timegm(arg1: *mut tm) -> time_t;
-}
-extern "C" {
-    pub fn nanosleep(__rqtp: *const timespec, __rmtp: *mut timespec) -> ::std::os::raw::c_int;
-}
-pub const clockid_t__CLOCK_REALTIME: clockid_t = 0;
-pub const clockid_t__CLOCK_MONOTONIC: clockid_t = 6;
-pub const clockid_t__CLOCK_MONOTONIC_RAW: clockid_t = 4;
-pub const clockid_t__CLOCK_MONOTONIC_RAW_APPROX: clockid_t = 5;
-pub const clockid_t__CLOCK_UPTIME_RAW: clockid_t = 8;
-pub const clockid_t__CLOCK_UPTIME_RAW_APPROX: clockid_t = 9;
-pub const clockid_t__CLOCK_PROCESS_CPUTIME_ID: clockid_t = 12;
-pub const clockid_t__CLOCK_THREAD_CPUTIME_ID: clockid_t = 16;
-pub type clockid_t = ::std::os::raw::c_uint;
-extern "C" {
-    pub fn clock_getres(__clock_id: clockid_t, __res: *mut timespec) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn clock_gettime(__clock_id: clockid_t, __tp: *mut timespec) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn clock_gettime_nsec_np(__clock_id: clockid_t) -> __uint64_t;
-}
-extern "C" {
-    pub fn clock_settime(__clock_id: clockid_t, __tp: *const timespec) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn timespec_get(ts: *mut timespec, base: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn __error() -> *mut ::std::os::raw::c_int;
-}
-pub type float_t = f32;
-pub type double_t = f64;
-extern "C" {
-    pub fn __math_errhandling() -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn __fpclassifyf(arg1: f32) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn __fpclassifyd(arg1: f64) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn __fpclassifyl(arg1: f64) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn acosf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn acos(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn acosl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn asinf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn asin(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn asinl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn atanf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn atan(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn atanl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn atan2f(arg1: f32, arg2: f32) -> f32;
-}
-extern "C" {
-    pub fn atan2(arg1: f64, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn atan2l(arg1: f64, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn cosf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn cos(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn cosl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn sinf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn sin(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn sinl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn tanf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn tan(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn tanl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn acoshf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn acosh(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn acoshl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn asinhf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn asinh(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn asinhl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn atanhf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn atanh(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn atanhl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn coshf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn cosh(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn coshl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn sinhf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn sinh(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn sinhl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn tanhf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn tanh(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn tanhl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn expf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn exp(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn expl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn exp2f(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn exp2(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn exp2l(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn expm1f(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn expm1(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn expm1l(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn logf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn log(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn logl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn log10f(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn log10(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn log10l(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn log2f(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn log2(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn log2l(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn log1pf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn log1p(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn log1pl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn logbf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn logb(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn logbl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn modff(arg1: f32, arg2: *mut f32) -> f32;
-}
-extern "C" {
-    pub fn modf(arg1: f64, arg2: *mut f64) -> f64;
-}
-extern "C" {
-    pub fn modfl(arg1: f64, arg2: *mut f64) -> f64;
-}
-extern "C" {
-    pub fn ldexpf(arg1: f32, arg2: ::std::os::raw::c_int) -> f32;
-}
-extern "C" {
-    pub fn ldexp(arg1: f64, arg2: ::std::os::raw::c_int) -> f64;
-}
-extern "C" {
-    pub fn ldexpl(arg1: f64, arg2: ::std::os::raw::c_int) -> f64;
-}
-extern "C" {
-    pub fn frexpf(arg1: f32, arg2: *mut ::std::os::raw::c_int) -> f32;
-}
-extern "C" {
-    pub fn frexp(arg1: f64, arg2: *mut ::std::os::raw::c_int) -> f64;
-}
-extern "C" {
-    pub fn frexpl(arg1: f64, arg2: *mut ::std::os::raw::c_int) -> f64;
-}
-extern "C" {
-    pub fn ilogbf(arg1: f32) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn ilogb(arg1: f64) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn ilogbl(arg1: f64) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn scalbnf(arg1: f32, arg2: ::std::os::raw::c_int) -> f32;
-}
-extern "C" {
-    pub fn scalbn(arg1: f64, arg2: ::std::os::raw::c_int) -> f64;
-}
-extern "C" {
-    pub fn scalbnl(arg1: f64, arg2: ::std::os::raw::c_int) -> f64;
-}
-extern "C" {
-    pub fn scalblnf(arg1: f32, arg2: ::std::os::raw::c_long) -> f32;
-}
-extern "C" {
-    pub fn scalbln(arg1: f64, arg2: ::std::os::raw::c_long) -> f64;
-}
-extern "C" {
-    pub fn scalblnl(arg1: f64, arg2: ::std::os::raw::c_long) -> f64;
-}
-extern "C" {
-    pub fn fabsf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn fabs(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn fabsl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn cbrtf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn cbrt(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn cbrtl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn hypotf(arg1: f32, arg2: f32) -> f32;
-}
-extern "C" {
-    pub fn hypot(arg1: f64, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn hypotl(arg1: f64, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn powf(arg1: f32, arg2: f32) -> f32;
-}
-extern "C" {
-    pub fn pow(arg1: f64, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn powl(arg1: f64, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn sqrtf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn sqrt(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn sqrtl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn erff(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn erf(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn erfl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn erfcf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn erfc(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn erfcl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn lgammaf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn lgamma(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn lgammal(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn tgammaf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn tgamma(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn tgammal(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn ceilf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn ceil(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn ceill(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn floorf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn floor(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn floorl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn nearbyintf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn nearbyint(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn nearbyintl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn rintf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn rint(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn rintl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn lrintf(arg1: f32) -> ::std::os::raw::c_long;
-}
-extern "C" {
-    pub fn lrint(arg1: f64) -> ::std::os::raw::c_long;
-}
-extern "C" {
-    pub fn lrintl(arg1: f64) -> ::std::os::raw::c_long;
-}
-extern "C" {
-    pub fn roundf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn round(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn roundl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn lroundf(arg1: f32) -> ::std::os::raw::c_long;
-}
-extern "C" {
-    pub fn lround(arg1: f64) -> ::std::os::raw::c_long;
-}
-extern "C" {
-    pub fn lroundl(arg1: f64) -> ::std::os::raw::c_long;
-}
-extern "C" {
-    pub fn llrintf(arg1: f32) -> ::std::os::raw::c_longlong;
-}
-extern "C" {
-    pub fn llrint(arg1: f64) -> ::std::os::raw::c_longlong;
-}
-extern "C" {
-    pub fn llrintl(arg1: f64) -> ::std::os::raw::c_longlong;
-}
-extern "C" {
-    pub fn llroundf(arg1: f32) -> ::std::os::raw::c_longlong;
-}
-extern "C" {
-    pub fn llround(arg1: f64) -> ::std::os::raw::c_longlong;
-}
-extern "C" {
-    pub fn llroundl(arg1: f64) -> ::std::os::raw::c_longlong;
-}
-extern "C" {
-    pub fn truncf(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn trunc(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn truncl(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn fmodf(arg1: f32, arg2: f32) -> f32;
-}
-extern "C" {
-    pub fn fmod(arg1: f64, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn fmodl(arg1: f64, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn remainderf(arg1: f32, arg2: f32) -> f32;
-}
-extern "C" {
-    pub fn remainder(arg1: f64, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn remainderl(arg1: f64, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn remquof(arg1: f32, arg2: f32, arg3: *mut ::std::os::raw::c_int) -> f32;
-}
-extern "C" {
-    pub fn remquo(arg1: f64, arg2: f64, arg3: *mut ::std::os::raw::c_int) -> f64;
-}
-extern "C" {
-    pub fn remquol(arg1: f64, arg2: f64, arg3: *mut ::std::os::raw::c_int) -> f64;
-}
-extern "C" {
-    pub fn copysignf(arg1: f32, arg2: f32) -> f32;
-}
-extern "C" {
-    pub fn copysign(arg1: f64, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn copysignl(arg1: f64, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn nanf(arg1: *const ::std::os::raw::c_char) -> f32;
-}
-extern "C" {
-    pub fn nan(arg1: *const ::std::os::raw::c_char) -> f64;
-}
-extern "C" {
-    pub fn nanl(arg1: *const ::std::os::raw::c_char) -> f64;
-}
-extern "C" {
-    pub fn nextafterf(arg1: f32, arg2: f32) -> f32;
-}
-extern "C" {
-    pub fn nextafter(arg1: f64, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn nextafterl(arg1: f64, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn nexttoward(arg1: f64, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn nexttowardf(arg1: f32, arg2: f64) -> f32;
-}
-extern "C" {
-    pub fn nexttowardl(arg1: f64, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn fdimf(arg1: f32, arg2: f32) -> f32;
-}
-extern "C" {
-    pub fn fdim(arg1: f64, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn fdiml(arg1: f64, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn fmaxf(arg1: f32, arg2: f32) -> f32;
-}
-extern "C" {
-    pub fn fmax(arg1: f64, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn fmaxl(arg1: f64, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn fminf(arg1: f32, arg2: f32) -> f32;
-}
-extern "C" {
-    pub fn fmin(arg1: f64, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn fminl(arg1: f64, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn fmaf(arg1: f32, arg2: f32, arg3: f32) -> f32;
-}
-extern "C" {
-    pub fn fma(arg1: f64, arg2: f64, arg3: f64) -> f64;
-}
-extern "C" {
-    pub fn fmal(arg1: f64, arg2: f64, arg3: f64) -> f64;
-}
-extern "C" {
-    pub fn __exp10f(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn __exp10(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn __cospif(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn __cospi(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn __sinpif(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn __sinpi(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn __tanpif(arg1: f32) -> f32;
-}
-extern "C" {
-    pub fn __tanpi(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn __fabsf16(arg1: __BindgenFloat16) -> __BindgenFloat16;
-}
-extern "C" {
-    pub fn __hypotf16(arg1: __BindgenFloat16, arg2: __BindgenFloat16) -> __BindgenFloat16;
-}
-extern "C" {
-    pub fn __sqrtf16(arg1: __BindgenFloat16) -> __BindgenFloat16;
-}
-extern "C" {
-    pub fn __ceilf16(arg1: __BindgenFloat16) -> __BindgenFloat16;
-}
-extern "C" {
-    pub fn __floorf16(arg1: __BindgenFloat16) -> __BindgenFloat16;
-}
-extern "C" {
-    pub fn __rintf16(arg1: __BindgenFloat16) -> __BindgenFloat16;
-}
-extern "C" {
-    pub fn __roundf16(arg1: __BindgenFloat16) -> __BindgenFloat16;
-}
-extern "C" {
-    pub fn __truncf16(arg1: __BindgenFloat16) -> __BindgenFloat16;
-}
-extern "C" {
-    pub fn __copysignf16(arg1: __BindgenFloat16, arg2: __BindgenFloat16) -> __BindgenFloat16;
-}
-extern "C" {
-    pub fn __nextafterf16(arg1: __BindgenFloat16, arg2: __BindgenFloat16) -> __BindgenFloat16;
-}
-extern "C" {
-    pub fn __fmaxf16(arg1: __BindgenFloat16, arg2: __BindgenFloat16) -> __BindgenFloat16;
-}
-extern "C" {
-    pub fn __fminf16(arg1: __BindgenFloat16, arg2: __BindgenFloat16) -> __BindgenFloat16;
-}
-extern "C" {
-    pub fn __fmaf16(
-        arg1: __BindgenFloat16,
-        arg2: __BindgenFloat16,
-        arg3: __BindgenFloat16,
-    ) -> __BindgenFloat16;
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct __float2 {
-    pub __sinval: f32,
-    pub __cosval: f32,
-}
-const _: () = {
-    ["Size of __float2"][::std::mem::size_of::<__float2>() - 8usize];
-    ["Alignment of __float2"][::std::mem::align_of::<__float2>() - 4usize];
-    ["Offset of field: __float2::__sinval"][::std::mem::offset_of!(__float2, __sinval) - 0usize];
-    ["Offset of field: __float2::__cosval"][::std::mem::offset_of!(__float2, __cosval) - 4usize];
-};
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct __double2 {
-    pub __sinval: f64,
-    pub __cosval: f64,
-}
-const _: () = {
-    ["Size of __double2"][::std::mem::size_of::<__double2>() - 16usize];
-    ["Alignment of __double2"][::std::mem::align_of::<__double2>() - 8usize];
-    ["Offset of field: __double2::__sinval"][::std::mem::offset_of!(__double2, __sinval) - 0usize];
-    ["Offset of field: __double2::__cosval"][::std::mem::offset_of!(__double2, __cosval) - 8usize];
-};
-extern "C" {
-    pub fn __sincosf_stret(arg1: f32) -> __float2;
-}
-extern "C" {
-    pub fn __sincos_stret(arg1: f64) -> __double2;
-}
-extern "C" {
-    pub fn __sincospif_stret(arg1: f32) -> __float2;
-}
-extern "C" {
-    pub fn __sincospi_stret(arg1: f64) -> __double2;
-}
-extern "C" {
-    pub fn j0(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn j1(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn jn(arg1: ::std::os::raw::c_int, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn y0(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn y1(arg1: f64) -> f64;
-}
-extern "C" {
-    pub fn yn(arg1: ::std::os::raw::c_int, arg2: f64) -> f64;
-}
-extern "C" {
-    pub fn scalb(arg1: f64, arg2: f64) -> f64;
-}
-extern "C" {
-    pub static mut signgam: ::std::os::raw::c_int;
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct sched_param {
-    pub sched_priority: ::std::os::raw::c_int,
-    pub __opaque: [::std::os::raw::c_char; 4usize],
-}
-const _: () = {
-    ["Size of sched_param"][::std::mem::size_of::<sched_param>() - 8usize];
-    ["Alignment of sched_param"][::std::mem::align_of::<sched_param>() - 4usize];
-    ["Offset of field: sched_param::sched_priority"]
-        [::std::mem::offset_of!(sched_param, sched_priority) - 0usize];
-    ["Offset of field: sched_param::__opaque"]
-        [::std::mem::offset_of!(sched_param, __opaque) - 4usize];
-};
-extern "C" {
-    pub fn sched_yield() -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn sched_get_priority_min(arg1: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn sched_get_priority_max(arg1: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
-}
-pub type pthread_cond_t = __darwin_pthread_cond_t;
-pub type pthread_condattr_t = __darwin_pthread_condattr_t;
-pub type pthread_key_t = __darwin_pthread_key_t;
-pub type pthread_mutex_t = __darwin_pthread_mutex_t;
-pub type pthread_mutexattr_t = __darwin_pthread_mutexattr_t;
-pub type pthread_once_t = __darwin_pthread_once_t;
-pub type pthread_rwlock_t = __darwin_pthread_rwlock_t;
-pub type pthread_rwlockattr_t = __darwin_pthread_rwlockattr_t;
-pub type pthread_t = __darwin_pthread_t;
-pub const qos_class_t_QOS_CLASS_USER_INTERACTIVE: qos_class_t = 33;
-pub const qos_class_t_QOS_CLASS_USER_INITIATED: qos_class_t = 25;
-pub const qos_class_t_QOS_CLASS_DEFAULT: qos_class_t = 21;
-pub const qos_class_t_QOS_CLASS_UTILITY: qos_class_t = 17;
-pub const qos_class_t_QOS_CLASS_BACKGROUND: qos_class_t = 9;
-pub const qos_class_t_QOS_CLASS_UNSPECIFIED: qos_class_t = 0;
-pub type qos_class_t = ::std::os::raw::c_uint;
-extern "C" {
-    pub fn qos_class_self() -> qos_class_t;
-}
-extern "C" {
-    pub fn qos_class_main() -> qos_class_t;
-}
-extern "C" {
-    pub fn pthread_attr_set_qos_class_np(
-        __attr: *mut pthread_attr_t,
-        __qos_class: qos_class_t,
-        __relative_priority: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_attr_get_qos_class_np(
-        __attr: *mut pthread_attr_t,
-        __qos_class: *mut qos_class_t,
-        __relative_priority: *mut ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_set_qos_class_self_np(
-        __qos_class: qos_class_t,
-        __relative_priority: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_get_qos_class_np(
-        __pthread: pthread_t,
-        __qos_class: *mut qos_class_t,
-        __relative_priority: *mut ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct pthread_override_s {
-    _unused: [u8; 0],
-}
-pub type pthread_override_t = *mut pthread_override_s;
-extern "C" {
-    pub fn pthread_override_qos_class_start_np(
-        __pthread: pthread_t,
-        __qos_class: qos_class_t,
-        __relative_priority: ::std::os::raw::c_int,
-    ) -> pthread_override_t;
-}
-extern "C" {
-    pub fn pthread_override_qos_class_end_np(
-        __override: pthread_override_t,
-    ) -> ::std::os::raw::c_int;
-}
-pub type mach_port_t = __darwin_mach_port_t;
-extern "C" {
-    pub fn pthread_atfork(
-        arg1: ::std::option::Option<unsafe extern "C" fn()>,
-        arg2: ::std::option::Option<unsafe extern "C" fn()>,
-        arg3: ::std::option::Option<unsafe extern "C" fn()>,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_attr_destroy(arg1: *mut pthread_attr_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_attr_getdetachstate(
-        arg1: *const pthread_attr_t,
-        arg2: *mut ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_attr_getguardsize(
-        arg1: *const pthread_attr_t,
-        arg2: *mut usize,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_attr_getinheritsched(
-        arg1: *const pthread_attr_t,
-        arg2: *mut ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_attr_getschedparam(
-        arg1: *const pthread_attr_t,
-        arg2: *mut sched_param,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_attr_getschedpolicy(
-        arg1: *const pthread_attr_t,
-        arg2: *mut ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_attr_getscope(
-        arg1: *const pthread_attr_t,
-        arg2: *mut ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_attr_getstack(
-        arg1: *const pthread_attr_t,
-        arg2: *mut *mut ::std::os::raw::c_void,
-        arg3: *mut usize,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_attr_getstackaddr(
-        arg1: *const pthread_attr_t,
-        arg2: *mut *mut ::std::os::raw::c_void,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_attr_getstacksize(
-        arg1: *const pthread_attr_t,
-        arg2: *mut usize,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_attr_init(arg1: *mut pthread_attr_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_attr_setdetachstate(
-        arg1: *mut pthread_attr_t,
-        arg2: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_attr_setguardsize(
-        arg1: *mut pthread_attr_t,
-        arg2: usize,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_attr_setinheritsched(
-        arg1: *mut pthread_attr_t,
-        arg2: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_attr_setschedparam(
-        arg1: *mut pthread_attr_t,
-        arg2: *const sched_param,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_attr_setschedpolicy(
-        arg1: *mut pthread_attr_t,
-        arg2: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_attr_setscope(
-        arg1: *mut pthread_attr_t,
-        arg2: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_attr_setstack(
-        arg1: *mut pthread_attr_t,
-        arg2: *mut ::std::os::raw::c_void,
-        arg3: usize,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_attr_setstackaddr(
-        arg1: *mut pthread_attr_t,
-        arg2: *mut ::std::os::raw::c_void,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_attr_setstacksize(
-        arg1: *mut pthread_attr_t,
-        arg2: usize,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_cancel(arg1: pthread_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_cond_broadcast(arg1: *mut pthread_cond_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_cond_destroy(arg1: *mut pthread_cond_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_cond_init(
-        arg1: *mut pthread_cond_t,
-        arg2: *const pthread_condattr_t,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_cond_signal(arg1: *mut pthread_cond_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_cond_timedwait(
-        arg1: *mut pthread_cond_t,
-        arg2: *mut pthread_mutex_t,
-        arg3: *const timespec,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_cond_wait(
-        arg1: *mut pthread_cond_t,
-        arg2: *mut pthread_mutex_t,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_condattr_destroy(arg1: *mut pthread_condattr_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_condattr_init(arg1: *mut pthread_condattr_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_condattr_getpshared(
-        arg1: *const pthread_condattr_t,
-        arg2: *mut ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_condattr_setpshared(
-        arg1: *mut pthread_condattr_t,
-        arg2: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_create(
-        arg1: *mut pthread_t,
-        arg2: *const pthread_attr_t,
-        arg3: ::std::option::Option<
-            unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void,
-        >,
-        arg4: *mut ::std::os::raw::c_void,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_detach(arg1: pthread_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_equal(arg1: pthread_t, arg2: pthread_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_exit(arg1: *mut ::std::os::raw::c_void) -> !;
-}
-extern "C" {
-    pub fn pthread_getconcurrency() -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_getschedparam(
-        arg1: pthread_t,
-        arg2: *mut ::std::os::raw::c_int,
-        arg3: *mut sched_param,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_getspecific(arg1: pthread_key_t) -> *mut ::std::os::raw::c_void;
-}
-extern "C" {
-    pub fn pthread_join(
-        arg1: pthread_t,
-        arg2: *mut *mut ::std::os::raw::c_void,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_key_create(
-        arg1: *mut pthread_key_t,
-        arg2: ::std::option::Option<unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void)>,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_key_delete(arg1: pthread_key_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_mutex_destroy(arg1: *mut pthread_mutex_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_mutex_getprioceiling(
-        arg1: *const pthread_mutex_t,
-        arg2: *mut ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_mutex_init(
-        arg1: *mut pthread_mutex_t,
-        arg2: *const pthread_mutexattr_t,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_mutex_lock(arg1: *mut pthread_mutex_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_mutex_setprioceiling(
-        arg1: *mut pthread_mutex_t,
-        arg2: ::std::os::raw::c_int,
-        arg3: *mut ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_mutex_trylock(arg1: *mut pthread_mutex_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_mutex_unlock(arg1: *mut pthread_mutex_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_mutexattr_destroy(arg1: *mut pthread_mutexattr_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_mutexattr_getprioceiling(
-        arg1: *const pthread_mutexattr_t,
-        arg2: *mut ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_mutexattr_getprotocol(
-        arg1: *const pthread_mutexattr_t,
-        arg2: *mut ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_mutexattr_getpshared(
-        arg1: *const pthread_mutexattr_t,
-        arg2: *mut ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_mutexattr_gettype(
-        arg1: *const pthread_mutexattr_t,
-        arg2: *mut ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_mutexattr_getpolicy_np(
-        arg1: *const pthread_mutexattr_t,
-        arg2: *mut ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_mutexattr_init(arg1: *mut pthread_mutexattr_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_mutexattr_setprioceiling(
-        arg1: *mut pthread_mutexattr_t,
-        arg2: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_mutexattr_setprotocol(
-        arg1: *mut pthread_mutexattr_t,
-        arg2: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_mutexattr_setpshared(
-        arg1: *mut pthread_mutexattr_t,
-        arg2: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_mutexattr_settype(
-        arg1: *mut pthread_mutexattr_t,
-        arg2: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_mutexattr_setpolicy_np(
-        arg1: *mut pthread_mutexattr_t,
-        arg2: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_once(
-        arg1: *mut pthread_once_t,
-        arg2: ::std::option::Option<unsafe extern "C" fn()>,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_rwlock_destroy(arg1: *mut pthread_rwlock_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_rwlock_init(
-        arg1: *mut pthread_rwlock_t,
-        arg2: *const pthread_rwlockattr_t,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_rwlock_rdlock(arg1: *mut pthread_rwlock_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_rwlock_tryrdlock(arg1: *mut pthread_rwlock_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_rwlock_trywrlock(arg1: *mut pthread_rwlock_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_rwlock_wrlock(arg1: *mut pthread_rwlock_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_rwlock_unlock(arg1: *mut pthread_rwlock_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_rwlockattr_destroy(arg1: *mut pthread_rwlockattr_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_rwlockattr_getpshared(
-        arg1: *const pthread_rwlockattr_t,
-        arg2: *mut ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_rwlockattr_init(arg1: *mut pthread_rwlockattr_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_rwlockattr_setpshared(
-        arg1: *mut pthread_rwlockattr_t,
-        arg2: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_self() -> pthread_t;
-}
-extern "C" {
-    pub fn pthread_setcancelstate(
-        arg1: ::std::os::raw::c_int,
-        arg2: *mut ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_setcanceltype(
-        arg1: ::std::os::raw::c_int,
-        arg2: *mut ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_setconcurrency(arg1: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_setschedparam(
-        arg1: pthread_t,
-        arg2: ::std::os::raw::c_int,
-        arg3: *const sched_param,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_setspecific(
-        arg1: pthread_key_t,
-        arg2: *const ::std::os::raw::c_void,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_testcancel();
-}
-extern "C" {
-    pub fn pthread_is_threaded_np() -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_threadid_np(arg1: pthread_t, arg2: *mut __uint64_t) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_getname_np(
-        arg1: pthread_t,
-        arg2: *mut ::std::os::raw::c_char,
-        arg3: usize,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_setname_np(arg1: *const ::std::os::raw::c_char) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_main_np() -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_mach_thread_np(arg1: pthread_t) -> mach_port_t;
-}
-extern "C" {
-    pub fn pthread_get_stacksize_np(arg1: pthread_t) -> usize;
-}
-extern "C" {
-    pub fn pthread_get_stackaddr_np(arg1: pthread_t) -> *mut ::std::os::raw::c_void;
-}
-extern "C" {
-    pub fn pthread_cond_signal_thread_np(
-        arg1: *mut pthread_cond_t,
-        arg2: pthread_t,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_cond_timedwait_relative_np(
-        arg1: *mut pthread_cond_t,
-        arg2: *mut pthread_mutex_t,
-        arg3: *const timespec,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_create_suspended_np(
-        arg1: *mut pthread_t,
-        arg2: *const pthread_attr_t,
-        arg3: ::std::option::Option<
-            unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void) -> *mut ::std::os::raw::c_void,
-        >,
-        arg4: *mut ::std::os::raw::c_void,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_kill(arg1: pthread_t, arg2: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_from_mach_thread_np(arg1: mach_port_t) -> pthread_t;
-}
-extern "C" {
-    pub fn pthread_sigmask(
-        arg1: ::std::os::raw::c_int,
-        arg2: *const sigset_t,
-        arg3: *mut sigset_t,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_yield_np();
-}
-extern "C" {
-    pub fn pthread_jit_write_protect_np(enabled: ::std::os::raw::c_int);
-}
-extern "C" {
-    pub fn pthread_jit_write_protect_supported_np() -> ::std::os::raw::c_int;
-}
-pub type pthread_jit_write_callback_t = ::std::option::Option<
-    unsafe extern "C" fn(ctx: *mut ::std::os::raw::c_void) -> ::std::os::raw::c_int,
->;
-extern "C" {
-    pub fn pthread_jit_write_with_callback_np(
-        callback: pthread_jit_write_callback_t,
-        ctx: *mut ::std::os::raw::c_void,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn pthread_jit_write_freeze_callbacks_np();
-}
-extern "C" {
-    pub fn pthread_cpu_number_np(cpu_number_out: *mut usize) -> ::std::os::raw::c_int;
-}
-pub type __libcpp_timespec_t = timespec;
 #[doc = " A simple wrapper for std::atomic that provides the most important\n interfaces and fixes the API bug where all of the orderings default\n to sequentially-consistent.\n\n It also sometimes uses a different implementation in cases where\n std::atomic has made unfortunate choices; our uses of this broadly\n don't have the ABI-compatibility issues that std::atomic faces."]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -6913,11 +6773,6 @@ pub struct swift_atomic {
     pub _address: u8,
 }
 pub type __builtin_va_list = *mut ::std::os::raw::c_char;
-pub type __uint128_t = u128;
 pub type type_ = ::std::os::raw::c_uint;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct _bindgen_ty_1 {
-    pub _address: u8,
-}
 pub type rep = u64;
+pub type __uint128_t = u128;
