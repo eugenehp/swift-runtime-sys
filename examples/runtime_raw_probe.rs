@@ -1267,7 +1267,9 @@ fn main() {
         date_interval_bounds_ok as i32,
     );
 
-    let index_path_flags = factory.call_to_i32("swift_index_path_probe_flags").unwrap_or(0);
+    let index_path_flags = factory
+        .call_to_i32("swift_index_path_probe_flags")
+        .unwrap_or(0);
     let index_path_count_ok = (index_path_flags & 1) != 0;
     let index_path_index_ok = (index_path_flags & 2) != 0;
     let index_path_append_ok = (index_path_flags & 4) != 0;
@@ -1278,6 +1280,34 @@ fn main() {
         index_path_index_ok as i32,
         index_path_append_ok as i32,
         index_path_compare_ok as i32,
+    );
+
+    let iso8601_flags = factory.call_to_i32("swift_iso8601_probe_flags").unwrap_or(0);
+    let iso8601_basic_ok = (iso8601_flags & 1) != 0;
+    let iso8601_parse_ok = (iso8601_flags & 2) != 0;
+    let iso8601_fractional_ok = (iso8601_flags & 4) != 0;
+    let iso8601_fractional_parse_ok = (iso8601_flags & 8) != 0;
+    println!(
+        "iso8601 => flags={iso8601_flags} basic_ok={} parse_ok={} fractional_ok={} fractional_parse_ok={}",
+        iso8601_basic_ok as i32,
+        iso8601_parse_ok as i32,
+        iso8601_fractional_ok as i32,
+        iso8601_fractional_parse_ok as i32,
+    );
+
+    let url_percent_flags = factory
+        .call_to_i32("swift_url_percent_encoding_probe_flags")
+        .unwrap_or(0);
+    let url_percent_encode_ok = (url_percent_flags & 1) != 0;
+    let url_percent_decode_ok = (url_percent_flags & 2) != 0;
+    let url_percent_reserved_ok = (url_percent_flags & 4) != 0;
+    let url_percent_invalid_ok = (url_percent_flags & 8) != 0;
+    println!(
+        "url percent encoding => flags={url_percent_flags} encode_ok={} decode_ok={} reserved_ok={} invalid_ok={}",
+        url_percent_encode_ok as i32,
+        url_percent_decode_ok as i32,
+        url_percent_reserved_ok as i32,
+        url_percent_invalid_ok as i32,
     );
 
     // ── Value existential dispatch parity ───────────────────────────────────

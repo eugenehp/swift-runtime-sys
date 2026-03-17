@@ -1810,6 +1810,47 @@ public func swift_index_path_probe_flags() -> Int32 {
     return flags
 }
 
+@_cdecl("swift_iso8601_probe_flags")
+public func swift_iso8601_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+    let date = Date(timeIntervalSince1970: 0)
+    let formatter = ISO8601DateFormatter()
+    formatter.timeZone = TimeZone(secondsFromGMT: 0)
+
+    let basic = formatter.string(from: date)
+    if basic == "1970-01-01T00:00:00Z" { flags |= 1 }
+
+    if let parsed = formatter.date(from: basic), Int(parsed.timeIntervalSince1970) == 0 { flags |= 2 }
+
+    formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+    let fractional = formatter.string(from: date)
+    if fractional == "1970-01-01T00:00:00.000Z" { flags |= 4 }
+
+    if let parsedFractional = formatter.date(from: fractional), Int(parsedFractional.timeIntervalSince1970) == 0 { flags |= 8 }
+
+    return flags
+}
+
+@_cdecl("swift_url_percent_encoding_probe_flags")
+public func swift_url_percent_encoding_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+    let allowed = CharacterSet.alphanumerics
+
+    let raw1 = "Swift Runtime+Sys"
+    let encoded1 = raw1.addingPercentEncoding(withAllowedCharacters: allowed) ?? ""
+    if encoded1 == "Swift%20Runtime%2BSys" { flags |= 1 }
+
+    if encoded1.removingPercentEncoding == raw1 { flags |= 2 }
+
+    let raw2 = "/?&="
+    let encoded2 = raw2.addingPercentEncoding(withAllowedCharacters: allowed) ?? ""
+    if encoded2 == "%2F%3F%26%3D" { flags |= 4 }
+
+    if "%ZZ".removingPercentEncoding == nil { flags |= 8 }
+
+    return flags
+}
+
 // ── Value existential dispatch parity ───────────────────────────────────────
 public protocol ValueCurrentLike {
     func current() -> Int32

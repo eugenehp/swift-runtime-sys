@@ -291,6 +291,8 @@ The parity report now also tracks:
 - ClosedRange semantics parity (containment checks, bound access, isEmpty, and count operations)
 - DateInterval semantics parity (duration, containment, overlap/intersection, and bound invariants)
 - IndexPath semantics parity (count/index access, append behavior, and ordering comparison invariants)
+- ISO8601DateFormatter semantics parity (basic/fractional formatting and parse round-trip invariants)
+- URL percent-encoding semantics parity (encode/decode, reserved-character escaping, invalid-percent rejection)
 - seeded randomized parity fuzz checks (`fuzz parity => ...`) validating add/divide/throw invariants
 
 Note: protocol witness dispatch check is currently an experimental callability
