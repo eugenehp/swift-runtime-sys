@@ -704,6 +704,804 @@ public func swift_synth_eq_hash_probe_flags() -> Int32 {
     return flags
 }
 
+// ── KeyPath synthesis parity ───────────────────────────────────────────────
+public struct KeyPathSynthPoint {
+    public var x: Int32
+    public var y: Int32
+    public init(x: Int32, y: Int32) {
+        self.x = x
+        self.y = y
+    }
+}
+
+public struct KeyPathSynthContainer {
+    public var point: KeyPathSynthPoint
+    public init(point: KeyPathSynthPoint) {
+        self.point = point
+    }
+}
+
+@_cdecl("swift_keypath_synth_probe_flags")
+public func swift_keypath_synth_probe_flags() -> Int32 {
+    var value = KeyPathSynthContainer(point: KeyPathSynthPoint(x: 11, y: 4))
+
+    let kpX = \KeyPathSynthContainer.point.x
+    let writableX = \KeyPathSynthContainer.point.x
+    let writableY = \KeyPathSynthContainer.point.y
+
+    let readOk = (value[keyPath: kpX] == 11)
+    value[keyPath: writableX] = 21
+    let writeOk = (value.point.x == 21)
+
+    let composed = writableY.appending(path: \.magnitude)
+    let appendOk = (value[keyPath: composed] == 4)
+
+    var flags: Int32 = 0
+    if readOk { flags |= 1 }
+    if writeOk { flags |= 2 }
+    if appendOk { flags |= 4 }
+    return flags
+}
+
+// ── Property-wrapper synthesis parity ──────────────────────────────────────
+@propertyWrapper
+public struct ClampedNonNegative {
+    private var storage: Int32
+
+    public var wrappedValue: Int32 {
+        get { storage }
+        set { storage = max(0, newValue) }
+    }
+
+    public var projectedValue: Int32 {
+        storage
+    }
+
+    public init(wrappedValue: Int32) {
+        self.storage = max(0, wrappedValue)
+    }
+}
+
+public struct PropertyWrapperSynthCounter {
+    @ClampedNonNegative public var value: Int32 = 3
+}
+
+@_cdecl("swift_property_wrapper_synth_probe_flags")
+public func swift_property_wrapper_synth_probe_flags() -> Int32 {
+    var sample = PropertyWrapperSynthCounter()
+
+    let defaultInitOk = (sample.value == 3)
+    sample.value = -9
+    let clampOk = (sample.value == 0)
+    let projectedOk = (sample.$value == 0)
+
+    let memberwise = PropertyWrapperSynthCounter(value: 17)
+    let memberwiseInitOk = (memberwise.value == 17)
+
+    var flags: Int32 = 0
+    if defaultInitOk { flags |= 1 }
+    if clampOk { flags |= 2 }
+    if projectedOk { flags |= 4 }
+    if memberwiseInitOk { flags |= 8 }
+    return flags
+}
+
+// ── Result-builder synthesis parity ───────────────────────────────────────
+@resultBuilder
+public enum IntSequenceBuilder {
+    public static func buildBlock(_ components: [Int32]...) -> [Int32] {
+        components.flatMap { $0 }
+    }
+
+    public static func buildExpression(_ expression: Int32) -> [Int32] {
+        [expression]
+    }
+
+    public static func buildOptional(_ component: [Int32]?) -> [Int32] {
+        component ?? []
+    }
+
+    public static func buildEither(first component: [Int32]) -> [Int32] {
+        component
+    }
+
+    public static func buildEither(second component: [Int32]) -> [Int32] {
+        component
+    }
+
+    public static func buildArray(_ components: [[Int32]]) -> [Int32] {
+        components.flatMap { $0 }
+    }
+}
+
+private func buildSequence(
+    includeBranch: Bool,
+    includeOptional: Bool,
+    loopValues: [Int32]
+) -> [Int32] {
+    @IntSequenceBuilder var seq: [Int32] {
+        1
+        if includeBranch {
+            2
+        } else {
+            3
+        }
+        if includeOptional {
+            6
+        }
+        for value in loopValues {
+            value
+        }
+    }
+    return seq
+}
+
+@_cdecl("swift_result_builder_synth_probe_flags")
+public func swift_result_builder_synth_probe_flags() -> Int32 {
+    let first = buildSequence(includeBranch: true, includeOptional: true, loopValues: [4, 5])
+    let second = buildSequence(includeBranch: false, includeOptional: false, loopValues: [7])
+
+    let branchEitherOk = (first == [1, 2, 6, 4, 5] && second == [1, 3, 7])
+    let optionalOk = (first.contains(6) && !second.contains(6))
+    let loopOk = (first.suffix(2) == [4, 5] && second.suffix(1) == [7])
+
+    var flags: Int32 = 0
+    if branchEitherOk { flags |= 1 }
+    if optionalOk { flags |= 2 }
+    if loopOk { flags |= 4 }
+    return flags
+}
+
+// ── Opaque return-type parity ─────────────────────────────────────────────
+public protocol OpaqueReadable {
+    func asI32() -> Int32
+}
+
+public struct OpaqueReadableImpl: OpaqueReadable, Equatable {
+    public let value: Int32
+    public func asI32() -> Int32 { value }
+}
+
+@inline(never)
+public func makeOpaqueReadable(_ value: Int32) -> some OpaqueReadable {
+    OpaqueReadableImpl(value: value)
+}
+
+@inline(never)
+private func consumeOpaqueReadable<T: OpaqueReadable>(_ value: T) -> Int32 {
+    value.asI32()
+}
+
+@_cdecl("swift_opaque_return_probe_flags")
+public func swift_opaque_return_probe_flags() -> Int32 {
+    let first = makeOpaqueReadable(7)
+    let second = makeOpaqueReadable(9)
+
+    let valueOk = (first.asI32() == 7 && second.asI32() == 9)
+    let genericConsumeOk = (consumeOpaqueReadable(first) == 7)
+    let stableUnderlyingTypeOk = (type(of: first) == type(of: second))
+
+    var flags: Int32 = 0
+    if valueOk { flags |= 1 }
+    if genericConsumeOk { flags |= 2 }
+    if stableUnderlyingTypeOk { flags |= 4 }
+    return flags
+}
+
+// ── Task-local runtime parity ─────────────────────────────────────────────
+enum RuntimeTaskLocal {
+    @TaskLocal static var value: Int32 = -1
+}
+
+private func runTaskLocalProbe() -> (Int32, Int32, Int32, Int32) {
+    let outside = RuntimeTaskLocal.value
+    let (inside, nested) = RuntimeTaskLocal.$value.withValue(41) {
+        let inside = RuntimeTaskLocal.value
+        let nested = RuntimeTaskLocal.$value.withValue(99) {
+            RuntimeTaskLocal.value
+        }
+        return (inside, nested)
+    }
+    let after = RuntimeTaskLocal.value
+    return (outside, inside, nested, after)
+}
+
+@_cdecl("swift_task_local_probe_flags")
+public func swift_task_local_probe_flags() -> Int32 {
+    let sem = DispatchSemaphore(value: 0)
+    var tuple = (Int32.min, Int32.min, Int32.min, Int32.min)
+    Task {
+        tuple = runTaskLocalProbe()
+        sem.signal()
+    }
+    sem.wait()
+
+    let outsideOk = (tuple.0 == -1)
+    let insideOk = (tuple.1 == 41)
+    let nestedOk = (tuple.2 == 99)
+    let restoredOk = (tuple.3 == -1)
+
+    var flags: Int32 = 0
+    if outsideOk { flags |= 1 }
+    if insideOk { flags |= 2 }
+    if nestedOk { flags |= 4 }
+    if restoredOk { flags |= 8 }
+    return flags
+}
+
+// ── Dynamic replacement parity ───────────────────────────────────────────
+public struct DynamicReplacementHarness {
+    public init() {}
+
+    public dynamic func target(_ value: Int32) -> Int32 {
+        value + 1
+    }
+}
+
+extension DynamicReplacementHarness {
+    @_dynamicReplacement(for: target(_:))
+    public func target_replacement(_ value: Int32) -> Int32 {
+        value + 11
+    }
+}
+
+@_cdecl("swift_dynamic_replacement_probe_flags")
+public func swift_dynamic_replacement_probe_flags() -> Int32 {
+    let harness = DynamicReplacementHarness()
+    let direct = harness.target(5)
+    let fnRef: (Int32) -> Int32 = harness.target
+    let indirect = fnRef(6)
+
+    let directOk = (direct == 16)
+    let indirectOk = (indirect == 17)
+
+    var flags: Int32 = 0
+    if directOk { flags |= 1 }
+    if indirectOk { flags |= 2 }
+    return flags
+}
+
+// ── Sendable concurrency parity ──────────────────────────────────────────
+public struct SendablePayload: Sendable {
+    public var value: Int32
+}
+
+private func runSendableProbe() async -> (Int32, Int32, Int32) {
+    let payload = SendablePayload(value: 41)
+    let detached = await Task.detached(priority: nil) { payload.value + 1 }.value
+
+    let childTask = Task { payload.value + 2 }
+    let child = await childTask.value
+
+    return (payload.value, detached, child)
+}
+
+@_cdecl("swift_sendable_probe_flags")
+public func swift_sendable_probe_flags() -> Int32 {
+    let sem = DispatchSemaphore(value: 0)
+    var tuple = (Int32.min, Int32.min, Int32.min)
+    Task {
+        tuple = await runSendableProbe()
+        sem.signal()
+    }
+    sem.wait()
+
+    let payloadOk = (tuple.0 == 41)
+    let detachedOk = (tuple.1 == 42)
+    let childOk = (tuple.2 == 43)
+
+    var flags: Int32 = 0
+    if payloadOk { flags |= 1 }
+    if detachedOk { flags |= 2 }
+    if childOk { flags |= 4 }
+    return flags
+}
+
+// ── Checked-continuation parity ────────────────────────────────────────────
+private func runContinuationProbe() async -> (Int32, Int32, Int32) {
+    // bit 1: async callback → continuation resume (71)
+    let asyncVal: Int32 = await withCheckedContinuation { continuation in
+        DispatchQueue.global().async {
+            continuation.resume(returning: Int32(71))
+        }
+    }
+    // bit 2: synchronous inline resume (72)
+    let syncVal: Int32 = await withCheckedContinuation { continuation in
+        continuation.resume(returning: Int32(72))
+    }
+    // bit 4: throwing continuation success path (73)
+    let throwingVal: Int32 = (try? await withCheckedThrowingContinuation { continuation in
+        continuation.resume(returning: Int32(73))
+    }) ?? 0
+    return (asyncVal, syncVal, throwingVal)
+}
+
+@_cdecl("swift_continuation_probe_flags")
+public func swift_continuation_probe_flags() -> Int32 {
+    let sem = DispatchSemaphore(value: 0)
+    var tuple = (Int32.min, Int32.min, Int32.min)
+    Task {
+        tuple = await runContinuationProbe()
+        sem.signal()
+    }
+    sem.wait()
+    var flags: Int32 = 0
+    if tuple.0 == 71 { flags |= 1 }
+    if tuple.1 == 72 { flags |= 2 }
+    if tuple.2 == 73 { flags |= 4 }
+    return flags
+}
+
+// ── TaskGroup structured concurrency parity ──────────────────────────────────
+private func runTaskGroupProbe() async -> (Int32, Int32, Int32) {
+    // bit 1: sum of task outputs == 150 (10+20+30+40+50)
+    let sum = await withTaskGroup(of: Int32.self) { group in
+        for i: Int32 in [10, 20, 30, 40, 50] {
+            group.addTask { i }
+        }
+        var total: Int32 = 0
+        for await val in group { total += val }
+        return total
+    }
+    // bit 2: throwing group success sum == 306 (101+102+103)
+    let throwSum: Int32 = (try? await withThrowingTaskGroup(of: Int32.self) { group in
+        for i: Int32 in [101, 102, 103] {
+            group.addTask { i }
+        }
+        var total: Int32 = 0
+        for try await val in group { total += val }
+        return total
+    }) ?? 0
+    // bit 4: max from group == 99
+    let maxVal = await withTaskGroup(of: Int32.self) { group in
+        for v: Int32 in [7, 3, 99, 12] {
+            group.addTask { v }
+        }
+        var m: Int32 = 0
+        for await val in group { m = max(m, val) }
+        return m
+    }
+    return (sum, throwSum, maxVal)
+}
+
+@_cdecl("swift_task_group_probe_flags")
+public func swift_task_group_probe_flags() -> Int32 {
+    let sem = DispatchSemaphore(value: 0)
+    var tuple = (Int32.min, Int32.min, Int32.min)
+    Task {
+        tuple = await runTaskGroupProbe()
+        sem.signal()
+    }
+    sem.wait()
+    var flags: Int32 = 0
+    if tuple.0 == 150 { flags |= 1 }
+    if tuple.1 == 306 { flags |= 2 }
+    if tuple.2 == 99  { flags |= 4 }
+    return flags
+}
+
+// ── AsyncStream parity ──────────────────────────────────────────────────────
+private func runAsyncStreamProbe() async -> (Int32, Int32) {
+    let stream = AsyncStream<Int32> { continuation in
+        for v: Int32 in [10, 20, 30, 40, 50] { continuation.yield(v) }
+        continuation.finish()
+    }
+    var count: Int32 = 0
+    var sum: Int32 = 0
+    for await val in stream { count += 1; sum += val }
+    return (count, sum)
+}
+
+@_cdecl("swift_async_stream_probe_flags")
+public func swift_async_stream_probe_flags() -> Int32 {
+    let sem = DispatchSemaphore(value: 0)
+    var pair = (Int32.min, Int32.min)
+    Task {
+        pair = await runAsyncStreamProbe()
+        sem.signal()
+    }
+    sem.wait()
+    var flags: Int32 = 0
+    if pair.0 == 5   { flags |= 1 }  // consumed count == 5
+    if pair.1 == 150 { flags |= 2 }  // sum == 150
+    if pair.0 == 5 && pair.1 == 150 { flags |= 4 }  // terminates cleanly (no extra values)
+    return flags
+}
+
+// ── Unsafe memory layout parity ──────────────────────────────────────────────
+private struct LayoutProbePoint { var x: Int32; var y: Int32 }
+
+@_cdecl("swift_unsafe_memory_probe_flags")
+public func swift_unsafe_memory_probe_flags() -> Int32 {
+    var pt = LayoutProbePoint(x: Int32(bitPattern: 0xAABBCCDD), y: Int32(bitPattern: 0x11223344))
+    var flags: Int32 = 0
+    // bit 1: field x readable via withUnsafeBytes at offset 0
+    withUnsafeBytes(of: &pt) { buf in
+        if buf.load(fromByteOffset: 0, as: Int32.self) == Int32(bitPattern: 0xAABBCCDD) { flags |= 1 }
+    }
+    // bit 2: field y readable via withUnsafeBytes at offset 4
+    withUnsafeBytes(of: &pt) { buf in
+        if buf.load(fromByteOffset: 4, as: Int32.self) == Int32(bitPattern: 0x11223344) { flags |= 2 }
+    }
+    // bit 4: withUnsafeMutablePointer write + read roundtrip
+    var val: Int32 = 77
+    withUnsafeMutablePointer(to: &val) { ptr in ptr.pointee = 99 }
+    if val == 99 { flags |= 4 }
+    return flags
+}
+
+// ── Protocol composition existential parity ────────────────────────────────
+public protocol Scalable { func scale(_ factor: Int32) -> Int32 }
+public protocol Labelable { func label() -> Int32 }
+
+public struct ComposedWidget: Scalable, Labelable {
+    public var tag: Int32
+    public init(_ tag: Int32) { self.tag = tag }
+    public func scale(_ factor: Int32) -> Int32 { tag * factor }
+    public func label() -> Int32 { tag + 100 }
+}
+
+@_cdecl("swift_protocol_composition_probe_flags")
+public func swift_protocol_composition_probe_flags() -> Int32 {
+    let widget = ComposedWidget(7)
+    let composed: any Scalable & Labelable = widget
+    var flags: Int32 = 0
+    if composed.scale(3) == 21  { flags |= 1 }
+    if composed.label() == 107  { flags |= 2 }
+    if let concrete = composed as? ComposedWidget, concrete.tag == 7 { flags |= 4 }
+    return flags
+}
+
+// ── Enum raw-value synthesis parity ─────────────────────────────────────────
+public enum Planet: Int32 {
+    case mercury = 1, venus, earth, mars, jupiter, saturn, uranus, neptune
+}
+
+@_cdecl("swift_enum_raw_value_probe_flags")
+public func swift_enum_raw_value_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+    if Planet.earth.rawValue == 3      { flags |= 1 }
+    if Planet(rawValue: 5) == .jupiter { flags |= 2 }
+    if Planet(rawValue: 99) == nil     { flags |= 4 }
+    if Planet.neptune.rawValue == 8    { flags |= 8 }
+    return flags
+}
+
+// ── OptionSet synthesis parity ───────────────────────────────────────────────
+public struct RuntimeOptions: OptionSet {
+    public let rawValue: Int32
+    public init(rawValue: Int32) { self.rawValue = rawValue }
+    public static let read = RuntimeOptions(rawValue: 1 << 0)
+    public static let write = RuntimeOptions(rawValue: 1 << 1)
+    public static let execute = RuntimeOptions(rawValue: 1 << 2)
+}
+
+@_cdecl("swift_option_set_probe_flags")
+public func swift_option_set_probe_flags() -> Int32 {
+    let base: RuntimeOptions = [.read, .write]
+    var flags: Int32 = 0
+    if base.contains(.read) && base.contains(.write) { flags |= 1 }
+    if base.union(.execute).rawValue == 7 { flags |= 2 }
+    if base.intersection(.write).rawValue == 2 { flags |= 4 }
+    let fromRaw = RuntimeOptions(rawValue: 5)
+    if fromRaw.contains(.read) && fromRaw.contains(.execute) { flags |= 8 }
+    return flags
+}
+
+// ── CaseIterable synthesis parity ───────────────────────────────────────────
+public enum BuildStage: Int32, CaseIterable {
+    case parse = 10
+    case typecheck = 20
+    case emit = 30
+}
+
+@_cdecl("swift_case_iterable_probe_flags")
+public func swift_case_iterable_probe_flags() -> Int32 {
+    let cases = BuildStage.allCases
+    var flags: Int32 = 0
+    if cases.count == 3 { flags |= 1 }
+    if cases.first == .parse && cases.last == .emit { flags |= 2 }
+    if cases.map(\.rawValue).reduce(0, +) == 60 { flags |= 4 }
+    if cases.map(\.rawValue) == [10, 20, 30] { flags |= 8 }
+    return flags
+}
+
+// ── Set algebra parity ──────────────────────────────────────────────────────
+@_cdecl("swift_set_algebra_probe_flags")
+public func swift_set_algebra_probe_flags() -> Int32 {
+    let a: Set<Int32> = [1, 2, 3]
+    let b: Set<Int32> = [3, 4]
+    var flags: Int32 = 0
+
+    let union = a.union(b)
+    if union.count == 4 && union.contains(4) { flags |= 1 }
+
+    let intersection = a.intersection(b)
+    if intersection.count == 1 && intersection.contains(3) { flags |= 2 }
+
+    let subtracting = a.subtracting(b)
+    if subtracting == Set([1, 2]) { flags |= 4 }
+
+    let sym = a.symmetricDifference(b)
+    if sym == Set([1, 2, 4]) { flags |= 8 }
+
+    return flags
+}
+
+// ── Dictionary semantics parity ─────────────────────────────────────────────
+@_cdecl("swift_dictionary_probe_flags")
+public func swift_dictionary_probe_flags() -> Int32 {
+    var dict: [String: Int32] = ["a": 1, "b": 2]
+    var flags: Int32 = 0
+
+    if dict["a"] == 1 { flags |= 1 }
+
+    dict["c", default: 0] += 3
+    if dict["c"] == 3 { flags |= 2 }
+
+    let oldA = dict.updateValue(9, forKey: "a")
+    if oldA == 1 && dict["a"] == 9 { flags |= 4 }
+
+    let removedB = dict.removeValue(forKey: "b")
+    if removedB == 2 && dict["b"] == nil && dict.count == 2 { flags |= 8 }
+
+    return flags
+}
+
+// ── Comparable synthesis parity ─────────────────────────────────────────────
+public struct RankPoint: Comparable {
+    public var score: Int32
+    public static func < (lhs: RankPoint, rhs: RankPoint) -> Bool {
+        lhs.score < rhs.score
+    }
+}
+
+@_cdecl("swift_comparable_probe_flags")
+public func swift_comparable_probe_flags() -> Int32 {
+    let values = [RankPoint(score: 7), RankPoint(score: 2), RankPoint(score: 5)]
+    let sorted = values.sorted()
+    var flags: Int32 = 0
+    if sorted.map(\.score) == [2, 5, 7] { flags |= 1 }
+    if RankPoint(score: 2) < RankPoint(score: 5) { flags |= 2 }
+    if RankPoint(score: 7) > RankPoint(score: 5) { flags |= 4 }
+    if RankPoint(score: 5) == RankPoint(score: 5) { flags |= 8 }
+    return flags
+}
+
+// ── Result semantics parity ─────────────────────────────────────────────────
+private enum RuntimeResultError: Error { case bad }
+
+@_cdecl("swift_result_probe_flags")
+public func swift_result_probe_flags() -> Int32 {
+    let ok: Result<Int32, RuntimeResultError> = .success(41)
+    let err: Result<Int32, RuntimeResultError> = .failure(.bad)
+    var flags: Int32 = 0
+
+    if (try? ok.get()) == 41 { flags |= 1 }
+    if (try? err.get()) == nil { flags |= 2 }
+
+    let mapped = ok.map { $0 + 1 }
+    if (try? mapped.get()) == 42 { flags |= 4 }
+
+    let recovered = err.mapError { _ in RuntimeResultError.bad }
+    if case .failure(.bad) = recovered { flags |= 8 }
+
+    return flags
+}
+
+// ── Data semantics parity ──────────────────────────────────────────────────
+@_cdecl("swift_data_probe_flags")
+public func swift_data_probe_flags() -> Int32 {
+    var data = Data([1, 2, 3, 4])
+    var flags: Int32 = 0
+
+    if data.count == 4 { flags |= 1 }
+    if data.reduce(Int32(0), { $0 + Int32($1) }) == 10 { flags |= 2 }
+
+    data.append(5)
+    if data.count == 5 && data.last == 5 { flags |= 4 }
+
+    let first = data.withUnsafeBytes { rawBuf -> UInt8 in
+        rawBuf.bindMemory(to: UInt8.self).first ?? 0
+    }
+    if first == 1 { flags |= 8 }
+
+    return flags
+}
+
+// ── UUID semantics parity ──────────────────────────────────────────────────
+@_cdecl("swift_uuid_probe_flags")
+public func swift_uuid_probe_flags() -> Int32 {
+    let upper = "01234567-89AB-CDEF-0123-456789ABCDEF"
+    let lower = "01234567-89ab-cdef-0123-456789abcdef"
+    var flags: Int32 = 0
+
+    if let uuid = UUID(uuidString: upper) {
+        flags |= 1
+        if uuid.uuidString.lowercased() == lower { flags |= 2 }
+        let byteCount = withUnsafeBytes(of: uuid.uuid) { $0.count }
+        if byteCount == 16 { flags |= 4 }
+    }
+
+    if UUID(uuidString: "not-a-uuid") == nil { flags |= 8 }
+    return flags
+}
+
+// ── CharacterSet semantics parity ──────────────────────────────────────────
+@_cdecl("swift_character_set_probe_flags")
+public func swift_character_set_probe_flags() -> Int32 {
+    let digits = CharacterSet.decimalDigits
+    var flags: Int32 = 0
+
+    if "5".unicodeScalars.allSatisfy({ digits.contains($0) }) { flags |= 1 }
+    if "A".unicodeScalars.allSatisfy({ !digits.contains($0) }) { flags |= 2 }
+
+    let vowels = CharacterSet(charactersIn: "aeiouAEIOU")
+    if "e".unicodeScalars.allSatisfy({ vowels.contains($0) }) { flags |= 4 }
+    if "z".unicodeScalars.allSatisfy({ !vowels.contains($0) }) { flags |= 8 }
+
+    return flags
+}
+
+// ── URLComponents semantics parity ─────────────────────────────────────────
+@_cdecl("swift_url_components_probe_flags")
+public func swift_url_components_probe_flags() -> Int32 {
+    let urlString = "https://example.com:8080/path/to?q=1&name=swift#frag"
+    var flags: Int32 = 0
+
+    if let comps = URLComponents(string: urlString) {
+        if comps.scheme == "https" && comps.host == "example.com" { flags |= 1 }
+        if comps.port == 8080 && comps.path == "/path/to" { flags |= 2 }
+        let q = comps.queryItems?.first(where: { $0.name == "q" })?.value
+        let name = comps.queryItems?.first(where: { $0.name == "name" })?.value
+        if q == "1" && name == "swift" { flags |= 4 }
+        if comps.fragment == "frag" { flags |= 8 }
+    }
+
+    return flags
+}
+
+// ── Calendar semantics parity ──────────────────────────────────────────────
+@_cdecl("swift_calendar_probe_flags")
+public func swift_calendar_probe_flags() -> Int32 {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+    var flags: Int32 = 0
+
+    let comps = DateComponents(year: 2024, month: 2, day: 29, hour: 12)
+    if let date = calendar.date(from: comps) {
+        flags |= 1
+        let out = calendar.dateComponents([.year, .month, .day, .hour], from: date)
+        if out.year == 2024 && out.month == 2 && out.day == 29 && out.hour == 12 { flags |= 2 }
+        if calendar.component(.weekday, from: date) == 5 { flags |= 4 } // Thursday in Gregorian, Sunday=1
+    }
+
+    if calendar.range(of: .day, in: .month, for: calendar.date(from: DateComponents(year: 2024, month: 2, day: 1))!)?.count == 29 {
+        flags |= 8
+    }
+
+    return flags
+}
+
+// ── IndexSet semantics parity ──────────────────────────────────────────────
+@_cdecl("swift_index_set_probe_flags")
+public func swift_index_set_probe_flags() -> Int32 {
+    var set = IndexSet([1, 3, 5])
+    var flags: Int32 = 0
+
+    if set.contains(3) && !set.contains(2) { flags |= 1 }
+
+    set.insert(integersIn: 7..<10)
+    if set.contains(8) && set.count == 6 { flags |= 2 }
+
+    set.remove(3)
+    if !set.contains(3) && set.count == 5 { flags |= 4 }
+
+    if set.first == 1 && set.last == 9 { flags |= 8 }
+    return flags
+}
+
+// ── TimeZone semantics parity ──────────────────────────────────────────────
+@_cdecl("swift_time_zone_probe_flags")
+public func swift_time_zone_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+    if let gmt = TimeZone(secondsFromGMT: 0) {
+        if gmt.secondsFromGMT() == 0 { flags |= 1 }
+        if gmt.identifier == "GMT" { flags |= 2 }
+    }
+    if let kolkata = TimeZone(identifier: "Asia/Kolkata") {
+        if kolkata.secondsFromGMT() == 19800 { flags |= 4 }
+        if kolkata.identifier == "Asia/Kolkata" { flags |= 8 }
+    }
+    return flags
+}
+
+// ── Measurement conversion parity ──────────────────────────────────────────
+@_cdecl("swift_measurement_probe_flags")
+public func swift_measurement_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+
+    let meters = Measurement(value: 1500.0, unit: UnitLength.meters)
+    let km = meters.converted(to: .kilometers)
+    if abs(km.value - 1.5) < 0.000_001 { flags |= 1 }
+
+    let celsius = Measurement(value: 100.0, unit: UnitTemperature.celsius)
+    let fahrenheit = celsius.converted(to: .fahrenheit)
+    if abs(fahrenheit.value - 212.0) < 0.000_001 { flags |= 2 }
+
+    let grams = Measurement(value: 750.0, unit: UnitMass.grams)
+    let kilograms = grams.converted(to: .kilograms)
+    if abs(kilograms.value - 0.75) < 0.000_001 { flags |= 4 }
+
+    let mps = Measurement(value: 36.0, unit: UnitSpeed.kilometersPerHour).converted(to: .metersPerSecond)
+    if abs(mps.value - 10.0) < 0.000_01 { flags |= 8 }
+
+    return flags
+}
+
+// ── DateFormatter/ISO8601 parity ───────────────────────────────────────────
+@_cdecl("swift_date_formatter_probe_flags")
+public func swift_date_formatter_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+
+    guard let utc = TimeZone(secondsFromGMT: 0) else { return flags }
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = utc
+
+    var components = DateComponents()
+    components.calendar = calendar
+    components.timeZone = utc
+    components.year = 2024
+    components.month = 3
+    components.day = 1
+    components.hour = 15
+    components.minute = 4
+    components.second = 5
+    guard let date = calendar.date(from: components) else { return flags }
+
+    let formatter = DateFormatter()
+    formatter.calendar = calendar
+    formatter.locale = Locale(identifier: "en_US_POSIX")
+    formatter.timeZone = utc
+    formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+
+    let rendered = formatter.string(from: date)
+    if rendered == "2024-03-01 15:04:05" { flags |= 1 }
+
+    if let reparsed = formatter.date(from: rendered),
+       abs(reparsed.timeIntervalSince1970 - date.timeIntervalSince1970) < 0.5 {
+        flags |= 2
+    }
+
+    let iso = ISO8601DateFormatter()
+    iso.timeZone = utc
+    iso.formatOptions = [.withInternetDateTime]
+
+    let isoRendered = iso.string(from: date)
+    if isoRendered == "2024-03-01T15:04:05Z" { flags |= 4 }
+
+    if let isoReparsed = iso.date(from: isoRendered),
+       abs(isoReparsed.timeIntervalSince1970 - date.timeIntervalSince1970) < 0.5 {
+        flags |= 8
+    }
+
+    return flags
+}
+
+// ── Scanner semantics parity ───────────────────────────────────────────────
+@_cdecl("swift_scanner_probe_flags")
+public func swift_scanner_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+    let scanner = Scanner(string: "42 3.25 token")
+    scanner.charactersToBeSkipped = CharacterSet.whitespaces
+
+    if let intValue = scanner.scanInt(), intValue == 42 { flags |= 1 }
+    if let doubleValue = scanner.scanDouble(), abs(doubleValue - 3.25) < 0.000_000_1 { flags |= 2 }
+    if let token = scanner.scanString("token"), token == "token" { flags |= 4 }
+    if scanner.isAtEnd { flags |= 8 }
+    return flags
+}
+
 // ── Value existential dispatch parity ───────────────────────────────────────
 public protocol ValueCurrentLike {
     func current() -> Int32

@@ -311,15 +311,15 @@ fn main() {
         enum_spare_size_eight as i32,
     );
 
-    let codable_flags = factory.call_to_i32("swift_codable_probe_flags").unwrap_or(0);
+    let codable_flags = factory
+        .call_to_i32("swift_codable_probe_flags")
+        .unwrap_or(0);
     let codable_encode_ok = (codable_flags & (1 << 0)) != 0;
     let codable_roundtrip_ok = (codable_flags & (1 << 1)) != 0;
     let codable_known_decode_ok = (codable_flags & (1 << 2)) != 0;
     println!(
         "codable => flags={codable_flags} encode_ok={} roundtrip_ok={} known_decode_ok={}",
-        codable_encode_ok as i32,
-        codable_roundtrip_ok as i32,
-        codable_known_decode_ok as i32,
+        codable_encode_ok as i32, codable_roundtrip_ok as i32, codable_known_decode_ok as i32,
     );
 
     // ── throws ABI ────────────────────────────────────────────────────────────
@@ -650,6 +650,426 @@ fn main() {
     println!(
         "synth witness => flags={synth_flags} eq_true={} eq_false={} dedup_ok={}",
         synth_eq_true as i32, synth_eq_false as i32, synth_dedup_ok as i32,
+    );
+
+    // ── KeyPath synthesis parity ─────────────────────────────────────────
+    let keypath_flags = factory
+        .call_to_i32("swift_keypath_synth_probe_flags")
+        .unwrap_or(0);
+    let keypath_read_ok = (keypath_flags & 1) != 0;
+    let keypath_write_ok = (keypath_flags & 2) != 0;
+    let keypath_append_ok = (keypath_flags & 4) != 0;
+    println!(
+        "keypath synth => flags={keypath_flags} read_ok={} write_ok={} append_ok={}",
+        keypath_read_ok as i32, keypath_write_ok as i32, keypath_append_ok as i32,
+    );
+
+    // ── Property-wrapper synthesis parity ────────────────────────────────
+    let property_wrapper_flags = factory
+        .call_to_i32("swift_property_wrapper_synth_probe_flags")
+        .unwrap_or(0);
+    let property_wrapper_default_ok = (property_wrapper_flags & 1) != 0;
+    let property_wrapper_clamp_ok = (property_wrapper_flags & 2) != 0;
+    let property_wrapper_projected_ok = (property_wrapper_flags & 4) != 0;
+    let property_wrapper_memberwise_ok = (property_wrapper_flags & 8) != 0;
+    println!(
+        "property wrapper synth => flags={property_wrapper_flags} default_ok={} clamp_ok={} projected_ok={} memberwise_ok={}",
+        property_wrapper_default_ok as i32,
+        property_wrapper_clamp_ok as i32,
+        property_wrapper_projected_ok as i32,
+        property_wrapper_memberwise_ok as i32,
+    );
+
+    // ── Result-builder synthesis parity ─────────────────────────────────
+    let result_builder_flags = factory
+        .call_to_i32("swift_result_builder_synth_probe_flags")
+        .unwrap_or(0);
+    let result_builder_branch_ok = (result_builder_flags & 1) != 0;
+    let result_builder_optional_ok = (result_builder_flags & 2) != 0;
+    let result_builder_loop_ok = (result_builder_flags & 4) != 0;
+    println!(
+        "result builder synth => flags={result_builder_flags} branch_ok={} optional_ok={} loop_ok={}",
+        result_builder_branch_ok as i32,
+        result_builder_optional_ok as i32,
+        result_builder_loop_ok as i32,
+    );
+
+    // ── Opaque return-type parity ───────────────────────────────────────
+    let opaque_return_flags = factory
+        .call_to_i32("swift_opaque_return_probe_flags")
+        .unwrap_or(0);
+    let opaque_return_value_ok = (opaque_return_flags & 1) != 0;
+    let opaque_return_generic_ok = (opaque_return_flags & 2) != 0;
+    let opaque_return_type_ok = (opaque_return_flags & 4) != 0;
+    println!(
+        "opaque return => flags={opaque_return_flags} value_ok={} generic_ok={} type_ok={}",
+        opaque_return_value_ok as i32,
+        opaque_return_generic_ok as i32,
+        opaque_return_type_ok as i32,
+    );
+
+    // ── Task-local runtime parity ───────────────────────────────────────
+    let task_local_flags = factory
+        .call_to_i32("swift_task_local_probe_flags")
+        .unwrap_or(0);
+    let task_local_outside_ok = (task_local_flags & 1) != 0;
+    let task_local_inside_ok = (task_local_flags & 2) != 0;
+    let task_local_nested_ok = (task_local_flags & 4) != 0;
+    let task_local_restored_ok = (task_local_flags & 8) != 0;
+    println!(
+        "task local => flags={task_local_flags} outside_ok={} inside_ok={} nested_ok={} restored_ok={}",
+        task_local_outside_ok as i32,
+        task_local_inside_ok as i32,
+        task_local_nested_ok as i32,
+        task_local_restored_ok as i32,
+    );
+
+    // ── Dynamic replacement parity ──────────────────────────────────────
+    let dynamic_replacement_flags = factory
+        .call_to_i32("swift_dynamic_replacement_probe_flags")
+        .unwrap_or(0);
+    let dynamic_replacement_direct_ok = (dynamic_replacement_flags & 1) != 0;
+    let dynamic_replacement_indirect_ok = (dynamic_replacement_flags & 2) != 0;
+    println!(
+        "dynamic replacement => flags={dynamic_replacement_flags} direct_ok={} indirect_ok={}",
+        dynamic_replacement_direct_ok as i32, dynamic_replacement_indirect_ok as i32,
+    );
+
+    // ── Sendable concurrency parity ─────────────────────────────────────
+    let sendable_flags = factory
+        .call_to_i32("swift_sendable_probe_flags")
+        .unwrap_or(0);
+    let sendable_payload_ok = (sendable_flags & 1) != 0;
+    let sendable_detached_ok = (sendable_flags & 2) != 0;
+    let sendable_child_ok = (sendable_flags & 4) != 0;
+    println!(
+        "sendable => flags={sendable_flags} payload_ok={} detached_ok={} child_ok={}",
+        sendable_payload_ok as i32, sendable_detached_ok as i32, sendable_child_ok as i32,
+    );
+
+    // ── Checked continuation parity ──────────────────────────────────────────
+    let continuation_flags = factory
+        .call_to_i32("swift_continuation_probe_flags")
+        .unwrap_or(0);
+    let continuation_async_ok = (continuation_flags & 1) != 0;
+    let continuation_sync_ok = (continuation_flags & 2) != 0;
+    let continuation_throwing_ok = (continuation_flags & 4) != 0;
+    println!(
+        "continuation => flags={continuation_flags} async_ok={} sync_ok={} throwing_ok={}",
+        continuation_async_ok as i32, continuation_sync_ok as i32, continuation_throwing_ok as i32,
+    );
+
+    // ── TaskGroup structured concurrency parity ──────────────────────────────
+    let task_group_flags = factory
+        .call_to_i32("swift_task_group_probe_flags")
+        .unwrap_or(0);
+    let task_group_sum_ok = (task_group_flags & 1) != 0;
+    let task_group_throw_sum_ok = (task_group_flags & 2) != 0;
+    let task_group_max_ok = (task_group_flags & 4) != 0;
+    println!(
+        "task group => flags={task_group_flags} sum_ok={} throw_sum_ok={} max_ok={}",
+        task_group_sum_ok as i32, task_group_throw_sum_ok as i32, task_group_max_ok as i32,
+    );
+
+    // ── AsyncStream parity ───────────────────────────────────────────────────
+    let async_stream_flags = factory
+        .call_to_i32("swift_async_stream_probe_flags")
+        .unwrap_or(0);
+    let async_stream_count_ok = (async_stream_flags & 1) != 0;
+    let async_stream_sum_ok = (async_stream_flags & 2) != 0;
+    let async_stream_term_ok = (async_stream_flags & 4) != 0;
+    println!(
+        "async stream => flags={async_stream_flags} count_ok={} sum_ok={} term_ok={}",
+        async_stream_count_ok as i32, async_stream_sum_ok as i32, async_stream_term_ok as i32,
+    );
+
+    // ── Unsafe memory layout parity ─────────────────────────────────────────
+    let unsafe_memory_flags = factory
+        .call_to_i32("swift_unsafe_memory_probe_flags")
+        .unwrap_or(0);
+    let unsafe_field_x_ok = (unsafe_memory_flags & 1) != 0;
+    let unsafe_field_y_ok = (unsafe_memory_flags & 2) != 0;
+    let unsafe_ptr_rw_ok = (unsafe_memory_flags & 4) != 0;
+    println!(
+        "unsafe memory => flags={unsafe_memory_flags} field_x_ok={} field_y_ok={} ptr_rw_ok={}",
+        unsafe_field_x_ok as i32, unsafe_field_y_ok as i32, unsafe_ptr_rw_ok as i32,
+    );
+
+    // ── Protocol composition existential parity ─────────────────────────────
+    let proto_composition_flags = factory
+        .call_to_i32("swift_protocol_composition_probe_flags")
+        .unwrap_or(0);
+    let proto_comp_scale_ok = (proto_composition_flags & 1) != 0;
+    let proto_comp_label_ok = (proto_composition_flags & 2) != 0;
+    let proto_comp_cast_ok = (proto_composition_flags & 4) != 0;
+    println!(
+        "protocol composition => flags={proto_composition_flags} scale_ok={} label_ok={} cast_ok={}",
+        proto_comp_scale_ok as i32,
+        proto_comp_label_ok as i32,
+        proto_comp_cast_ok  as i32,
+    );
+
+    // ── Enum raw-value synthesis parity ──────────────────────────────────────
+    let enum_raw_flags = factory
+        .call_to_i32("swift_enum_raw_value_probe_flags")
+        .unwrap_or(0);
+    let enum_raw_roundtrip_ok = (enum_raw_flags & 1) != 0;
+    let enum_raw_init_ok = (enum_raw_flags & 2) != 0;
+    let enum_raw_nil_ok = (enum_raw_flags & 4) != 0;
+    let enum_raw_auto_inc_ok = (enum_raw_flags & 8) != 0;
+    println!(
+        "enum raw value => flags={enum_raw_flags} roundtrip_ok={} init_ok={} nil_ok={} auto_inc_ok={}",
+        enum_raw_roundtrip_ok as i32,
+        enum_raw_init_ok      as i32,
+        enum_raw_nil_ok       as i32,
+        enum_raw_auto_inc_ok  as i32,
+    );
+
+    // ── OptionSet synthesis parity ──────────────────────────────────────────
+    let option_set_flags = factory
+        .call_to_i32("swift_option_set_probe_flags")
+        .unwrap_or(0);
+    let option_set_contains_ok = (option_set_flags & 1) != 0;
+    let option_set_union_ok = (option_set_flags & 2) != 0;
+    let option_set_intersection_ok = (option_set_flags & 4) != 0;
+    let option_set_raw_ok = (option_set_flags & 8) != 0;
+    println!(
+        "option set => flags={option_set_flags} contains_ok={} union_ok={} intersection_ok={} raw_ok={}",
+        option_set_contains_ok as i32,
+        option_set_union_ok as i32,
+        option_set_intersection_ok as i32,
+        option_set_raw_ok as i32,
+    );
+
+    // ── CaseIterable synthesis parity ───────────────────────────────────────
+    let case_iterable_flags = factory
+        .call_to_i32("swift_case_iterable_probe_flags")
+        .unwrap_or(0);
+    let case_iterable_count_ok = (case_iterable_flags & 1) != 0;
+    let case_iterable_endpoints_ok = (case_iterable_flags & 2) != 0;
+    let case_iterable_sum_ok = (case_iterable_flags & 4) != 0;
+    let case_iterable_order_ok = (case_iterable_flags & 8) != 0;
+    println!(
+        "case iterable => flags={case_iterable_flags} count_ok={} endpoints_ok={} sum_ok={} order_ok={}",
+        case_iterable_count_ok as i32,
+        case_iterable_endpoints_ok as i32,
+        case_iterable_sum_ok as i32,
+        case_iterable_order_ok as i32,
+    );
+
+    // ── Set algebra parity ─────────────────────────────────────────────────
+    let set_algebra_flags = factory
+        .call_to_i32("swift_set_algebra_probe_flags")
+        .unwrap_or(0);
+    let set_union_ok = (set_algebra_flags & 1) != 0;
+    let set_intersection_ok = (set_algebra_flags & 2) != 0;
+    let set_subtract_ok = (set_algebra_flags & 4) != 0;
+    let set_symdiff_ok = (set_algebra_flags & 8) != 0;
+    println!(
+        "set algebra => flags={set_algebra_flags} union_ok={} intersection_ok={} subtract_ok={} symdiff_ok={}",
+        set_union_ok as i32,
+        set_intersection_ok as i32,
+        set_subtract_ok as i32,
+        set_symdiff_ok as i32,
+    );
+
+    // ── Dictionary semantics parity ────────────────────────────────────────
+    let dictionary_flags = factory
+        .call_to_i32("swift_dictionary_probe_flags")
+        .unwrap_or(0);
+    let dict_lookup_ok = (dictionary_flags & 1) != 0;
+    let dict_default_ok = (dictionary_flags & 2) != 0;
+    let dict_update_ok = (dictionary_flags & 4) != 0;
+    let dict_remove_ok = (dictionary_flags & 8) != 0;
+    println!(
+        "dictionary => flags={dictionary_flags} lookup_ok={} default_ok={} update_ok={} remove_ok={}",
+        dict_lookup_ok as i32,
+        dict_default_ok as i32,
+        dict_update_ok as i32,
+        dict_remove_ok as i32,
+    );
+
+    // ── Comparable synthesis parity ────────────────────────────────────────
+    let comparable_flags = factory
+        .call_to_i32("swift_comparable_probe_flags")
+        .unwrap_or(0);
+    let comparable_sorted_ok = (comparable_flags & 1) != 0;
+    let comparable_lt_ok = (comparable_flags & 2) != 0;
+    let comparable_gt_ok = (comparable_flags & 4) != 0;
+    let comparable_eq_ok = (comparable_flags & 8) != 0;
+    println!(
+        "comparable => flags={comparable_flags} sorted_ok={} lt_ok={} gt_ok={} eq_ok={}",
+        comparable_sorted_ok as i32,
+        comparable_lt_ok as i32,
+        comparable_gt_ok as i32,
+        comparable_eq_ok as i32,
+    );
+
+    // ── Result semantics parity ────────────────────────────────────────────
+    let result_flags = factory.call_to_i32("swift_result_probe_flags").unwrap_or(0);
+    let result_get_ok = (result_flags & 1) != 0;
+    let result_get_err_ok = (result_flags & 2) != 0;
+    let result_map_ok = (result_flags & 4) != 0;
+    let result_map_err_ok = (result_flags & 8) != 0;
+    println!(
+        "result => flags={result_flags} get_ok={} get_err_ok={} map_ok={} map_err_ok={}",
+        result_get_ok as i32,
+        result_get_err_ok as i32,
+        result_map_ok as i32,
+        result_map_err_ok as i32,
+    );
+
+    // ── Data semantics parity ───────────────────────────────────────────────
+    let data_flags = factory.call_to_i32("swift_data_probe_flags").unwrap_or(0);
+    let data_count_ok = (data_flags & 1) != 0;
+    let data_sum_ok = (data_flags & 2) != 0;
+    let data_append_ok = (data_flags & 4) != 0;
+    let data_bytes_ok = (data_flags & 8) != 0;
+    println!(
+        "data => flags={data_flags} count_ok={} sum_ok={} append_ok={} bytes_ok={}",
+        data_count_ok as i32, data_sum_ok as i32, data_append_ok as i32, data_bytes_ok as i32,
+    );
+
+    // ── UUID semantics parity ───────────────────────────────────────────────
+    let uuid_flags = factory.call_to_i32("swift_uuid_probe_flags").unwrap_or(0);
+    let uuid_parse_ok = (uuid_flags & 1) != 0;
+    let uuid_normalized_ok = (uuid_flags & 2) != 0;
+    let uuid_bytes_ok = (uuid_flags & 4) != 0;
+    let uuid_invalid_ok = (uuid_flags & 8) != 0;
+    println!(
+        "uuid => flags={uuid_flags} parse_ok={} normalized_ok={} bytes_ok={} invalid_ok={}",
+        uuid_parse_ok as i32,
+        uuid_normalized_ok as i32,
+        uuid_bytes_ok as i32,
+        uuid_invalid_ok as i32,
+    );
+
+    // ── CharacterSet semantics parity ──────────────────────────────────────
+    let character_set_flags = factory
+        .call_to_i32("swift_character_set_probe_flags")
+        .unwrap_or(0);
+    let charset_digit_ok = (character_set_flags & 1) != 0;
+    let charset_nondigit_ok = (character_set_flags & 2) != 0;
+    let charset_vowel_ok = (character_set_flags & 4) != 0;
+    let charset_nonvowel_ok = (character_set_flags & 8) != 0;
+    println!(
+        "character set => flags={character_set_flags} digit_ok={} nondigit_ok={} vowel_ok={} nonvowel_ok={}",
+        charset_digit_ok as i32,
+        charset_nondigit_ok as i32,
+        charset_vowel_ok as i32,
+        charset_nonvowel_ok as i32,
+    );
+
+    // ── URLComponents semantics parity ─────────────────────────────────────
+    let url_components_flags = factory
+        .call_to_i32("swift_url_components_probe_flags")
+        .unwrap_or(0);
+    let url_scheme_host_ok = (url_components_flags & 1) != 0;
+    let url_port_path_ok = (url_components_flags & 2) != 0;
+    let url_query_ok = (url_components_flags & 4) != 0;
+    let url_fragment_ok = (url_components_flags & 8) != 0;
+    println!(
+        "url components => flags={url_components_flags} scheme_host_ok={} port_path_ok={} query_ok={} fragment_ok={}",
+        url_scheme_host_ok as i32,
+        url_port_path_ok as i32,
+        url_query_ok as i32,
+        url_fragment_ok as i32,
+    );
+
+    // ── Calendar semantics parity ──────────────────────────────────────────
+    let calendar_flags = factory
+        .call_to_i32("swift_calendar_probe_flags")
+        .unwrap_or(0);
+    let calendar_construct_ok = (calendar_flags & 1) != 0;
+    let calendar_roundtrip_ok = (calendar_flags & 2) != 0;
+    let calendar_weekday_ok = (calendar_flags & 4) != 0;
+    let calendar_leap_ok = (calendar_flags & 8) != 0;
+    println!(
+        "calendar => flags={calendar_flags} construct_ok={} roundtrip_ok={} weekday_ok={} leap_ok={}",
+        calendar_construct_ok as i32,
+        calendar_roundtrip_ok as i32,
+        calendar_weekday_ok as i32,
+        calendar_leap_ok as i32,
+    );
+
+    // ── IndexSet semantics parity ──────────────────────────────────────────
+    let index_set_flags = factory
+        .call_to_i32("swift_index_set_probe_flags")
+        .unwrap_or(0);
+    let index_set_membership_ok = (index_set_flags & 1) != 0;
+    let index_set_insert_ok = (index_set_flags & 2) != 0;
+    let index_set_remove_ok = (index_set_flags & 4) != 0;
+    let index_set_bounds_ok = (index_set_flags & 8) != 0;
+    println!(
+        "index set => flags={index_set_flags} membership_ok={} insert_ok={} remove_ok={} bounds_ok={}",
+        index_set_membership_ok as i32,
+        index_set_insert_ok as i32,
+        index_set_remove_ok as i32,
+        index_set_bounds_ok as i32,
+    );
+
+    // ── TimeZone semantics parity ──────────────────────────────────────────
+    let time_zone_flags = factory
+        .call_to_i32("swift_time_zone_probe_flags")
+        .unwrap_or(0);
+    let tz_gmt_offset_ok = (time_zone_flags & 1) != 0;
+    let tz_gmt_id_ok = (time_zone_flags & 2) != 0;
+    let tz_kolkata_offset_ok = (time_zone_flags & 4) != 0;
+    let tz_kolkata_id_ok = (time_zone_flags & 8) != 0;
+    println!(
+        "time zone => flags={time_zone_flags} gmt_offset_ok={} gmt_id_ok={} kolkata_offset_ok={} kolkata_id_ok={}",
+        tz_gmt_offset_ok as i32,
+        tz_gmt_id_ok as i32,
+        tz_kolkata_offset_ok as i32,
+        tz_kolkata_id_ok as i32,
+    );
+
+    // ── Measurement conversion parity ──────────────────────────────────────
+    let measurement_flags = factory
+        .call_to_i32("swift_measurement_probe_flags")
+        .unwrap_or(0);
+    let measure_length_ok = (measurement_flags & 1) != 0;
+    let measure_temp_ok = (measurement_flags & 2) != 0;
+    let measure_mass_ok = (measurement_flags & 4) != 0;
+    let measure_speed_ok = (measurement_flags & 8) != 0;
+    println!(
+        "measurement => flags={measurement_flags} length_ok={} temp_ok={} mass_ok={} speed_ok={}",
+        measure_length_ok as i32,
+        measure_temp_ok as i32,
+        measure_mass_ok as i32,
+        measure_speed_ok as i32,
+    );
+
+    // ── DateFormatter/ISO8601 parity ───────────────────────────────────────
+    let date_formatter_flags = factory
+        .call_to_i32("swift_date_formatter_probe_flags")
+        .unwrap_or(0);
+    let date_string_ok = (date_formatter_flags & 1) != 0;
+    let date_roundtrip_ok = (date_formatter_flags & 2) != 0;
+    let date_iso_string_ok = (date_formatter_flags & 4) != 0;
+    let date_iso_roundtrip_ok = (date_formatter_flags & 8) != 0;
+    println!(
+        "date formatter => flags={date_formatter_flags} string_ok={} roundtrip_ok={} iso_string_ok={} iso_roundtrip_ok={}",
+        date_string_ok as i32,
+        date_roundtrip_ok as i32,
+        date_iso_string_ok as i32,
+        date_iso_roundtrip_ok as i32,
+    );
+
+    // ── Scanner semantics parity ───────────────────────────────────────────
+    let scanner_flags = factory
+        .call_to_i32("swift_scanner_probe_flags")
+        .unwrap_or(0);
+    let scanner_int_ok = (scanner_flags & 1) != 0;
+    let scanner_double_ok = (scanner_flags & 2) != 0;
+    let scanner_token_ok = (scanner_flags & 4) != 0;
+    let scanner_end_ok = (scanner_flags & 8) != 0;
+    println!(
+        "scanner => flags={scanner_flags} int_ok={} double_ok={} token_ok={} end_ok={}",
+        scanner_int_ok as i32,
+        scanner_double_ok as i32,
+        scanner_token_ok as i32,
+        scanner_end_ok as i32,
     );
 
     // ── Value existential dispatch parity ───────────────────────────────────

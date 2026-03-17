@@ -97,6 +97,35 @@ actor_line=$(line_or_empty "actor =>" "$PROBE_LOG")
 generic_meta_line=$(line_or_empty "generic metadata =>" "$PROBE_LOG")
 generic_specialization_line=$(line_or_empty "generic specialization =>" "$PROBE_LOG")
 synth_witness_line=$(line_or_empty "synth witness =>" "$PROBE_LOG")
+keypath_synth_line=$(line_or_empty "keypath synth =>" "$PROBE_LOG")
+property_wrapper_synth_line=$(line_or_empty "property wrapper synth =>" "$PROBE_LOG")
+result_builder_synth_line=$(line_or_empty "result builder synth =>" "$PROBE_LOG")
+opaque_return_line=$(line_or_empty "opaque return =>" "$PROBE_LOG")
+task_local_line=$(line_or_empty "task local =>" "$PROBE_LOG")
+dynamic_replacement_line=$(line_or_empty "dynamic replacement =>" "$PROBE_LOG")
+sendable_line=$(line_or_empty "sendable =>" "$PROBE_LOG")
+continuation_line=$(line_or_empty "continuation =>" "$PROBE_LOG")
+task_group_line=$(line_or_empty "task group =>" "$PROBE_LOG")
+async_stream_line=$(line_or_empty "async stream =>" "$PROBE_LOG")
+unsafe_memory_line=$(line_or_empty "unsafe memory =>" "$PROBE_LOG")
+proto_composition_line=$(line_or_empty "protocol composition =>" "$PROBE_LOG")
+enum_raw_value_line=$(line_or_empty "enum raw value =>" "$PROBE_LOG")
+option_set_line=$(line_or_empty "option set =>" "$PROBE_LOG")
+case_iterable_line=$(line_or_empty "case iterable =>" "$PROBE_LOG")
+set_algebra_line=$(line_or_empty "set algebra =>" "$PROBE_LOG")
+dictionary_line=$(line_or_empty "dictionary =>" "$PROBE_LOG")
+comparable_line=$(line_or_empty "comparable =>" "$PROBE_LOG")
+result_line=$(line_or_empty "result =>" "$PROBE_LOG")
+data_line=$(line_or_empty "^data =>" "$PROBE_LOG")
+uuid_line=$(line_or_empty "uuid =>" "$PROBE_LOG")
+character_set_line=$(line_or_empty "character set =>" "$PROBE_LOG")
+url_components_line=$(line_or_empty "url components =>" "$PROBE_LOG")
+calendar_line=$(line_or_empty "calendar =>" "$PROBE_LOG")
+index_set_line=$(line_or_empty "index set =>" "$PROBE_LOG")
+time_zone_line=$(line_or_empty "time zone =>" "$PROBE_LOG")
+measurement_line=$(line_or_empty "measurement =>" "$PROBE_LOG")
+date_formatter_line=$(line_or_empty "date formatter =>" "$PROBE_LOG")
+scanner_line=$(line_or_empty "scanner =>" "$PROBE_LOG")
 value_existential_line=$(line_or_empty "value existential =>" "$PROBE_LOG")
 resilient_layout_line=$(line_or_empty "resilient layout =>" "$PROBE_LOG")
 cross_module_resilient_line=$(line_or_empty "cross-module resilient =>" "$PROBE_LOG")
@@ -151,6 +180,111 @@ generic_reabstract_ok=$(extract_number "reabstract_ok" "$generic_specialization_
 synth_eq_true=$(extract_number "eq_true" "$synth_witness_line")
 synth_eq_false=$(extract_number "eq_false" "$synth_witness_line")
 synth_dedup_ok=$(extract_number "dedup_ok" "$synth_witness_line")
+keypath_read_ok=$(extract_number "read_ok" "$keypath_synth_line")
+keypath_write_ok=$(extract_number "write_ok" "$keypath_synth_line")
+keypath_append_ok=$(extract_number "append_ok" "$keypath_synth_line")
+property_wrapper_default_ok=$(extract_number "default_ok" "$property_wrapper_synth_line")
+property_wrapper_clamp_ok=$(extract_number "clamp_ok" "$property_wrapper_synth_line")
+property_wrapper_projected_ok=$(extract_number "projected_ok" "$property_wrapper_synth_line")
+property_wrapper_memberwise_ok=$(extract_number "memberwise_ok" "$property_wrapper_synth_line")
+result_builder_branch_ok=$(extract_number "branch_ok" "$result_builder_synth_line")
+result_builder_optional_ok=$(extract_number "optional_ok" "$result_builder_synth_line")
+result_builder_loop_ok=$(extract_number "loop_ok" "$result_builder_synth_line")
+opaque_return_value_ok=$(extract_number "value_ok" "$opaque_return_line")
+opaque_return_generic_ok=$(extract_number "generic_ok" "$opaque_return_line")
+opaque_return_type_ok=$(extract_number "type_ok" "$opaque_return_line")
+task_local_outside_ok=$(extract_number "outside_ok" "$task_local_line")
+task_local_inside_ok=$(extract_number "inside_ok" "$task_local_line")
+task_local_nested_ok=$(extract_number "nested_ok" "$task_local_line")
+task_local_restored_ok=$(extract_number "restored_ok" "$task_local_line")
+dynamic_replacement_direct_ok=$(extract_number "direct_ok" "$dynamic_replacement_line")
+dynamic_replacement_indirect_ok=$(extract_number "indirect_ok" "$dynamic_replacement_line")
+sendable_payload_ok=$(extract_number "payload_ok" "$sendable_line")
+sendable_detached_ok=$(extract_number "detached_ok" "$sendable_line")
+sendable_child_ok=$(extract_number "child_ok" "$sendable_line")
+continuation_async_ok=$(extract_number "async_ok" "$continuation_line")
+continuation_sync_ok=$(extract_number "sync_ok" "$continuation_line")
+continuation_throwing_ok=$(extract_number "throwing_ok" "$continuation_line")
+task_group_sum_ok=$(extract_number "sum_ok" "$task_group_line")
+task_group_throw_sum_ok=$(extract_number "throw_sum_ok" "$task_group_line")
+task_group_max_ok=$(extract_number "max_ok" "$task_group_line")
+async_stream_count_ok=$(extract_number "count_ok" "$async_stream_line")
+async_stream_sum_ok=$(extract_number "sum_ok" "$async_stream_line")
+async_stream_term_ok=$(extract_number "term_ok" "$async_stream_line")
+unsafe_field_x_ok=$(extract_number "field_x_ok" "$unsafe_memory_line")
+unsafe_field_y_ok=$(extract_number "field_y_ok" "$unsafe_memory_line")
+unsafe_ptr_rw_ok=$(extract_number "ptr_rw_ok" "$unsafe_memory_line")
+proto_comp_scale_ok=$(extract_number "scale_ok" "$proto_composition_line")
+proto_comp_label_ok=$(extract_number "label_ok" "$proto_composition_line")
+proto_comp_cast_ok=$(extract_number "cast_ok" "$proto_composition_line")
+enum_raw_roundtrip_ok=$(extract_number "roundtrip_ok" "$enum_raw_value_line")
+enum_raw_init_ok=$(extract_number "init_ok" "$enum_raw_value_line")
+enum_raw_nil_ok=$(extract_number "nil_ok" "$enum_raw_value_line")
+enum_raw_auto_inc_ok=$(extract_number "auto_inc_ok" "$enum_raw_value_line")
+option_set_contains_ok=$(extract_number "contains_ok" "$option_set_line")
+option_set_union_ok=$(extract_number "union_ok" "$option_set_line")
+option_set_intersection_ok=$(extract_number "intersection_ok" "$option_set_line")
+option_set_raw_ok=$(extract_number "raw_ok" "$option_set_line")
+case_iterable_count_ok=$(extract_number "count_ok" "$case_iterable_line")
+case_iterable_endpoints_ok=$(extract_number "endpoints_ok" "$case_iterable_line")
+case_iterable_sum_ok=$(extract_number "sum_ok" "$case_iterable_line")
+case_iterable_order_ok=$(extract_number "order_ok" "$case_iterable_line")
+set_union_ok=$(extract_number "union_ok" "$set_algebra_line")
+set_intersection_ok=$(extract_number "intersection_ok" "$set_algebra_line")
+set_subtract_ok=$(extract_number "subtract_ok" "$set_algebra_line")
+set_symdiff_ok=$(extract_number "symdiff_ok" "$set_algebra_line")
+dict_lookup_ok=$(extract_number "lookup_ok" "$dictionary_line")
+dict_default_ok=$(extract_number "default_ok" "$dictionary_line")
+dict_update_ok=$(extract_number "update_ok" "$dictionary_line")
+dict_remove_ok=$(extract_number "remove_ok" "$dictionary_line")
+comparable_sorted_ok=$(extract_number "sorted_ok" "$comparable_line")
+comparable_lt_ok=$(extract_number "lt_ok" "$comparable_line")
+comparable_gt_ok=$(extract_number "gt_ok" "$comparable_line")
+comparable_eq_ok=$(extract_number "eq_ok" "$comparable_line")
+result_get_ok=$(extract_number "get_ok" "$result_line")
+result_get_err_ok=$(extract_number "get_err_ok" "$result_line")
+result_map_ok=$(extract_number "map_ok" "$result_line")
+result_map_err_ok=$(extract_number "map_err_ok" "$result_line")
+data_count_ok=$(extract_number "count_ok" "$data_line")
+data_sum_ok=$(extract_number "sum_ok" "$data_line")
+data_append_ok=$(extract_number "append_ok" "$data_line")
+data_bytes_ok=$(extract_number "bytes_ok" "$data_line")
+uuid_parse_ok=$(extract_number "parse_ok" "$uuid_line")
+uuid_normalized_ok=$(extract_number "normalized_ok" "$uuid_line")
+uuid_bytes_ok=$(extract_number "bytes_ok" "$uuid_line")
+uuid_invalid_ok=$(extract_number "invalid_ok" "$uuid_line")
+charset_digit_ok=$(extract_number "digit_ok" "$character_set_line")
+charset_nondigit_ok=$(extract_number "nondigit_ok" "$character_set_line")
+charset_vowel_ok=$(extract_number "vowel_ok" "$character_set_line")
+charset_nonvowel_ok=$(extract_number "nonvowel_ok" "$character_set_line")
+url_scheme_host_ok=$(extract_number "scheme_host_ok" "$url_components_line")
+url_port_path_ok=$(extract_number "port_path_ok" "$url_components_line")
+url_query_ok=$(extract_number "query_ok" "$url_components_line")
+url_fragment_ok=$(extract_number "fragment_ok" "$url_components_line")
+calendar_construct_ok=$(extract_number "construct_ok" "$calendar_line")
+calendar_roundtrip_ok=$(extract_number "roundtrip_ok" "$calendar_line")
+calendar_weekday_ok=$(extract_number "weekday_ok" "$calendar_line")
+calendar_leap_ok=$(extract_number "leap_ok" "$calendar_line")
+index_set_membership_ok=$(extract_number "membership_ok" "$index_set_line")
+index_set_insert_ok=$(extract_number "insert_ok" "$index_set_line")
+index_set_remove_ok=$(extract_number "remove_ok" "$index_set_line")
+index_set_bounds_ok=$(extract_number "bounds_ok" "$index_set_line")
+tz_gmt_offset_ok=$(extract_number "gmt_offset_ok" "$time_zone_line")
+tz_gmt_id_ok=$(extract_number "gmt_id_ok" "$time_zone_line")
+tz_kolkata_offset_ok=$(extract_number "kolkata_offset_ok" "$time_zone_line")
+tz_kolkata_id_ok=$(extract_number "kolkata_id_ok" "$time_zone_line")
+measure_length_ok=$(extract_number "length_ok" "$measurement_line")
+measure_temp_ok=$(extract_number "temp_ok" "$measurement_line")
+measure_mass_ok=$(extract_number "mass_ok" "$measurement_line")
+measure_speed_ok=$(extract_number "speed_ok" "$measurement_line")
+date_string_ok=$(extract_number "string_ok" "$date_formatter_line")
+date_roundtrip_ok=$(extract_number "roundtrip_ok" "$date_formatter_line")
+date_iso_string_ok=$(extract_number "iso_string_ok" "$date_formatter_line")
+date_iso_roundtrip_ok=$(extract_number "iso_roundtrip_ok" "$date_formatter_line")
+scanner_int_ok=$(extract_number "int_ok" "$scanner_line")
+scanner_double_ok=$(extract_number "double_ok" "$scanner_line")
+scanner_token_ok=$(extract_number "token_ok" "$scanner_line")
+scanner_end_ok=$(extract_number "end_ok" "$scanner_line")
 value_existential_current=$(extract_number "current" "$value_existential_line")
 point_size=$(extract_number "point_size" "$resilient_layout_line")
 point_stride=$(extract_number "point_stride" "$resilient_layout_line")
@@ -234,6 +368,35 @@ pass_generic_metadata=0
 pass_generic_specialization=0
 pass_synth_witness=0
 pass_synth_witness_lldb=0
+pass_keypath_synth=0
+pass_property_wrapper_synth=0
+pass_result_builder_synth=0
+pass_opaque_return=0
+pass_task_local=0
+pass_dynamic_replacement=0
+pass_sendable=0
+pass_continuation=0
+pass_task_group=0
+pass_async_stream=0
+pass_unsafe_memory=0
+pass_proto_composition=0
+pass_enum_raw_value=0
+pass_option_set=0
+pass_case_iterable=0
+pass_set_algebra=0
+pass_dictionary=0
+pass_comparable=0
+pass_result=0
+pass_data=0
+pass_uuid=0
+pass_character_set=0
+pass_url_components=0
+pass_calendar=0
+pass_index_set=0
+pass_time_zone=0
+pass_measurement=0
+pass_date_formatter=0
+pass_scanner=0
 pass_value_existential=0
 pass_resilient_layout_metrics=0
 pass_resilient_field_offset=0
@@ -287,6 +450,35 @@ if [[ "$generic_meta_distinct" == "1" && "$generic_constrained" == "77" ]]; then
 if [[ "$generic_specialization_int" == "1" && "$generic_specialization_string" == "1" && "$generic_reabstract_ok" == "1" ]]; then pass_generic_specialization=1; fi
 if [[ "$synth_eq_true" == "1" && "$synth_eq_false" == "1" && "$synth_dedup_ok" == "1" ]]; then pass_synth_witness=1; fi
 if [[ "$synth_eq_lldb_hits" -gt 0 && "$synth_hash_lldb_hits" -gt 0 ]]; then pass_synth_witness_lldb=1; fi
+if [[ "$keypath_read_ok" == "1" && "$keypath_write_ok" == "1" && "$keypath_append_ok" == "1" ]]; then pass_keypath_synth=1; fi
+if [[ "$property_wrapper_default_ok" == "1" && "$property_wrapper_clamp_ok" == "1" && "$property_wrapper_projected_ok" == "1" && "$property_wrapper_memberwise_ok" == "1" ]]; then pass_property_wrapper_synth=1; fi
+if [[ "$result_builder_branch_ok" == "1" && "$result_builder_optional_ok" == "1" && "$result_builder_loop_ok" == "1" ]]; then pass_result_builder_synth=1; fi
+if [[ "$opaque_return_value_ok" == "1" && "$opaque_return_generic_ok" == "1" && "$opaque_return_type_ok" == "1" ]]; then pass_opaque_return=1; fi
+if [[ "$task_local_outside_ok" == "1" && "$task_local_inside_ok" == "1" && "$task_local_nested_ok" == "1" && "$task_local_restored_ok" == "1" ]]; then pass_task_local=1; fi
+if [[ "$dynamic_replacement_direct_ok" == "1" && "$dynamic_replacement_indirect_ok" == "1" ]]; then pass_dynamic_replacement=1; fi
+if [[ "$sendable_payload_ok" == "1" && "$sendable_detached_ok" == "1" && "$sendable_child_ok" == "1" ]]; then pass_sendable=1; fi
+if [[ "$continuation_async_ok" == "1" && "$continuation_sync_ok" == "1" && "$continuation_throwing_ok" == "1" ]]; then pass_continuation=1; fi
+if [[ "$task_group_sum_ok" == "1" && "$task_group_throw_sum_ok" == "1" && "$task_group_max_ok" == "1" ]]; then pass_task_group=1; fi
+if [[ "$async_stream_count_ok" == "1" && "$async_stream_sum_ok" == "1" && "$async_stream_term_ok" == "1" ]]; then pass_async_stream=1; fi
+if [[ "$unsafe_field_x_ok" == "1" && "$unsafe_field_y_ok" == "1" && "$unsafe_ptr_rw_ok" == "1" ]]; then pass_unsafe_memory=1; fi
+if [[ "$proto_comp_scale_ok" == "1" && "$proto_comp_label_ok" == "1" && "$proto_comp_cast_ok" == "1" ]]; then pass_proto_composition=1; fi
+if [[ "$enum_raw_roundtrip_ok" == "1" && "$enum_raw_init_ok" == "1" && "$enum_raw_nil_ok" == "1" && "$enum_raw_auto_inc_ok" == "1" ]]; then pass_enum_raw_value=1; fi
+if [[ "$option_set_contains_ok" == "1" && "$option_set_union_ok" == "1" && "$option_set_intersection_ok" == "1" && "$option_set_raw_ok" == "1" ]]; then pass_option_set=1; fi
+if [[ "$case_iterable_count_ok" == "1" && "$case_iterable_endpoints_ok" == "1" && "$case_iterable_sum_ok" == "1" && "$case_iterable_order_ok" == "1" ]]; then pass_case_iterable=1; fi
+if [[ "$set_union_ok" == "1" && "$set_intersection_ok" == "1" && "$set_subtract_ok" == "1" && "$set_symdiff_ok" == "1" ]]; then pass_set_algebra=1; fi
+if [[ "$dict_lookup_ok" == "1" && "$dict_default_ok" == "1" && "$dict_update_ok" == "1" && "$dict_remove_ok" == "1" ]]; then pass_dictionary=1; fi
+if [[ "$comparable_sorted_ok" == "1" && "$comparable_lt_ok" == "1" && "$comparable_gt_ok" == "1" && "$comparable_eq_ok" == "1" ]]; then pass_comparable=1; fi
+if [[ "$result_get_ok" == "1" && "$result_get_err_ok" == "1" && "$result_map_ok" == "1" && "$result_map_err_ok" == "1" ]]; then pass_result=1; fi
+if [[ "$data_count_ok" == "1" && "$data_sum_ok" == "1" && "$data_append_ok" == "1" && "$data_bytes_ok" == "1" ]]; then pass_data=1; fi
+if [[ "$uuid_parse_ok" == "1" && "$uuid_normalized_ok" == "1" && "$uuid_bytes_ok" == "1" && "$uuid_invalid_ok" == "1" ]]; then pass_uuid=1; fi
+if [[ "$charset_digit_ok" == "1" && "$charset_nondigit_ok" == "1" && "$charset_vowel_ok" == "1" && "$charset_nonvowel_ok" == "1" ]]; then pass_character_set=1; fi
+if [[ "$url_scheme_host_ok" == "1" && "$url_port_path_ok" == "1" && "$url_query_ok" == "1" && "$url_fragment_ok" == "1" ]]; then pass_url_components=1; fi
+if [[ "$calendar_construct_ok" == "1" && "$calendar_roundtrip_ok" == "1" && "$calendar_weekday_ok" == "1" && "$calendar_leap_ok" == "1" ]]; then pass_calendar=1; fi
+if [[ "$index_set_membership_ok" == "1" && "$index_set_insert_ok" == "1" && "$index_set_remove_ok" == "1" && "$index_set_bounds_ok" == "1" ]]; then pass_index_set=1; fi
+if [[ "$tz_gmt_offset_ok" == "1" && "$tz_gmt_id_ok" == "1" && "$tz_kolkata_offset_ok" == "1" && "$tz_kolkata_id_ok" == "1" ]]; then pass_time_zone=1; fi
+if [[ "$measure_length_ok" == "1" && "$measure_temp_ok" == "1" && "$measure_mass_ok" == "1" && "$measure_speed_ok" == "1" ]]; then pass_measurement=1; fi
+if [[ "$date_string_ok" == "1" && "$date_roundtrip_ok" == "1" && "$date_iso_string_ok" == "1" && "$date_iso_roundtrip_ok" == "1" ]]; then pass_date_formatter=1; fi
+if [[ "$scanner_int_ok" == "1" && "$scanner_double_ok" == "1" && "$scanner_token_ok" == "1" && "$scanner_end_ok" == "1" ]]; then pass_scanner=1; fi
 if [[ "$value_existential_current" == "88" ]]; then pass_value_existential=1; fi
 if [[ "$point_size" == "8" && "$point_stride" == "8" && "$point_align" == "4" && "$resilient_size" == "16" && "$resilient_stride" == "16" && "$resilient_align" == "8" ]]; then pass_resilient_layout_metrics=1; fi
 if [[ "$resilient_b_offset" == "8" ]]; then pass_resilient_field_offset=1; fi
@@ -339,6 +531,35 @@ cat > "$REPORT_JSON" <<JSON
     "generic_specialization_reabstraction": $pass_generic_specialization,
     "synthesized_witness_eq_hash": $pass_synth_witness,
     "synthesized_witness_lldb_hits": $pass_synth_witness_lldb,
+    "keypath_synthesis": $pass_keypath_synth,
+    "property_wrapper_synthesis": $pass_property_wrapper_synth,
+    "result_builder_synthesis": $pass_result_builder_synth,
+    "opaque_return_types": $pass_opaque_return,
+    "task_local_runtime": $pass_task_local,
+    "dynamic_replacement": $pass_dynamic_replacement,
+    "sendable_concurrency": $pass_sendable,
+    "checked_continuation": $pass_continuation,
+    "task_group_concurrency": $pass_task_group,
+    "async_stream": $pass_async_stream,
+    "unsafe_memory_layout": $pass_unsafe_memory,
+    "protocol_composition_existential": $pass_proto_composition,
+    "enum_raw_value_synthesis": $pass_enum_raw_value,
+    "option_set_synthesis": $pass_option_set,
+    "case_iterable_synthesis": $pass_case_iterable,
+    "set_algebra": $pass_set_algebra,
+    "dictionary_semantics": $pass_dictionary,
+    "comparable_synthesis": $pass_comparable,
+    "result_semantics": $pass_result,
+    "data_semantics": $pass_data,
+    "uuid_semantics": $pass_uuid,
+    "character_set_semantics": $pass_character_set,
+    "url_components_semantics": $pass_url_components,
+    "calendar_semantics": $pass_calendar,
+    "index_set_semantics": $pass_index_set,
+    "time_zone_semantics": $pass_time_zone,
+    "measurement_semantics": $pass_measurement,
+    "date_formatter_semantics": $pass_date_formatter,
+    "scanner_semantics": $pass_scanner,
     "value_existential_dispatch": $pass_value_existential,
     "resilient_layout_metrics": $pass_resilient_layout_metrics,
     "resilient_field_offset": $pass_resilient_field_offset,
@@ -391,6 +612,13 @@ cat > "$REPORT_JSON" <<JSON
     "generic_meta_line": "${generic_meta_line}",
     "generic_specialization_line": "${generic_specialization_line}",
     "synth_witness_line": "${synth_witness_line}",
+    "keypath_synth_line": "${keypath_synth_line}",
+    "property_wrapper_synth_line": "${property_wrapper_synth_line}",
+    "result_builder_synth_line": "${result_builder_synth_line}",
+    "opaque_return_line": "${opaque_return_line}",
+    "task_local_line": "${task_local_line}",
+    "dynamic_replacement_line": "${dynamic_replacement_line}",
+    "sendable_line": "${sendable_line}",
     "value_existential_line": "${value_existential_line}",
     "resilient_layout_line": "${resilient_layout_line}",
     "cross_module_resilient_line": "${cross_module_resilient_line}",
@@ -413,8 +641,8 @@ RUN_TS=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 GIT_HASH=$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo "unknown")
 HISTORY_FILE="$HISTORY_DIR/${RUN_TS//[: ]/_}_${GIT_HASH}.json"
 
-total_checks=48
-pass_count=$(( pass_increment + pass_reset + pass_add_pair + pass_clear + pass_retain + pass_alloc_sizes + pass_lldb + pass_direct_field + pass_protocol_witness + pass_protocol_slot + pass_protocol_dispatch + pass_protocol_dispatch_semantic + pass_global_variable + pass_raw_metadata + pass_enum_simple + pass_enum_associated + pass_enum_payload + pass_codable + pass_throws_success + pass_throws_error + pass_generic_type + pass_string + pass_struct_dispatch + pass_tuple_return + pass_optional_layout + pass_array + pass_string_storage + pass_array_storage + pass_closure + pass_reflection + pass_error_boxing + pass_error_roundtrip + pass_objc_interop + pass_weak_ref + pass_conformance + pass_async_task + pass_actor_executor + pass_generic_metadata + pass_generic_specialization + pass_synth_witness + pass_synth_witness_lldb + pass_value_existential + pass_resilient_layout_metrics + pass_resilient_field_offset + pass_cross_module_resilient + pass_cross_module_existential + pass_arc_edge_stress + pass_fuzz_parity ))
+total_checks=77
+pass_count=$(( pass_increment + pass_reset + pass_add_pair + pass_clear + pass_retain + pass_alloc_sizes + pass_lldb + pass_direct_field + pass_protocol_witness + pass_protocol_slot + pass_protocol_dispatch + pass_protocol_dispatch_semantic + pass_global_variable + pass_raw_metadata + pass_enum_simple + pass_enum_associated + pass_enum_payload + pass_codable + pass_throws_success + pass_throws_error + pass_generic_type + pass_string + pass_struct_dispatch + pass_tuple_return + pass_optional_layout + pass_array + pass_string_storage + pass_array_storage + pass_closure + pass_reflection + pass_error_boxing + pass_error_roundtrip + pass_objc_interop + pass_weak_ref + pass_conformance + pass_async_task + pass_actor_executor + pass_generic_metadata + pass_generic_specialization + pass_synth_witness + pass_synth_witness_lldb + pass_keypath_synth + pass_property_wrapper_synth + pass_result_builder_synth + pass_opaque_return + pass_task_local + pass_dynamic_replacement + pass_sendable + pass_continuation + pass_task_group + pass_async_stream + pass_unsafe_memory + pass_proto_composition + pass_enum_raw_value + pass_option_set + pass_case_iterable + pass_set_algebra + pass_dictionary + pass_comparable + pass_result + pass_data + pass_uuid + pass_character_set + pass_url_components + pass_calendar + pass_index_set + pass_time_zone + pass_measurement + pass_date_formatter + pass_scanner + pass_value_existential + pass_resilient_layout_metrics + pass_resilient_field_offset + pass_cross_module_resilient + pass_cross_module_existential + pass_arc_edge_stress + pass_fuzz_parity ))
 
 cat > "$HISTORY_FILE" <<HIST
 {
@@ -465,6 +693,35 @@ cat > "$HISTORY_FILE" <<HIST
     "generic_specialization_reabstraction": $pass_generic_specialization,
     "synthesized_witness_eq_hash": $pass_synth_witness,
     "synthesized_witness_lldb_hits": $pass_synth_witness_lldb,
+    "keypath_synthesis": $pass_keypath_synth,
+    "property_wrapper_synthesis": $pass_property_wrapper_synth,
+    "result_builder_synthesis": $pass_result_builder_synth,
+    "opaque_return_types": $pass_opaque_return,
+    "task_local_runtime": $pass_task_local,
+    "dynamic_replacement": $pass_dynamic_replacement,
+    "sendable_concurrency": $pass_sendable,
+    "checked_continuation": $pass_continuation,
+    "task_group_concurrency": $pass_task_group,
+    "async_stream": $pass_async_stream,
+    "unsafe_memory_layout": $pass_unsafe_memory,
+    "protocol_composition_existential": $pass_proto_composition,
+    "enum_raw_value_synthesis": $pass_enum_raw_value,
+    "option_set_synthesis": $pass_option_set,
+    "case_iterable_synthesis": $pass_case_iterable,
+    "set_algebra": $pass_set_algebra,
+    "dictionary_semantics": $pass_dictionary,
+    "comparable_synthesis": $pass_comparable,
+    "result_semantics": $pass_result,
+    "data_semantics": $pass_data,
+    "uuid_semantics": $pass_uuid,
+    "character_set_semantics": $pass_character_set,
+    "url_components_semantics": $pass_url_components,
+    "calendar_semantics": $pass_calendar,
+    "index_set_semantics": $pass_index_set,
+    "time_zone_semantics": $pass_time_zone,
+    "measurement_semantics": $pass_measurement,
+    "date_formatter_semantics": $pass_date_formatter,
+    "scanner_semantics": $pass_scanner,
     "value_existential_dispatch": $pass_value_existential,
     "resilient_layout_metrics": $pass_resilient_layout_metrics,
     "resilient_field_offset": $pass_resilient_field_offset,
@@ -528,6 +785,35 @@ cat > "$REPORT_MD" <<MD
 | generic specialization/reabstraction | $(status_symbol "$pass_generic_specialization") | int_ok=${generic_specialization_int}, string_ok=${generic_specialization_string}, reabstract_ok=${generic_reabstract_ok} |
 | synthesized witness eq/hash | $(status_symbol "$pass_synth_witness") | eq_true=${synth_eq_true}, eq_false=${synth_eq_false}, dedup_ok=${synth_dedup_ok} |
 | synthesized witness LLDB hits | $(status_symbol "$pass_synth_witness_lldb") | eq_hits=${synth_eq_lldb_hits}, hash_hits=${synth_hash_lldb_hits} |
+| keypath synthesis | $(status_symbol "$pass_keypath_synth") | read_ok=${keypath_read_ok}, write_ok=${keypath_write_ok}, append_ok=${keypath_append_ok} |
+| property-wrapper synthesis | $(status_symbol "$pass_property_wrapper_synth") | default_ok=${property_wrapper_default_ok}, clamp_ok=${property_wrapper_clamp_ok}, projected_ok=${property_wrapper_projected_ok}, memberwise_ok=${property_wrapper_memberwise_ok} |
+| result-builder synthesis | $(status_symbol "$pass_result_builder_synth") | branch_ok=${result_builder_branch_ok}, optional_ok=${result_builder_optional_ok}, loop_ok=${result_builder_loop_ok} |
+| opaque return types | $(status_symbol "$pass_opaque_return") | value_ok=${opaque_return_value_ok}, generic_ok=${opaque_return_generic_ok}, type_ok=${opaque_return_type_ok} |
+| task-local runtime | $(status_symbol "$pass_task_local") | outside_ok=${task_local_outside_ok}, inside_ok=${task_local_inside_ok}, nested_ok=${task_local_nested_ok}, restored_ok=${task_local_restored_ok} |
+| dynamic replacement | $(status_symbol "$pass_dynamic_replacement") | direct_ok=${dynamic_replacement_direct_ok}, indirect_ok=${dynamic_replacement_indirect_ok} |
+| sendable concurrency | $(status_symbol "$pass_sendable") | payload_ok=${sendable_payload_ok}, detached_ok=${sendable_detached_ok}, child_ok=${sendable_child_ok} |
+| checked continuation | $(status_symbol "$pass_continuation") | async_ok=${continuation_async_ok}, sync_ok=${continuation_sync_ok}, throwing_ok=${continuation_throwing_ok} |
+| task group concurrency | $(status_symbol "$pass_task_group") | sum_ok=${task_group_sum_ok}, throw_sum_ok=${task_group_throw_sum_ok}, max_ok=${task_group_max_ok} |
+| AsyncStream | $(status_symbol "$pass_async_stream") | count_ok=${async_stream_count_ok}, sum_ok=${async_stream_sum_ok}, term_ok=${async_stream_term_ok} |
+| unsafe memory layout | $(status_symbol "$pass_unsafe_memory") | field_x_ok=${unsafe_field_x_ok}, field_y_ok=${unsafe_field_y_ok}, ptr_rw_ok=${unsafe_ptr_rw_ok} |
+| protocol composition existential | $(status_symbol "$pass_proto_composition") | scale_ok=${proto_comp_scale_ok}, label_ok=${proto_comp_label_ok}, cast_ok=${proto_comp_cast_ok} |
+| enum raw-value synthesis | $(status_symbol "$pass_enum_raw_value") | roundtrip_ok=${enum_raw_roundtrip_ok}, init_ok=${enum_raw_init_ok}, nil_ok=${enum_raw_nil_ok}, auto_inc_ok=${enum_raw_auto_inc_ok} |
+| OptionSet synthesis | $(status_symbol "$pass_option_set") | contains_ok=${option_set_contains_ok}, union_ok=${option_set_union_ok}, intersection_ok=${option_set_intersection_ok}, raw_ok=${option_set_raw_ok} |
+| CaseIterable synthesis | $(status_symbol "$pass_case_iterable") | count_ok=${case_iterable_count_ok}, endpoints_ok=${case_iterable_endpoints_ok}, sum_ok=${case_iterable_sum_ok}, order_ok=${case_iterable_order_ok} |
+| set algebra | $(status_symbol "$pass_set_algebra") | union_ok=${set_union_ok}, intersection_ok=${set_intersection_ok}, subtract_ok=${set_subtract_ok}, symdiff_ok=${set_symdiff_ok} |
+| dictionary semantics | $(status_symbol "$pass_dictionary") | lookup_ok=${dict_lookup_ok}, default_ok=${dict_default_ok}, update_ok=${dict_update_ok}, remove_ok=${dict_remove_ok} |
+| comparable synthesis | $(status_symbol "$pass_comparable") | sorted_ok=${comparable_sorted_ok}, lt_ok=${comparable_lt_ok}, gt_ok=${comparable_gt_ok}, eq_ok=${comparable_eq_ok} |
+| result semantics | $(status_symbol "$pass_result") | get_ok=${result_get_ok}, get_err_ok=${result_get_err_ok}, map_ok=${result_map_ok}, map_err_ok=${result_map_err_ok} |
+| data semantics | $(status_symbol "$pass_data") | count_ok=${data_count_ok}, sum_ok=${data_sum_ok}, append_ok=${data_append_ok}, bytes_ok=${data_bytes_ok} |
+| uuid semantics | $(status_symbol "$pass_uuid") | parse_ok=${uuid_parse_ok}, normalized_ok=${uuid_normalized_ok}, bytes_ok=${uuid_bytes_ok}, invalid_ok=${uuid_invalid_ok} |
+| character set semantics | $(status_symbol "$pass_character_set") | digit_ok=${charset_digit_ok}, nondigit_ok=${charset_nondigit_ok}, vowel_ok=${charset_vowel_ok}, nonvowel_ok=${charset_nonvowel_ok} |
+| URLComponents semantics | $(status_symbol "$pass_url_components") | scheme_host_ok=${url_scheme_host_ok}, port_path_ok=${url_port_path_ok}, query_ok=${url_query_ok}, fragment_ok=${url_fragment_ok} |
+| calendar semantics | $(status_symbol "$pass_calendar") | construct_ok=${calendar_construct_ok}, roundtrip_ok=${calendar_roundtrip_ok}, weekday_ok=${calendar_weekday_ok}, leap_ok=${calendar_leap_ok} |
+| IndexSet semantics | $(status_symbol "$pass_index_set") | membership_ok=${index_set_membership_ok}, insert_ok=${index_set_insert_ok}, remove_ok=${index_set_remove_ok}, bounds_ok=${index_set_bounds_ok} |
+| time zone semantics | $(status_symbol "$pass_time_zone") | gmt_offset_ok=${tz_gmt_offset_ok}, gmt_id_ok=${tz_gmt_id_ok}, kolkata_offset_ok=${tz_kolkata_offset_ok}, kolkata_id_ok=${tz_kolkata_id_ok} |
+| measurement semantics | $(status_symbol "$pass_measurement") | length_ok=${measure_length_ok}, temp_ok=${measure_temp_ok}, mass_ok=${measure_mass_ok}, speed_ok=${measure_speed_ok} |
+| date formatter semantics | $(status_symbol "$pass_date_formatter") | string_ok=${date_string_ok}, roundtrip_ok=${date_roundtrip_ok}, iso_string_ok=${date_iso_string_ok}, iso_roundtrip_ok=${date_iso_roundtrip_ok} |
+| scanner semantics | $(status_symbol "$pass_scanner") | int_ok=${scanner_int_ok}, double_ok=${scanner_double_ok}, token_ok=${scanner_token_ok}, end_ok=${scanner_end_ok} |
 | value existential dispatch | $(status_symbol "$pass_value_existential") | current=${value_existential_current} |
 | resilient layout metrics | $(status_symbol "$pass_resilient_layout_metrics") | point(size=${point_size},stride=${point_stride},align=${point_align}) resilient(size=${resilient_size},stride=${resilient_stride},align=${resilient_align}) |
 | resilient field offset | $(status_symbol "$pass_resilient_field_offset") | b_offset=${resilient_b_offset} |
