@@ -395,6 +395,8 @@ retain_init=$(extract_number "init" "$retain_init_line")
 retain_after_release=$(extract_number "release" "$retain_after_release_line")
 counter_drop_ok=$(extract_number "drop_ok" "$counter_teardown_line")
 counter_deinit_delta=$(extract_number "deinit_delta" "$counter_teardown_line")
+counter_deinit_lifecycle_line=$(line_or_empty "counter teardown fresh_deinit_ok=" "$PROBE_LOG")
+counter_fresh_deinit_ok=$(extract_number "fresh_deinit_ok" "$counter_deinit_lifecycle_line")
 
 malloc_counter_line=$(line_or_empty "malloc_size\(counter\)=" "$PROBE_LOG")
 malloc_raw_line=$(line_or_empty "malloc_size\(raw_counter\)=" "$PROBE_LOG")
@@ -418,6 +420,7 @@ pass_add_pair=0
 pass_clear=0
 pass_retain=0
 pass_alloc_sizes=0
+pass_counter_deinit=0
 pass_lldb=0
 pass_direct_field=0
 pass_protocol_witness=0
@@ -512,6 +515,7 @@ if [[ "$add_pair" == "17" ]]; then pass_add_pair=1; fi
 if [[ "$after_clear" == "0" ]]; then pass_clear=1; fi
 if [[ "$retain_init" == "1" && "$retain_after_release" == "1" && "$counter_drop_ok" == "1" ]]; then pass_retain=1; fi
 if [[ "$malloc_counter" == "32" && "$malloc_raw" == "32" ]]; then pass_alloc_sizes=1; fi
+if [[ "$counter_fresh_deinit_ok" == "1" ]]; then pass_counter_deinit=1; fi
 if [[ "$has_person_init" == "1" && "$has_counter_alloc" == "1" && "$has_bad_access" == "0" ]]; then pass_lldb=1; fi
 if [[ "$direct_field" == "99" && "$after_direct" == "99" ]]; then pass_direct_field=1; fi
 if [[ "$protocol_nonnull" == "1" ]]; then pass_protocol_witness=1; fi
@@ -610,6 +614,7 @@ cat > "$REPORT_JSON" <<JSON
     "add_pair": $pass_add_pair,
     "clear": $pass_clear,
     "retain_counts": $pass_retain,
+    "counter_deinit_lifecycle": $pass_counter_deinit,
     "allocation_sizes": $pass_alloc_sizes,
     "lldb_breakpoints": $pass_lldb,
     "direct_field_write": $pass_direct_field,
@@ -715,6 +720,7 @@ cat > "$REPORT_JSON" <<JSON
     "retain_init": "${retain_init}",
     "retain_after_release": "${retain_after_release}",
     "counter_teardown_line": "${counter_teardown_line}",
+    "counter_deinit_lifecycle_line": "${counter_deinit_lifecycle_line}",
     "malloc_counter": "${malloc_counter}",
     "malloc_raw_counter": "${malloc_raw}",
     "lldb_person_init": $has_person_init,
@@ -773,8 +779,9 @@ RUN_TS=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 GIT_HASH=$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo "unknown")
 HISTORY_FILE="$HISTORY_DIR/${RUN_TS//[: ]/_}_${GIT_HASH}.json"
 
-total_checks=93
+total_checks=94
 pass_count=$(( pass_increment + pass_reset + pass_add_pair + pass_clear + pass_retain + pass_alloc_sizes + pass_lldb + pass_direct_field + pass_protocol_witness + pass_protocol_slot + pass_protocol_dispatch + pass_protocol_dispatch_semantic + pass_global_variable + pass_raw_metadata + pass_enum_simple + pass_enum_associated + pass_enum_payload + pass_codable + pass_throws_success + pass_throws_error + pass_generic_type + pass_string + pass_struct_dispatch + pass_tuple_return + pass_optional_layout + pass_array + pass_string_storage + pass_array_storage + pass_closure + pass_reflection + pass_error_boxing + pass_error_roundtrip + pass_objc_interop + pass_weak_ref + pass_conformance + pass_async_task + pass_actor_executor + pass_generic_metadata + pass_generic_specialization + pass_synth_witness + pass_synth_witness_lldb + pass_keypath_synth + pass_property_wrapper_synth + pass_result_builder_synth + pass_opaque_return + pass_task_local + pass_dynamic_replacement + pass_sendable + pass_continuation + pass_task_group + pass_async_stream + pass_unsafe_memory + pass_proto_composition + pass_enum_raw_value + pass_option_set + pass_case_iterable + pass_set_algebra + pass_dictionary + pass_comparable + pass_result + pass_data + pass_uuid + pass_character_set + pass_url_components + pass_calendar + pass_index_set + pass_time_zone + pass_measurement + pass_date_formatter + pass_scanner + pass_locale + pass_number_formatter + pass_url + pass_decimal + pass_url_request + pass_data_base64 + pass_http_response + pass_json_encoder + pass_plist_encoder + pass_range + pass_url_query_item + pass_closed_range + pass_date_interval + pass_index_path + pass_iso8601 + pass_url_percent + pass_value_existential + pass_resilient_layout_metrics + pass_resilient_field_offset + pass_cross_module_resilient + pass_cross_module_existential + pass_arc_edge_stress + pass_fuzz_parity ))
+pass_count=$(( pass_count + pass_counter_deinit ))
 
 cat > "$HISTORY_FILE" <<HIST
 {
@@ -789,6 +796,7 @@ cat > "$HISTORY_FILE" <<HIST
     "add_pair": $pass_add_pair,
     "clear": $pass_clear,
     "retain_counts": $pass_retain,
+    "counter_deinit_lifecycle": $pass_counter_deinit,
     "allocation_sizes": $pass_alloc_sizes,
     "lldb_breakpoints": $pass_lldb,
     "direct_field_write": $pass_direct_field,
@@ -897,6 +905,7 @@ cat > "$REPORT_MD" <<MD
 | addPair (self_i32_i32_to_i32) | $(status_symbol "$pass_add_pair") | add_pair=${add_pair} |
 | clear (self_to_void) | $(status_symbol "$pass_clear") | after_clear=${after_clear} |
 | retain counts | $(status_symbol "$pass_retain") | init=${retain_init}, after_release=${retain_after_release}, drop_ok=${counter_drop_ok}, deinit_delta=${counter_deinit_delta} |
+| counter deinit lifecycle | $(status_symbol "$pass_counter_deinit") | fresh_deinit_ok=${counter_fresh_deinit_ok}; ${counter_deinit_lifecycle_line} |
 | allocation sizes | $(status_symbol "$pass_alloc_sizes") | counter=${malloc_counter}, raw=${malloc_raw} |
 | lldb constructor path | $(status_symbol "$pass_lldb") | probe_person=${has_person_init}, probe_counter=${has_counter_alloc}, lldb_exit=${has_lldb_exit}, bad_access=${has_bad_access} |
 | direct field write | $(status_symbol "$pass_direct_field") | direct=${direct_field}, current=${after_direct} |

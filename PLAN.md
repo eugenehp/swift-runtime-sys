@@ -4,18 +4,18 @@
 Define and complete all work needed to claim production-grade parity between Rust runtime access and Swift behavior in this repository.
 
 ## Current Baseline
-- [ ] Current matrix status: `93/93 PASS`.
-- [ ] Source of truth for checks and totals: `scripts/run_parity_matrix.sh`.
+- [x] Current matrix status: `94/94 PASS`.
+- [x] Source of truth for checks and totals: `scripts/run_parity_matrix.sh`.
 - [ ] Latest parity key inventory: `/memories/repo/parity.md`.
 
 ## Definition of 100% Parity
 100% parity is not only a check count. It requires all of the following:
-- [ ] Functional parity: all in-scope semantic/runtime features are covered by deterministic checks.
-- [ ] ABI parity: all supported call shapes are validated and stable (no opt-in crash-prone paths).
+- [x] Functional parity: all in-scope semantic/runtime features are covered by deterministic checks.
+- [x] ABI parity: all supported call shapes are validated and stable (no opt-in crash-prone paths).
 - [ ] Reliability parity: stress/fuzz runs pass repeatedly with no intermittent failures.
 - [ ] Platform/version parity: supported Swift and macOS targets pass the same matrix.
-- [ ] Tooling parity: CI enforces parity gates and preserves history/artifacts.
-- [ ] Operational parity: known experimental caveats removed or explicitly scoped out of claim.
+- [x] Tooling parity: CI enforces parity gates and preserves history/artifacts.
+- [x] Operational parity: known experimental caveats removed or explicitly scoped out of claim.
 
 ## Scope Lock (must be explicit)
 - [x] Freeze a v1 parity scope in writing (which APIs and ABI shapes are in/out).
@@ -46,9 +46,9 @@ Define and complete all work needed to claim production-grade parity between Rus
 ### 2) Close lifecycle/teardown instability
 - [x] Resolve retained-object teardown caveats in probe flow.
 - [x] Ensure alloc/retain/release/dealloc behavior is fully balanced and validated.
-- [ ] Exit criteria:
+- [x] Exit criteria:
 - [x] No intentional retained-object leak in main parity path.
-- [ ] Dedicated deinit/teardown checks pass reliably.
+- [x] Dedicated deinit/teardown checks pass reliably.
 
 ### 3) Expand ABI shape matrix coverage
 - [x] Validate additional calling convention/register shapes and metadata/witness argument placements.
@@ -84,7 +84,7 @@ Define and complete all work needed to claim production-grade parity between Rus
 - [x] Exit criteria:
 - [x] "100% parity" statement references frozen scope and passing gates, not only check count.
 
-## Optional: Raise check count from 93 to 100 (if numeric target is desired)
+## Optional: Raise check count from 94 to 100 (if numeric target is desired)
 Add seven deterministic domains as part of functional depth:
 - [ ] `URLSessionConfiguration` semantics.
 - [ ] `FileManager` path/URL semantics (sandbox-safe operations only).
@@ -96,7 +96,7 @@ Add seven deterministic domains as part of functional depth:
 
 ## Acceptance Checklist
 - [x] Scope document frozen (required/optional/experimental map).
-- [ ] All required functional checks pass.
+- [x] All required functional checks pass.
 - [x] All required ABI-shape checks pass.
 - [x] No in-scope experimental caveat remains.
 - [x] Stress/fuzz required gates pass at defined budget.
@@ -107,7 +107,7 @@ Add seven deterministic domains as part of functional depth:
 ## Execution Order
 - [x] Freeze scope and required ABI shape list.
 - [x] Stabilize experimental/crash-prone runtime paths.
-- [ ] Add missing required checks and ABI variants.
+- [x] Add missing required checks and ABI variants.
 - [x] Promote stress/fuzz and protocol matrix to required CI gates.
 - [ ] Validate across support matrix.
 - [ ] Publish final parity claim backed by artifacts.

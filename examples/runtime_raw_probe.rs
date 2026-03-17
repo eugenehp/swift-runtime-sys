@@ -1470,6 +1470,37 @@ fn main() {
             reset_f();
         }
     }
+    // Control: drop a fresh counter to verify deinit tracking works at this point.
+    let fresh_deinit_ok = unsafe {
+        let new_f = factory
+            .symbol_address("swift_counter_new")
+            .map(|p| std::mem::transmute::<*mut c_void, CdeclI32ToPtr>(p));
+        let drop_f = factory
+            .symbol_address("swift_counter_drop")
+            .map(|p| std::mem::transmute::<*mut c_void, CdeclPtrToVoid>(p));
+        match (new_f, drop_f) {
+            (Ok(nf), Ok(df)) => {
+                let obj = nf(1);
+                let before = factory
+                    .call_to_i32("swift_counter_deinit_count")
+                    .unwrap_or(-99);
+                df(obj);
+                let after = factory
+                    .call_to_i32("swift_counter_deinit_count")
+                    .unwrap_or(-99);
+                // Reset so the main-counter measurement starts from 0
+                if let Ok(reset_f2) = factory
+                    .symbol_address("swift_counter_deinit_reset")
+                    .map(|q| std::mem::transmute::<*mut c_void, CdeclVoidToVoid>(q))
+                {
+                    reset_f2();
+                }
+                (after - before == 1) as i32
+            }
+            _ => -1,
+        }
+    };
+    println!("counter teardown fresh_deinit_ok={fresh_deinit_ok}");
     loop {
         let rc = factory.retain_count(counter).unwrap_or(0);
         if rc <= 1 {
@@ -1482,16 +1513,23 @@ fn main() {
     let deinit_before = factory
         .call_to_i32("swift_counter_deinit_count")
         .unwrap_or(i32::MIN);
-    let counter_drop_ok = unsafe {
-        match factory
-            .symbol_address("swift_counter_drop")
-            .map(|p| std::mem::transmute::<*mut c_void, CdeclPtrToVoid>(p))
-        {
-            Ok(drop_f) => {
-                drop_f(counter);
-                1
+    // Use swift_release directly: when RC drops to 0, Swift calls deinit.
+    let counter_drop_ok = match factory.release(counter) {
+        Ok(()) => 1i32,
+        Err(_) => {
+            // Fallback: try the @_cdecl helper
+            unsafe {
+                match factory
+                    .symbol_address("swift_counter_drop")
+                    .map(|p| std::mem::transmute::<*mut c_void, CdeclPtrToVoid>(p))
+                {
+                    Ok(drop_f) => {
+                        drop_f(counter);
+                        1
+                    }
+                    Err(_) => 0,
+                }
             }
-            Err(_) => 0,
         }
     };
     let deinit_after = factory
