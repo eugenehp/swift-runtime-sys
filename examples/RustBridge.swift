@@ -101,6 +101,12 @@ public enum SpareBitRef {
     case none
 }
 
+public struct CodablePayload: Codable, Equatable {
+    public var id: Int32
+    public var name: String
+    public var values: [Int32]
+}
+
 private func rawBytes<T>(of value: T) -> [UInt8] {
     withUnsafeBytes(of: value) { Array($0) }
 }
@@ -157,6 +163,34 @@ public func swift_enum_payload_probe_flags() -> Int32 {
     if spareNilZero { flags |= 1 << 4 }
     if spareSomeNonZero { flags |= 1 << 5 }
     if spareSizeEight { flags |= 1 << 6 }
+    return flags
+}
+
+@_cdecl("swift_codable_probe_flags")
+public func swift_codable_probe_flags() -> Int32 {
+    let payload = CodablePayload(id: 7, name: "swift", values: [1, 2, 3])
+
+    var flags: Int32 = 0
+    let encoder = JSONEncoder()
+    let decoder = JSONDecoder()
+
+    if let data = try? encoder.encode(payload),
+       let json = String(data: data, encoding: .utf8) {
+        if json.contains("\"id\":7") && json.contains("\"name\":\"swift\"") {
+            flags |= 1 << 0
+        }
+        if let decoded = try? decoder.decode(CodablePayload.self, from: data), decoded == payload {
+            flags |= 1 << 1
+        }
+    }
+
+    let known = "{\"id\":11,\"name\":\"bridge\",\"values\":[4,5]}".data(using: .utf8)
+    if let known,
+       let decoded = try? decoder.decode(CodablePayload.self, from: known),
+       decoded == CodablePayload(id: 11, name: "bridge", values: [4, 5]) {
+        flags |= 1 << 2
+    }
+
     return flags
 }
 

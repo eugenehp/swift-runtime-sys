@@ -45,6 +45,7 @@ raw_meta_line=$(line_or_empty "raw metadata parity =>" "$PROBE_LOG")
 enum_dir_line=$(line_or_empty "enum Direction tag =>" "$PROBE_LOG")
 enum_shape_line=$(line_or_empty "enum Shape area =>" "$PROBE_LOG")
 enum_payload_line=$(line_or_empty "enum payload =>" "$PROBE_LOG")
+codable_line=$(line_or_empty "codable =>" "$PROBE_LOG")
 inc1=$(echo "$probe_line" | sed -nE 's/.*=> ([0-9-]+), ([0-9-]+).*/\1/p')
 inc2=$(echo "$probe_line" | sed -nE 's/.*=> ([0-9-]+), ([0-9-]+).*/\2/p')
 current=$(extract_number "current" "$probe_line")
@@ -71,6 +72,9 @@ enum_spare_semantic_ok=$(extract_number "spare_semantic_ok" "$enum_payload_line"
 enum_spare_nil_zero=$(extract_number "spare_nil_zero" "$enum_payload_line")
 enum_spare_some_nonzero=$(extract_number "spare_some_nonzero" "$enum_payload_line")
 enum_spare_size_eight=$(extract_number "spare_size_eight" "$enum_payload_line")
+codable_encode_ok=$(extract_number "encode_ok" "$codable_line")
+codable_roundtrip_ok=$(extract_number "roundtrip_ok" "$codable_line")
+codable_known_decode_ok=$(extract_number "known_decode_ok" "$codable_line")
 throws_ok_line=$(line_or_empty "throws safeDivide =>" "$PROBE_LOG")
 throws_err_line=$(line_or_empty "throws safeDivide error =>" "$PROBE_LOG")
 generic_line=$(line_or_empty "generic TypedBox =>" "$PROBE_LOG")
@@ -208,6 +212,7 @@ pass_protocol_dispatch_semantic=0
 pass_enum_simple=0
 pass_enum_associated=0
 pass_enum_payload=0
+pass_codable=0
 pass_throws_success=0
 pass_throws_error=0
 pass_generic_type=0
@@ -258,6 +263,7 @@ if [[ "$enum_dir_initial" == "0" && "$enum_dir_after" == "2" ]]; then pass_enum_
 # circle area ≈78.54, rect area == 12.0; check integer part only via prefix match
 if echo "$enum_shape_circle" | grep -q "^78" && [[ "$enum_shape_rect" == "12.0000"* ]]; then pass_enum_associated=1; fi
 if [[ "$enum_multi_semantic_ok" == "1" && "$enum_multi_distinct" == "1" && "$enum_multi_layout_sane" == "1" && "$enum_spare_semantic_ok" == "1" && "$enum_spare_nil_zero" == "1" && "$enum_spare_some_nonzero" == "1" && "$enum_spare_size_eight" == "1" ]]; then pass_enum_payload=1; fi
+if [[ "$codable_encode_ok" == "1" && "$codable_roundtrip_ok" == "1" && "$codable_known_decode_ok" == "1" ]]; then pass_codable=1; fi
 if [[ "$throws_ok_result" == "5" && "$throws_ok_err_null" == "1" ]]; then pass_throws_success=1; fi
 if [[ "$throws_err_nonnull" == "1" ]]; then pass_throws_error=1; fi
 if [[ "$generic_get1" == "42" && "$generic_get2" == "99" ]]; then pass_generic_type=1; fi
@@ -309,6 +315,7 @@ cat > "$REPORT_JSON" <<JSON
     "enum_simple_tag": $pass_enum_simple,
     "enum_associated_value": $pass_enum_associated,
     "enum_payload_encoding": $pass_enum_payload,
+    "codable_synthesized": $pass_codable,
     "throws_success": $pass_throws_success,
     "throws_error": $pass_throws_error,
     "generic_type": $pass_generic_type,
@@ -351,6 +358,7 @@ cat > "$REPORT_JSON" <<JSON
     "global_line": "${global_line}",
     "raw_meta_line": "${raw_meta_line}",
     "enum_payload_line": "${enum_payload_line}",
+    "codable_line": "${codable_line}",
     "person_bits_line": "${person_bits_line}",
     "retain_init": "${retain_init}",
     "retain_after_release": "${retain_after_release}",
@@ -405,8 +413,8 @@ RUN_TS=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 GIT_HASH=$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo "unknown")
 HISTORY_FILE="$HISTORY_DIR/${RUN_TS//[: ]/_}_${GIT_HASH}.json"
 
-total_checks=47
-pass_count=$(( pass_increment + pass_reset + pass_add_pair + pass_clear + pass_retain + pass_alloc_sizes + pass_lldb + pass_direct_field + pass_protocol_witness + pass_protocol_slot + pass_protocol_dispatch + pass_protocol_dispatch_semantic + pass_global_variable + pass_raw_metadata + pass_enum_simple + pass_enum_associated + pass_enum_payload + pass_throws_success + pass_throws_error + pass_generic_type + pass_string + pass_struct_dispatch + pass_tuple_return + pass_optional_layout + pass_array + pass_string_storage + pass_array_storage + pass_closure + pass_reflection + pass_error_boxing + pass_error_roundtrip + pass_objc_interop + pass_weak_ref + pass_conformance + pass_async_task + pass_actor_executor + pass_generic_metadata + pass_generic_specialization + pass_synth_witness + pass_synth_witness_lldb + pass_value_existential + pass_resilient_layout_metrics + pass_resilient_field_offset + pass_cross_module_resilient + pass_cross_module_existential + pass_arc_edge_stress + pass_fuzz_parity ))
+total_checks=48
+pass_count=$(( pass_increment + pass_reset + pass_add_pair + pass_clear + pass_retain + pass_alloc_sizes + pass_lldb + pass_direct_field + pass_protocol_witness + pass_protocol_slot + pass_protocol_dispatch + pass_protocol_dispatch_semantic + pass_global_variable + pass_raw_metadata + pass_enum_simple + pass_enum_associated + pass_enum_payload + pass_codable + pass_throws_success + pass_throws_error + pass_generic_type + pass_string + pass_struct_dispatch + pass_tuple_return + pass_optional_layout + pass_array + pass_string_storage + pass_array_storage + pass_closure + pass_reflection + pass_error_boxing + pass_error_roundtrip + pass_objc_interop + pass_weak_ref + pass_conformance + pass_async_task + pass_actor_executor + pass_generic_metadata + pass_generic_specialization + pass_synth_witness + pass_synth_witness_lldb + pass_value_existential + pass_resilient_layout_metrics + pass_resilient_field_offset + pass_cross_module_resilient + pass_cross_module_existential + pass_arc_edge_stress + pass_fuzz_parity ))
 
 cat > "$HISTORY_FILE" <<HIST
 {
@@ -433,6 +441,7 @@ cat > "$HISTORY_FILE" <<HIST
     "enum_simple_tag": $pass_enum_simple,
     "enum_associated_value": $pass_enum_associated,
     "enum_payload_encoding": $pass_enum_payload,
+    "codable_synthesized": $pass_codable,
     "throws_success": $pass_throws_success,
     "throws_error": $pass_throws_error,
     "generic_type": $pass_generic_type,
@@ -495,6 +504,7 @@ cat > "$REPORT_MD" <<MD
 | enum simple tag (Direction) | $(status_symbol "$pass_enum_simple") | initial=${enum_dir_initial}, after_write=${enum_dir_after} |
 | enum associated value (Shape) | $(status_symbol "$pass_enum_associated") | circle=${enum_shape_circle}, rect=${enum_shape_rect} |
 | enum payload encoding | $(status_symbol "$pass_enum_payload") | multi_semantic_ok=${enum_multi_semantic_ok}, multi_distinct=${enum_multi_distinct}, multi_layout_sane=${enum_multi_layout_sane}, spare_semantic_ok=${enum_spare_semantic_ok}, spare_nil_zero=${enum_spare_nil_zero}, spare_some_nonzero=${enum_spare_some_nonzero}, spare_size_eight=${enum_spare_size_eight} |
+| Codable synthesized round-trip | $(status_symbol "$pass_codable") | encode_ok=${codable_encode_ok}, roundtrip_ok=${codable_roundtrip_ok}, known_decode_ok=${codable_known_decode_ok} |
 | throws — success path | $(status_symbol "$pass_throws_success") | ok_result=${throws_ok_result}, err_null=${throws_ok_err_null} |
 | throws — error path | $(status_symbol "$pass_throws_error") | throws_nonnull=${throws_err_nonnull} |
 | generic type TypedBox\<Int32\> | $(status_symbol "$pass_generic_type") | get1=${generic_get1}, get2=${generic_get2} |

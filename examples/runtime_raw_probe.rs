@@ -311,6 +311,17 @@ fn main() {
         enum_spare_size_eight as i32,
     );
 
+    let codable_flags = factory.call_to_i32("swift_codable_probe_flags").unwrap_or(0);
+    let codable_encode_ok = (codable_flags & (1 << 0)) != 0;
+    let codable_roundtrip_ok = (codable_flags & (1 << 1)) != 0;
+    let codable_known_decode_ok = (codable_flags & (1 << 2)) != 0;
+    println!(
+        "codable => flags={codable_flags} encode_ok={} roundtrip_ok={} known_decode_ok={}",
+        codable_encode_ok as i32,
+        codable_roundtrip_ok as i32,
+        codable_known_decode_ok as i32,
+    );
+
     // ── throws ABI ────────────────────────────────────────────────────────────
     let throws_sym = "$s10RustBridge10safeDivideys5Int32VAD_ADtKF";
 
