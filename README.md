@@ -287,6 +287,8 @@ The parity report now also tracks:
 - JSONEncoder/JSONDecoder semantics parity (encode, decode, nested structures, null-value handling)
 - PropertyListEncoder/PropertyListDecoder semantics parity (XML and binary format encoding/decoding invariants)
 - Range semantics parity (containment checks, exclusion validation, isEmpty, and count operations)
+- URLQueryItem semantics parity (name/value property access, encoding invariants, nil-value handling)
+- ClosedRange semantics parity (containment checks, bound access, isEmpty, and count operations)
 - seeded randomized parity fuzz checks (`fuzz parity => ...`) validating add/divide/throw invariants
 
 Note: protocol witness dispatch check is currently an experimental callability

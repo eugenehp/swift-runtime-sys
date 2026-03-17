@@ -1224,6 +1224,36 @@ fn main() {
         range_count_ok as i32,
     );
 
+    let url_query_item_flags = factory
+        .call_to_i32("swift_url_query_item_probe_flags")
+        .unwrap_or(0);
+    let url_query_name_ok = (url_query_item_flags & 1) != 0;
+    let url_query_value_ok = (url_query_item_flags & 2) != 0;
+    let url_query_encode_ok = (url_query_item_flags & 4) != 0;
+    let url_query_nil_ok = (url_query_item_flags & 8) != 0;
+    println!(
+        "url query item => flags={url_query_item_flags} name_ok={} value_ok={} encode_ok={} nil_ok={}",
+        url_query_name_ok as i32,
+        url_query_value_ok as i32,
+        url_query_encode_ok as i32,
+        url_query_nil_ok as i32,
+    );
+
+    let closed_range_flags = factory
+        .call_to_i32("swift_closed_range_probe_flags")
+        .unwrap_or(0);
+    let closed_range_contains_ok = (closed_range_flags & 1) != 0;
+    let closed_range_bounds_ok = (closed_range_flags & 2) != 0;
+    let closed_range_not_empty_ok = (closed_range_flags & 4) != 0;
+    let closed_range_count_ok = (closed_range_flags & 8) != 0;
+    println!(
+        "closed range => flags={closed_range_flags} contains_ok={} bounds_ok={} not_empty_ok={} count_ok={}",
+        closed_range_contains_ok as i32,
+        closed_range_bounds_ok as i32,
+        closed_range_not_empty_ok as i32,
+        closed_range_count_ok as i32,
+    );
+
     // ── Value existential dispatch parity ───────────────────────────────────
     let value_existential_current = factory
         .call_to_i32("swift_value_existential_current")

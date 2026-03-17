@@ -1739,6 +1739,40 @@ public func swift_range_probe_flags() -> Int32 {
     return flags
 }
 
+@_cdecl("swift_url_query_item_probe_flags")
+public func swift_url_query_item_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+    let item = URLQueryItem(name: "key", value: "value")
+
+    if item.name == "key" { flags |= 1 }
+
+    if item.value == "value" { flags |= 2 }
+
+    let encodedItem = URLQueryItem(name: "special&char", value: "test=value")
+    if encodedItem.name == "special&char" && encodedItem.value == "test=value" { flags |= 4 }
+
+    let nilItem = URLQueryItem(name: "empty", value: nil)
+    if nilItem.value == nil { flags |= 8 }
+
+    return flags
+}
+
+@_cdecl("swift_closed_range_probe_flags")
+public func swift_closed_range_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+    let closedRange: ClosedRange<Int> = 5...10
+
+    if closedRange.contains(7) { flags |= 1 }
+
+    if closedRange.lowerBound == 5 && closedRange.upperBound == 10 { flags |= 2 }
+
+    if !closedRange.isEmpty { flags |= 4 }
+
+    if closedRange.count == 6 { flags |= 8 }
+
+    return flags
+}
+
 // ── Value existential dispatch parity ───────────────────────────────────────
 public protocol ValueCurrentLike {
     func current() -> Int32
