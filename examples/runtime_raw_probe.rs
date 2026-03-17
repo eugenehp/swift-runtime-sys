@@ -1130,6 +1130,38 @@ fn main() {
         decimal_invalid_ok as i32,
     );
 
+    // ── URLRequest semantics parity ───────────────────────────────────────
+    let url_request_flags = factory
+        .call_to_i32("swift_url_request_probe_flags")
+        .unwrap_or(0);
+    let request_url_method_ok = (url_request_flags & 1) != 0;
+    let request_header_ok = (url_request_flags & 2) != 0;
+    let request_timeout_ok = (url_request_flags & 4) != 0;
+    let request_body_ok = (url_request_flags & 8) != 0;
+    println!(
+        "url request => flags={url_request_flags} url_method_ok={} header_ok={} timeout_ok={} body_ok={}",
+        request_url_method_ok as i32,
+        request_header_ok as i32,
+        request_timeout_ok as i32,
+        request_body_ok as i32,
+    );
+
+    // ── Data base64 semantics parity ──────────────────────────────────────
+    let data_base64_flags = factory
+        .call_to_i32("swift_data_base64_probe_flags")
+        .unwrap_or(0);
+    let base64_encode_ok = (data_base64_flags & 1) != 0;
+    let base64_decode_ok = (data_base64_flags & 2) != 0;
+    let base64_ignore_ok = (data_base64_flags & 4) != 0;
+    let base64_invalid_ok = (data_base64_flags & 8) != 0;
+    println!(
+        "data base64 => flags={data_base64_flags} encode_ok={} decode_ok={} ignore_ok={} invalid_ok={}",
+        base64_encode_ok as i32,
+        base64_decode_ok as i32,
+        base64_ignore_ok as i32,
+        base64_invalid_ok as i32,
+    );
+
     // ── Value existential dispatch parity ───────────────────────────────────
     let value_existential_current = factory
         .call_to_i32("swift_value_existential_current")

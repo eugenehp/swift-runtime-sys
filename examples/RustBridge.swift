@@ -1599,6 +1599,48 @@ public func swift_decimal_probe_flags() -> Int32 {
     return flags
 }
 
+// ── URLRequest semantics parity ────────────────────────────────────────────
+@_cdecl("swift_url_request_probe_flags")
+public func swift_url_request_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+
+    guard let url = URL(string: "https://example.com/api") else { return flags }
+    var request = URLRequest(url: url)
+    request.httpMethod = "POST"
+    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    request.timeoutInterval = 12.5
+
+    let body = Data("{\"x\":1}".utf8)
+    request.httpBody = body
+
+    if request.url?.absoluteString == "https://example.com/api" && request.httpMethod == "POST" { flags |= 1 }
+    if request.value(forHTTPHeaderField: "content-type") == "application/json" { flags |= 2 }
+    if abs(request.timeoutInterval - 12.5) < 0.000_001 { flags |= 4 }
+    if request.httpBody == body { flags |= 8 }
+
+    return flags
+}
+
+// ── Data base64 semantics parity ───────────────────────────────────────────
+@_cdecl("swift_data_base64_probe_flags")
+public func swift_data_base64_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+    let source = Data([0x53, 0x77, 0x69, 0x66, 0x74]) // "Swift"
+
+    let encoded = source.base64EncodedString()
+    if encoded == "U3dpZnQ=" { flags |= 1 }
+
+    if let decoded = Data(base64Encoded: encoded), decoded == source { flags |= 2 }
+
+    if let decodedIgnore = Data(base64Encoded: "U3dp\nZnQ=", options: .ignoreUnknownCharacters), decodedIgnore == source {
+        flags |= 4
+    }
+
+    if Data(base64Encoded: "not-base64") == nil { flags |= 8 }
+
+    return flags
+}
+
 // ── Value existential dispatch parity ───────────────────────────────────────
 public protocol ValueCurrentLike {
     func current() -> Int32

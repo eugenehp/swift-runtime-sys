@@ -130,6 +130,8 @@ locale_line=$(line_or_empty "locale =>" "$PROBE_LOG")
 number_formatter_line=$(line_or_empty "number formatter =>" "$PROBE_LOG")
 url_line=$(line_or_empty "url =>" "$PROBE_LOG")
 decimal_line=$(line_or_empty "decimal =>" "$PROBE_LOG")
+url_request_line=$(line_or_empty "url request =>" "$PROBE_LOG")
+data_base64_line=$(line_or_empty "data base64 =>" "$PROBE_LOG")
 value_existential_line=$(line_or_empty "value existential =>" "$PROBE_LOG")
 resilient_layout_line=$(line_or_empty "resilient layout =>" "$PROBE_LOG")
 cross_module_resilient_line=$(line_or_empty "cross-module resilient =>" "$PROBE_LOG")
@@ -305,6 +307,14 @@ decimal_add_ok=$(extract_number "add_ok" "$decimal_line")
 decimal_mul_ok=$(extract_number "mul_ok" "$decimal_line")
 decimal_round_ok=$(extract_number "round_ok" "$decimal_line")
 decimal_invalid_ok=$(extract_number "invalid_ok" "$decimal_line")
+request_url_method_ok=$(extract_number "url_method_ok" "$url_request_line")
+request_header_ok=$(extract_number "header_ok" "$url_request_line")
+request_timeout_ok=$(extract_number "timeout_ok" "$url_request_line")
+request_body_ok=$(extract_number "body_ok" "$url_request_line")
+base64_encode_ok=$(extract_number "encode_ok" "$data_base64_line")
+base64_decode_ok=$(extract_number "decode_ok" "$data_base64_line")
+base64_ignore_ok=$(extract_number "ignore_ok" "$data_base64_line")
+base64_invalid_ok=$(extract_number "invalid_ok" "$data_base64_line")
 value_existential_current=$(extract_number "current" "$value_existential_line")
 point_size=$(extract_number "point_size" "$resilient_layout_line")
 point_stride=$(extract_number "point_stride" "$resilient_layout_line")
@@ -421,6 +431,8 @@ pass_locale=0
 pass_number_formatter=0
 pass_url=0
 pass_decimal=0
+pass_url_request=0
+pass_data_base64=0
 pass_value_existential=0
 pass_resilient_layout_metrics=0
 pass_resilient_field_offset=0
@@ -507,6 +519,8 @@ if [[ "$locale_identifier_ok" == "1" && "$locale_canonical_ok" == "1" && "$local
 if [[ "$number_format_ok" == "1" && "$number_parse_ok" == "1" && "$number_round_ok" == "1" && "$number_invalid_ok" == "1" ]]; then pass_number_formatter=1; fi
 if [[ "$url_scheme_host_path_ok" == "1" && "$url_query_fragment_ok" == "1" && "$url_absolute_ok" == "1" && "$url_relative_ok" == "1" ]]; then pass_url=1; fi
 if [[ "$decimal_add_ok" == "1" && "$decimal_mul_ok" == "1" && "$decimal_round_ok" == "1" && "$decimal_invalid_ok" == "1" ]]; then pass_decimal=1; fi
+if [[ "$request_url_method_ok" == "1" && "$request_header_ok" == "1" && "$request_timeout_ok" == "1" && "$request_body_ok" == "1" ]]; then pass_url_request=1; fi
+if [[ "$base64_encode_ok" == "1" && "$base64_decode_ok" == "1" && "$base64_ignore_ok" == "1" && "$base64_invalid_ok" == "1" ]]; then pass_data_base64=1; fi
 if [[ "$value_existential_current" == "88" ]]; then pass_value_existential=1; fi
 if [[ "$point_size" == "8" && "$point_stride" == "8" && "$point_align" == "4" && "$resilient_size" == "16" && "$resilient_stride" == "16" && "$resilient_align" == "8" ]]; then pass_resilient_layout_metrics=1; fi
 if [[ "$resilient_b_offset" == "8" ]]; then pass_resilient_field_offset=1; fi
@@ -592,6 +606,8 @@ cat > "$REPORT_JSON" <<JSON
     "number_formatter_semantics": $pass_number_formatter,
     "url_semantics": $pass_url,
     "decimal_semantics": $pass_decimal,
+    "url_request_semantics": $pass_url_request,
+    "data_base64_semantics": $pass_data_base64,
     "value_existential_dispatch": $pass_value_existential,
     "resilient_layout_metrics": $pass_resilient_layout_metrics,
     "resilient_field_offset": $pass_resilient_field_offset,
@@ -673,8 +689,8 @@ RUN_TS=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 GIT_HASH=$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo "unknown")
 HISTORY_FILE="$HISTORY_DIR/${RUN_TS//[: ]/_}_${GIT_HASH}.json"
 
-total_checks=81
-pass_count=$(( pass_increment + pass_reset + pass_add_pair + pass_clear + pass_retain + pass_alloc_sizes + pass_lldb + pass_direct_field + pass_protocol_witness + pass_protocol_slot + pass_protocol_dispatch + pass_protocol_dispatch_semantic + pass_global_variable + pass_raw_metadata + pass_enum_simple + pass_enum_associated + pass_enum_payload + pass_codable + pass_throws_success + pass_throws_error + pass_generic_type + pass_string + pass_struct_dispatch + pass_tuple_return + pass_optional_layout + pass_array + pass_string_storage + pass_array_storage + pass_closure + pass_reflection + pass_error_boxing + pass_error_roundtrip + pass_objc_interop + pass_weak_ref + pass_conformance + pass_async_task + pass_actor_executor + pass_generic_metadata + pass_generic_specialization + pass_synth_witness + pass_synth_witness_lldb + pass_keypath_synth + pass_property_wrapper_synth + pass_result_builder_synth + pass_opaque_return + pass_task_local + pass_dynamic_replacement + pass_sendable + pass_continuation + pass_task_group + pass_async_stream + pass_unsafe_memory + pass_proto_composition + pass_enum_raw_value + pass_option_set + pass_case_iterable + pass_set_algebra + pass_dictionary + pass_comparable + pass_result + pass_data + pass_uuid + pass_character_set + pass_url_components + pass_calendar + pass_index_set + pass_time_zone + pass_measurement + pass_date_formatter + pass_scanner + pass_locale + pass_number_formatter + pass_url + pass_decimal + pass_value_existential + pass_resilient_layout_metrics + pass_resilient_field_offset + pass_cross_module_resilient + pass_cross_module_existential + pass_arc_edge_stress + pass_fuzz_parity ))
+total_checks=83
+pass_count=$(( pass_increment + pass_reset + pass_add_pair + pass_clear + pass_retain + pass_alloc_sizes + pass_lldb + pass_direct_field + pass_protocol_witness + pass_protocol_slot + pass_protocol_dispatch + pass_protocol_dispatch_semantic + pass_global_variable + pass_raw_metadata + pass_enum_simple + pass_enum_associated + pass_enum_payload + pass_codable + pass_throws_success + pass_throws_error + pass_generic_type + pass_string + pass_struct_dispatch + pass_tuple_return + pass_optional_layout + pass_array + pass_string_storage + pass_array_storage + pass_closure + pass_reflection + pass_error_boxing + pass_error_roundtrip + pass_objc_interop + pass_weak_ref + pass_conformance + pass_async_task + pass_actor_executor + pass_generic_metadata + pass_generic_specialization + pass_synth_witness + pass_synth_witness_lldb + pass_keypath_synth + pass_property_wrapper_synth + pass_result_builder_synth + pass_opaque_return + pass_task_local + pass_dynamic_replacement + pass_sendable + pass_continuation + pass_task_group + pass_async_stream + pass_unsafe_memory + pass_proto_composition + pass_enum_raw_value + pass_option_set + pass_case_iterable + pass_set_algebra + pass_dictionary + pass_comparable + pass_result + pass_data + pass_uuid + pass_character_set + pass_url_components + pass_calendar + pass_index_set + pass_time_zone + pass_measurement + pass_date_formatter + pass_scanner + pass_locale + pass_number_formatter + pass_url + pass_decimal + pass_url_request + pass_data_base64 + pass_value_existential + pass_resilient_layout_metrics + pass_resilient_field_offset + pass_cross_module_resilient + pass_cross_module_existential + pass_arc_edge_stress + pass_fuzz_parity ))
 
 cat > "$HISTORY_FILE" <<HIST
 {
@@ -758,6 +774,8 @@ cat > "$HISTORY_FILE" <<HIST
     "number_formatter_semantics": $pass_number_formatter,
     "url_semantics": $pass_url,
     "decimal_semantics": $pass_decimal,
+    "url_request_semantics": $pass_url_request,
+    "data_base64_semantics": $pass_data_base64,
     "value_existential_dispatch": $pass_value_existential,
     "resilient_layout_metrics": $pass_resilient_layout_metrics,
     "resilient_field_offset": $pass_resilient_field_offset,
@@ -854,6 +872,8 @@ cat > "$REPORT_MD" <<MD
 | number formatter semantics | $(status_symbol "$pass_number_formatter") | format_ok=${number_format_ok}, parse_ok=${number_parse_ok}, round_ok=${number_round_ok}, invalid_ok=${number_invalid_ok} |
 | URL semantics | $(status_symbol "$pass_url") | scheme_host_path_ok=${url_scheme_host_path_ok}, query_fragment_ok=${url_query_fragment_ok}, absolute_ok=${url_absolute_ok}, relative_ok=${url_relative_ok} |
 | decimal semantics | $(status_symbol "$pass_decimal") | add_ok=${decimal_add_ok}, mul_ok=${decimal_mul_ok}, round_ok=${decimal_round_ok}, invalid_ok=${decimal_invalid_ok} |
+| URLRequest semantics | $(status_symbol "$pass_url_request") | url_method_ok=${request_url_method_ok}, header_ok=${request_header_ok}, timeout_ok=${request_timeout_ok}, body_ok=${request_body_ok} |
+| data base64 semantics | $(status_symbol "$pass_data_base64") | encode_ok=${base64_encode_ok}, decode_ok=${base64_decode_ok}, ignore_ok=${base64_ignore_ok}, invalid_ok=${base64_invalid_ok} |
 | value existential dispatch | $(status_symbol "$pass_value_existential") | current=${value_existential_current} |
 | resilient layout metrics | $(status_symbol "$pass_resilient_layout_metrics") | point(size=${point_size},stride=${point_stride},align=${point_align}) resilient(size=${resilient_size},stride=${resilient_stride},align=${resilient_align}) |
 | resilient field offset | $(status_symbol "$pass_resilient_field_offset") | b_offset=${resilient_b_offset} |
