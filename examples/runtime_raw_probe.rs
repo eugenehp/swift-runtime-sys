@@ -1102,6 +1102,34 @@ fn main() {
         number_invalid_ok as i32,
     );
 
+    // ── URL semantics parity ───────────────────────────────────────────────
+    let url_flags = factory.call_to_i32("swift_url_probe_flags").unwrap_or(0);
+    let url_scheme_host_path_ok = (url_flags & 1) != 0;
+    let url_query_fragment_ok = (url_flags & 2) != 0;
+    let url_absolute_ok = (url_flags & 4) != 0;
+    let url_relative_ok = (url_flags & 8) != 0;
+    println!(
+        "url => flags={url_flags} scheme_host_path_ok={} query_fragment_ok={} absolute_ok={} relative_ok={}",
+        url_scheme_host_path_ok as i32,
+        url_query_fragment_ok as i32,
+        url_absolute_ok as i32,
+        url_relative_ok as i32,
+    );
+
+    // ── Decimal semantics parity ───────────────────────────────────────────
+    let decimal_flags = factory.call_to_i32("swift_decimal_probe_flags").unwrap_or(0);
+    let decimal_add_ok = (decimal_flags & 1) != 0;
+    let decimal_mul_ok = (decimal_flags & 2) != 0;
+    let decimal_round_ok = (decimal_flags & 4) != 0;
+    let decimal_invalid_ok = (decimal_flags & 8) != 0;
+    println!(
+        "decimal => flags={decimal_flags} add_ok={} mul_ok={} round_ok={} invalid_ok={}",
+        decimal_add_ok as i32,
+        decimal_mul_ok as i32,
+        decimal_round_ok as i32,
+        decimal_invalid_ok as i32,
+    );
+
     // ── Value existential dispatch parity ───────────────────────────────────
     let value_existential_current = factory
         .call_to_i32("swift_value_existential_current")

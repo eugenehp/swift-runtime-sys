@@ -279,6 +279,8 @@ The parity report now also tracks:
 - scanner semantics parity (`Scanner` int/double/token scan progression and end-of-input invariant)
 - locale semantics parity (canonical identifier normalization, decimal separator, and language/country component invariants)
 - number formatter semantics parity (decimal rendering/parsing, half-up rounding, and invalid-input rejection invariants)
+- URL semantics parity (scheme/host/path, query/fragment, absolute-string, and relative-resolution invariants)
+- decimal semantics parity (`Decimal` add/multiply/round and invalid-parse rejection invariants)
 - seeded randomized parity fuzz checks (`fuzz parity => ...`) validating add/divide/throw invariants
 
 Note: protocol witness dispatch check is currently an experimental callability

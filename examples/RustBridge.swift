@@ -1550,6 +1550,55 @@ public func swift_number_formatter_probe_flags() -> Int32 {
     return flags
 }
 
+// ── URL semantics parity ───────────────────────────────────────────────────
+@_cdecl("swift_url_probe_flags")
+public func swift_url_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+
+    if let url = URL(string: "https://example.com/a%20b?q=1#frag") {
+        if url.scheme == "https" && url.host == "example.com" && url.path == "/a b" { flags |= 1 }
+        if url.query == "q=1" && url.fragment == "frag" { flags |= 2 }
+        if url.absoluteString == "https://example.com/a%20b?q=1#frag" { flags |= 4 }
+    }
+
+    if let base = URL(string: "https://example.com/a/b/"),
+       let resolved = URL(string: "../c", relativeTo: base)?.absoluteURL.absoluteString,
+       resolved == "https://example.com/a/c" {
+        flags |= 8
+    }
+
+    return flags
+}
+
+// ── Decimal semantics parity ───────────────────────────────────────────────
+@_cdecl("swift_decimal_probe_flags")
+public func swift_decimal_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+    let posix = Locale(identifier: "en_US_POSIX")
+
+    guard var left = Decimal(string: "1.20", locale: posix),
+          var right = Decimal(string: "2.30", locale: posix) else {
+        return flags
+    }
+
+    var sum = Decimal()
+    NSDecimalAdd(&sum, &left, &right, .plain)
+    if sum == Decimal(string: "3.50", locale: posix) { flags |= 1 }
+
+    var product = Decimal()
+    NSDecimalMultiply(&product, &left, &right, .plain)
+    if product == Decimal(string: "2.760", locale: posix) { flags |= 2 }
+
+    var input = Decimal(string: "2.676", locale: posix)!
+    var rounded = Decimal()
+    NSDecimalRound(&rounded, &input, 2, .plain)
+    if rounded == Decimal(string: "2.68", locale: posix) { flags |= 4 }
+
+    if Decimal(string: "not_a_number", locale: posix) == nil { flags |= 8 }
+
+    return flags
+}
+
 // ── Value existential dispatch parity ───────────────────────────────────────
 public protocol ValueCurrentLike {
     func current() -> Int32
