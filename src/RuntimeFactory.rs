@@ -34,6 +34,7 @@ type CallExistentialClassToI32ByAddress =
 type F32ToF32 = unsafe extern "C" fn(f32) -> f32;
 type F32F32ToF32 = unsafe extern "C" fn(f32, f32) -> f32;
 type I32ToI32 = unsafe extern "C" fn(i32) -> i32;
+type ZeroToCString = unsafe extern "C" fn() -> *const c_char;
 
 /// Return value for a Swift `throws` call: either the result or the error object.
 #[derive(Debug)]
@@ -95,6 +96,13 @@ struct DlInfo {
 pub enum RuntimeFactoryError {
     OpenLibrary(String),
     ResolveSymbol { symbol: String, error: String },
+    ContractValidation(String),
+}
+
+#[derive(Debug, Clone)]
+pub struct RuntimeContractDescriptor {
+    pub version: i32,
+    pub json: String,
 }
 
 pub struct RuntimeFactory {
@@ -253,6 +261,79 @@ impl RuntimeFactory {
         type ZeroToI32 = unsafe extern "C" fn() -> i32;
         let f: ZeroToI32 = resolve_symbol_any(symbol)?;
         Ok(unsafe { f() })
+    }
+
+    /// Calls a cdecl function `() -> const char*` and copies it into a Rust String.
+    pub fn call_to_cstring(&self, symbol: &str) -> Result<String, RuntimeFactoryError> {
+        let f: ZeroToCString = resolve_symbol_any(symbol)?;
+        let ptr = unsafe { f() };
+        if ptr.is_null() {
+            return Err(RuntimeFactoryError::ContractValidation(format!(
+                "{symbol} returned null"
+            )));
+        }
+        Ok(unsafe { CStr::from_ptr(ptr) }.to_string_lossy().into_owned())
+    }
+
+    /// Loads the Swift runtime contract descriptor exposed by the bridge.
+    pub fn runtime_contract_descriptor(&self) -> Result<RuntimeContractDescriptor, RuntimeFactoryError> {
+        let version = self.call_to_i32("swift_runtime_contract_version")?;
+        let json_len = self.call_to_i32("swift_runtime_contract_json_len")?;
+        if json_len <= 0 {
+            return Err(RuntimeFactoryError::ContractValidation(
+                "swift_runtime_contract_json_len returned non-positive length".to_string(),
+            ));
+        }
+
+        let json = self.call_to_cstring("swift_runtime_contract_json")?;
+        if json.is_empty() {
+            return Err(RuntimeFactoryError::ContractValidation(
+                "swift runtime contract JSON is empty".to_string(),
+            ));
+        }
+
+        // Ensure declared UTF-8 byte length matches exported length.
+        if json.as_bytes().len() != json_len as usize {
+            return Err(RuntimeFactoryError::ContractValidation(format!(
+                "contract JSON length mismatch: declared={json_len}, actual={}",
+                json.as_bytes().len()
+            )));
+        }
+
+        Ok(RuntimeContractDescriptor { version, json })
+    }
+
+    /// Validates minimum required fields and contract version.
+    pub fn validate_runtime_contract(
+        &self,
+        expected_version: i32,
+    ) -> Result<RuntimeContractDescriptor, RuntimeFactoryError> {
+        let descriptor = self.runtime_contract_descriptor()?;
+
+        if descriptor.version != expected_version {
+            return Err(RuntimeFactoryError::ContractValidation(format!(
+                "contract version mismatch: expected={expected_version}, got={}",
+                descriptor.version
+            )));
+        }
+
+        let required_tokens = [
+            "\"contract_version\"",
+            "\"types\"",
+            "\"ownership\"",
+            "\"capabilities\"",
+            "\"type_id\"",
+        ];
+
+        for token in required_tokens {
+            if !descriptor.json.contains(token) {
+                return Err(RuntimeFactoryError::ContractValidation(format!(
+                    "contract JSON missing required token: {token}"
+                )));
+            }
+        }
+
+        Ok(descriptor)
     }
 
     /// Calls a cdecl function `(Float) -> Float`.

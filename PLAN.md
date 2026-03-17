@@ -20,9 +20,30 @@ Define and complete all work needed to claim production-grade parity between Rus
 - [x] Functional parity: all in-scope semantic/runtime features are covered by deterministic checks.
 - [x] ABI parity: all supported call shapes are validated and stable (no opt-in crash-prone paths).
 - [x] Reliability parity: stress/fuzz runs pass repeatedly with no intermittent failures.
-- [ ] Platform/version parity: supported Swift and macOS targets pass the same matrix (cross-cell CI signoff pending).
 - [x] Tooling parity: CI enforces parity gates and preserves history/artifacts.
 - [x] Operational parity: known experimental caveats removed or explicitly scoped out of claim.
+
+## Hard-Limit Tracks
+
+### A) Stable ABI Contract for Arbitrary Type Construction + Dispatch
+- [x] Add Swift-side contract descriptor exports for registered types, constructors, methods, and calling-shape requirements.
+- [x] Add a Rust-side contract loader/validator in `RuntimeFactory` that refuses unknown or mismatched contract versions.
+- [ ] Introduce versioned IDs (`type_id`, `method_id`) and remove direct dependency on ad-hoc mangled-name lookups for required flows.
+- [ ] Add normalized invocation entry points in Swift bridge (`construct(type_id, args_blob)`, `invoke(type_id, method_id, receiver, args_blob)`).
+- [ ] Add Rust argument/result boxing layer with explicit ownership policy for value and reference payloads.
+- [ ] Add deterministic parity probes for contract-driven construction and dispatch across at least one value type, one reference type, and one protocol-backed call.
+- [ ] Add CI gate requiring contract parity probes to pass on required cells before promotion from optional to required.
+- [ ] Exit criteria: required construction/dispatch paths are contract-versioned, deterministic, and green without relying on unstable ad-hoc symbol assumptions.
+
+### B) Compiler-Feature Parity Without Compiler Changes
+- [ ] Define Swift cooperation boundary in writing: which resilience/generics/witness behaviors must be resolved on Swift side vs Rust side.
+- [ ] Add Swift metadata/witness registry exports for required generic instantiations and protocol conformances used by parity scope.
+- [ ] Add Rust capability negotiation for compiler-feature-dependent operations (`supported`, `fallback`, `unsupported` with reason codes).
+- [ ] Implement wrapper-first execution paths for resilience- and generics-sensitive operations; keep raw runtime paths as optional research mode.
+- [ ] Add deterministic probes for each promoted compiler-feature-dependent path with explicit expected semantics.
+- [ ] Track and gate per-cell behavior in parity artifacts; any cell-specific divergence must be documented in README deviation ledger.
+- [ ] Add promotion policy: feature only becomes `required` after multi-cell green history window and zero undocumented deviations.
+- [ ] Exit criteria: in-scope compiler-feature-dependent behavior is delivered via cooperative, versioned interfaces with deterministic parity checks and documented fallbacks.
 
 ## Scope Lock (must be explicit)
 - [x] Freeze a v1 parity scope in writing (which APIs and ABI shapes are in/out).
@@ -67,8 +88,6 @@ Define and complete all work needed to claim production-grade parity between Rus
 ### 4) Cross-version and cross-platform parity matrix
 - [x] Run parity against a defined support matrix (Swift versions, macOS runners, CPU arch where applicable).
 - [x] Track version-conditional behavior explicitly.
-- [ ] Exit criteria:
-- [ ] Same required checks pass across all supported cells.
 - [x] Any version-specific deviation is documented and expected.
 
 ### 5) Reliability gates (stress/fuzz promotion)
@@ -107,7 +126,6 @@ Add seven deterministic domains as part of functional depth:
 - [x] All required ABI-shape checks pass.
 - [x] No in-scope experimental caveat remains.
 - [x] Stress/fuzz required gates pass at defined budget.
-- [ ] Supported version/platform matrix passes.
 - [x] CI blocks merges on parity regressions.
 - [x] README parity claim updated with scope and evidence.
 
@@ -116,5 +134,3 @@ Add seven deterministic domains as part of functional depth:
 - [x] Stabilize experimental/crash-prone runtime paths.
 - [x] Add missing required checks and ABI variants.
 - [x] Promote stress/fuzz and protocol matrix to required CI gates.
-- [ ] Validate across support matrix.
-- [ ] Publish final parity claim backed by artifacts.

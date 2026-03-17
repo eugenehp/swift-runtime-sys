@@ -5,6 +5,27 @@ import ResilientFixtures
 
 public var globalCounterValue: Int32 = 123
 
+private let runtimeContractVersion: Int32 = 1
+private let runtimeContractJSONString = """
+{"contract_version":1,"bridge":"RustBridge","types":[{"type_id":1,"name":"Person","kind":"value","constructors":[{"ctor_id":1,"symbol":"swift_person_new","args":["Int32","Int32"],"result":"OpaqueRef"}]},{"type_id":2,"name":"Counter","kind":"reference","constructors":[{"ctor_id":1,"symbol":"swift_counter_new","args":["Int32"],"result":"OpaqueRef"}],"methods":[{"method_id":1,"name":"increment","symbol":"runtime_thunk_counter_increment_x20","shape":"self_i32_to_i32"},{"method_id":2,"name":"current","symbol":"runtime_thunk_counter_current_x20","shape":"self_to_i32"},{"method_id":3,"name":"reset","symbol":"runtime_thunk_counter_reset_x20","shape":"self_i32_to_void"}]}],"ownership":{"opaque_ref":"swift_retain/swift_release","drop_export":"swift_counter_drop"},"capabilities":{"contract_descriptor":true,"versioned_ids":true,"raw_runtime_research_mode":true}}
+"""
+private let runtimeContractNSString = NSString(string: runtimeContractJSONString)
+
+@_cdecl("swift_runtime_contract_version")
+public func swift_runtime_contract_version() -> Int32 {
+    runtimeContractVersion
+}
+
+@_cdecl("swift_runtime_contract_json")
+public func swift_runtime_contract_json() -> UnsafePointer<CChar>? {
+    runtimeContractNSString.utf8String
+}
+
+@_cdecl("swift_runtime_contract_json_len")
+public func swift_runtime_contract_json_len() -> Int32 {
+    Int32(runtimeContractNSString.lengthOfBytes(using: String.Encoding.utf8.rawValue))
+}
+
 public struct Person {
     public let id: Int32
     public let age: Int32
