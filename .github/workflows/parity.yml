@@ -157,3 +157,28 @@ jobs:
         with:
           name: protocol-dispatch-${{ github.sha }}
           path: target/runtime-probe/protocol-dispatch-matrix.md
+
+  support_matrix_signoff:
+    name: Support matrix signoff
+    runs-on: macos-15
+    needs: [parity, stress, protocol_dispatch]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download parity artifacts from all cells
+        uses: actions/download-artifact@v4
+        with:
+          pattern: parity-report-*
+          path: target/ci/parity-artifacts
+          merge-multiple: false
+
+      - name: Validate support matrix parity artifacts
+        run: ./scripts/validate_support_matrix_artifacts.sh target/ci/parity-artifacts
+
+      - name: Upload support matrix signoff artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: support-matrix-signoff-${{ github.sha }}
+          path: target/runtime-probe/support-matrix-signoff.md

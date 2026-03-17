@@ -261,6 +261,7 @@ Required:
 - `scripts/run_protocol_dispatch_matrix.sh` completes and publishes matrix output.
 - CI uploads parity/stress/protocol artifacts for each run.
 - Required protocol dispatch variant (`existential`) passes with semantic parity.
+- CI support-matrix signoff job validates parity artifacts from all required cells.
 
 Optional:
 
@@ -302,6 +303,10 @@ CI-equivalent budgets used in `.github/workflows/parity.yml`:
 
 A parity claim is valid only when all required gates above pass and artifacts are
 generated for matrix, stress, and protocol-dispatch runs.
+
+CI support-matrix signoff artifact:
+
+- `target/runtime-probe/support-matrix-signoff.md`
 
 Final claim publication criteria:
 
