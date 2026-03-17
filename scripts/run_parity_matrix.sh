@@ -142,6 +142,13 @@ date_interval_line=$(line_or_empty "date interval =>" "$PROBE_LOG")
 index_path_line=$(line_or_empty "index path =>" "$PROBE_LOG")
 iso8601_line=$(line_or_empty "iso8601 =>" "$PROBE_LOG")
 url_percent_line=$(line_or_empty "url percent encoding =>" "$PROBE_LOG")
+url_session_config_line=$(line_or_empty "url session config =>" "$PROBE_LOG")
+file_manager_line=$(line_or_empty "file manager =>" "$PROBE_LOG")
+date_components_line=$(line_or_empty "date components =>" "$PROBE_LOG")
+notification_line=$(line_or_empty "notification =>" "$PROBE_LOG")
+byte_count_line=$(line_or_empty "byte count formatter =>" "$PROBE_LOG")
+range_bridge_line=$(line_or_empty "range bridge =>" "$PROBE_LOG")
+attributed_string_line=$(line_or_empty "attributed string =>" "$PROBE_LOG")
 value_existential_line=$(line_or_empty "value existential =>" "$PROBE_LOG")
 resilient_layout_line=$(line_or_empty "resilient layout =>" "$PROBE_LOG")
 cross_module_resilient_line=$(line_or_empty "cross-module resilient =>" "$PROBE_LOG")
@@ -365,6 +372,34 @@ url_percent_encode_ok=$(extract_number "encode_ok" "$url_percent_line")
 url_percent_decode_ok=$(extract_number "decode_ok" "$url_percent_line")
 url_percent_reserved_ok=$(extract_number "reserved_ok" "$url_percent_line")
 url_percent_invalid_ok=$(extract_number "invalid_ok" "$url_percent_line")
+url_session_cache_policy_ok=$(extract_number "cache_policy_ok" "$url_session_config_line")
+url_session_ephemeral_cache_ok=$(extract_number "ephemeral_cache_ok" "$url_session_config_line")
+url_session_timeout_ok=$(extract_number "timeout_ok" "$url_session_config_line")
+url_session_cellular_ok=$(extract_number "cellular_ok" "$url_session_config_line")
+file_manager_temp_dir_ok=$(extract_number "temp_dir_ok" "$file_manager_line")
+file_manager_create_ok=$(extract_number "create_ok" "$file_manager_line")
+file_manager_read_ok=$(extract_number "read_ok" "$file_manager_line")
+file_manager_remove_ok=$(extract_number "remove_ok" "$file_manager_line")
+date_components_normalize_ok=$(extract_number "normalize_ok" "$date_components_line")
+date_components_roundtrip_ok=$(extract_number "roundtrip_ok" "$date_components_line")
+date_components_weekday_ok=$(extract_number "weekday_ok" "$date_components_line")
+date_components_interval_ok=$(extract_number "interval_ok" "$date_components_line")
+notification_name_ok=$(extract_number "name_ok" "$notification_line")
+notification_user_info_ok=$(extract_number "user_info_ok" "$notification_line")
+notification_delivery_ok=$(extract_number "delivery_ok" "$notification_line")
+notification_object_ok=$(extract_number "object_ok" "$notification_line")
+byte_count_unit_ok=$(extract_number "unit_ok" "$byte_count_line")
+byte_count_1024_ok=$(extract_number "thousand_ok" "$byte_count_line")
+byte_count_kb_ok=$(extract_number "kb_ok" "$byte_count_line")
+byte_count_zero_ok=$(extract_number "zero_ok" "$byte_count_line")
+range_bridge_ascii_ok=$(extract_number "ascii_ok" "$range_bridge_line")
+range_bridge_nsrange_ok=$(extract_number "nsrange_ok" "$range_bridge_line")
+range_bridge_invalid_ok=$(extract_number "invalid_ok" "$range_bridge_line")
+range_bridge_unicode_ok=$(extract_number "unicode_ok" "$range_bridge_line")
+attributed_string_ns_ok=$(extract_number "ns_ok" "$attributed_string_line")
+attributed_string_swift_ok=$(extract_number "swift_ok" "$attributed_string_line")
+attributed_string_roundtrip_ok=$(extract_number "roundtrip_ok" "$attributed_string_line")
+attributed_string_append_ok=$(extract_number "append_ok" "$attributed_string_line")
 value_existential_current=$(extract_number "current" "$value_existential_line")
 point_size=$(extract_number "point_size" "$resilient_layout_line")
 point_stride=$(extract_number "point_stride" "$resilient_layout_line")
@@ -499,6 +534,13 @@ pass_date_interval=0
 pass_index_path=0
 pass_iso8601=0
 pass_url_percent=0
+pass_url_session_config=0
+pass_file_manager=0
+pass_date_components=0
+pass_notification=0
+pass_byte_count_formatter=0
+pass_range_bridge=0
+pass_attributed_string=0
 pass_value_existential=0
 pass_resilient_layout_metrics=0
 pass_resilient_field_offset=0
@@ -598,6 +640,13 @@ if [[ "$date_interval_duration_ok" == "1" && "$date_interval_contains_ok" == "1"
 if [[ "$index_path_count_ok" == "1" && "$index_path_index_ok" == "1" && "$index_path_append_ok" == "1" && "$index_path_compare_ok" == "1" ]]; then pass_index_path=1; fi
 if [[ "$iso8601_basic_ok" == "1" && "$iso8601_parse_ok" == "1" && "$iso8601_fractional_ok" == "1" && "$iso8601_fractional_parse_ok" == "1" ]]; then pass_iso8601=1; fi
 if [[ "$url_percent_encode_ok" == "1" && "$url_percent_decode_ok" == "1" && "$url_percent_reserved_ok" == "1" && "$url_percent_invalid_ok" == "1" ]]; then pass_url_percent=1; fi
+if [[ "$url_session_cache_policy_ok" == "1" && "$url_session_ephemeral_cache_ok" == "1" && "$url_session_timeout_ok" == "1" && "$url_session_cellular_ok" == "1" ]]; then pass_url_session_config=1; fi
+if [[ "$file_manager_temp_dir_ok" == "1" && "$file_manager_create_ok" == "1" && "$file_manager_read_ok" == "1" && "$file_manager_remove_ok" == "1" ]]; then pass_file_manager=1; fi
+if [[ "$date_components_normalize_ok" == "1" && "$date_components_roundtrip_ok" == "1" && "$date_components_weekday_ok" == "1" && "$date_components_interval_ok" == "1" ]]; then pass_date_components=1; fi
+if [[ "$notification_name_ok" == "1" && "$notification_user_info_ok" == "1" && "$notification_delivery_ok" == "1" && "$notification_object_ok" == "1" ]]; then pass_notification=1; fi
+if [[ "$byte_count_unit_ok" == "1" && "$byte_count_1024_ok" == "1" && "$byte_count_kb_ok" == "1" && "$byte_count_zero_ok" == "1" ]]; then pass_byte_count_formatter=1; fi
+if [[ "$range_bridge_ascii_ok" == "1" && "$range_bridge_nsrange_ok" == "1" && "$range_bridge_invalid_ok" == "1" && "$range_bridge_unicode_ok" == "1" ]]; then pass_range_bridge=1; fi
+if [[ "$attributed_string_ns_ok" == "1" && "$attributed_string_swift_ok" == "1" && "$attributed_string_roundtrip_ok" == "1" && "$attributed_string_append_ok" == "1" ]]; then pass_attributed_string=1; fi
 if [[ "$value_existential_current" == "88" ]]; then pass_value_existential=1; fi
 if [[ "$point_size" == "8" && "$point_stride" == "8" && "$point_align" == "4" && "$resilient_size" == "16" && "$resilient_stride" == "16" && "$resilient_align" == "8" ]]; then pass_resilient_layout_metrics=1; fi
 if [[ "$resilient_b_offset" == "8" ]]; then pass_resilient_field_offset=1; fi
@@ -696,6 +745,13 @@ cat > "$REPORT_JSON" <<JSON
     "index_path_semantics": $pass_index_path,
     "iso8601_semantics": $pass_iso8601,
     "url_percent_encoding_semantics": $pass_url_percent,
+    "url_session_configuration_semantics": $pass_url_session_config,
+    "file_manager_semantics": $pass_file_manager,
+    "date_components_semantics": $pass_date_components,
+    "notification_semantics": $pass_notification,
+    "byte_count_formatter_semantics": $pass_byte_count_formatter,
+    "range_bridge_semantics": $pass_range_bridge,
+    "attributed_string_bridge_semantics": $pass_attributed_string,
     "value_existential_dispatch": $pass_value_existential,
     "resilient_layout_metrics": $pass_resilient_layout_metrics,
     "resilient_field_offset": $pass_resilient_field_offset,
@@ -757,6 +813,13 @@ cat > "$REPORT_JSON" <<JSON
     "task_local_line": "${task_local_line}",
     "dynamic_replacement_line": "${dynamic_replacement_line}",
     "sendable_line": "${sendable_line}",
+    "url_session_config_line": "${url_session_config_line}",
+    "file_manager_line": "${file_manager_line}",
+    "date_components_line": "${date_components_line}",
+    "notification_line": "${notification_line}",
+    "byte_count_line": "${byte_count_line}",
+    "range_bridge_line": "${range_bridge_line}",
+    "attributed_string_line": "${attributed_string_line}",
     "value_existential_line": "${value_existential_line}",
     "resilient_layout_line": "${resilient_layout_line}",
     "cross_module_resilient_line": "${cross_module_resilient_line}",
@@ -779,9 +842,9 @@ RUN_TS=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 GIT_HASH=$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo "unknown")
 HISTORY_FILE="$HISTORY_DIR/${RUN_TS//[: ]/_}_${GIT_HASH}.json"
 
-total_checks=94
+total_checks=101
 pass_count=$(( pass_increment + pass_reset + pass_add_pair + pass_clear + pass_retain + pass_alloc_sizes + pass_lldb + pass_direct_field + pass_protocol_witness + pass_protocol_slot + pass_protocol_dispatch + pass_protocol_dispatch_semantic + pass_global_variable + pass_raw_metadata + pass_enum_simple + pass_enum_associated + pass_enum_payload + pass_codable + pass_throws_success + pass_throws_error + pass_generic_type + pass_string + pass_struct_dispatch + pass_tuple_return + pass_optional_layout + pass_array + pass_string_storage + pass_array_storage + pass_closure + pass_reflection + pass_error_boxing + pass_error_roundtrip + pass_objc_interop + pass_weak_ref + pass_conformance + pass_async_task + pass_actor_executor + pass_generic_metadata + pass_generic_specialization + pass_synth_witness + pass_synth_witness_lldb + pass_keypath_synth + pass_property_wrapper_synth + pass_result_builder_synth + pass_opaque_return + pass_task_local + pass_dynamic_replacement + pass_sendable + pass_continuation + pass_task_group + pass_async_stream + pass_unsafe_memory + pass_proto_composition + pass_enum_raw_value + pass_option_set + pass_case_iterable + pass_set_algebra + pass_dictionary + pass_comparable + pass_result + pass_data + pass_uuid + pass_character_set + pass_url_components + pass_calendar + pass_index_set + pass_time_zone + pass_measurement + pass_date_formatter + pass_scanner + pass_locale + pass_number_formatter + pass_url + pass_decimal + pass_url_request + pass_data_base64 + pass_http_response + pass_json_encoder + pass_plist_encoder + pass_range + pass_url_query_item + pass_closed_range + pass_date_interval + pass_index_path + pass_iso8601 + pass_url_percent + pass_value_existential + pass_resilient_layout_metrics + pass_resilient_field_offset + pass_cross_module_resilient + pass_cross_module_existential + pass_arc_edge_stress + pass_fuzz_parity ))
-pass_count=$(( pass_count + pass_counter_deinit ))
+pass_count=$(( pass_count + pass_counter_deinit + pass_url_session_config + pass_file_manager + pass_date_components + pass_notification + pass_byte_count_formatter + pass_range_bridge + pass_attributed_string ))
 
 cat > "$HISTORY_FILE" <<HIST
 {
@@ -878,6 +941,13 @@ cat > "$HISTORY_FILE" <<HIST
     "index_path_semantics": $pass_index_path,
     "iso8601_semantics": $pass_iso8601,
     "url_percent_encoding_semantics": $pass_url_percent,
+    "url_session_configuration_semantics": $pass_url_session_config,
+    "file_manager_semantics": $pass_file_manager,
+    "date_components_semantics": $pass_date_components,
+    "notification_semantics": $pass_notification,
+    "byte_count_formatter_semantics": $pass_byte_count_formatter,
+    "range_bridge_semantics": $pass_range_bridge,
+    "attributed_string_bridge_semantics": $pass_attributed_string,
     "value_existential_dispatch": $pass_value_existential,
     "resilient_layout_metrics": $pass_resilient_layout_metrics,
     "resilient_field_offset": $pass_resilient_field_offset,
@@ -987,6 +1057,13 @@ cat > "$REPORT_MD" <<MD
 | index path semantics | $(status_symbol "$pass_index_path") | count_ok=${index_path_count_ok}, index_ok=${index_path_index_ok}, append_ok=${index_path_append_ok}, compare_ok=${index_path_compare_ok} |
 | ISO8601 semantics | $(status_symbol "$pass_iso8601") | basic_ok=${iso8601_basic_ok}, parse_ok=${iso8601_parse_ok}, fractional_ok=${iso8601_fractional_ok}, fractional_parse_ok=${iso8601_fractional_parse_ok} |
 | URL percent-encoding semantics | $(status_symbol "$pass_url_percent") | encode_ok=${url_percent_encode_ok}, decode_ok=${url_percent_decode_ok}, reserved_ok=${url_percent_reserved_ok}, invalid_ok=${url_percent_invalid_ok} |
+| URLSessionConfiguration semantics | $(status_symbol "$pass_url_session_config") | cache_policy_ok=${url_session_cache_policy_ok}, ephemeral_cache_ok=${url_session_ephemeral_cache_ok}, timeout_ok=${url_session_timeout_ok}, cellular_ok=${url_session_cellular_ok} |
+| FileManager semantics | $(status_symbol "$pass_file_manager") | temp_dir_ok=${file_manager_temp_dir_ok}, create_ok=${file_manager_create_ok}, read_ok=${file_manager_read_ok}, remove_ok=${file_manager_remove_ok} |
+| DateComponents semantics | $(status_symbol "$pass_date_components") | normalize_ok=${date_components_normalize_ok}, roundtrip_ok=${date_components_roundtrip_ok}, weekday_ok=${date_components_weekday_ok}, interval_ok=${date_components_interval_ok} |
+| Notification semantics | $(status_symbol "$pass_notification") | name_ok=${notification_name_ok}, user_info_ok=${notification_user_info_ok}, delivery_ok=${notification_delivery_ok}, object_ok=${notification_object_ok} |
+| ByteCountFormatter semantics | $(status_symbol "$pass_byte_count_formatter") | unit_ok=${byte_count_unit_ok}, thousand_ok=${byte_count_1024_ok}, kb_ok=${byte_count_kb_ok}, zero_ok=${byte_count_zero_ok} |
+| NSRange/Range bridge semantics | $(status_symbol "$pass_range_bridge") | ascii_ok=${range_bridge_ascii_ok}, nsrange_ok=${range_bridge_nsrange_ok}, invalid_ok=${range_bridge_invalid_ok}, unicode_ok=${range_bridge_unicode_ok} |
+| AttributedString bridge semantics | $(status_symbol "$pass_attributed_string") | ns_ok=${attributed_string_ns_ok}, swift_ok=${attributed_string_swift_ok}, roundtrip_ok=${attributed_string_roundtrip_ok}, append_ok=${attributed_string_append_ok} |
 | value existential dispatch | $(status_symbol "$pass_value_existential") | current=${value_existential_current} |
 | resilient layout metrics | $(status_symbol "$pass_resilient_layout_metrics") | point(size=${point_size},stride=${point_stride},align=${point_align}) resilient(size=${resilient_size},stride=${resilient_stride},align=${resilient_align}) |
 | resilient field offset | $(status_symbol "$pass_resilient_field_offset") | b_offset=${resilient_b_offset} |

@@ -4,7 +4,7 @@
 Define and complete all work needed to claim production-grade parity between Rust runtime access and Swift behavior in this repository.
 
 ## Current Baseline
-- [x] Current matrix status: `94/94 PASS`.
+- [x] Current matrix status: `101/101 PASS`.
 - [x] Source of truth for checks and totals: `scripts/run_parity_matrix.sh`.
 - [ ] Latest parity key inventory: `/memories/repo/parity.md`.
 
@@ -86,13 +86,13 @@ Define and complete all work needed to claim production-grade parity between Rus
 
 ## Optional: Raise check count from 94 to 100 (if numeric target is desired)
 Add seven deterministic domains as part of functional depth:
-- [ ] `URLSessionConfiguration` semantics.
-- [ ] `FileManager` path/URL semantics (sandbox-safe operations only).
-- [ ] `DateComponents` normalization and calendar round-trip.
-- [ ] `Notification.Name` and userInfo bridging invariants.
-- [ ] `ByteCountFormatter` deterministic formatting invariants.
-- [ ] `NSRange` and `Range<String.Index>` bridge invariants.
-- [ ] `AttributedString`/`NSAttributedString` bridge invariants (if support matrix allows).
+- [x] `URLSessionConfiguration` semantics.
+- [x] `FileManager` path/URL semantics (sandbox-safe operations only).
+- [x] `DateComponents` normalization and calendar round-trip.
+- [x] `Notification.Name` and userInfo bridging invariants.
+- [x] `ByteCountFormatter` deterministic formatting invariants.
+- [x] `NSRange` and `Range<String.Index>` bridge invariants.
+- [x] `AttributedString`/`NSAttributedString` bridge invariants (if support matrix allows).
 
 ## Acceptance Checklist
 - [x] Scope document frozen (required/optional/experimental map).

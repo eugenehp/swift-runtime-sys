@@ -1307,6 +1307,105 @@ fn main() {
         url_percent_invalid_ok as i32,
     );
 
+    let url_session_config_flags = factory
+        .call_to_i32("swift_url_session_configuration_probe_flags")
+        .unwrap_or(0);
+    let url_session_cache_policy_ok = (url_session_config_flags & 1) != 0;
+    let url_session_ephemeral_cache_ok = (url_session_config_flags & 2) != 0;
+    let url_session_timeout_ok = (url_session_config_flags & 4) != 0;
+    let url_session_cellular_ok = (url_session_config_flags & 8) != 0;
+    println!(
+        "url session config => flags={url_session_config_flags} cache_policy_ok={} ephemeral_cache_ok={} timeout_ok={} cellular_ok={}",
+        url_session_cache_policy_ok as i32,
+        url_session_ephemeral_cache_ok as i32,
+        url_session_timeout_ok as i32,
+        url_session_cellular_ok as i32,
+    );
+
+    let file_manager_flags = factory.call_to_i32("swift_file_manager_probe_flags").unwrap_or(0);
+    let file_manager_temp_dir_ok = (file_manager_flags & 1) != 0;
+    let file_manager_create_ok = (file_manager_flags & 2) != 0;
+    let file_manager_read_ok = (file_manager_flags & 4) != 0;
+    let file_manager_remove_ok = (file_manager_flags & 8) != 0;
+    println!(
+        "file manager => flags={file_manager_flags} temp_dir_ok={} create_ok={} read_ok={} remove_ok={}",
+        file_manager_temp_dir_ok as i32,
+        file_manager_create_ok as i32,
+        file_manager_read_ok as i32,
+        file_manager_remove_ok as i32,
+    );
+
+    let date_components_flags = factory
+        .call_to_i32("swift_date_components_probe_flags")
+        .unwrap_or(0);
+    let date_components_normalize_ok = (date_components_flags & 1) != 0;
+    let date_components_roundtrip_ok = (date_components_flags & 2) != 0;
+    let date_components_weekday_ok = (date_components_flags & 4) != 0;
+    let date_components_interval_ok = (date_components_flags & 8) != 0;
+    println!(
+        "date components => flags={date_components_flags} normalize_ok={} roundtrip_ok={} weekday_ok={} interval_ok={}",
+        date_components_normalize_ok as i32,
+        date_components_roundtrip_ok as i32,
+        date_components_weekday_ok as i32,
+        date_components_interval_ok as i32,
+    );
+
+    let notification_flags = factory.call_to_i32("swift_notification_probe_flags").unwrap_or(0);
+    let notification_name_ok = (notification_flags & 1) != 0;
+    let notification_user_info_ok = (notification_flags & 2) != 0;
+    let notification_delivery_ok = (notification_flags & 4) != 0;
+    let notification_object_ok = (notification_flags & 8) != 0;
+    println!(
+        "notification => flags={notification_flags} name_ok={} user_info_ok={} delivery_ok={} object_ok={}",
+        notification_name_ok as i32,
+        notification_user_info_ok as i32,
+        notification_delivery_ok as i32,
+        notification_object_ok as i32,
+    );
+
+    let byte_count_flags = factory
+        .call_to_i32("swift_byte_count_formatter_probe_flags")
+        .unwrap_or(0);
+    let byte_count_unit_ok = (byte_count_flags & 1) != 0;
+    let byte_count_1024_ok = (byte_count_flags & 2) != 0;
+    let byte_count_kb_ok = (byte_count_flags & 4) != 0;
+    let byte_count_zero_ok = (byte_count_flags & 8) != 0;
+    println!(
+        "byte count formatter => flags={byte_count_flags} unit_ok={} thousand_ok={} kb_ok={} zero_ok={}",
+        byte_count_unit_ok as i32,
+        byte_count_1024_ok as i32,
+        byte_count_kb_ok as i32,
+        byte_count_zero_ok as i32,
+    );
+
+    let range_bridge_flags = factory.call_to_i32("swift_range_bridge_probe_flags").unwrap_or(0);
+    let range_bridge_ascii_ok = (range_bridge_flags & 1) != 0;
+    let range_bridge_nsrange_ok = (range_bridge_flags & 2) != 0;
+    let range_bridge_invalid_ok = (range_bridge_flags & 4) != 0;
+    let range_bridge_unicode_ok = (range_bridge_flags & 8) != 0;
+    println!(
+        "range bridge => flags={range_bridge_flags} ascii_ok={} nsrange_ok={} invalid_ok={} unicode_ok={}",
+        range_bridge_ascii_ok as i32,
+        range_bridge_nsrange_ok as i32,
+        range_bridge_invalid_ok as i32,
+        range_bridge_unicode_ok as i32,
+    );
+
+    let attributed_string_flags = factory
+        .call_to_i32("swift_attributed_string_probe_flags")
+        .unwrap_or(0);
+    let attributed_string_ns_ok = (attributed_string_flags & 1) != 0;
+    let attributed_string_swift_ok = (attributed_string_flags & 2) != 0;
+    let attributed_string_roundtrip_ok = (attributed_string_flags & 4) != 0;
+    let attributed_string_append_ok = (attributed_string_flags & 8) != 0;
+    println!(
+        "attributed string => flags={attributed_string_flags} ns_ok={} swift_ok={} roundtrip_ok={} append_ok={}",
+        attributed_string_ns_ok as i32,
+        attributed_string_swift_ok as i32,
+        attributed_string_roundtrip_ok as i32,
+        attributed_string_append_ok as i32,
+    );
+
     // ── Value existential dispatch parity ───────────────────────────────────
     let value_existential_current = factory
         .call_to_i32("swift_value_existential_current")

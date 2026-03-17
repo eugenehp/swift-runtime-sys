@@ -1866,6 +1866,173 @@ public func swift_url_percent_encoding_probe_flags() -> Int32 {
     return flags
 }
 
+@_cdecl("swift_url_session_configuration_probe_flags")
+public func swift_url_session_configuration_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+    let cfg = URLSessionConfiguration.default
+    let eph = URLSessionConfiguration.ephemeral
+
+    if cfg.requestCachePolicy == .useProtocolCachePolicy { flags |= 1 }
+    if cfg !== eph { flags |= 2 }
+    if cfg.timeoutIntervalForRequest > 0 && cfg.timeoutIntervalForResource >= cfg.timeoutIntervalForRequest { flags |= 4 }
+    if cfg.allowsCellularAccess { flags |= 8 }
+
+    return flags
+}
+
+@_cdecl("swift_file_manager_probe_flags")
+public func swift_file_manager_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+    let fm = FileManager.default
+    let tempDir = fm.temporaryDirectory
+    let fileURL = tempDir.appendingPathComponent("runtime-parity-\(UUID().uuidString).txt")
+
+    if tempDir.isFileURL { flags |= 1 }
+
+    do {
+        try Data("ok".utf8).write(to: fileURL, options: .atomic)
+        if fm.fileExists(atPath: fileURL.path) { flags |= 2 }
+
+        let readBack = try Data(contentsOf: fileURL)
+        if readBack == Data("ok".utf8) { flags |= 4 }
+
+        try fm.removeItem(at: fileURL)
+        if !fm.fileExists(atPath: fileURL.path) { flags |= 8 }
+    } catch {
+        // flags remain partial/zero on error
+    }
+
+    return flags
+}
+
+@_cdecl("swift_date_components_probe_flags")
+public func swift_date_components_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+
+    if let normalized = calendar.date(from: DateComponents(year: 2024, month: 2, day: 31, hour: 12)) {
+        let back = calendar.dateComponents([.year, .month, .day, .hour], from: normalized)
+        if back.year == 2024 && back.month == 3 && back.day == 2 && back.hour == 12 { flags |= 1 }
+    }
+
+    if let leap = calendar.date(from: DateComponents(year: 2024, month: 2, day: 29, hour: 9)) {
+        let round = calendar.dateComponents([.year, .month, .day], from: leap)
+        if round.year == 2024 && round.month == 2 && round.day == 29 { flags |= 2 }
+
+        let weekday = calendar.component(.weekday, from: leap)
+        if weekday == 5 { flags |= 4 } // Thursday in Gregorian calendar
+
+        if let nextDay = calendar.date(from: DateComponents(year: 2024, month: 3, day: 1, hour: 9)) {
+            if Int(nextDay.timeIntervalSince(leap)) == 86_400 { flags |= 8 }
+        }
+    }
+
+    return flags
+}
+
+@_cdecl("swift_notification_probe_flags")
+public func swift_notification_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+    let center = NotificationCenter()
+    let name = Notification.Name("RuntimeParity.Test")
+    let object = NSObject()
+    let userInfo: [AnyHashable: Any] = ["answer": 42, "kind": "probe"]
+    var observedCount = 0
+    var observedObjectMatch = false
+    var observedUserInfoMatch = false
+
+    if name.rawValue == "RuntimeParity.Test" { flags |= 1 }
+
+    let token = center.addObserver(forName: name, object: nil, queue: nil) { note in
+        observedCount += 1
+        observedObjectMatch = (note.object as AnyObject?) === object
+        let answer = note.userInfo?["answer"] as? Int
+        let kind = note.userInfo?["kind"] as? String
+        observedUserInfoMatch = (answer == 42 && kind == "probe")
+    }
+
+    center.post(name: name, object: object, userInfo: userInfo)
+    center.removeObserver(token)
+
+    if observedUserInfoMatch { flags |= 2 }
+    if observedCount == 1 { flags |= 4 }
+    if observedObjectMatch { flags |= 8 }
+
+    return flags
+}
+
+@_cdecl("swift_byte_count_formatter_probe_flags")
+public func swift_byte_count_formatter_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+    let f = ByteCountFormatter()
+    f.countStyle = .file
+    f.includesUnit = true
+    f.includesCount = true
+    f.includesActualByteCount = false
+    f.isAdaptive = false
+    f.allowedUnits = [.useBytes]
+
+    let bytes = f.string(fromByteCount: 1_024)
+    if bytes.lowercased().contains("byte") { flags |= 1 }
+    if bytes.contains("1024") || bytes.contains("1,024") { flags |= 2 }
+
+    f.allowedUnits = [.useKB]
+    f.isAdaptive = true
+    let kb = f.string(fromByteCount: 1_536)
+    if kb.uppercased().contains("KB") { flags |= 4 }
+
+    f.allowedUnits = [.useBytes]
+    f.isAdaptive = false
+    let zero = f.string(fromByteCount: 0).lowercased()
+    if zero.contains("0") || zero.contains("zero") { flags |= 8 }
+
+    return flags
+}
+
+@_cdecl("swift_range_bridge_probe_flags")
+public func swift_range_bridge_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+    let ascii = "abcdef"
+    let nsRange = NSRange(location: 1, length: 3)
+
+    if let r = Range(nsRange, in: ascii), String(ascii[r]) == "bcd" { flags |= 1 }
+
+    let swiftRange = ascii.index(ascii.startIndex, offsetBy: 2)..<ascii.index(ascii.startIndex, offsetBy: 5)
+    let bridged = NSRange(swiftRange, in: ascii)
+    if bridged.location == 2 && bridged.length == 3 { flags |= 2 }
+
+    if Range(NSRange(location: 10, length: 2), in: ascii) == nil { flags |= 4 }
+
+    let unicode = "a🙂b"
+    if let ur = Range(NSRange(location: 1, length: 2), in: unicode), String(unicode[ur]) == "🙂" { flags |= 8 }
+
+    return flags
+}
+
+@_cdecl("swift_attributed_string_probe_flags")
+public func swift_attributed_string_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+
+    if #available(macOS 12.0, *) {
+        let ns = NSAttributedString(string: "hello")
+        if ns.string == "hello" { flags |= 1 }
+
+        let swiftAttr = AttributedString(ns)
+        do {
+            if String(swiftAttr.characters) == "hello" { flags |= 2 }
+
+            let nsRoundtrip = NSAttributedString(swiftAttr)
+            if nsRoundtrip.string == "hello" { flags |= 4 }
+
+            let appended = swiftAttr + AttributedString("!")
+            if String(appended.characters) == "hello!" { flags |= 8 }
+        }
+    }
+
+    return flags
+}
+
 // ── Value existential dispatch parity ───────────────────────────────────────
 public protocol ValueCurrentLike {
     func current() -> Int32
