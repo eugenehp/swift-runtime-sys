@@ -1081,3 +1081,10 @@ MD
 
 echo "Wrote $REPORT_JSON"
 echo "Wrote $REPORT_MD"
+
+if [[ "$pass_count" -ne "$total_checks" ]]; then
+  echo "Parity matrix FAILED: ${pass_count}/${total_checks} checks passed"
+  exit 1
+fi
+
+echo "Parity matrix PASSED: ${pass_count}/${total_checks}"

@@ -62,7 +62,7 @@ Define and complete all work needed to claim production-grade parity between Rus
 - [x] Track version-conditional behavior explicitly.
 - [ ] Exit criteria:
 - [ ] Same required checks pass across all supported cells.
-- [ ] Any version-specific deviation is documented and expected.
+- [x] Any version-specific deviation is documented and expected.
 
 ### 5) Reliability gates (stress/fuzz promotion)
 - [x] Promote stress and fuzz from optional to required release gates.

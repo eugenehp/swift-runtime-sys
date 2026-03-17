@@ -242,6 +242,18 @@ Version-conditional tracking:
 - Any cell-specific deviations must be documented before parity claims are updated.
 - A parity claim for v1 scope requires all supported cells to pass required gates.
 
+Support-matrix deviation ledger (v1 required scope):
+
+- `macos-14`: no known required-scope deviations.
+- `macos-15`: no known required-scope deviations.
+
+If a deviation appears, this section must be updated with:
+
+- affected cell(s)
+- affected check key(s)
+- expected/accepted behavior and rationale
+- mitigation or promotion plan
+
 Required:
 
 - `scripts/run_parity_matrix.sh` reports full pass count (`N/N PASS`).
@@ -290,6 +302,13 @@ CI-equivalent budgets used in `.github/workflows/parity.yml`:
 
 A parity claim is valid only when all required gates above pass and artifacts are
 generated for matrix, stress, and protocol-dispatch runs.
+
+Final claim publication criteria:
+
+- Both parity matrix cells (`macos-14`, `macos-15`) are green in CI.
+- Stress and protocol-dispatch jobs are green in the same CI run.
+- Artifacts exist for each required job and are retained.
+- This README deviation ledger reflects current expected behavior.
 
 Artifacts:
 
