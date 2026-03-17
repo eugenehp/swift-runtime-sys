@@ -90,6 +90,76 @@ public func swift_shape_rect_area(_ w: Float, _ h: Float) -> Float {
     Shape.rectangle(width: w, height: h).area()
 }
 
+public enum MultiPayloadEncoding {
+    case int(Int32)
+    case double(Double)
+    case none
+}
+
+public enum SpareBitRef {
+    case object(NSObject)
+    case none
+}
+
+private func rawBytes<T>(of value: T) -> [UInt8] {
+    withUnsafeBytes(of: value) { Array($0) }
+}
+
+@_cdecl("swift_enum_payload_probe_flags")
+public func swift_enum_payload_probe_flags() -> Int32 {
+    let intZero = MultiPayloadEncoding.int(0)
+    let doubleZero = MultiPayloadEncoding.double(0)
+    let noneValue = MultiPayloadEncoding.none
+
+    let intBytes = rawBytes(of: intZero)
+    let doubleBytes = rawBytes(of: doubleZero)
+    let noneBytes = rawBytes(of: noneValue)
+
+    let multiSemanticOk: Bool = {
+        if case .int(let value) = MultiPayloadEncoding.int(41), value == 41 {
+            if case .double(let value) = MultiPayloadEncoding.double(2.5), value == 2.5 {
+                if case .none = MultiPayloadEncoding.none {
+                    return true
+                }
+            }
+        }
+        return false
+    }()
+
+    let multiDistinct = (intBytes != doubleBytes && intBytes != noneBytes && doubleBytes != noneBytes)
+    let multiLayoutSane = (MemoryLayout<MultiPayloadEncoding>.size <= 16 &&
+        MemoryLayout<MultiPayloadEncoding>.stride <= 16 &&
+        MemoryLayout<MultiPayloadEncoding>.alignment >= 4)
+
+    let spareNone = SpareBitRef.none
+    let spareObject = SpareBitRef.object(NSObject())
+    let spareNoneBytes = rawBytes(of: spareNone)
+    let spareObjectBytes = rawBytes(of: spareObject)
+
+    let spareSemanticOk: Bool = {
+        if case .none = spareNone {
+            if case .object = spareObject {
+                return true
+            }
+        }
+        return false
+    }()
+
+    let spareNilZero = spareNoneBytes.allSatisfy { $0 == 0 }
+    let spareSomeNonZero = spareObjectBytes.contains { $0 != 0 }
+    let spareSizeEight = (MemoryLayout<SpareBitRef>.size == 8)
+
+    var flags: Int32 = 0
+    if multiSemanticOk { flags |= 1 << 0 }
+    if multiDistinct { flags |= 1 << 1 }
+    if multiLayoutSane { flags |= 1 << 2 }
+    if spareSemanticOk { flags |= 1 << 3 }
+    if spareNilZero { flags |= 1 << 4 }
+    if spareSomeNonZero { flags |= 1 << 5 }
+    if spareSizeEight { flags |= 1 << 6 }
+    return flags
+}
+
 private final class Box<T> {
     let value: T
 

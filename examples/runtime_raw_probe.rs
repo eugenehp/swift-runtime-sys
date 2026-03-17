@@ -290,6 +290,27 @@ fn main() {
         .unwrap_or(f32::MIN);
     println!("enum Shape area => circle={circle_area:.4} rect={rect_area:.4}");
 
+    let enum_payload_flags = factory
+        .call_to_i32("swift_enum_payload_probe_flags")
+        .unwrap_or(0);
+    let enum_multi_semantic_ok = (enum_payload_flags & (1 << 0)) != 0;
+    let enum_multi_distinct = (enum_payload_flags & (1 << 1)) != 0;
+    let enum_multi_layout_sane = (enum_payload_flags & (1 << 2)) != 0;
+    let enum_spare_semantic_ok = (enum_payload_flags & (1 << 3)) != 0;
+    let enum_spare_nil_zero = (enum_payload_flags & (1 << 4)) != 0;
+    let enum_spare_some_nonzero = (enum_payload_flags & (1 << 5)) != 0;
+    let enum_spare_size_eight = (enum_payload_flags & (1 << 6)) != 0;
+    println!(
+        "enum payload => flags={enum_payload_flags} multi_semantic_ok={} multi_distinct={} multi_layout_sane={} spare_semantic_ok={} spare_nil_zero={} spare_some_nonzero={} spare_size_eight={}",
+        enum_multi_semantic_ok as i32,
+        enum_multi_distinct as i32,
+        enum_multi_layout_sane as i32,
+        enum_spare_semantic_ok as i32,
+        enum_spare_nil_zero as i32,
+        enum_spare_some_nonzero as i32,
+        enum_spare_size_eight as i32,
+    );
+
     // ── throws ABI ────────────────────────────────────────────────────────────
     let throws_sym = "$s10RustBridge10safeDivideys5Int32VAD_ADtKF";
 
