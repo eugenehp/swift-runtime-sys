@@ -596,6 +596,20 @@ fn main() {
         "generic metadata => distinct={generic_meta_distinct} constrained={generic_constrained}"
     );
 
+    // ── Synthesized witness parity (Equatable/Hashable) ───────────────────
+    let synth_flags = factory
+        .call_to_i32("swift_synth_eq_hash_probe_flags")
+        .unwrap_or(0);
+    let synth_eq_true = (synth_flags & 1) != 0;
+    let synth_eq_false = (synth_flags & 2) != 0;
+    let synth_dedup_ok = (synth_flags & 4) != 0;
+    println!(
+        "synth witness => flags={synth_flags} eq_true={} eq_false={} dedup_ok={}",
+        synth_eq_true as i32,
+        synth_eq_false as i32,
+        synth_dedup_ok as i32,
+    );
+
     // ── Value existential dispatch parity ───────────────────────────────────
     let value_existential_current = factory
         .call_to_i32("swift_value_existential_current")

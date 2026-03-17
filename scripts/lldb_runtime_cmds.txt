@@ -1,3 +1,11 @@
 settings set stop-disassembly-count 0
+
+# Synthesized Equatable/Hashable internals for SynthEqHash
+breakpoint set -r 'SynthEqHashV23__derived_struct_equals'
+breakpoint command add 1 -o 'script print("LLDB_SYNTH_EQ_BREAK"); lldb.debugger.HandleCommand("register read x0 x1 x2 x20"); lldb.debugger.HandleCommand("continue")'
+
+breakpoint set -r 'SynthEqHashV4hash4into'
+breakpoint command add 2 -o 'script print("LLDB_SYNTH_HASH_BREAK"); lldb.debugger.HandleCommand("register read x0 x1 x2 x20"); lldb.debugger.HandleCommand("continue")'
+
 run
 quit

@@ -543,6 +543,38 @@ public func swift_generic_constrained_call() -> Int32 {
     consumeValueLike(ValueHolder(v: 77))
 }
 
+// ── Synthesized witness parity (Equatable/Hashable) ───────────────────────
+public struct SynthEqHash: Equatable, Hashable {
+    public var a: Int32
+    public var b: Int32
+    public init(a: Int32, b: Int32) {
+        self.a = a
+        self.b = b
+    }
+}
+
+@_cdecl("swift_synth_eq_hash_probe_flags")
+public func swift_synth_eq_hash_probe_flags() -> Int32 {
+    let lhs = SynthEqHash(a: 7, b: 9)
+    let rhsSame = SynthEqHash(a: 7, b: 9)
+    let rhsDiff = SynthEqHash(a: 7, b: 10)
+
+    let eqTrue = (lhs == rhsSame)
+    let eqFalse = (lhs != rhsDiff)
+
+    var set = Set<SynthEqHash>()
+    set.insert(lhs)
+    set.insert(rhsSame)
+    set.insert(rhsDiff)
+    let dedupOk = (set.count == 2)
+
+    var flags: Int32 = 0
+    if eqTrue { flags |= 1 }
+    if eqFalse { flags |= 2 }
+    if dedupOk { flags |= 4 }
+    return flags
+}
+
 // ── Value existential dispatch parity ───────────────────────────────────────
 public protocol ValueCurrentLike {
     func current() -> Int32
