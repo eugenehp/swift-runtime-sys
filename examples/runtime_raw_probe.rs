@@ -636,8 +636,26 @@ fn main() {
     let resilient_b_offset = factory
         .call_to_i32("swift_layout_resilient_b_offset")
         .unwrap_or(i32::MIN);
+    let external_resilient_size = factory
+        .call_to_i32("swift_layout_external_resilient_size")
+        .unwrap_or(i32::MIN);
+    let external_resilient_stride = factory
+        .call_to_i32("swift_layout_external_resilient_stride")
+        .unwrap_or(i32::MIN);
+    let external_resilient_align = factory
+        .call_to_i32("swift_layout_external_resilient_alignment")
+        .unwrap_or(i32::MIN);
+    let external_resilient_b_offset = factory
+        .call_to_i32("swift_layout_external_resilient_b_offset")
+        .unwrap_or(i32::MIN);
+    let external_resilient_sample_b = factory
+        .call_to_i32("swift_layout_external_resilient_sample_b")
+        .unwrap_or(0);
     println!(
         "resilient layout => point_size={point_size} point_stride={point_stride} point_align={point_align} resilient_size={resilient_size} resilient_stride={resilient_stride} resilient_align={resilient_align} b_offset={resilient_b_offset}"
+    );
+    println!(
+        "cross-module resilient => size={external_resilient_size} stride={external_resilient_stride} align={external_resilient_align} b_offset={external_resilient_b_offset} sample_b_ok={external_resilient_sample_b}"
     );
 
     // ── ARC edge-case stress checks ────────────────────────────────────────

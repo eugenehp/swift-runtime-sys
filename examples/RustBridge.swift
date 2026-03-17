@@ -1,6 +1,7 @@
 import Foundation
 import Dispatch
 import ObjectiveC.runtime
+import ResilientFixtures
 
 public var globalCounterValue: Int32 = 123
 
@@ -640,6 +641,31 @@ public func swift_layout_resilient_b_offset() -> Int32 {
             Int32(Int(bitPattern: bptr) - Int(bitPattern: base))
         }
     }
+}
+
+@_cdecl("swift_layout_external_resilient_size")
+public func swift_layout_external_resilient_size() -> Int32 {
+    external_resilient_size()
+}
+
+@_cdecl("swift_layout_external_resilient_stride")
+public func swift_layout_external_resilient_stride() -> Int32 {
+    external_resilient_stride()
+}
+
+@_cdecl("swift_layout_external_resilient_alignment")
+public func swift_layout_external_resilient_alignment() -> Int32 {
+    external_resilient_alignment()
+}
+
+@_cdecl("swift_layout_external_resilient_b_offset")
+public func swift_layout_external_resilient_b_offset() -> Int32 {
+    external_resilient_b_offset()
+}
+
+@_cdecl("swift_layout_external_resilient_sample_b")
+public func swift_layout_external_resilient_sample_b() -> Int32 {
+    external_resilient_get_b(11, 2222) == 2222 ? 1 : 0
 }
 
 // ── ARC edge-case stress probes ─────────────────────────────────────────────
