@@ -134,6 +134,8 @@ url_request_line=$(line_or_empty "url request =>" "$PROBE_LOG")
 data_base64_line=$(line_or_empty "data base64 =>" "$PROBE_LOG")
 http_response_line=$(line_or_empty "http url response =>" "$PROBE_LOG")
 json_encoder_line=$(line_or_empty "json encoder =>" "$PROBE_LOG")
+plist_encoder_line=$(line_or_empty "plist encoder =>" "$PROBE_LOG")
+range_line=$(line_or_empty "range =>" "$PROBE_LOG")
 value_existential_line=$(line_or_empty "value existential =>" "$PROBE_LOG")
 resilient_layout_line=$(line_or_empty "resilient layout =>" "$PROBE_LOG")
 cross_module_resilient_line=$(line_or_empty "cross-module resilient =>" "$PROBE_LOG")
@@ -325,6 +327,14 @@ json_encode_ok=$(extract_number "encode_ok" "$json_encoder_line")
 json_decode_ok=$(extract_number "decode_ok" "$json_encoder_line")
 json_nested_ok=$(extract_number "nested_ok" "$json_encoder_line")
 json_null_ok=$(extract_number "null_ok" "$json_encoder_line")
+plist_encode_ok=$(extract_number "encode_ok" "$plist_encoder_line")
+plist_decode_ok=$(extract_number "decode_ok" "$plist_encoder_line")
+plist_binary_ok=$(extract_number "binary_ok" "$plist_encoder_line")
+plist_binary_decode_ok=$(extract_number "binary_decode_ok" "$plist_encoder_line")
+range_contains_ok=$(extract_number "contains_ok" "$range_line")
+range_exclude_ok=$(extract_number "exclude_ok" "$range_line")
+range_not_empty_ok=$(extract_number "not_empty_ok" "$range_line")
+range_count_ok=$(extract_number "count_ok" "$range_line")
 value_existential_current=$(extract_number "current" "$value_existential_line")
 point_size=$(extract_number "point_size" "$resilient_layout_line")
 point_stride=$(extract_number "point_stride" "$resilient_layout_line")
@@ -445,6 +455,8 @@ pass_url_request=0
 pass_data_base64=0
 pass_http_response=0
 pass_json_encoder=0
+pass_plist_encoder=0
+pass_range=0
 pass_value_existential=0
 pass_resilient_layout_metrics=0
 pass_resilient_field_offset=0
@@ -535,6 +547,8 @@ if [[ "$request_url_method_ok" == "1" && "$request_header_ok" == "1" && "$reques
 if [[ "$base64_encode_ok" == "1" && "$base64_decode_ok" == "1" && "$base64_ignore_ok" == "1" && "$base64_invalid_ok" == "1" ]]; then pass_data_base64=1; fi
 if [[ "$response_status_code_ok" == "1" && "$response_header_ok" == "1" && "$response_url_ok" == "1" && "$response_content_type_ok" == "1" ]]; then pass_http_response=1; fi
 if [[ "$json_encode_ok" == "1" && "$json_decode_ok" == "1" && "$json_nested_ok" == "1" && "$json_null_ok" == "1" ]]; then pass_json_encoder=1; fi
+if [[ "$plist_encode_ok" == "1" && "$plist_decode_ok" == "1" && "$plist_binary_ok" == "1" && "$plist_binary_decode_ok" == "1" ]]; then pass_plist_encoder=1; fi
+if [[ "$range_contains_ok" == "1" && "$range_exclude_ok" == "1" && "$range_not_empty_ok" == "1" && "$range_count_ok" == "1" ]]; then pass_range=1; fi
 if [[ "$value_existential_current" == "88" ]]; then pass_value_existential=1; fi
 if [[ "$point_size" == "8" && "$point_stride" == "8" && "$point_align" == "4" && "$resilient_size" == "16" && "$resilient_stride" == "16" && "$resilient_align" == "8" ]]; then pass_resilient_layout_metrics=1; fi
 if [[ "$resilient_b_offset" == "8" ]]; then pass_resilient_field_offset=1; fi
@@ -624,6 +638,10 @@ cat > "$REPORT_JSON" <<JSON
     "data_base64_semantics": $pass_data_base64,
     "http_url_response_semantics": $pass_http_response,
     "json_encoder_semantics": $pass_json_encoder,
+    "plist_encoder_semantics": $pass_plist_encoder,
+    "range_semantics": $pass_range,
+    "plist_encoder_semantics": $pass_plist_encoder,
+    "range_semantics": $pass_range,
     "value_existential_dispatch": $pass_value_existential,
     "resilient_layout_metrics": $pass_resilient_layout_metrics,
     "resilient_field_offset": $pass_resilient_field_offset,
@@ -705,8 +723,8 @@ RUN_TS=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 GIT_HASH=$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo "unknown")
 HISTORY_FILE="$HISTORY_DIR/${RUN_TS//[: ]/_}_${GIT_HASH}.json"
 
-total_checks=85
-pass_count=$(( pass_increment + pass_reset + pass_add_pair + pass_clear + pass_retain + pass_alloc_sizes + pass_lldb + pass_direct_field + pass_protocol_witness + pass_protocol_slot + pass_protocol_dispatch + pass_protocol_dispatch_semantic + pass_global_variable + pass_raw_metadata + pass_enum_simple + pass_enum_associated + pass_enum_payload + pass_codable + pass_throws_success + pass_throws_error + pass_generic_type + pass_string + pass_struct_dispatch + pass_tuple_return + pass_optional_layout + pass_array + pass_string_storage + pass_array_storage + pass_closure + pass_reflection + pass_error_boxing + pass_error_roundtrip + pass_objc_interop + pass_weak_ref + pass_conformance + pass_async_task + pass_actor_executor + pass_generic_metadata + pass_generic_specialization + pass_synth_witness + pass_synth_witness_lldb + pass_keypath_synth + pass_property_wrapper_synth + pass_result_builder_synth + pass_opaque_return + pass_task_local + pass_dynamic_replacement + pass_sendable + pass_continuation + pass_task_group + pass_async_stream + pass_unsafe_memory + pass_proto_composition + pass_enum_raw_value + pass_option_set + pass_case_iterable + pass_set_algebra + pass_dictionary + pass_comparable + pass_result + pass_data + pass_uuid + pass_character_set + pass_url_components + pass_calendar + pass_index_set + pass_time_zone + pass_measurement + pass_date_formatter + pass_scanner + pass_locale + pass_number_formatter + pass_url + pass_decimal + pass_url_request + pass_data_base64 + pass_http_response + pass_json_encoder + pass_value_existential + pass_resilient_layout_metrics + pass_resilient_field_offset + pass_cross_module_resilient + pass_cross_module_existential + pass_arc_edge_stress + pass_fuzz_parity ))
+total_checks=87
+pass_count=$(( pass_increment + pass_reset + pass_add_pair + pass_clear + pass_retain + pass_alloc_sizes + pass_lldb + pass_direct_field + pass_protocol_witness + pass_protocol_slot + pass_protocol_dispatch + pass_protocol_dispatch_semantic + pass_global_variable + pass_raw_metadata + pass_enum_simple + pass_enum_associated + pass_enum_payload + pass_codable + pass_throws_success + pass_throws_error + pass_generic_type + pass_string + pass_struct_dispatch + pass_tuple_return + pass_optional_layout + pass_array + pass_string_storage + pass_array_storage + pass_closure + pass_reflection + pass_error_boxing + pass_error_roundtrip + pass_objc_interop + pass_weak_ref + pass_conformance + pass_async_task + pass_actor_executor + pass_generic_metadata + pass_generic_specialization + pass_synth_witness + pass_synth_witness_lldb + pass_keypath_synth + pass_property_wrapper_synth + pass_result_builder_synth + pass_opaque_return + pass_task_local + pass_dynamic_replacement + pass_sendable + pass_continuation + pass_task_group + pass_async_stream + pass_unsafe_memory + pass_proto_composition + pass_enum_raw_value + pass_option_set + pass_case_iterable + pass_set_algebra + pass_dictionary + pass_comparable + pass_result + pass_data + pass_uuid + pass_character_set + pass_url_components + pass_calendar + pass_index_set + pass_time_zone + pass_measurement + pass_date_formatter + pass_scanner + pass_locale + pass_number_formatter + pass_url + pass_decimal + pass_url_request + pass_data_base64 + pass_http_response + pass_json_encoder + pass_plist_encoder + pass_range + pass_value_existential + pass_resilient_layout_metrics + pass_resilient_field_offset + pass_cross_module_resilient + pass_cross_module_existential + pass_arc_edge_stress + pass_fuzz_parity ))
 
 cat > "$HISTORY_FILE" <<HIST
 {
@@ -892,6 +910,8 @@ cat > "$REPORT_MD" <<MD
 | data base64 semantics | $(status_symbol "$pass_data_base64") | encode_ok=${base64_encode_ok}, decode_ok=${base64_decode_ok}, ignore_ok=${base64_ignore_ok}, invalid_ok=${base64_invalid_ok} |
 | http url response semantics | $(status_symbol "$pass_http_response") | status_code_ok=${response_status_code_ok}, header_ok=${response_header_ok}, url_ok=${response_url_ok}, content_type_ok=${response_content_type_ok} |
 | json encoder semantics | $(status_symbol "$pass_json_encoder") | encode_ok=${json_encode_ok}, decode_ok=${json_decode_ok}, nested_ok=${json_nested_ok}, null_ok=${json_null_ok} |
+| plist encoder semantics | $(status_symbol "$pass_plist_encoder") | encode_ok=${plist_encode_ok}, decode_ok=${plist_decode_ok}, binary_ok=${plist_binary_ok}, binary_decode_ok=${plist_binary_decode_ok} |
+| range semantics | $(status_symbol "$pass_range") | contains_ok=${range_contains_ok}, exclude_ok=${range_exclude_ok}, not_empty_ok=${range_not_empty_ok}, count_ok=${range_count_ok} |
 | value existential dispatch | $(status_symbol "$pass_value_existential") | current=${value_existential_current} |
 | resilient layout metrics | $(status_symbol "$pass_resilient_layout_metrics") | point(size=${point_size},stride=${point_stride},align=${point_align}) resilient(size=${resilient_size},stride=${resilient_stride},align=${resilient_align}) |
 | resilient field offset | $(status_symbol "$pass_resilient_field_offset") | b_offset=${resilient_b_offset} |

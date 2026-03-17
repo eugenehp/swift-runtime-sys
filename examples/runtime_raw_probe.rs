@@ -1117,7 +1117,9 @@ fn main() {
     );
 
     // ── Decimal semantics parity ───────────────────────────────────────────
-    let decimal_flags = factory.call_to_i32("swift_decimal_probe_flags").unwrap_or(0);
+    let decimal_flags = factory
+        .call_to_i32("swift_decimal_probe_flags")
+        .unwrap_or(0);
     let decimal_add_ok = (decimal_flags & 1) != 0;
     let decimal_mul_ok = (decimal_flags & 2) != 0;
     let decimal_round_ok = (decimal_flags & 4) != 0;
@@ -1190,6 +1192,36 @@ fn main() {
         json_decode_ok as i32,
         json_nested_ok as i32,
         json_null_ok as i32,
+    );
+
+    let plist_encoder_flags = factory
+        .call_to_i32("swift_plist_encoder_probe_flags")
+        .unwrap_or(0);
+    let plist_encode_ok = (plist_encoder_flags & 1) != 0;
+    let plist_decode_ok = (plist_encoder_flags & 2) != 0;
+    let plist_binary_ok = (plist_encoder_flags & 4) != 0;
+    let plist_binary_decode_ok = (plist_encoder_flags & 8) != 0;
+    println!(
+        "plist encoder => flags={plist_encoder_flags} encode_ok={} decode_ok={} binary_ok={} binary_decode_ok={}",
+        plist_encode_ok as i32,
+        plist_decode_ok as i32,
+        plist_binary_ok as i32,
+        plist_binary_decode_ok as i32,
+    );
+
+    let range_flags = factory
+        .call_to_i32("swift_range_probe_flags")
+        .unwrap_or(0);
+    let range_contains_ok = (range_flags & 1) != 0;
+    let range_exclude_ok = (range_flags & 2) != 0;
+    let range_not_empty_ok = (range_flags & 4) != 0;
+    let range_count_ok = (range_flags & 8) != 0;
+    println!(
+        "range => flags={range_flags} contains_ok={} exclude_ok={} not_empty_ok={} count_ok={}",
+        range_contains_ok as i32,
+        range_exclude_ok as i32,
+        range_not_empty_ok as i32,
+        range_count_ok as i32,
     );
 
     // ── Value existential dispatch parity ───────────────────────────────────

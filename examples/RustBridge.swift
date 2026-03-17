@@ -1693,6 +1693,52 @@ public func swift_json_encoder_probe_flags() -> Int32 {
     return flags
 }
 
+@_cdecl("swift_plist_encoder_probe_flags")
+public func swift_plist_encoder_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+
+    struct PlistData: Codable {
+        let title: String
+        let count: Int
+    }
+
+    let decoder = PropertyListDecoder()
+    let original = PlistData(title: "test", count: 42)
+
+    do {
+        let encoder = PropertyListEncoder()
+        let xmlData = try encoder.encode(original)
+        if !xmlData.isEmpty { flags |= 1 }
+
+        let decoded = try decoder.decode(PlistData.self, from: xmlData)
+        if decoded.title == original.title && decoded.count == original.count { flags |= 2 }
+
+        let binaryData = try PropertyListSerialization.data(fromPropertyList: ["title": "test", "count": 42], format: .binary, options: 0)
+        if !binaryData.isEmpty { flags |= 4 }
+
+        if let dict = try PropertyListSerialization.propertyList(from: binaryData, options: [], format: nil) as? [String: Any],
+           let title = dict["title"] as? String, title == "test" { flags |= 8 }
+    } catch { }
+
+    return flags
+}
+
+@_cdecl("swift_range_probe_flags")
+public func swift_range_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+    let range: Range<Int> = 5..<10
+
+    if range.contains(7) { flags |= 1 }
+
+    if !range.contains(4) && !range.contains(10) { flags |= 2 }
+
+    if range.isEmpty == false { flags |= 4 }
+
+    if range.count == 5 { flags |= 8 }
+
+    return flags
+}
+
 // ── Value existential dispatch parity ───────────────────────────────────────
 public protocol ValueCurrentLike {
     func current() -> Int32
