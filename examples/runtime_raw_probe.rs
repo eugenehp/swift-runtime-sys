@@ -1072,6 +1072,36 @@ fn main() {
         scanner_end_ok as i32,
     );
 
+    // ── Locale semantics parity ────────────────────────────────────────────
+    let locale_flags = factory.call_to_i32("swift_locale_probe_flags").unwrap_or(0);
+    let locale_identifier_ok = (locale_flags & 1) != 0;
+    let locale_canonical_ok = (locale_flags & 2) != 0;
+    let locale_decimal_ok = (locale_flags & 4) != 0;
+    let locale_components_ok = (locale_flags & 8) != 0;
+    println!(
+        "locale => flags={locale_flags} identifier_ok={} canonical_ok={} decimal_ok={} components_ok={}",
+        locale_identifier_ok as i32,
+        locale_canonical_ok as i32,
+        locale_decimal_ok as i32,
+        locale_components_ok as i32,
+    );
+
+    // ── NumberFormatter semantics parity ───────────────────────────────────
+    let number_formatter_flags = factory
+        .call_to_i32("swift_number_formatter_probe_flags")
+        .unwrap_or(0);
+    let number_format_ok = (number_formatter_flags & 1) != 0;
+    let number_parse_ok = (number_formatter_flags & 2) != 0;
+    let number_round_ok = (number_formatter_flags & 4) != 0;
+    let number_invalid_ok = (number_formatter_flags & 8) != 0;
+    println!(
+        "number formatter => flags={number_formatter_flags} format_ok={} parse_ok={} round_ok={} invalid_ok={}",
+        number_format_ok as i32,
+        number_parse_ok as i32,
+        number_round_ok as i32,
+        number_invalid_ok as i32,
+    );
+
     // ── Value existential dispatch parity ───────────────────────────────────
     let value_existential_current = factory
         .call_to_i32("swift_value_existential_current")

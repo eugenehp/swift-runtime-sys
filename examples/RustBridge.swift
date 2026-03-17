@@ -1502,6 +1502,54 @@ public func swift_scanner_probe_flags() -> Int32 {
     return flags
 }
 
+// ── Locale semantics parity ────────────────────────────────────────────────
+@_cdecl("swift_locale_probe_flags")
+public func swift_locale_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+    let posix = Locale(identifier: "en_US_POSIX")
+
+    if posix.identifier == "en_US_POSIX" { flags |= 1 }
+    if Locale(identifier: "EN_us").identifier == "en_US" { flags |= 2 }
+    if posix.decimalSeparator == "." { flags |= 4 }
+
+    if posix.language.languageCode?.identifier == "en" &&
+       posix.region?.identifier == "US" {
+        flags |= 8
+    }
+
+    return flags
+}
+
+// ── NumberFormatter semantics parity ───────────────────────────────────────
+@_cdecl("swift_number_formatter_probe_flags")
+public func swift_number_formatter_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+
+    let decimal = NumberFormatter()
+    decimal.locale = Locale(identifier: "en_US_POSIX")
+    decimal.numberStyle = .decimal
+    decimal.usesGroupingSeparator = false
+    decimal.minimumFractionDigits = 2
+    decimal.maximumFractionDigits = 2
+
+    let rendered = decimal.string(from: NSNumber(value: 1234.5))
+    if rendered == "1234.50" { flags |= 1 }
+
+    if let parsed = decimal.number(from: "1234.50"), abs(parsed.doubleValue - 1234.5) < 0.000_001 {
+        flags |= 2
+    }
+
+    let rounded = NumberFormatter()
+    rounded.locale = Locale(identifier: "en_US_POSIX")
+    rounded.numberStyle = .decimal
+    rounded.maximumFractionDigits = 0
+    rounded.roundingMode = .halfUp
+    if rounded.string(from: NSNumber(value: 2.6)) == "3" { flags |= 4 }
+
+    if decimal.number(from: "not_a_number") == nil { flags |= 8 }
+    return flags
+}
+
 // ── Value existential dispatch parity ───────────────────────────────────────
 public protocol ValueCurrentLike {
     func current() -> Int32
