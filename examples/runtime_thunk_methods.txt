@@ -1,0 +1,12 @@
+# thunk_name|swift_mangled_symbol|self_register|signature
+# signature options:
+#   self_i32_to_i32
+#   self_to_i32
+#   self_i32_to_void
+#   self_i32_i32_to_i32
+#   self_to_void
+runtime_thunk_counter_increment_x20|$s10RustBridge7CounterC9increment2bys5Int32VAG_tF|x20|self_i32_to_i32
+runtime_thunk_counter_current_x20|$s10RustBridge7CounterC7currents5Int32VyF|x20|self_to_i32
+runtime_thunk_counter_reset_x20|$s10RustBridge7CounterC5reset2toys5Int32V_tF|x20|self_i32_to_void
+runtime_thunk_counter_add_pair_x20|$s10RustBridge7CounterC7addPairys5Int32VAF_AFtF|x20|self_i32_i32_to_i32
+runtime_thunk_counter_clear_x20|$s10RustBridge7CounterC5clearyyF|x20|self_to_void

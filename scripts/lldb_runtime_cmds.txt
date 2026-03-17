@@ -1,0 +1,3 @@
+settings set stop-disassembly-count 0
+run
+quit
