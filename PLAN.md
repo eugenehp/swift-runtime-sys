@@ -51,11 +51,11 @@ Define and complete all work needed to claim production-grade parity between Rus
 - [ ] Dedicated deinit/teardown checks pass reliably.
 
 ### 3) Expand ABI shape matrix coverage
-- [ ] Validate additional calling convention/register shapes and metadata/witness argument placements.
-- [ ] Keep per-shape tests process-isolated to avoid global crash contamination.
+- [x] Validate additional calling convention/register shapes and metadata/witness argument placements.
+- [x] Keep per-shape tests process-isolated to avoid global crash contamination.
 - [ ] Exit criteria:
-- [ ] Required ABI shape list is frozen and fully green.
-- [ ] `run_protocol_dispatch_matrix.sh` has no unsupported required variant.
+- [x] Required ABI shape list is frozen and fully green.
+- [x] `run_protocol_dispatch_matrix.sh` has no unsupported required variant.
 
 ### 4) Cross-version and cross-platform parity matrix
 - [ ] Run parity against a defined support matrix (Swift versions, macOS runners, CPU arch where applicable).

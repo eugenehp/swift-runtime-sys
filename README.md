@@ -241,6 +241,7 @@ Required:
 - `scripts/run_parity_stress.sh` gate passes at configured CI budget.
 - `scripts/run_protocol_dispatch_matrix.sh` completes and publishes matrix output.
 - CI uploads parity/stress/protocol artifacts for each run.
+- Required protocol dispatch variant (`existential`) passes with semantic parity.
 
 Optional:
 
@@ -253,6 +254,12 @@ Experimental (excluded from 100% claim):
 - Opt-in direct `swiftcall` increment path (`RUNTIME_TRY_INCREMENT=1`).
 - Witness `x1` opt-in variants that may crash depending on ABI shape.
 - Raw runtime-only integration paths documented as research mode.
+
+Protocol dispatch matrix notes:
+
+- Required variants default to `existential` and are enforced by `run_protocol_dispatch_matrix.sh`.
+- You can override required variants locally with `RUNTIME_PROTOCOL_REQUIRED_VARIANTS`.
+- Non-required variants remain visible in the matrix as ABI research signals.
 
 Claim policy:
 
