@@ -390,8 +390,10 @@ fuzz_cases=$(extract_number "cases" "$fuzz_line")
 
 retain_init_line=$(line_or_empty "retain count after init=" "$PROBE_LOG")
 retain_after_release_line=$(line_or_empty "retain count after one release=" "$PROBE_LOG")
+counter_teardown_line=$(line_or_empty "counter teardown =>" "$PROBE_LOG")
 retain_init=$(extract_number "init" "$retain_init_line")
 retain_after_release=$(extract_number "release" "$retain_after_release_line")
+counter_drop_ok=$(extract_number "drop_ok" "$counter_teardown_line")
 
 malloc_counter_line=$(line_or_empty "malloc_size\(counter\)=" "$PROBE_LOG")
 malloc_raw_line=$(line_or_empty "malloc_size\(raw_counter\)=" "$PROBE_LOG")
@@ -507,7 +509,7 @@ if [[ "$inc1" == "15" && "$inc2" == "18" && "$current" == "18" ]]; then pass_inc
 if [[ "$after_reset" == "4" ]]; then pass_reset=1; fi
 if [[ "$add_pair" == "17" ]]; then pass_add_pair=1; fi
 if [[ "$after_clear" == "0" ]]; then pass_clear=1; fi
-if [[ "$retain_init" == "1" && "$retain_after_release" == "1" ]]; then pass_retain=1; fi
+if [[ "$retain_init" == "1" && "$retain_after_release" == "1" && "$counter_drop_ok" == "1" ]]; then pass_retain=1; fi
 if [[ "$malloc_counter" == "32" && "$malloc_raw" == "32" ]]; then pass_alloc_sizes=1; fi
 if [[ "$has_person_init" == "1" && "$has_counter_alloc" == "1" && "$has_bad_access" == "0" ]]; then pass_lldb=1; fi
 if [[ "$direct_field" == "99" && "$after_direct" == "99" ]]; then pass_direct_field=1; fi
@@ -711,6 +713,7 @@ cat > "$REPORT_JSON" <<JSON
     "person_bits_line": "${person_bits_line}",
     "retain_init": "${retain_init}",
     "retain_after_release": "${retain_after_release}",
+    "counter_teardown_line": "${counter_teardown_line}",
     "malloc_counter": "${malloc_counter}",
     "malloc_raw_counter": "${malloc_raw}",
     "lldb_person_init": $has_person_init,
@@ -892,7 +895,7 @@ cat > "$REPORT_MD" <<MD
 | reset (self_i32_to_void) | $(status_symbol "$pass_reset") | after_reset=${after_reset} |
 | addPair (self_i32_i32_to_i32) | $(status_symbol "$pass_add_pair") | add_pair=${add_pair} |
 | clear (self_to_void) | $(status_symbol "$pass_clear") | after_clear=${after_clear} |
-| retain counts | $(status_symbol "$pass_retain") | init=${retain_init}, after_release=${retain_after_release} |
+| retain counts | $(status_symbol "$pass_retain") | init=${retain_init}, after_release=${retain_after_release}, drop_ok=${counter_drop_ok} |
 | allocation sizes | $(status_symbol "$pass_alloc_sizes") | counter=${malloc_counter}, raw=${malloc_raw} |
 | lldb constructor path | $(status_symbol "$pass_lldb") | probe_person=${has_person_init}, probe_counter=${has_counter_alloc}, lldb_exit=${has_lldb_exit}, bad_access=${has_bad_access} |
 | direct field write | $(status_symbol "$pass_direct_field") | direct=${direct_field}, current=${after_direct} |

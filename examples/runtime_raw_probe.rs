@@ -255,8 +255,6 @@ fn main() {
         .unwrap_or_else(|e| panic!("retain count #3 failed: {e:?}"));
     println!("retain count after one release={rc3}");
 
-    println!("leaving final retain in place to avoid teardown crash in experimental probe");
-
     // ── Enum parity ──────────────────────────────────────────────────────────
 
     // Test 1: Direction (RawRepresentable Int32, 4-byte storage).
@@ -1463,4 +1461,19 @@ fn main() {
     println!(
         "fuzz parity => add_ok={add_ok} divide_ok={divide_ok} throw_ok={throw_ok} cases={fuzz_cases} seed={fuzz_seed}"
     );
+
+    // Finalize primary counter lifecycle at the end of the probe.
+    let counter_drop_ok = unsafe {
+        match factory
+            .symbol_address("swift_counter_drop")
+            .map(|p| std::mem::transmute::<*mut c_void, CdeclPtrToVoid>(p))
+        {
+            Ok(drop_f) => {
+                drop_f(counter);
+                1
+            }
+            Err(_) => 0,
+        }
+    };
+    println!("counter teardown => drop_ok={counter_drop_ok}");
 }

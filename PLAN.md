@@ -44,10 +44,10 @@ Define and complete all work needed to claim production-grade parity between Rus
 - [ ] Experimental labels removed for in-scope functionality.
 
 ### 2) Close lifecycle/teardown instability
-- [ ] Resolve retained-object teardown caveats in probe flow.
+- [x] Resolve retained-object teardown caveats in probe flow.
 - [ ] Ensure alloc/retain/release/dealloc behavior is fully balanced and validated.
 - [ ] Exit criteria:
-- [ ] No intentional retained-object leak in main parity path.
+- [x] No intentional retained-object leak in main parity path.
 - [ ] Dedicated deinit/teardown checks pass reliably.
 
 ### 3) Expand ABI shape matrix coverage
