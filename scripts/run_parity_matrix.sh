@@ -138,6 +138,8 @@ plist_encoder_line=$(line_or_empty "plist encoder =>" "$PROBE_LOG")
 range_line=$(line_or_empty "range =>" "$PROBE_LOG")
 url_query_item_line=$(line_or_empty "url query item =>" "$PROBE_LOG")
 closed_range_line=$(line_or_empty "closed range =>" "$PROBE_LOG")
+date_interval_line=$(line_or_empty "date interval =>" "$PROBE_LOG")
+index_path_line=$(line_or_empty "index path =>" "$PROBE_LOG")
 value_existential_line=$(line_or_empty "value existential =>" "$PROBE_LOG")
 resilient_layout_line=$(line_or_empty "resilient layout =>" "$PROBE_LOG")
 cross_module_resilient_line=$(line_or_empty "cross-module resilient =>" "$PROBE_LOG")
@@ -345,6 +347,14 @@ closed_range_contains_ok=$(extract_number "contains_ok" "$closed_range_line")
 closed_range_bounds_ok=$(extract_number "bounds_ok" "$closed_range_line")
 closed_range_not_empty_ok=$(extract_number "not_empty_ok" "$closed_range_line")
 closed_range_count_ok=$(extract_number "count_ok" "$closed_range_line")
+date_interval_duration_ok=$(extract_number "duration_ok" "$date_interval_line")
+date_interval_contains_ok=$(extract_number "contains_ok" "$date_interval_line")
+date_interval_overlap_ok=$(extract_number "overlap_ok" "$date_interval_line")
+date_interval_bounds_ok=$(extract_number "bounds_ok" "$date_interval_line")
+index_path_count_ok=$(extract_number "count_ok" "$index_path_line")
+index_path_index_ok=$(extract_number "index_ok" "$index_path_line")
+index_path_append_ok=$(extract_number "append_ok" "$index_path_line")
+index_path_compare_ok=$(extract_number "compare_ok" "$index_path_line")
 value_existential_current=$(extract_number "current" "$value_existential_line")
 point_size=$(extract_number "point_size" "$resilient_layout_line")
 point_stride=$(extract_number "point_stride" "$resilient_layout_line")
@@ -469,6 +479,8 @@ pass_plist_encoder=0
 pass_range=0
 pass_url_query_item=0
 pass_closed_range=0
+pass_date_interval=0
+pass_index_path=0
 pass_value_existential=0
 pass_resilient_layout_metrics=0
 pass_resilient_field_offset=0
@@ -563,6 +575,8 @@ if [[ "$plist_encode_ok" == "1" && "$plist_decode_ok" == "1" && "$plist_binary_o
 if [[ "$range_contains_ok" == "1" && "$range_exclude_ok" == "1" && "$range_not_empty_ok" == "1" && "$range_count_ok" == "1" ]]; then pass_range=1; fi
 if [[ "$url_query_name_ok" == "1" && "$url_query_value_ok" == "1" && "$url_query_encode_ok" == "1" && "$url_query_nil_ok" == "1" ]]; then pass_url_query_item=1; fi
 if [[ "$closed_range_contains_ok" == "1" && "$closed_range_bounds_ok" == "1" && "$closed_range_not_empty_ok" == "1" && "$closed_range_count_ok" == "1" ]]; then pass_closed_range=1; fi
+if [[ "$date_interval_duration_ok" == "1" && "$date_interval_contains_ok" == "1" && "$date_interval_overlap_ok" == "1" && "$date_interval_bounds_ok" == "1" ]]; then pass_date_interval=1; fi
+if [[ "$index_path_count_ok" == "1" && "$index_path_index_ok" == "1" && "$index_path_append_ok" == "1" && "$index_path_compare_ok" == "1" ]]; then pass_index_path=1; fi
 if [[ "$value_existential_current" == "88" ]]; then pass_value_existential=1; fi
 if [[ "$point_size" == "8" && "$point_stride" == "8" && "$point_align" == "4" && "$resilient_size" == "16" && "$resilient_stride" == "16" && "$resilient_align" == "8" ]]; then pass_resilient_layout_metrics=1; fi
 if [[ "$resilient_b_offset" == "8" ]]; then pass_resilient_field_offset=1; fi
@@ -654,12 +668,10 @@ cat > "$REPORT_JSON" <<JSON
     "json_encoder_semantics": $pass_json_encoder,
     "plist_encoder_semantics": $pass_plist_encoder,
     "range_semantics": $pass_range,
-    "plist_encoder_semantics": $pass_plist_encoder,
-    "range_semantics": $pass_range,
     "url_query_item_semantics": $pass_url_query_item,
     "closed_range_semantics": $pass_closed_range,
-    "url_query_item_semantics": $pass_url_query_item,
-    "closed_range_semantics": $pass_closed_range,
+    "date_interval_semantics": $pass_date_interval,
+    "index_path_semantics": $pass_index_path,
     "value_existential_dispatch": $pass_value_existential,
     "resilient_layout_metrics": $pass_resilient_layout_metrics,
     "resilient_field_offset": $pass_resilient_field_offset,
@@ -741,8 +753,8 @@ RUN_TS=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 GIT_HASH=$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo "unknown")
 HISTORY_FILE="$HISTORY_DIR/${RUN_TS//[: ]/_}_${GIT_HASH}.json"
 
-total_checks=89
-pass_count=$(( pass_increment + pass_reset + pass_add_pair + pass_clear + pass_retain + pass_alloc_sizes + pass_lldb + pass_direct_field + pass_protocol_witness + pass_protocol_slot + pass_protocol_dispatch + pass_protocol_dispatch_semantic + pass_global_variable + pass_raw_metadata + pass_enum_simple + pass_enum_associated + pass_enum_payload + pass_codable + pass_throws_success + pass_throws_error + pass_generic_type + pass_string + pass_struct_dispatch + pass_tuple_return + pass_optional_layout + pass_array + pass_string_storage + pass_array_storage + pass_closure + pass_reflection + pass_error_boxing + pass_error_roundtrip + pass_objc_interop + pass_weak_ref + pass_conformance + pass_async_task + pass_actor_executor + pass_generic_metadata + pass_generic_specialization + pass_synth_witness + pass_synth_witness_lldb + pass_keypath_synth + pass_property_wrapper_synth + pass_result_builder_synth + pass_opaque_return + pass_task_local + pass_dynamic_replacement + pass_sendable + pass_continuation + pass_task_group + pass_async_stream + pass_unsafe_memory + pass_proto_composition + pass_enum_raw_value + pass_option_set + pass_case_iterable + pass_set_algebra + pass_dictionary + pass_comparable + pass_result + pass_data + pass_uuid + pass_character_set + pass_url_components + pass_calendar + pass_index_set + pass_time_zone + pass_measurement + pass_date_formatter + pass_scanner + pass_locale + pass_number_formatter + pass_url + pass_decimal + pass_url_request + pass_data_base64 + pass_http_response + pass_json_encoder + pass_plist_encoder + pass_range + pass_url_query_item + pass_closed_range + pass_value_existential + pass_resilient_layout_metrics + pass_resilient_field_offset + pass_cross_module_resilient + pass_cross_module_existential + pass_arc_edge_stress + pass_fuzz_parity ))
+total_checks=91
+pass_count=$(( pass_increment + pass_reset + pass_add_pair + pass_clear + pass_retain + pass_alloc_sizes + pass_lldb + pass_direct_field + pass_protocol_witness + pass_protocol_slot + pass_protocol_dispatch + pass_protocol_dispatch_semantic + pass_global_variable + pass_raw_metadata + pass_enum_simple + pass_enum_associated + pass_enum_payload + pass_codable + pass_throws_success + pass_throws_error + pass_generic_type + pass_string + pass_struct_dispatch + pass_tuple_return + pass_optional_layout + pass_array + pass_string_storage + pass_array_storage + pass_closure + pass_reflection + pass_error_boxing + pass_error_roundtrip + pass_objc_interop + pass_weak_ref + pass_conformance + pass_async_task + pass_actor_executor + pass_generic_metadata + pass_generic_specialization + pass_synth_witness + pass_synth_witness_lldb + pass_keypath_synth + pass_property_wrapper_synth + pass_result_builder_synth + pass_opaque_return + pass_task_local + pass_dynamic_replacement + pass_sendable + pass_continuation + pass_task_group + pass_async_stream + pass_unsafe_memory + pass_proto_composition + pass_enum_raw_value + pass_option_set + pass_case_iterable + pass_set_algebra + pass_dictionary + pass_comparable + pass_result + pass_data + pass_uuid + pass_character_set + pass_url_components + pass_calendar + pass_index_set + pass_time_zone + pass_measurement + pass_date_formatter + pass_scanner + pass_locale + pass_number_formatter + pass_url + pass_decimal + pass_url_request + pass_data_base64 + pass_http_response + pass_json_encoder + pass_plist_encoder + pass_range + pass_url_query_item + pass_closed_range + pass_date_interval + pass_index_path + pass_value_existential + pass_resilient_layout_metrics + pass_resilient_field_offset + pass_cross_module_resilient + pass_cross_module_existential + pass_arc_edge_stress + pass_fuzz_parity ))
 
 cat > "$HISTORY_FILE" <<HIST
 {
@@ -828,6 +840,14 @@ cat > "$HISTORY_FILE" <<HIST
     "decimal_semantics": $pass_decimal,
     "url_request_semantics": $pass_url_request,
     "data_base64_semantics": $pass_data_base64,
+    "http_url_response_semantics": $pass_http_response,
+    "json_encoder_semantics": $pass_json_encoder,
+    "plist_encoder_semantics": $pass_plist_encoder,
+    "range_semantics": $pass_range,
+    "url_query_item_semantics": $pass_url_query_item,
+    "closed_range_semantics": $pass_closed_range,
+    "date_interval_semantics": $pass_date_interval,
+    "index_path_semantics": $pass_index_path,
     "value_existential_dispatch": $pass_value_existential,
     "resilient_layout_metrics": $pass_resilient_layout_metrics,
     "resilient_field_offset": $pass_resilient_field_offset,
@@ -932,6 +952,8 @@ cat > "$REPORT_MD" <<MD
 | range semantics | $(status_symbol "$pass_range") | contains_ok=${range_contains_ok}, exclude_ok=${range_exclude_ok}, not_empty_ok=${range_not_empty_ok}, count_ok=${range_count_ok} |
 | url query item semantics | $(status_symbol "$pass_url_query_item") | name_ok=${url_query_name_ok}, value_ok=${url_query_value_ok}, encode_ok=${url_query_encode_ok}, nil_ok=${url_query_nil_ok} |
 | closed range semantics | $(status_symbol "$pass_closed_range") | contains_ok=${closed_range_contains_ok}, bounds_ok=${closed_range_bounds_ok}, not_empty_ok=${closed_range_not_empty_ok}, count_ok=${closed_range_count_ok} |
+| date interval semantics | $(status_symbol "$pass_date_interval") | duration_ok=${date_interval_duration_ok}, contains_ok=${date_interval_contains_ok}, overlap_ok=${date_interval_overlap_ok}, bounds_ok=${date_interval_bounds_ok} |
+| index path semantics | $(status_symbol "$pass_index_path") | count_ok=${index_path_count_ok}, index_ok=${index_path_index_ok}, append_ok=${index_path_append_ok}, compare_ok=${index_path_compare_ok} |
 | value existential dispatch | $(status_symbol "$pass_value_existential") | current=${value_existential_current} |
 | resilient layout metrics | $(status_symbol "$pass_resilient_layout_metrics") | point(size=${point_size},stride=${point_stride},align=${point_align}) resilient(size=${resilient_size},stride=${resilient_stride},align=${resilient_align}) |
 | resilient field offset | $(status_symbol "$pass_resilient_field_offset") | b_offset=${resilient_b_offset} |

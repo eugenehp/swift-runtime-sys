@@ -289,6 +289,8 @@ The parity report now also tracks:
 - Range semantics parity (containment checks, exclusion validation, isEmpty, and count operations)
 - URLQueryItem semantics parity (name/value property access, encoding invariants, nil-value handling)
 - ClosedRange semantics parity (containment checks, bound access, isEmpty, and count operations)
+- DateInterval semantics parity (duration, containment, overlap/intersection, and bound invariants)
+- IndexPath semantics parity (count/index access, append behavior, and ordering comparison invariants)
 - seeded randomized parity fuzz checks (`fuzz parity => ...`) validating add/divide/throw invariants
 
 Note: protocol witness dispatch check is currently an experimental callability

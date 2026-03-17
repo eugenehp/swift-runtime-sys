@@ -1209,9 +1209,7 @@ fn main() {
         plist_binary_decode_ok as i32,
     );
 
-    let range_flags = factory
-        .call_to_i32("swift_range_probe_flags")
-        .unwrap_or(0);
+    let range_flags = factory.call_to_i32("swift_range_probe_flags").unwrap_or(0);
     let range_contains_ok = (range_flags & 1) != 0;
     let range_exclude_ok = (range_flags & 2) != 0;
     let range_not_empty_ok = (range_flags & 4) != 0;
@@ -1252,6 +1250,34 @@ fn main() {
         closed_range_bounds_ok as i32,
         closed_range_not_empty_ok as i32,
         closed_range_count_ok as i32,
+    );
+
+    let date_interval_flags = factory
+        .call_to_i32("swift_date_interval_probe_flags")
+        .unwrap_or(0);
+    let date_interval_duration_ok = (date_interval_flags & 1) != 0;
+    let date_interval_contains_ok = (date_interval_flags & 2) != 0;
+    let date_interval_overlap_ok = (date_interval_flags & 4) != 0;
+    let date_interval_bounds_ok = (date_interval_flags & 8) != 0;
+    println!(
+        "date interval => flags={date_interval_flags} duration_ok={} contains_ok={} overlap_ok={} bounds_ok={}",
+        date_interval_duration_ok as i32,
+        date_interval_contains_ok as i32,
+        date_interval_overlap_ok as i32,
+        date_interval_bounds_ok as i32,
+    );
+
+    let index_path_flags = factory.call_to_i32("swift_index_path_probe_flags").unwrap_or(0);
+    let index_path_count_ok = (index_path_flags & 1) != 0;
+    let index_path_index_ok = (index_path_flags & 2) != 0;
+    let index_path_append_ok = (index_path_flags & 4) != 0;
+    let index_path_compare_ok = (index_path_flags & 8) != 0;
+    println!(
+        "index path => flags={index_path_flags} count_ok={} index_ok={} append_ok={} compare_ok={}",
+        index_path_count_ok as i32,
+        index_path_index_ok as i32,
+        index_path_append_ok as i32,
+        index_path_compare_ok as i32,
     );
 
     // ── Value existential dispatch parity ───────────────────────────────────

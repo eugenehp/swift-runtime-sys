@@ -1773,6 +1773,43 @@ public func swift_closed_range_probe_flags() -> Int32 {
     return flags
 }
 
+@_cdecl("swift_date_interval_probe_flags")
+public func swift_date_interval_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+    let start = Date(timeIntervalSince1970: 0)
+    let end = Date(timeIntervalSince1970: 3600)
+    let interval = DateInterval(start: start, end: end)
+
+    if Int(interval.duration) == 3600 { flags |= 1 }
+
+    if interval.contains(Date(timeIntervalSince1970: 1800)) { flags |= 2 }
+
+    let other = DateInterval(start: Date(timeIntervalSince1970: 2400), end: Date(timeIntervalSince1970: 4800))
+    if let overlap = interval.intersection(with: other), Int(overlap.duration) == 1200 { flags |= 4 }
+
+    if interval.start == start && interval.end == end { flags |= 8 }
+
+    return flags
+}
+
+@_cdecl("swift_index_path_probe_flags")
+public func swift_index_path_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+    let path = IndexPath(indexes: [1, 3, 5])
+
+    if path.count == 3 { flags |= 1 }
+
+    if path[0] == 1 && path[2] == 5 { flags |= 2 }
+
+    let appended = path.appending(7)
+    if appended.count == 4 && appended[3] == 7 { flags |= 4 }
+
+    let next = IndexPath(indexes: [1, 3, 6])
+    if path.compare(next) == .orderedAscending { flags |= 8 }
+
+    return flags
+}
+
 // ── Value existential dispatch parity ───────────────────────────────────────
 public protocol ValueCurrentLike {
     func current() -> Int32
