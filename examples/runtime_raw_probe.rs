@@ -346,6 +346,7 @@ fn main() {
     type CdeclPtrToI32 = unsafe extern "C" fn(*mut c_void) -> i32;
     type CdeclPtrI32ToVoid = unsafe extern "C" fn(*mut c_void, i32);
     type CdeclPtrToVoid = unsafe extern "C" fn(*mut c_void);
+    type CdeclVoidToVoid = unsafe extern "C" fn();
     let generic_get1_v2: i32;
     let generic_get2_v2: i32;
     unsafe {
@@ -1463,6 +1464,24 @@ fn main() {
     );
 
     // Finalize primary counter lifecycle at the end of the probe.
+    unsafe {
+        if let Ok(reset_f) = factory
+            .symbol_address("swift_counter_deinit_reset")
+            .map(|p| std::mem::transmute::<*mut c_void, CdeclVoidToVoid>(p))
+        {
+            reset_f();
+        }
+    }
+    loop {
+        let rc = factory.retain_count(counter).unwrap_or(0);
+        if rc <= 1 {
+            break;
+        }
+        factory
+            .release(counter)
+            .unwrap_or_else(|e| panic!("release-before-drop failed: {e:?}"));
+    }
+    let deinit_before = factory.call_to_i32("swift_counter_deinit_count").unwrap_or(i32::MIN);
     let counter_drop_ok = unsafe {
         match factory
             .symbol_address("swift_counter_drop")
@@ -1475,5 +1494,13 @@ fn main() {
             Err(_) => 0,
         }
     };
-    println!("counter teardown => drop_ok={counter_drop_ok}");
+    let deinit_after = factory.call_to_i32("swift_counter_deinit_count").unwrap_or(i32::MIN);
+    let deinit_delta = if deinit_before == i32::MIN || deinit_after == i32::MIN {
+        i32::MIN
+    } else {
+        deinit_after - deinit_before
+    };
+    println!(
+        "counter teardown => drop_ok={counter_drop_ok} deinit_before={deinit_before} deinit_after={deinit_after} deinit_delta={deinit_delta}"
+    );
 }

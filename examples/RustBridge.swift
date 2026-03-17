@@ -20,6 +20,7 @@ public protocol CounterLike {
 }
 
 public final class Counter {
+    public static var deinitCount: Int32 = 0
     private var value: Int32
 
     public init(start: Int32) {
@@ -46,6 +47,10 @@ public final class Counter {
 
     public func clear() {
         value = 0
+    }
+
+    deinit {
+        Counter.deinitCount += 1
     }
 }
 
@@ -245,6 +250,16 @@ public func swift_counter_increment(_ counter: UnsafeMutableRawPointer?, _ delta
 public func swift_counter_drop(_ counter: UnsafeMutableRawPointer?) {
     guard let counter else { return }
     _ = Unmanaged<Counter>.fromOpaque(counter).takeRetainedValue()
+}
+
+@_cdecl("swift_counter_deinit_count")
+public func swift_counter_deinit_count() -> Int32 {
+    Counter.deinitCount
+}
+
+@_cdecl("swift_counter_deinit_reset")
+public func swift_counter_deinit_reset() {
+    Counter.deinitCount = 0
 }
 
 @_cdecl("swift_add")

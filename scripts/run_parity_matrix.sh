@@ -394,6 +394,7 @@ counter_teardown_line=$(line_or_empty "counter teardown =>" "$PROBE_LOG")
 retain_init=$(extract_number "init" "$retain_init_line")
 retain_after_release=$(extract_number "release" "$retain_after_release_line")
 counter_drop_ok=$(extract_number "drop_ok" "$counter_teardown_line")
+counter_deinit_delta=$(extract_number "deinit_delta" "$counter_teardown_line")
 
 malloc_counter_line=$(line_or_empty "malloc_size\(counter\)=" "$PROBE_LOG")
 malloc_raw_line=$(line_or_empty "malloc_size\(raw_counter\)=" "$PROBE_LOG")
@@ -895,7 +896,7 @@ cat > "$REPORT_MD" <<MD
 | reset (self_i32_to_void) | $(status_symbol "$pass_reset") | after_reset=${after_reset} |
 | addPair (self_i32_i32_to_i32) | $(status_symbol "$pass_add_pair") | add_pair=${add_pair} |
 | clear (self_to_void) | $(status_symbol "$pass_clear") | after_clear=${after_clear} |
-| retain counts | $(status_symbol "$pass_retain") | init=${retain_init}, after_release=${retain_after_release}, drop_ok=${counter_drop_ok} |
+| retain counts | $(status_symbol "$pass_retain") | init=${retain_init}, after_release=${retain_after_release}, drop_ok=${counter_drop_ok}, deinit_delta=${counter_deinit_delta} |
 | allocation sizes | $(status_symbol "$pass_alloc_sizes") | counter=${malloc_counter}, raw=${malloc_raw} |
 | lldb constructor path | $(status_symbol "$pass_lldb") | probe_person=${has_person_init}, probe_counter=${has_counter_alloc}, lldb_exit=${has_lldb_exit}, bad_access=${has_bad_access} |
 | direct field write | $(status_symbol "$pass_direct_field") | direct=${direct_field}, current=${after_direct} |
