@@ -531,6 +531,16 @@ private func consumeValueLike<T: ValueLike>(_ t: T) -> Int32 {
     t.value()
 }
 
+@inline(never)
+private func applyTransform<T>(_ value: T, _ transform: (T) -> T) -> T {
+    transform(value)
+}
+
+@inline(never)
+private func liftTransform<T>(_ transform: @escaping (T) -> T) -> (T) -> T {
+    { value in transform(value) }
+}
+
 @_cdecl("swift_generic_metadata_distinct")
 public func swift_generic_metadata_distinct() -> Int32 {
     let a = ObjectIdentifier(TypedBox<Int32>.self)
@@ -542,6 +552,20 @@ public func swift_generic_metadata_distinct() -> Int32 {
 @_cdecl("swift_generic_constrained_call")
 public func swift_generic_constrained_call() -> Int32 {
     consumeValueLike(ValueHolder(v: 77))
+}
+
+@_cdecl("swift_generic_specialization_probe_flags")
+public func swift_generic_specialization_probe_flags() -> Int32 {
+    let intResult = applyTransform(Int32(21)) { $0 + 21 }
+    let stringResult = applyTransform("ab") { $0 + "cd" }
+    let lifted = liftTransform { (x: Int32) in x * 2 }
+    let reabstractedResult = lifted(9)
+
+    var flags: Int32 = 0
+    if intResult == 42 { flags |= 1 }
+    if stringResult == "abcd" { flags |= 2 }
+    if reabstractedResult == 18 { flags |= 4 }
+    return flags
 }
 
 // ── Synthesized witness parity (Equatable/Hashable) ───────────────────────

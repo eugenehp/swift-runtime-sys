@@ -83,6 +83,7 @@ conform_line=$(line_or_empty "conformance =>" "$PROBE_LOG")
 async_line=$(line_or_empty "async task =>" "$PROBE_LOG")
 actor_line=$(line_or_empty "actor =>" "$PROBE_LOG")
 generic_meta_line=$(line_or_empty "generic metadata =>" "$PROBE_LOG")
+generic_specialization_line=$(line_or_empty "generic specialization =>" "$PROBE_LOG")
 synth_witness_line=$(line_or_empty "synth witness =>" "$PROBE_LOG")
 value_existential_line=$(line_or_empty "value existential =>" "$PROBE_LOG")
 resilient_layout_line=$(line_or_empty "resilient layout =>" "$PROBE_LOG")
@@ -132,6 +133,9 @@ actor_inc=$(extract_number "inc" "$actor_line")
 actor_cur=$(extract_number "cur" "$actor_line")
 generic_meta_distinct=$(extract_number "distinct" "$generic_meta_line")
 generic_constrained=$(extract_number "constrained" "$generic_meta_line")
+generic_specialization_int=$(extract_number "int_ok" "$generic_specialization_line")
+generic_specialization_string=$(extract_number "string_ok" "$generic_specialization_line")
+generic_reabstract_ok=$(extract_number "reabstract_ok" "$generic_specialization_line")
 synth_eq_true=$(extract_number "eq_true" "$synth_witness_line")
 synth_eq_false=$(extract_number "eq_false" "$synth_witness_line")
 synth_dedup_ok=$(extract_number "dedup_ok" "$synth_witness_line")
@@ -213,6 +217,7 @@ pass_conformance=0
 pass_async_task=0
 pass_actor_executor=0
 pass_generic_metadata=0
+pass_generic_specialization=0
 pass_synth_witness=0
 pass_synth_witness_lldb=0
 pass_value_existential=0
@@ -263,6 +268,7 @@ if [[ "$conform_nonnull" == "1" ]]; then pass_conformance=1; fi
 if [[ "$async_add" == "42" && "$async_div_ok" == "5" && "$async_div_throw" == "1" ]]; then pass_async_task=1; fi
 if [[ "$actor_create" == "1" && "$actor_inc" == "15" && "$actor_cur" == "15" ]]; then pass_actor_executor=1; fi
 if [[ "$generic_meta_distinct" == "1" && "$generic_constrained" == "77" ]]; then pass_generic_metadata=1; fi
+if [[ "$generic_specialization_int" == "1" && "$generic_specialization_string" == "1" && "$generic_reabstract_ok" == "1" ]]; then pass_generic_specialization=1; fi
 if [[ "$synth_eq_true" == "1" && "$synth_eq_false" == "1" && "$synth_dedup_ok" == "1" ]]; then pass_synth_witness=1; fi
 if [[ "$synth_eq_lldb_hits" -gt 0 && "$synth_hash_lldb_hits" -gt 0 ]]; then pass_synth_witness_lldb=1; fi
 if [[ "$value_existential_current" == "88" ]]; then pass_value_existential=1; fi
@@ -312,6 +318,7 @@ cat > "$REPORT_JSON" <<JSON
     "async_task_runtime": $pass_async_task,
     "actor_executor_behavior": $pass_actor_executor,
     "generic_metadata_instantiation": $pass_generic_metadata,
+    "generic_specialization_reabstraction": $pass_generic_specialization,
     "synthesized_witness_eq_hash": $pass_synth_witness,
     "synthesized_witness_lldb_hits": $pass_synth_witness_lldb,
     "value_existential_dispatch": $pass_value_existential,
@@ -362,6 +369,7 @@ cat > "$REPORT_JSON" <<JSON
     "async_line": "${async_line}",
     "actor_line": "${actor_line}",
     "generic_meta_line": "${generic_meta_line}",
+    "generic_specialization_line": "${generic_specialization_line}",
     "synth_witness_line": "${synth_witness_line}",
     "value_existential_line": "${value_existential_line}",
     "resilient_layout_line": "${resilient_layout_line}",
@@ -385,8 +393,8 @@ RUN_TS=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 GIT_HASH=$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo "unknown")
 HISTORY_FILE="$HISTORY_DIR/${RUN_TS//[: ]/_}_${GIT_HASH}.json"
 
-total_checks=45
-pass_count=$(( pass_increment + pass_reset + pass_add_pair + pass_clear + pass_retain + pass_alloc_sizes + pass_lldb + pass_direct_field + pass_protocol_witness + pass_protocol_slot + pass_protocol_dispatch + pass_protocol_dispatch_semantic + pass_global_variable + pass_raw_metadata + pass_enum_simple + pass_enum_associated + pass_throws_success + pass_throws_error + pass_generic_type + pass_string + pass_struct_dispatch + pass_tuple_return + pass_optional_layout + pass_array + pass_string_storage + pass_array_storage + pass_closure + pass_reflection + pass_error_boxing + pass_error_roundtrip + pass_objc_interop + pass_weak_ref + pass_conformance + pass_async_task + pass_actor_executor + pass_generic_metadata + pass_synth_witness + pass_synth_witness_lldb + pass_value_existential + pass_resilient_layout_metrics + pass_resilient_field_offset + pass_cross_module_resilient + pass_cross_module_existential + pass_arc_edge_stress + pass_fuzz_parity ))
+total_checks=46
+pass_count=$(( pass_increment + pass_reset + pass_add_pair + pass_clear + pass_retain + pass_alloc_sizes + pass_lldb + pass_direct_field + pass_protocol_witness + pass_protocol_slot + pass_protocol_dispatch + pass_protocol_dispatch_semantic + pass_global_variable + pass_raw_metadata + pass_enum_simple + pass_enum_associated + pass_throws_success + pass_throws_error + pass_generic_type + pass_string + pass_struct_dispatch + pass_tuple_return + pass_optional_layout + pass_array + pass_string_storage + pass_array_storage + pass_closure + pass_reflection + pass_error_boxing + pass_error_roundtrip + pass_objc_interop + pass_weak_ref + pass_conformance + pass_async_task + pass_actor_executor + pass_generic_metadata + pass_generic_specialization + pass_synth_witness + pass_synth_witness_lldb + pass_value_existential + pass_resilient_layout_metrics + pass_resilient_field_offset + pass_cross_module_resilient + pass_cross_module_existential + pass_arc_edge_stress + pass_fuzz_parity ))
 
 cat > "$HISTORY_FILE" <<HIST
 {
@@ -432,6 +440,7 @@ cat > "$HISTORY_FILE" <<HIST
     "async_task_runtime": $pass_async_task,
     "actor_executor_behavior": $pass_actor_executor,
     "generic_metadata_instantiation": $pass_generic_metadata,
+    "generic_specialization_reabstraction": $pass_generic_specialization,
     "synthesized_witness_eq_hash": $pass_synth_witness,
     "synthesized_witness_lldb_hits": $pass_synth_witness_lldb,
     "value_existential_dispatch": $pass_value_existential,
@@ -492,6 +501,7 @@ cat > "$REPORT_MD" <<MD
 | async/task runtime | $(status_symbol "$pass_async_task") | add=${async_add}, divide_ok=${async_div_ok}, divide_throw=${async_div_throw} |
 | actor/executor behavior | $(status_symbol "$pass_actor_executor") | create=${actor_create}, inc=${actor_inc}, cur=${actor_cur} |
 | generic metadata instantiation | $(status_symbol "$pass_generic_metadata") | distinct=${generic_meta_distinct}, constrained=${generic_constrained} |
+| generic specialization/reabstraction | $(status_symbol "$pass_generic_specialization") | int_ok=${generic_specialization_int}, string_ok=${generic_specialization_string}, reabstract_ok=${generic_reabstract_ok} |
 | synthesized witness eq/hash | $(status_symbol "$pass_synth_witness") | eq_true=${synth_eq_true}, eq_false=${synth_eq_false}, dedup_ok=${synth_dedup_ok} |
 | synthesized witness LLDB hits | $(status_symbol "$pass_synth_witness_lldb") | eq_hits=${synth_eq_lldb_hits}, hash_hits=${synth_hash_lldb_hits} |
 | value existential dispatch | $(status_symbol "$pass_value_existential") | current=${value_existential_current} |

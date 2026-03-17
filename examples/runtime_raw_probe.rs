@@ -592,8 +592,20 @@ fn main() {
     let generic_constrained = factory
         .call_to_i32("swift_generic_constrained_call")
         .unwrap_or(i32::MIN);
+    let generic_specialization_flags = factory
+        .call_to_i32("swift_generic_specialization_probe_flags")
+        .unwrap_or(0);
+    let generic_specialization_int = (generic_specialization_flags & 1) != 0;
+    let generic_specialization_string = (generic_specialization_flags & 2) != 0;
+    let generic_reabstraction = (generic_specialization_flags & 4) != 0;
     println!(
         "generic metadata => distinct={generic_meta_distinct} constrained={generic_constrained}"
+    );
+    println!(
+        "generic specialization => flags={generic_specialization_flags} int_ok={} string_ok={} reabstract_ok={}",
+        generic_specialization_int as i32,
+        generic_specialization_string as i32,
+        generic_reabstraction as i32,
     );
 
     // ── Synthesized witness parity (Equatable/Hashable) ───────────────────
