@@ -8,12 +8,19 @@ Define and complete all work needed to claim production-grade parity between Rus
 - [x] Source of truth for checks and totals: `scripts/run_parity_matrix.sh`.
 - [x] Latest parity key inventory: `/memories/repo/parity.md`.
 
+## Host-Local Signoff (current machine)
+- [x] Host Swift toolchain recorded: `Apple Swift 6.2.4` (`arm64-apple-macosx26.0`).
+- [x] `run_parity_matrix.sh` passes on current host (`101/101 PASS`).
+- [x] Host reliability gate passes (`FUZZ_CASES=64 STOP_ON_FAIL=1 run_parity_stress.sh 3` => `3/3`).
+- [x] Host protocol dispatch required variant passes (`existential` semantic parity).
+- [x] Host-local parity claim is complete; cross-matrix CI signoff remains separate below.
+
 ## Definition of 100% Parity
 100% parity is not only a check count. It requires all of the following:
 - [x] Functional parity: all in-scope semantic/runtime features are covered by deterministic checks.
 - [x] ABI parity: all supported call shapes are validated and stable (no opt-in crash-prone paths).
 - [x] Reliability parity: stress/fuzz runs pass repeatedly with no intermittent failures.
-- [ ] Platform/version parity: supported Swift and macOS targets pass the same matrix.
+- [ ] Platform/version parity: supported Swift and macOS targets pass the same matrix (cross-cell CI signoff pending).
 - [x] Tooling parity: CI enforces parity gates and preserves history/artifacts.
 - [x] Operational parity: known experimental caveats removed or explicitly scoped out of claim.
 
