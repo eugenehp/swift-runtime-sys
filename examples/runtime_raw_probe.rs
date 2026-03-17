@@ -89,128 +89,124 @@ fn main() {
         .unwrap_or_else(|e| panic!("retain count failed: {e:?}"));
     println!("retain count after init={rc1}");
 
-    if std::env::var("RUNTIME_TRY_INCREMENT").as_deref() == Ok("1") {
-        // This path is experimental and may crash if ABI assumptions drift.
-        let inc1 = factory
-            .call_self_i32_to_i32("runtime_thunk_counter_increment_x20", counter, 5)
-            .unwrap_or_else(|e| panic!("increment #1 failed: {e:?}"));
-        let inc2 = factory
-            .call_self_i32_to_i32("runtime_thunk_counter_increment_x20", counter, 3)
-            .unwrap_or_else(|e| panic!("increment #2 failed: {e:?}"));
-        let current = factory
-            .call_self_to_i32("runtime_thunk_counter_current_x20", counter)
-            .unwrap_or_else(|e| panic!("current failed: {e:?}"));
-        factory
-            .call_self_i32_to_void("runtime_thunk_counter_reset_x20", counter, 4)
-            .unwrap_or_else(|e| panic!("reset failed: {e:?}"));
-        let reset_rc = 0;
-        let after_reset = factory
-            .call_self_to_i32("runtime_thunk_counter_current_x20", counter)
-            .unwrap_or_else(|e| panic!("after reset current failed: {e:?}"));
-        let add_pair = factory
-            .call_self_i32_i32_to_i32("runtime_thunk_counter_add_pair_x20", counter, 6, 7)
-            .unwrap_or_else(|e| panic!("addPair failed: {e:?}"));
-        factory
-            .call_self_to_void("runtime_thunk_counter_clear_x20", counter)
-            .unwrap_or_else(|e| panic!("clear failed: {e:?}"));
-        let clear_rc = 0;
-        let after_clear = factory
-            .call_self_to_i32("runtime_thunk_counter_current_x20", counter)
-            .unwrap_or_else(|e| panic!("after clear current failed: {e:?}"));
+    let inc1 = factory
+        .call_self_i32_to_i32("runtime_thunk_counter_increment_x20", counter, 5)
+        .unwrap_or_else(|e| panic!("increment #1 failed: {e:?}"));
+    let inc2 = factory
+        .call_self_i32_to_i32("runtime_thunk_counter_increment_x20", counter, 3)
+        .unwrap_or_else(|e| panic!("increment #2 failed: {e:?}"));
+    let current = factory
+        .call_self_to_i32("runtime_thunk_counter_current_x20", counter)
+        .unwrap_or_else(|e| panic!("current failed: {e:?}"));
+    factory
+        .call_self_i32_to_void("runtime_thunk_counter_reset_x20", counter, 4)
+        .unwrap_or_else(|e| panic!("reset failed: {e:?}"));
+    let reset_rc = 0;
+    let after_reset = factory
+        .call_self_to_i32("runtime_thunk_counter_current_x20", counter)
+        .unwrap_or_else(|e| panic!("after reset current failed: {e:?}"));
+    let add_pair = factory
+        .call_self_i32_i32_to_i32("runtime_thunk_counter_add_pair_x20", counter, 6, 7)
+        .unwrap_or_else(|e| panic!("addPair failed: {e:?}"));
+    factory
+        .call_self_to_void("runtime_thunk_counter_clear_x20", counter)
+        .unwrap_or_else(|e| panic!("clear failed: {e:?}"));
+    let clear_rc = 0;
+    let after_clear = factory
+        .call_self_to_i32("runtime_thunk_counter_current_x20", counter)
+        .unwrap_or_else(|e| panic!("after clear current failed: {e:?}"));
 
-        factory.write_i32_at_offset(counter, 16, 99);
-        let direct_field = factory.read_i32_at_offset(counter, 16);
-        let after_direct = factory
-            .call_self_to_i32("runtime_thunk_counter_current_x20", counter)
-            .unwrap_or_else(|e| panic!("after direct write current failed: {e:?}"));
+    factory.write_i32_at_offset(counter, 16, 99);
+    let direct_field = factory.read_i32_at_offset(counter, 16);
+    let after_direct = factory
+        .call_self_to_i32("runtime_thunk_counter_current_x20", counter)
+        .unwrap_or_else(|e| panic!("after direct write current failed: {e:?}"));
 
-        let witness_symbol = "$s10RustBridge7CounterCAA0C4LikeAAWP";
-        let witness = factory.symbol_address(witness_symbol).ok();
-        let existential = factory.make_class_protocol_existential(
-            counter,
-            witness.unwrap_or(std::ptr::null_mut()) as *const _,
-        );
-        let witness_nonnull = (!existential.witness_table.is_null()) as i32;
-        let slot0 = if existential.witness_table.is_null() {
-            std::ptr::null()
-        } else {
-            factory.read_ptr_at_offset(existential.witness_table as *const c_void, 0)
-        };
-        let slot1 = if existential.witness_table.is_null() {
-            std::ptr::null()
-        } else {
-            factory.read_ptr_at_offset(existential.witness_table as *const c_void, 8)
-        };
-        let slot2 = if existential.witness_table.is_null() {
-            std::ptr::null()
-        } else {
-            factory.read_ptr_at_offset(existential.witness_table as *const c_void, 16)
-        };
-        let slot0_name = factory
-            .symbol_name_for_address(slot0)
-            .unwrap_or_else(|| "<unknown>".to_string());
-        let slot1_name = factory
-            .symbol_name_for_address(slot1)
-            .unwrap_or_else(|| "<unknown>".to_string());
-        let slot2_name = factory
-            .symbol_name_for_address(slot2)
-            .unwrap_or_else(|| "<unknown>".to_string());
-        // Correct calling convention: TW witness thunk does `ldr x20,[x20]` on entry,
-        // so x20 must be a pointer to the object pointer (existential indirect-self).
-        let witness_dispatch_existential = if slot1.is_null() {
-            i32::MIN
-        } else {
-            factory
-                .call_existential_class_to_i32_by_address(slot1, counter)
-                .unwrap_or(i32::MIN)
-        };
-        // Legacy experimental variants kept for ABI reference (guarded to avoid crashes).
-        let witness_dispatch_current_x20 = if slot1.is_null() {
-            i32::MIN
-        } else {
-            factory
-                .call_self_to_i32_by_address_x20(slot1, counter)
-                .unwrap_or(i32::MIN)
-        };
-        let witness_dispatch_current_x0 =
-            if std::env::var("RUNTIME_TRY_WITNESS_X0").as_deref() == Ok("1") {
-                if slot1.is_null() {
-                    i32::MIN
-                } else {
-                    factory
-                        .call_self_to_i32_by_address_x0(slot1, counter)
-                        .unwrap_or(i32::MIN)
-                }
-            } else {
-                i32::MIN
-            };
-
-        println!(
-            "counter increments via x20 thunk => {inc1}, {inc2}; current={current}; reset_rc={reset_rc}; after_reset={after_reset}; add_pair={add_pair}; clear_rc={clear_rc}; after_clear={after_clear}"
-        );
-        println!("direct field write => direct={direct_field}; current={after_direct}");
-        println!(
-            "protocol witness => nonnull={witness_nonnull}; addr={:p}",
-            existential.witness_table
-        );
-        println!(
-            "protocol witness slot0 => addr={:p}; symbol={}",
-            slot0, slot0_name
-        );
-        println!(
-            "protocol witness slot1 => addr={:p}; symbol={}",
-            slot1, slot1_name
-        );
-        println!(
-            "protocol witness slot2 => addr={:p}; symbol={}",
-            slot2, slot2_name
-        );
-        println!(
-            "protocol witness dispatch => existential={witness_dispatch_existential}; x20={witness_dispatch_current_x20}; x0={witness_dispatch_current_x0}"
-        );
+    let witness_symbol = "$s10RustBridge7CounterCAA0C4LikeAAWP";
+    let witness = factory.symbol_address(witness_symbol).ok();
+    let existential = factory.make_class_protocol_existential(
+        counter,
+        witness.unwrap_or(std::ptr::null_mut()) as *const _,
+    );
+    let witness_nonnull = (!existential.witness_table.is_null()) as i32;
+    let slot0 = if existential.witness_table.is_null() {
+        std::ptr::null()
     } else {
-        println!("skipping unsafe direct method call; set RUNTIME_TRY_INCREMENT=1 to attempt it");
-    }
+        factory.read_ptr_at_offset(existential.witness_table as *const c_void, 0)
+    };
+    let slot1 = if existential.witness_table.is_null() {
+        std::ptr::null()
+    } else {
+        factory.read_ptr_at_offset(existential.witness_table as *const c_void, 8)
+    };
+    let slot2 = if existential.witness_table.is_null() {
+        std::ptr::null()
+    } else {
+        factory.read_ptr_at_offset(existential.witness_table as *const c_void, 16)
+    };
+    let slot0_name = factory
+        .symbol_name_for_address(slot0)
+        .unwrap_or_else(|| "<unknown>".to_string());
+    let slot1_name = factory
+        .symbol_name_for_address(slot1)
+        .unwrap_or_else(|| "<unknown>".to_string());
+    let slot2_name = factory
+        .symbol_name_for_address(slot2)
+        .unwrap_or_else(|| "<unknown>".to_string());
+    // Correct calling convention: TW witness thunk does `ldr x20,[x20]` on entry,
+    // so x20 must be a pointer to the object pointer (existential indirect-self).
+    let witness_dispatch_existential = if slot1.is_null() {
+        i32::MIN
+    } else {
+        factory
+            .call_existential_class_to_i32_by_address(slot1, counter)
+            .unwrap_or(i32::MIN)
+    };
+    // x20 direct-self variant: non-semantic reference path, kept for ABI study only.
+    // Out of parity scope — actual parity is via existential dispatch above.
+    let witness_dispatch_current_x20 = if slot1.is_null() {
+        i32::MIN
+    } else {
+        factory
+            .call_self_to_i32_by_address_x20(slot1, counter)
+            .unwrap_or(i32::MIN)
+    };
+    let witness_dispatch_current_x0 =
+        if std::env::var("RUNTIME_TRY_WITNESS_X0").as_deref() == Ok("1") {
+            if slot1.is_null() {
+                i32::MIN
+            } else {
+                factory
+                    .call_self_to_i32_by_address_x0(slot1, counter)
+                    .unwrap_or(i32::MIN)
+            }
+        } else {
+            i32::MIN
+        };
+
+    println!(
+        "counter increments via x20 thunk => {inc1}, {inc2}; current={current}; reset_rc={reset_rc}; after_reset={after_reset}; add_pair={add_pair}; clear_rc={clear_rc}; after_clear={after_clear}"
+    );
+    println!("direct field write => direct={direct_field}; current={after_direct}");
+    println!(
+        "protocol witness => nonnull={witness_nonnull}; addr={:p}",
+        existential.witness_table
+    );
+    println!(
+        "protocol witness slot0 => addr={:p}; symbol={}",
+        slot0, slot0_name
+    );
+    println!(
+        "protocol witness slot1 => addr={:p}; symbol={}",
+        slot1, slot1_name
+    );
+    println!(
+        "protocol witness slot2 => addr={:p}; symbol={}",
+        slot2, slot2_name
+    );
+    println!(
+        "protocol witness dispatch => existential={witness_dispatch_existential}; x20={witness_dispatch_current_x20}; x0={witness_dispatch_current_x0}"
+    );
 
     let obj_size = unsafe { malloc_size(counter) };
     println!("malloc_size(counter)={obj_size}");

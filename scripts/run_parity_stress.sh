@@ -1,6 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# ---------------------------------------------------------------------------
+# Reliability gate for runtime parity.
+#
+# Release floor (required for a production parity claim):
+#   FUZZ_CASES=128 ./scripts/run_parity_stress.sh 100
+#
+# CI defaults:
+#   PR push  : FUZZ_CASES=64  ./scripts/run_parity_stress.sh 3
+#   main push: FUZZ_CASES=128 ./scripts/run_parity_stress.sh 10
+#
+# On any failure the seed and log path are captured in the summary file
+# so failures are fully reproducible:
+#   RUNTIME_FUZZ_SEED=<seed> RUNTIME_FUZZ_CASES=<n> ./scripts/run_parity_matrix.sh
+# ---------------------------------------------------------------------------
+
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 OUT_DIR="$ROOT/target/runtime-probe/stress"
 RUNS="${1:-20}"
@@ -38,14 +53,14 @@ for i in $(seq 1 "$RUNS"); do
       echo "[$i/$RUNS] PASS (${passed}/${total})"
     else
       fails=$((fails + 1))
-      failed_runs+="- run ${i}: incomplete pass ratio; see ${run_log}\n"
-      echo "[$i/$RUNS] FAIL (unexpected summary parsing)"
+      failed_runs+="- run ${i}: incomplete pass ratio; seed=${seed} FUZZ_CASES=${FUZZ_CASES}; reproduce: RUNTIME_FUZZ_SEED=${seed} RUNTIME_FUZZ_CASES=${FUZZ_CASES} ./scripts/run_parity_matrix.sh; log: ${run_log}\n"
+      echo "[$i/$RUNS] FAIL (unexpected summary parsing) seed=${seed}"
       if [[ "$STOP_ON_FAIL" == "1" ]]; then break; fi
     fi
   else
     fails=$((fails + 1))
-    failed_runs+="- run ${i}: command failed; see ${run_log}\n"
-    echo "[$i/$RUNS] FAIL (command failed)"
+    failed_runs+="- run ${i}: command failed; seed=${seed} FUZZ_CASES=${FUZZ_CASES}; reproduce: RUNTIME_FUZZ_SEED=${seed} RUNTIME_FUZZ_CASES=${FUZZ_CASES} ./scripts/run_parity_matrix.sh; log: ${run_log}\n"
+    echo "[$i/$RUNS] FAIL (command failed) seed=${seed}"
     if [[ "$STOP_ON_FAIL" == "1" ]]; then break; fi
   fi
 done
@@ -61,6 +76,7 @@ cat > "$SUMMARY_FILE" <<MD
 - passed_runs: ${passes}
 - failed_runs: ${fails}
 - fuzz_cases_per_run: ${FUZZ_CASES}
+- release_floor: FUZZ_CASES=128 ./scripts/run_parity_stress.sh 100
 
 ## Failures
 

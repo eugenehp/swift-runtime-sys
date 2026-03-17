@@ -47,6 +47,33 @@ jobs:
         if: always()
         run: cat target/runtime-probe/parity-report.md || true
 
+      - name: Show parity trend (last 2 history entries)
+        if: always()
+        run: |
+          HIST_DIR="target/runtime-probe/history"
+          if [[ -d "$HIST_DIR" ]]; then
+            mapfile -t history_files < <(ls -t "$HIST_DIR"/*.json 2>/dev/null | head -2)
+            if [[ ${#history_files[@]} -ge 2 ]]; then
+              prev="${history_files[1]}"
+              curr="${history_files[0]}"
+              prev_pass=$(python3 -c "import json,sys; d=json.load(open('$prev')); print(d.get('pass_count',0))")
+              curr_pass=$(python3 -c "import json,sys; d=json.load(open('$curr')); print(d.get('pass_count',0))")
+              total=$(python3 -c "import json,sys; d=json.load(open('$curr')); print(d.get('total_checks',0))")
+              delta=$((curr_pass - prev_pass))
+              if [[ $delta -gt 0 ]]; then trend="+${delta}"; elif [[ $delta -lt 0 ]]; then trend="${delta}"; else trend="no change"; fi
+              echo "Parity trend: ${trend} (prev=${prev_pass}/${total}, now=${curr_pass}/${total})"
+            elif [[ ${#history_files[@]} -eq 1 ]]; then
+              curr="${history_files[0]}"
+              curr_pass=$(python3 -c "import json,sys; d=json.load(open('$curr')); print(d.get('pass_count',0))")
+              total=$(python3 -c "import json,sys; d=json.load(open('$curr')); print(d.get('total_checks',0))")
+              echo "Parity trend: first run — ${curr_pass}/${total} pass"
+            else
+              echo "Parity trend: no history files yet"
+            fi
+          else
+            echo "Parity trend: no history directory"
+          fi
+
       - name: Upload parity artifacts
         if: always()
         uses: actions/upload-artifact@v4

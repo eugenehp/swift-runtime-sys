@@ -18,8 +18,8 @@ swiftc -emit-library -emit-module -emit-module-path "$FIXTURE_DIR/ResilientFixtu
 swiftc -emit-library -g -I "$FIXTURE_DIR" -L "$FIXTURE_DIR" -lResilientFixtures -o libRustBridge.dylib examples/RustBridge.swift
 cargo build --example runtime_raw_probe
 
-RUNTIME_TRY_INCREMENT=1 DYLD_LIBRARY_PATH="$FIXTURE_DIR:." "target/debug/examples/runtime_raw_probe" > "$PROBE_LOG" 2>&1
-RUNTIME_TRY_INCREMENT=1 ./scripts/run_tmux_lldb.sh > /dev/null
+DYLD_LIBRARY_PATH="$FIXTURE_DIR:." "target/debug/examples/runtime_raw_probe" > "$PROBE_LOG" 2>&1
+./scripts/run_tmux_lldb.sh > /dev/null
 
 line_or_empty() {
   local pattern="$1"

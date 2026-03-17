@@ -37,11 +37,11 @@ Define and complete all work needed to claim production-grade parity between Rus
 ## Remaining Workstreams to Reach 100%
 
 ### 1) Stabilize experimental direct-call paths
-- [ ] Remove or harden paths currently marked experimental and crash-sensitive.
-- [ ] Convert `RUNTIME_TRY_INCREMENT` and witness x1 variants from opt-in experimental to gated, deterministic checks.
-- [ ] Exit criteria:
-- [ ] No crash-prone path required for parity success.
-- [ ] Experimental labels removed for in-scope functionality.
+- [x] Remove or harden paths currently marked experimental and crash-sensitive.
+- [x] Convert `RUNTIME_TRY_INCREMENT` and witness x1 variants from opt-in experimental to gated, deterministic checks.
+- [x] Exit criteria:
+- [x] No crash-prone path required for parity success.
+- [x] Experimental labels removed for in-scope functionality.
 
 ### 2) Close lifecycle/teardown instability
 - [x] Resolve retained-object teardown caveats in probe flow.
@@ -65,18 +65,18 @@ Define and complete all work needed to claim production-grade parity between Rus
 - [ ] Any version-specific deviation is documented and expected.
 
 ### 5) Reliability gates (stress/fuzz promotion)
-- [ ] Promote stress and fuzz from optional to required release gates.
-- [ ] Define minimum stress budget and fuzz case counts per run.
-- [ ] Exit criteria:
-- [ ] Example gate: `run_parity_stress.sh 100` with `FUZZ_CASES=128` and zero failures.
-- [ ] Reproducible failure capture (seed, artifacts, logs) on any failure.
+- [x] Promote stress and fuzz from optional to required release gates.
+- [x] Define minimum stress budget and fuzz case counts per run.
+- [x] Exit criteria:
+- [x] Example gate: `run_parity_stress.sh 100` with `FUZZ_CASES=128` and zero failures.
+- [x] Reproducible failure capture (seed, artifacts, logs) on any failure.
 
 ### 6) CI parity enforcement
 - [x] Add CI jobs for matrix run, stress run, and protocol dispatch matrix run.
 - [x] Upload parity JSON/MD/history artifacts for every CI run.
-- [ ] Exit criteria:
-- [ ] PR merge blocked on parity gate failures.
-- [ ] Historical trend and regressions visible via artifacts.
+- [x] Exit criteria:
+- [x] PR merge blocked on parity gate failures.
+- [x] Historical trend and regressions visible via artifacts.
 
 ### 7) Documentation and claim policy
 - [x] Add a clear parity claim section in README: exact scope, exclusions, and quality gates.
@@ -95,18 +95,18 @@ Add seven deterministic domains as part of functional depth:
 - [ ] `AttributedString`/`NSAttributedString` bridge invariants (if support matrix allows).
 
 ## Acceptance Checklist
-- [ ] Scope document frozen (required/optional/experimental map).
+- [x] Scope document frozen (required/optional/experimental map).
 - [ ] All required functional checks pass.
-- [ ] All required ABI-shape checks pass.
-- [ ] No in-scope experimental caveat remains.
-- [ ] Stress/fuzz required gates pass at defined budget.
+- [x] All required ABI-shape checks pass.
+- [x] No in-scope experimental caveat remains.
+- [x] Stress/fuzz required gates pass at defined budget.
 - [ ] Supported version/platform matrix passes.
-- [ ] CI blocks merges on parity regressions.
+- [x] CI blocks merges on parity regressions.
 - [x] README parity claim updated with scope and evidence.
 
 ## Execution Order
 - [x] Freeze scope and required ABI shape list.
-- [ ] Stabilize experimental/crash-prone runtime paths.
+- [x] Stabilize experimental/crash-prone runtime paths.
 - [ ] Add missing required checks and ABI variants.
 - [x] Promote stress/fuzz and protocol matrix to required CI gates.
 - [ ] Validate across support matrix.
