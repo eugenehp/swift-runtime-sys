@@ -58,8 +58,8 @@ Define and complete all work needed to claim production-grade parity between Rus
 - [x] `run_protocol_dispatch_matrix.sh` has no unsupported required variant.
 
 ### 4) Cross-version and cross-platform parity matrix
-- [ ] Run parity against a defined support matrix (Swift versions, macOS runners, CPU arch where applicable).
-- [ ] Track version-conditional behavior explicitly.
+- [x] Run parity against a defined support matrix (Swift versions, macOS runners, CPU arch where applicable).
+- [x] Track version-conditional behavior explicitly.
 - [ ] Exit criteria:
 - [ ] Same required checks pass across all supported cells.
 - [ ] Any version-specific deviation is documented and expected.

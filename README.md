@@ -235,6 +235,17 @@ through Cargo, so probe/parity/debug paths all exercise `RuntimeFactory`.
 This repository's parity claim is scoped and versioned. "100% parity" means
 all items marked as required in this scope pass on supported environments.
 
+Supported parity matrix cells:
+
+- GitHub Actions `macos-14` (arm64 runner image)
+- GitHub Actions `macos-15` (arm64 runner image)
+
+Version-conditional tracking:
+
+- Parity artifacts are uploaded per CI cell and named with runner identity.
+- Any cell-specific deviations must be documented before parity claims are updated.
+- A parity claim for v1 scope requires all supported cells to pass required gates.
+
 Required:
 
 - `scripts/run_parity_matrix.sh` reports full pass count (`N/N PASS`).

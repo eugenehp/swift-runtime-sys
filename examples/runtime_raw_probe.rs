@@ -1281,7 +1281,9 @@ fn main() {
         index_path_compare_ok as i32,
     );
 
-    let iso8601_flags = factory.call_to_i32("swift_iso8601_probe_flags").unwrap_or(0);
+    let iso8601_flags = factory
+        .call_to_i32("swift_iso8601_probe_flags")
+        .unwrap_or(0);
     let iso8601_basic_ok = (iso8601_flags & 1) != 0;
     let iso8601_parse_ok = (iso8601_flags & 2) != 0;
     let iso8601_fractional_ok = (iso8601_flags & 4) != 0;
@@ -1481,7 +1483,9 @@ fn main() {
             .release(counter)
             .unwrap_or_else(|e| panic!("release-before-drop failed: {e:?}"));
     }
-    let deinit_before = factory.call_to_i32("swift_counter_deinit_count").unwrap_or(i32::MIN);
+    let deinit_before = factory
+        .call_to_i32("swift_counter_deinit_count")
+        .unwrap_or(i32::MIN);
     let counter_drop_ok = unsafe {
         match factory
             .symbol_address("swift_counter_drop")
@@ -1494,7 +1498,9 @@ fn main() {
             Err(_) => 0,
         }
     };
-    let deinit_after = factory.call_to_i32("swift_counter_deinit_count").unwrap_or(i32::MIN);
+    let deinit_after = factory
+        .call_to_i32("swift_counter_deinit_count")
+        .unwrap_or(i32::MIN);
     let deinit_delta = if deinit_before == i32::MIN || deinit_after == i32::MIN {
         i32::MIN
     } else {
