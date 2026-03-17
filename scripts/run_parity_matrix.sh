@@ -87,6 +87,7 @@ synth_witness_line=$(line_or_empty "synth witness =>" "$PROBE_LOG")
 value_existential_line=$(line_or_empty "value existential =>" "$PROBE_LOG")
 resilient_layout_line=$(line_or_empty "resilient layout =>" "$PROBE_LOG")
 cross_module_resilient_line=$(line_or_empty "cross-module resilient =>" "$PROBE_LOG")
+cross_module_existential_line=$(line_or_empty "cross-module existential =>" "$PROBE_LOG")
 arc_stress_line=$(line_or_empty "arc stress =>" "$PROBE_LOG")
 fuzz_line=$(line_or_empty "fuzz parity =>" "$PROBE_LOG")
 throws_ok_result=$(extract_number "ok_result" "$throws_ok_line")
@@ -147,6 +148,9 @@ cross_resilient_stride=$(extract_number "stride" "$cross_module_resilient_line")
 cross_resilient_align=$(extract_number "align" "$cross_module_resilient_line")
 cross_resilient_b_offset=$(extract_number "b_offset" "$cross_module_resilient_line")
 cross_resilient_sample_ok=$(extract_number "sample_b_ok" "$cross_module_resilient_line")
+cross_existential_value=$(extract_number "value_current" "$cross_module_existential_line")
+cross_existential_ref=$(extract_number "ref_current" "$cross_module_existential_line")
+cross_existential_class=$(extract_number "class_current" "$cross_module_existential_line")
 arc_swift_edge=$(extract_number "swift_edge" "$arc_stress_line")
 arc_runtime_balance=$(extract_number "runtime_balance" "$arc_stress_line")
 fuzz_add_ok=$(extract_number "add_ok" "$fuzz_line")
@@ -215,6 +219,7 @@ pass_value_existential=0
 pass_resilient_layout_metrics=0
 pass_resilient_field_offset=0
 pass_cross_module_resilient=0
+pass_cross_module_existential=0
 pass_arc_edge_stress=0
 pass_string_storage=0
 pass_array_storage=0
@@ -264,6 +269,7 @@ if [[ "$value_existential_current" == "88" ]]; then pass_value_existential=1; fi
 if [[ "$point_size" == "8" && "$point_stride" == "8" && "$point_align" == "4" && "$resilient_size" == "16" && "$resilient_stride" == "16" && "$resilient_align" == "8" ]]; then pass_resilient_layout_metrics=1; fi
 if [[ "$resilient_b_offset" == "8" ]]; then pass_resilient_field_offset=1; fi
 if [[ "$cross_resilient_size" == "16" && "$cross_resilient_stride" == "16" && "$cross_resilient_align" == "8" && "$cross_resilient_b_offset" == "8" && "$cross_resilient_sample_ok" == "1" ]]; then pass_cross_module_resilient=1; fi
+if [[ "$cross_existential_value" == "91" && "$cross_existential_ref" == "73" && "$cross_existential_class" == "64" ]]; then pass_cross_module_existential=1; fi
 if [[ "$arc_swift_edge" == "1" && "$arc_runtime_balance" == "1" ]]; then pass_arc_edge_stress=1; fi
 if [[ "$fuzz_add_ok" == "1" && "$fuzz_divide_ok" == "1" && "$fuzz_throw_ok" == "1" && -n "$fuzz_cases" && "$fuzz_cases" -ge 16 ]]; then pass_fuzz_parity=1; fi
 
@@ -312,6 +318,7 @@ cat > "$REPORT_JSON" <<JSON
     "resilient_layout_metrics": $pass_resilient_layout_metrics,
     "resilient_field_offset": $pass_resilient_field_offset,
     "cross_module_resilient_layout": $pass_cross_module_resilient,
+    "cross_module_existential_dispatch": $pass_cross_module_existential,
     "arc_edge_stress": $pass_arc_edge_stress,
     "fuzz_parity": $pass_fuzz_parity
   },
@@ -359,6 +366,7 @@ cat > "$REPORT_JSON" <<JSON
     "value_existential_line": "${value_existential_line}",
     "resilient_layout_line": "${resilient_layout_line}",
     "cross_module_resilient_line": "${cross_module_resilient_line}",
+    "cross_module_existential_line": "${cross_module_existential_line}",
     "arc_stress_line": "${arc_stress_line}",
     "fuzz_line": "${fuzz_line}"
   },
@@ -377,8 +385,8 @@ RUN_TS=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 GIT_HASH=$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo "unknown")
 HISTORY_FILE="$HISTORY_DIR/${RUN_TS//[: ]/_}_${GIT_HASH}.json"
 
-total_checks=44
-pass_count=$(( pass_increment + pass_reset + pass_add_pair + pass_clear + pass_retain + pass_alloc_sizes + pass_lldb + pass_direct_field + pass_protocol_witness + pass_protocol_slot + pass_protocol_dispatch + pass_protocol_dispatch_semantic + pass_global_variable + pass_raw_metadata + pass_enum_simple + pass_enum_associated + pass_throws_success + pass_throws_error + pass_generic_type + pass_string + pass_struct_dispatch + pass_tuple_return + pass_optional_layout + pass_array + pass_string_storage + pass_array_storage + pass_closure + pass_reflection + pass_error_boxing + pass_error_roundtrip + pass_objc_interop + pass_weak_ref + pass_conformance + pass_async_task + pass_actor_executor + pass_generic_metadata + pass_synth_witness + pass_synth_witness_lldb + pass_value_existential + pass_resilient_layout_metrics + pass_resilient_field_offset + pass_cross_module_resilient + pass_arc_edge_stress + pass_fuzz_parity ))
+total_checks=45
+pass_count=$(( pass_increment + pass_reset + pass_add_pair + pass_clear + pass_retain + pass_alloc_sizes + pass_lldb + pass_direct_field + pass_protocol_witness + pass_protocol_slot + pass_protocol_dispatch + pass_protocol_dispatch_semantic + pass_global_variable + pass_raw_metadata + pass_enum_simple + pass_enum_associated + pass_throws_success + pass_throws_error + pass_generic_type + pass_string + pass_struct_dispatch + pass_tuple_return + pass_optional_layout + pass_array + pass_string_storage + pass_array_storage + pass_closure + pass_reflection + pass_error_boxing + pass_error_roundtrip + pass_objc_interop + pass_weak_ref + pass_conformance + pass_async_task + pass_actor_executor + pass_generic_metadata + pass_synth_witness + pass_synth_witness_lldb + pass_value_existential + pass_resilient_layout_metrics + pass_resilient_field_offset + pass_cross_module_resilient + pass_cross_module_existential + pass_arc_edge_stress + pass_fuzz_parity ))
 
 cat > "$HISTORY_FILE" <<HIST
 {
@@ -430,6 +438,7 @@ cat > "$HISTORY_FILE" <<HIST
     "resilient_layout_metrics": $pass_resilient_layout_metrics,
     "resilient_field_offset": $pass_resilient_field_offset,
     "cross_module_resilient_layout": $pass_cross_module_resilient,
+    "cross_module_existential_dispatch": $pass_cross_module_existential,
     "arc_edge_stress": $pass_arc_edge_stress,
     "fuzz_parity": $pass_fuzz_parity
   }
@@ -489,6 +498,7 @@ cat > "$REPORT_MD" <<MD
 | resilient layout metrics | $(status_symbol "$pass_resilient_layout_metrics") | point(size=${point_size},stride=${point_stride},align=${point_align}) resilient(size=${resilient_size},stride=${resilient_stride},align=${resilient_align}) |
 | resilient field offset | $(status_symbol "$pass_resilient_field_offset") | b_offset=${resilient_b_offset} |
 | cross-module resilient layout | $(status_symbol "$pass_cross_module_resilient") | size=${cross_resilient_size}, stride=${cross_resilient_stride}, align=${cross_resilient_align}, b_offset=${cross_resilient_b_offset}, sample_ok=${cross_resilient_sample_ok} |
+| cross-module existential dispatch | $(status_symbol "$pass_cross_module_existential") | value_current=${cross_existential_value}, ref_current=${cross_existential_ref}, class_current=${cross_existential_class} |
 | ARC edge-case stress | $(status_symbol "$pass_arc_edge_stress") | swift_edge=${arc_swift_edge}, runtime_balance=${arc_runtime_balance} |
 | fuzz parity (seeded random) | $(status_symbol "$pass_fuzz_parity") | add_ok=${fuzz_add_ok}, divide_ok=${fuzz_divide_ok}, throw_ok=${fuzz_throw_ok}, cases=${fuzz_cases} |
 

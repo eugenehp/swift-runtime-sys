@@ -29,3 +29,42 @@ public func external_resilient_b_offset() -> Int32 {
 public func external_resilient_get_b(_ a: Int32, _ b: Int64) -> Int64 {
     ExternalResilient(a: a, b: b).b
 }
+
+public protocol ExternalCurrentLike {
+    func current() -> Int32
+}
+
+public protocol ExternalRefCurrentLike: AnyObject {
+    func current() -> Int32
+}
+
+public struct ExternalValueCounter: ExternalCurrentLike {
+    public var value: Int32
+    public init(_ value: Int32) {
+        self.value = value
+    }
+    public func current() -> Int32 { value }
+}
+
+public final class ExternalRefCounter: ExternalCurrentLike, ExternalRefCurrentLike {
+    public var value: Int32
+    public init(_ value: Int32) {
+        self.value = value
+    }
+    public func current() -> Int32 { value }
+}
+
+public func external_existential_value_current() -> Int32 {
+    let anyValue: any ExternalCurrentLike = ExternalValueCounter(91)
+    return anyValue.current()
+}
+
+public func external_existential_ref_current() -> Int32 {
+    let anyRef: any ExternalCurrentLike = ExternalRefCounter(73)
+    return anyRef.current()
+}
+
+public func external_class_existential_current() -> Int32 {
+    let anyClassRef: any ExternalRefCurrentLike = ExternalRefCounter(64)
+    return anyClassRef.current()
+}

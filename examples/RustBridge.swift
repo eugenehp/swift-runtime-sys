@@ -668,6 +668,21 @@ public func swift_layout_external_resilient_sample_b() -> Int32 {
     external_resilient_get_b(11, 2222) == 2222 ? 1 : 0
 }
 
+@_cdecl("swift_external_existential_value_current")
+public func swift_external_existential_value_current() -> Int32 {
+    external_existential_value_current()
+}
+
+@_cdecl("swift_external_existential_ref_current")
+public func swift_external_existential_ref_current() -> Int32 {
+    external_existential_ref_current()
+}
+
+@_cdecl("swift_external_class_existential_current")
+public func swift_external_class_existential_current() -> Int32 {
+    external_class_existential_current()
+}
+
 // ── ARC edge-case stress probes ─────────────────────────────────────────────
 private final class ArcTracked {
     static var deinitCount: Int32 = 0

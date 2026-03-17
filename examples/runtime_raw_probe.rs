@@ -458,7 +458,9 @@ fn main() {
         str_long_utf8_ok as i32,
     );
 
-    let arr_cow_flags = factory.call_to_i32("swift_array_cow_probe_flags").unwrap_or(0);
+    let arr_cow_flags = factory
+        .call_to_i32("swift_array_cow_probe_flags")
+        .unwrap_or(0);
     let arr_shared_before = (arr_cow_flags & 1) != 0;
     let arr_split_after = (arr_cow_flags & 2) != 0;
     let arr_original_unchanged = (arr_cow_flags & 4) != 0;
@@ -528,9 +530,7 @@ fn main() {
     let objc_array_bridge_ok = (objc_flags & 4) != 0;
     println!(
         "objc interop => flags={objc_flags} selector_ok={} string_bridge_ok={} array_bridge_ok={}",
-        objc_selector_ok as i32,
-        objc_string_bridge_ok as i32,
-        objc_array_bridge_ok as i32,
+        objc_selector_ok as i32, objc_string_bridge_ok as i32, objc_array_bridge_ok as i32,
     );
 
     // ── Weak reference ────────────────────────────────────────────────────────
@@ -605,9 +605,7 @@ fn main() {
     let synth_dedup_ok = (synth_flags & 4) != 0;
     println!(
         "synth witness => flags={synth_flags} eq_true={} eq_false={} dedup_ok={}",
-        synth_eq_true as i32,
-        synth_eq_false as i32,
-        synth_dedup_ok as i32,
+        synth_eq_true as i32, synth_eq_false as i32, synth_dedup_ok as i32,
     );
 
     // ── Value existential dispatch parity ───────────────────────────────────
@@ -617,7 +615,9 @@ fn main() {
     println!("value existential => current={value_existential_current}");
 
     // ── Resilient layout parity checks ─────────────────────────────────────
-    let point_size = factory.call_to_i32("swift_layout_point_size").unwrap_or(i32::MIN);
+    let point_size = factory
+        .call_to_i32("swift_layout_point_size")
+        .unwrap_or(i32::MIN);
     let point_stride = factory
         .call_to_i32("swift_layout_point_stride")
         .unwrap_or(i32::MIN);
@@ -658,6 +658,19 @@ fn main() {
         "cross-module resilient => size={external_resilient_size} stride={external_resilient_stride} align={external_resilient_align} b_offset={external_resilient_b_offset} sample_b_ok={external_resilient_sample_b}"
     );
 
+    let external_existential_value = factory
+        .call_to_i32("swift_external_existential_value_current")
+        .unwrap_or(i32::MIN);
+    let external_existential_ref = factory
+        .call_to_i32("swift_external_existential_ref_current")
+        .unwrap_or(i32::MIN);
+    let external_class_existential = factory
+        .call_to_i32("swift_external_class_existential_current")
+        .unwrap_or(i32::MIN);
+    println!(
+        "cross-module existential => value_current={external_existential_value} ref_current={external_existential_ref} class_current={external_class_existential}"
+    );
+
     // ── ARC edge-case stress checks ────────────────────────────────────────
     let arc_swift_edge = factory
         .call_i32_to_i32("swift_arc_edge_stress", 1000)
@@ -681,7 +694,11 @@ fn main() {
                 }
                 let after = factory.retain_count(obj).unwrap_or(0);
                 drop_f(obj);
-                if before == 1 && after == 1 { 1 } else { 0 }
+                if before == 1 && after == 1 {
+                    1
+                } else {
+                    0
+                }
             }
             _ => 0,
         }
