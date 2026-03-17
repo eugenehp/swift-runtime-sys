@@ -157,12 +157,8 @@ rustc -g examples/runtime_raw_probe.rs -o target/runtime_raw_probe
 DYLD_LIBRARY_PATH=. ./target/runtime_raw_probe
 ```
 
-Optional (experimental): attempt direct class method call through a non-Swift
-`swiftcall` thunk (may crash if ABI assumptions drift):
-
-```shell
-RUNTIME_TRY_INCREMENT=1 DYLD_LIBRARY_PATH=. ./target/runtime_raw_probe
-```
+Direct class-method probes now run as part of the default parity path; no
+separate `RUNTIME_TRY_INCREMENT` toggle is required.
 
 Current status on Apple Silicon:
 
@@ -262,8 +258,7 @@ Optional:
 
 Experimental (excluded from 100% claim):
 
-- Opt-in direct `swiftcall` increment path (`RUNTIME_TRY_INCREMENT=1`).
-- Witness `x1` opt-in variants that may crash depending on ABI shape.
+- Witness `x1` variants that may crash depending on ABI shape.
 - Raw runtime-only integration paths documented as research mode.
 
 Protocol dispatch matrix notes:

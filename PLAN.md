@@ -6,13 +6,13 @@ Define and complete all work needed to claim production-grade parity between Rus
 ## Current Baseline
 - [x] Current matrix status: `101/101 PASS`.
 - [x] Source of truth for checks and totals: `scripts/run_parity_matrix.sh`.
-- [ ] Latest parity key inventory: `/memories/repo/parity.md`.
+- [x] Latest parity key inventory: `/memories/repo/parity.md`.
 
 ## Definition of 100% Parity
 100% parity is not only a check count. It requires all of the following:
 - [x] Functional parity: all in-scope semantic/runtime features are covered by deterministic checks.
 - [x] ABI parity: all supported call shapes are validated and stable (no opt-in crash-prone paths).
-- [ ] Reliability parity: stress/fuzz runs pass repeatedly with no intermittent failures.
+- [x] Reliability parity: stress/fuzz runs pass repeatedly with no intermittent failures.
 - [ ] Platform/version parity: supported Swift and macOS targets pass the same matrix.
 - [x] Tooling parity: CI enforces parity gates and preserves history/artifacts.
 - [x] Operational parity: known experimental caveats removed or explicitly scoped out of claim.
@@ -23,16 +23,16 @@ Define and complete all work needed to claim production-grade parity between Rus
 - [x] Only claim 100% against the frozen scope.
 
 ## Functional Coverage Inventory (already covered)
-- [ ] Synthesis/language checks: keypath, property-wrapper, result-builder, opaque return.
-- [ ] Concurrency checks: task-local, sendable, continuation, task-group, async stream, actor executor.
-- [ ] Runtime/ABI checks: protocol witness pointer/slot/dispatch semantics, direct field write, metadata header, existential dispatch, resilient layout and offsets, cross-module resilient and existential dispatch.
-- [ ] Value/collection checks: optionals, arrays, dictionaries, sets, IndexSet, Comparable, Result, Data, UUID, CharacterSet.
-- [ ] Foundation/date/time checks: Calendar, TimeZone, DateFormatter, Scanner, Locale, Measurement, DateInterval, ISO8601DateFormatter.
-- [ ] URL/network checks: URL, URLComponents, URLRequest, HTTPURLResponse, URLQueryItem, percent encoding.
-- [ ] Number/format checks: Decimal, NumberFormatter.
-- [ ] Serialization checks: Codable JSON, PropertyList.
-- [ ] Range/path checks: Range, ClosedRange, IndexPath.
-- [ ] Safety/stability checks: ARC edge stress, seeded fuzz parity.
+- [x] Synthesis/language checks: keypath, property-wrapper, result-builder, opaque return.
+- [x] Concurrency checks: task-local, sendable, continuation, task-group, async stream, actor executor.
+- [x] Runtime/ABI checks: protocol witness pointer/slot/dispatch semantics, direct field write, metadata header, existential dispatch, resilient layout and offsets, cross-module resilient and existential dispatch.
+- [x] Value/collection checks: optionals, arrays, dictionaries, sets, IndexSet, Comparable, Result, Data, UUID, CharacterSet.
+- [x] Foundation/date/time checks: Calendar, TimeZone, DateFormatter, Scanner, Locale, Measurement, DateInterval, ISO8601DateFormatter.
+- [x] URL/network checks: URL, URLComponents, URLRequest, HTTPURLResponse, URLQueryItem, percent encoding.
+- [x] Number/format checks: Decimal, NumberFormatter.
+- [x] Serialization checks: Codable JSON, PropertyList.
+- [x] Range/path checks: Range, ClosedRange, IndexPath.
+- [x] Safety/stability checks: ARC edge stress, seeded fuzz parity.
 
 ## Remaining Workstreams to Reach 100%
 
@@ -53,7 +53,7 @@ Define and complete all work needed to claim production-grade parity between Rus
 ### 3) Expand ABI shape matrix coverage
 - [x] Validate additional calling convention/register shapes and metadata/witness argument placements.
 - [x] Keep per-shape tests process-isolated to avoid global crash contamination.
-- [ ] Exit criteria:
+- [x] Exit criteria:
 - [x] Required ABI shape list is frozen and fully green.
 - [x] `run_protocol_dispatch_matrix.sh` has no unsupported required variant.
 
