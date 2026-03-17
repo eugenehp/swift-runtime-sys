@@ -1,0 +1,98 @@
+name: Runtime Parity
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  parity:
+    name: Parity matrix (macOS arm64)
+    runs-on: macos-15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
+
+      - name: Verify Swift version
+        run: swift --version
+
+      - name: Install tmux (required by run_parity_matrix.sh)
+        run: brew install tmux
+
+      - name: Build runtime thunks
+        run: ./scripts/build_runtime_thunks.sh
+
+      - name: Run parity matrix
+        run: ./scripts/run_parity_matrix.sh
+        env:
+          RUNTIME_TRY_INCREMENT: "1"
+
+      - name: Print parity report
+        if: always()
+        run: cat target/runtime-probe/parity-report.md || true
+
+      - name: Upload parity artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: parity-report-${{ github.sha }}
+          path: |
+            target/runtime-probe/parity-report.json
+            target/runtime-probe/parity-report.md
+            target/runtime-probe/probe.log
+            target/runtime-probe/history/
+
+  stress:
+    name: Parity stress smoke (macOS arm64)
+    runs-on: macos-15
+    # Only run stress on push to main, not on every PR to keep CI fast
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-stress-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
+
+      - name: Install tmux
+        run: brew install tmux
+
+      - name: Build runtime thunks
+        run: ./scripts/build_runtime_thunks.sh
+
+      - name: Run stress smoke (3 runs × 64 fuzz cases, varying seeds)
+        run: FUZZ_CASES=64 ./scripts/run_parity_stress.sh 3
+        env:
+          RUNTIME_TRY_INCREMENT: "1"
+          STOP_ON_FAIL: "1"
+
+      - name: Upload stress artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stress-report-${{ github.sha }}
+          path: target/runtime-probe/stress/
