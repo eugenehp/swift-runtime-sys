@@ -68,11 +68,22 @@ struct_method_line=$(line_or_empty "struct method =>" "$PROBE_LOG")
 tuple_line=$(line_or_empty "tuple =>" "$PROBE_LOG")
 optional_line=$(line_or_empty "optional =>" "$PROBE_LOG")
 array_line=$(line_or_empty "array =>" "$PROBE_LOG")
+string_storage_line=$(line_or_empty "string storage =>" "$PROBE_LOG")
+array_storage_line=$(line_or_empty "array storage =>" "$PROBE_LOG")
 closure_line=$(line_or_empty "closure adder =>" "$PROBE_LOG")
 reflect_line=$(line_or_empty "reflection =>" "$PROBE_LOG")
 error_line=$(line_or_empty "error boxing =>" "$PROBE_LOG")
+error_roundtrip_line=$(line_or_empty "error roundtrip =>" "$PROBE_LOG")
+objc_interop_line=$(line_or_empty "objc interop =>" "$PROBE_LOG")
 weakref_line=$(line_or_empty "weak ref =>" "$PROBE_LOG")
 conform_line=$(line_or_empty "conformance =>" "$PROBE_LOG")
+async_line=$(line_or_empty "async task =>" "$PROBE_LOG")
+actor_line=$(line_or_empty "actor =>" "$PROBE_LOG")
+generic_meta_line=$(line_or_empty "generic metadata =>" "$PROBE_LOG")
+value_existential_line=$(line_or_empty "value existential =>" "$PROBE_LOG")
+resilient_layout_line=$(line_or_empty "resilient layout =>" "$PROBE_LOG")
+arc_stress_line=$(line_or_empty "arc stress =>" "$PROBE_LOG")
+fuzz_line=$(line_or_empty "fuzz parity =>" "$PROBE_LOG")
 throws_ok_result=$(extract_number "ok_result" "$throws_ok_line")
 throws_ok_err_null=$(extract_number "err_null" "$throws_ok_line")
 throws_err_nonnull=$(extract_number "throws_nonnull" "$throws_err_line")
@@ -90,13 +101,45 @@ opt_layout=$(extract_number "some_layout_ok" "$optional_line")
 arr_count=$(extract_number "count" "$array_line")
 arr_elem2=$(extract_number "elem2" "$array_line")
 arr_count_after=$(extract_number "count_after_append" "$array_line")
+str_storage_tagged_diff=$(extract_number "tagged_diff" "$string_storage_line")
+str_storage_short_ok=$(extract_number "short_utf8_ok" "$string_storage_line")
+str_storage_long_ok=$(extract_number "long_utf8_ok" "$string_storage_line")
+arr_storage_shared_before=$(extract_number "shared_before" "$array_storage_line")
+arr_storage_split_after=$(extract_number "split_after" "$array_storage_line")
+arr_storage_original_unchanged=$(extract_number "original_unchanged" "$array_storage_line")
 closure_result=$(extract_number "result" "$closure_line")
 reflect_fields=$(extract_number "point_fields" "$reflect_line")
 reflect_first_x=$(extract_number "first_field_x" "$reflect_line")
 error_nonnull=$(extract_number "nonnull" "$error_line")
 error_rc=$(extract_number "rc" "$error_line")
+error_semantic_ok=$(extract_number "semantic_ok" "$error_roundtrip_line")
+objc_selector_ok=$(extract_number "selector_ok" "$objc_interop_line")
+objc_string_bridge_ok=$(extract_number "string_bridge_ok" "$objc_interop_line")
+objc_array_bridge_ok=$(extract_number "array_bridge_ok" "$objc_interop_line")
 weak_loaded_eq=$(extract_number "loaded_eq_original" "$weakref_line")
 conform_nonnull=$(extract_number "witness_nonnull" "$conform_line")
+async_add=$(extract_number "add" "$async_line")
+async_div_ok=$(extract_number "divide_ok" "$async_line")
+async_div_throw=$(extract_number "divide_throw" "$async_line")
+actor_create=$(extract_number "create" "$actor_line")
+actor_inc=$(extract_number "inc" "$actor_line")
+actor_cur=$(extract_number "cur" "$actor_line")
+generic_meta_distinct=$(extract_number "distinct" "$generic_meta_line")
+generic_constrained=$(extract_number "constrained" "$generic_meta_line")
+value_existential_current=$(extract_number "current" "$value_existential_line")
+point_size=$(extract_number "point_size" "$resilient_layout_line")
+point_stride=$(extract_number "point_stride" "$resilient_layout_line")
+point_align=$(extract_number "point_align" "$resilient_layout_line")
+resilient_size=$(extract_number "resilient_size" "$resilient_layout_line")
+resilient_stride=$(extract_number "resilient_stride" "$resilient_layout_line")
+resilient_align=$(extract_number "resilient_align" "$resilient_layout_line")
+resilient_b_offset=$(extract_number "b_offset" "$resilient_layout_line")
+arc_swift_edge=$(extract_number "swift_edge" "$arc_stress_line")
+arc_runtime_balance=$(extract_number "runtime_balance" "$arc_stress_line")
+fuzz_add_ok=$(extract_number "add_ok" "$fuzz_line")
+fuzz_divide_ok=$(extract_number "divide_ok" "$fuzz_line")
+fuzz_throw_ok=$(extract_number "throw_ok" "$fuzz_line")
+fuzz_cases=$(extract_number "cases" "$fuzz_line")
 
 retain_init_line=$(line_or_empty "retain count after init=" "$PROBE_LOG")
 retain_after_release_line=$(line_or_empty "retain count after one release=" "$PROBE_LOG")
@@ -144,8 +187,20 @@ pass_array=0
 pass_closure=0
 pass_reflection=0
 pass_error_boxing=0
+pass_error_roundtrip=0
+pass_objc_interop=0
 pass_weak_ref=0
 pass_conformance=0
+pass_async_task=0
+pass_actor_executor=0
+pass_generic_metadata=0
+pass_value_existential=0
+pass_resilient_layout_metrics=0
+pass_resilient_field_offset=0
+pass_arc_edge_stress=0
+pass_string_storage=0
+pass_array_storage=0
+pass_fuzz_parity=0
 
 if [[ "$inc1" == "15" && "$inc2" == "18" && "$current" == "18" ]]; then pass_increment=1; fi
 if [[ "$after_reset" == "4" ]]; then pass_reset=1; fi
@@ -173,11 +228,23 @@ if [[ "$struct_sum" == "7" && "$struct_product" == "12" ]]; then pass_struct_dis
 if [[ "$tuple_first" == "13" && "$tuple_second" == "7" ]]; then pass_tuple_return=1; fi
 if [[ "$opt_none" == "-999" && "$opt_some" == "42" && "$opt_layout" == "1" ]]; then pass_optional_layout=1; fi
 if [[ "$arr_count" == "5" && "$arr_elem2" == "30" && "$arr_count_after" == "6" ]]; then pass_array=1; fi
+if [[ "$str_storage_tagged_diff" == "1" && "$str_storage_short_ok" == "1" && "$str_storage_long_ok" == "1" ]]; then pass_string_storage=1; fi
+if [[ "$arr_storage_shared_before" == "1" && "$arr_storage_split_after" == "1" && "$arr_storage_original_unchanged" == "1" ]]; then pass_array_storage=1; fi
 if [[ "$closure_result" == "12" ]]; then pass_closure=1; fi
 if [[ "$reflect_fields" == "2" && "$reflect_first_x" == "1" ]]; then pass_reflection=1; fi
 if [[ "$error_nonnull" == "1" && -n "$error_rc" ]]; then pass_error_boxing=1; fi
+if [[ "$error_semantic_ok" == "1" ]]; then pass_error_roundtrip=1; fi
+if [[ "$objc_selector_ok" == "1" && "$objc_string_bridge_ok" == "1" && "$objc_array_bridge_ok" == "1" ]]; then pass_objc_interop=1; fi
 if [[ "$weak_loaded_eq" == "1" ]]; then pass_weak_ref=1; fi
 if [[ "$conform_nonnull" == "1" ]]; then pass_conformance=1; fi
+if [[ "$async_add" == "42" && "$async_div_ok" == "5" && "$async_div_throw" == "1" ]]; then pass_async_task=1; fi
+if [[ "$actor_create" == "1" && "$actor_inc" == "15" && "$actor_cur" == "15" ]]; then pass_actor_executor=1; fi
+if [[ "$generic_meta_distinct" == "1" && "$generic_constrained" == "77" ]]; then pass_generic_metadata=1; fi
+if [[ "$value_existential_current" == "88" ]]; then pass_value_existential=1; fi
+if [[ "$point_size" == "8" && "$point_stride" == "8" && "$point_align" == "4" && "$resilient_size" == "16" && "$resilient_stride" == "16" && "$resilient_align" == "8" ]]; then pass_resilient_layout_metrics=1; fi
+if [[ "$resilient_b_offset" == "8" ]]; then pass_resilient_field_offset=1; fi
+if [[ "$arc_swift_edge" == "1" && "$arc_runtime_balance" == "1" ]]; then pass_arc_edge_stress=1; fi
+if [[ "$fuzz_add_ok" == "1" && "$fuzz_divide_ok" == "1" && "$fuzz_throw_ok" == "1" && -n "$fuzz_cases" && "$fuzz_cases" -ge 16 ]]; then pass_fuzz_parity=1; fi
 
 cat > "$REPORT_JSON" <<JSON
 {
@@ -206,11 +273,23 @@ cat > "$REPORT_JSON" <<JSON
     "tuple_return": $pass_tuple_return,
     "optional_layout": $pass_optional_layout,
     "array": $pass_array,
+    "string_storage_internals": $pass_string_storage,
+    "array_storage_internals": $pass_array_storage,
     "closure": $pass_closure,
     "reflection": $pass_reflection,
     "error_boxing": $pass_error_boxing,
+    "error_roundtrip": $pass_error_roundtrip,
+    "objc_interop": $pass_objc_interop,
     "weak_reference": $pass_weak_ref,
-    "conformance_check": $pass_conformance
+    "conformance_check": $pass_conformance,
+    "async_task_runtime": $pass_async_task,
+    "actor_executor_behavior": $pass_actor_executor,
+    "generic_metadata_instantiation": $pass_generic_metadata,
+    "value_existential_dispatch": $pass_value_existential,
+    "resilient_layout_metrics": $pass_resilient_layout_metrics,
+    "resilient_field_offset": $pass_resilient_field_offset,
+    "arc_edge_stress": $pass_arc_edge_stress,
+    "fuzz_parity": $pass_fuzz_parity
   },
   "observed": {
     "probe_line": "${probe_line}",
@@ -238,11 +317,22 @@ cat > "$REPORT_JSON" <<JSON
     "tuple_line": "${tuple_line}",
     "optional_line": "${optional_line}",
     "array_line": "${array_line}",
+    "string_storage_line": "${string_storage_line}",
+    "array_storage_line": "${array_storage_line}",
     "closure_line": "${closure_line}",
     "reflect_line": "${reflect_line}",
     "error_line": "${error_line}",
+    "error_roundtrip_line": "${error_roundtrip_line}",
+    "objc_interop_line": "${objc_interop_line}",
     "weakref_line": "${weakref_line}",
-    "conform_line": "${conform_line}"
+    "conform_line": "${conform_line}",
+    "async_line": "${async_line}",
+    "actor_line": "${actor_line}",
+    "generic_meta_line": "${generic_meta_line}",
+    "value_existential_line": "${value_existential_line}",
+    "resilient_layout_line": "${resilient_layout_line}",
+    "arc_stress_line": "${arc_stress_line}",
+    "fuzz_line": "${fuzz_line}"
   },
   "artifacts": {
     "probe_log": "target/runtime-probe/probe.log",
@@ -259,8 +349,8 @@ RUN_TS=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 GIT_HASH=$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo "unknown")
 HISTORY_FILE="$HISTORY_DIR/${RUN_TS//[: ]/_}_${GIT_HASH}.json"
 
-total_checks=29
-pass_count=$(( pass_increment + pass_reset + pass_add_pair + pass_clear + pass_retain + pass_alloc_sizes + pass_lldb + pass_direct_field + pass_protocol_witness + pass_protocol_slot + pass_protocol_dispatch + pass_protocol_dispatch_semantic + pass_global_variable + pass_raw_metadata + pass_enum_simple + pass_enum_associated + pass_throws_success + pass_throws_error + pass_generic_type + pass_string + pass_struct_dispatch + pass_tuple_return + pass_optional_layout + pass_array + pass_closure + pass_reflection + pass_error_boxing + pass_weak_ref + pass_conformance ))
+total_checks=41
+pass_count=$(( pass_increment + pass_reset + pass_add_pair + pass_clear + pass_retain + pass_alloc_sizes + pass_lldb + pass_direct_field + pass_protocol_witness + pass_protocol_slot + pass_protocol_dispatch + pass_protocol_dispatch_semantic + pass_global_variable + pass_raw_metadata + pass_enum_simple + pass_enum_associated + pass_throws_success + pass_throws_error + pass_generic_type + pass_string + pass_struct_dispatch + pass_tuple_return + pass_optional_layout + pass_array + pass_string_storage + pass_array_storage + pass_closure + pass_reflection + pass_error_boxing + pass_error_roundtrip + pass_objc_interop + pass_weak_ref + pass_conformance + pass_async_task + pass_actor_executor + pass_generic_metadata + pass_value_existential + pass_resilient_layout_metrics + pass_resilient_field_offset + pass_arc_edge_stress + pass_fuzz_parity ))
 
 cat > "$HISTORY_FILE" <<HIST
 {
@@ -294,11 +384,23 @@ cat > "$HISTORY_FILE" <<HIST
     "tuple_return": $pass_tuple_return,
     "optional_layout": $pass_optional_layout,
     "array": $pass_array,
+    "string_storage_internals": $pass_string_storage,
+    "array_storage_internals": $pass_array_storage,
     "closure": $pass_closure,
     "reflection": $pass_reflection,
     "error_boxing": $pass_error_boxing,
+    "error_roundtrip": $pass_error_roundtrip,
+    "objc_interop": $pass_objc_interop,
     "weak_reference": $pass_weak_ref,
-    "conformance_check": $pass_conformance
+    "conformance_check": $pass_conformance,
+    "async_task_runtime": $pass_async_task,
+    "actor_executor_behavior": $pass_actor_executor,
+    "generic_metadata_instantiation": $pass_generic_metadata,
+    "value_existential_dispatch": $pass_value_existential,
+    "resilient_layout_metrics": $pass_resilient_layout_metrics,
+    "resilient_field_offset": $pass_resilient_field_offset,
+    "arc_edge_stress": $pass_arc_edge_stress,
+    "fuzz_parity": $pass_fuzz_parity
   }
 }
 HIST
@@ -338,11 +440,23 @@ cat > "$REPORT_MD" <<MD
 | tuple return | $(status_symbol "$pass_tuple_return") | first=${tuple_first}, second=${tuple_second} |
 | Optional\<T\> layout | $(status_symbol "$pass_optional_layout") | none=${opt_none}, some=${opt_some}, layout_ok=${opt_layout} |
 | Array\<T\> | $(status_symbol "$pass_array") | count=${arr_count}, elem2=${arr_elem2}, after_append=${arr_count_after} |
+| string storage internals | $(status_symbol "$pass_string_storage") | tagged_diff=${str_storage_tagged_diff}, short_ok=${str_storage_short_ok}, long_ok=${str_storage_long_ok} |
+| array storage internals | $(status_symbol "$pass_array_storage") | shared_before=${arr_storage_shared_before}, split_after=${arr_storage_split_after}, unchanged=${arr_storage_original_unchanged} |
 | closure (thick fn ptr) | $(status_symbol "$pass_closure") | result=${closure_result} |
 | reflection (Mirror) | $(status_symbol "$pass_reflection") | fields=${reflect_fields}, first_x=${reflect_first_x} |
 | error boxing | $(status_symbol "$pass_error_boxing") | nonnull=${error_nonnull}, rc=${error_rc} |
+| error round-trip semantic | $(status_symbol "$pass_error_roundtrip") | semantic_ok=${error_semantic_ok} |
+| Objective-C interop | $(status_symbol "$pass_objc_interop") | selector_ok=${objc_selector_ok}, string_bridge_ok=${objc_string_bridge_ok}, array_bridge_ok=${objc_array_bridge_ok} |
 | weak reference | $(status_symbol "$pass_weak_ref") | loaded_eq=${weak_loaded_eq} |
 | swift_conformsToProtocol | $(status_symbol "$pass_conformance") | witness_nonnull=${conform_nonnull} |
+| async/task runtime | $(status_symbol "$pass_async_task") | add=${async_add}, divide_ok=${async_div_ok}, divide_throw=${async_div_throw} |
+| actor/executor behavior | $(status_symbol "$pass_actor_executor") | create=${actor_create}, inc=${actor_inc}, cur=${actor_cur} |
+| generic metadata instantiation | $(status_symbol "$pass_generic_metadata") | distinct=${generic_meta_distinct}, constrained=${generic_constrained} |
+| value existential dispatch | $(status_symbol "$pass_value_existential") | current=${value_existential_current} |
+| resilient layout metrics | $(status_symbol "$pass_resilient_layout_metrics") | point(size=${point_size},stride=${point_stride},align=${point_align}) resilient(size=${resilient_size},stride=${resilient_stride},align=${resilient_align}) |
+| resilient field offset | $(status_symbol "$pass_resilient_field_offset") | b_offset=${resilient_b_offset} |
+| ARC edge-case stress | $(status_symbol "$pass_arc_edge_stress") | swift_edge=${arc_swift_edge}, runtime_balance=${arc_runtime_balance} |
+| fuzz parity (seeded random) | $(status_symbol "$pass_fuzz_parity") | add_ok=${fuzz_add_ok}, divide_ok=${fuzz_divide_ok}, throw_ok=${fuzz_throw_ok}, cases=${fuzz_cases} |
 
 ## Artifacts
 

@@ -20,6 +20,13 @@ fn unpack_person_bits(bits: u64) -> (i32, i32) {
     (low as i32, high as i32)
 }
 
+fn lcg_next(state: &mut u64) -> u64 {
+    *state = state
+        .wrapping_mul(6364136223846793005)
+        .wrapping_add(1442695040888963407);
+    *state
+}
+
 fn main() {
     let factory =
         RuntimeFactory::with_thunk_library("./libRustBridge.dylib", "./libRuntimeThunks.dylib")
@@ -437,6 +444,31 @@ fn main() {
     let arr_count_after = factory.call_to_i32("swift_array_count").unwrap_or(i32::MIN);
     println!("array => count={arr_count} elem2={arr_elem2} count_after_append={arr_count_after}");
 
+    // String/Array storage internals
+    let str_storage_flags = factory
+        .call_to_i32("swift_string_storage_probe_flags")
+        .unwrap_or(0);
+    let str_tagged_diff = (str_storage_flags & 1) != 0;
+    let str_short_utf8_ok = (str_storage_flags & 2) != 0;
+    let str_long_utf8_ok = (str_storage_flags & 4) != 0;
+    println!(
+        "string storage => flags={str_storage_flags} tagged_diff={} short_utf8_ok={} long_utf8_ok={}",
+        str_tagged_diff as i32,
+        str_short_utf8_ok as i32,
+        str_long_utf8_ok as i32,
+    );
+
+    let arr_cow_flags = factory.call_to_i32("swift_array_cow_probe_flags").unwrap_or(0);
+    let arr_shared_before = (arr_cow_flags & 1) != 0;
+    let arr_split_after = (arr_cow_flags & 2) != 0;
+    let arr_original_unchanged = (arr_cow_flags & 4) != 0;
+    println!(
+        "array storage => flags={arr_cow_flags} shared_before={} split_after={} original_unchanged={}",
+        arr_shared_before as i32,
+        arr_split_after as i32,
+        arr_original_unchanged as i32,
+    );
+
     // ── Closure ───────────────────────────────────────────────────────────────
     factory.call_i32_to_i32("swift_store_adder_closure", 7).ok();
     let closure_result = factory
@@ -457,27 +489,49 @@ fn main() {
     type CdeclToPtr = unsafe extern "C" fn() -> *mut c_void;
     let error_nonnull: i32;
     let error_rc: i32;
+    let error_semantic_ok: i32;
     unsafe {
         let make_fn = factory
             .symbol_address("swift_make_math_error")
             .map(|p| std::mem::transmute::<*mut c_void, CdeclToPtr>(p));
+        let check_fn = factory
+            .symbol_address("swift_check_math_error")
+            .map(|p| std::mem::transmute::<*mut c_void, CdeclPtrToI32>(p));
         let drop_fn = factory
             .symbol_address("swift_drop_error")
             .map(|p| std::mem::transmute::<*mut c_void, CdeclPtrToVoid>(p));
-        match (make_fn, drop_fn) {
-            (Ok(make_f), Ok(drop_f)) => {
+        match (make_fn, check_fn, drop_fn) {
+            (Ok(make_f), Ok(check_f), Ok(drop_f)) => {
                 let eptr = make_f();
                 error_nonnull = if eptr.is_null() { 0 } else { 1 };
                 error_rc = factory.retain_count(eptr).unwrap_or(0) as i32;
+                let semantic_flags = check_f(eptr);
+                error_semantic_ok = if semantic_flags == 7 { 1 } else { 0 };
                 drop_f(eptr);
             }
             _ => {
                 error_nonnull = 0;
                 error_rc = 0;
+                error_semantic_ok = 0;
             }
         }
     }
     println!("error boxing => nonnull={error_nonnull} rc={error_rc}");
+    println!("error roundtrip => semantic_ok={error_semantic_ok}");
+
+    // ── Objective-C interop parity ──────────────────────────────────────────
+    let objc_flags = factory
+        .call_to_i32("swift_objc_interop_probe_flags")
+        .unwrap_or(0);
+    let objc_selector_ok = (objc_flags & 1) != 0;
+    let objc_string_bridge_ok = (objc_flags & 2) != 0;
+    let objc_array_bridge_ok = (objc_flags & 4) != 0;
+    println!(
+        "objc interop => flags={objc_flags} selector_ok={} string_bridge_ok={} array_bridge_ok={}",
+        objc_selector_ok as i32,
+        objc_string_bridge_ok as i32,
+        objc_array_bridge_ok as i32,
+    );
 
     // ── Weak reference ────────────────────────────────────────────────────────
     let mut weak_slot: u64 = 0;
@@ -504,4 +558,158 @@ fn main() {
         Err(_) => 0,
     };
     println!("conformance => witness_nonnull={conformance_nonnull}");
+
+    // ── Async/task runtime ABI (via blocking bridges) ───────────────────────
+    let async_add = factory
+        .call_i32_i32_to_i32("swift_async_add_blocking", 20, 22)
+        .unwrap_or(i32::MIN);
+    let async_div_ok = factory
+        .call_i32_i32_to_i32("swift_async_divide_try_blocking", 10, 2)
+        .unwrap_or(i32::MIN);
+    let async_div_throw = factory
+        .call_i32_i32_to_i32("swift_async_divide_did_throw_blocking", 10, 0)
+        .unwrap_or(0);
+    println!(
+        "async task => add={async_add} divide_ok={async_div_ok} divide_throw={async_div_throw}"
+    );
+
+    // ── Actor isolation/executor behavior (via blocking bridges) ─────────────
+    let actor_create = factory
+        .call_i32_to_i32("swift_actor_counter_create", 10)
+        .unwrap_or(0);
+    let actor_inc = factory
+        .call_i32_to_i32("swift_actor_counter_increment_blocking", 5)
+        .unwrap_or(i32::MIN);
+    let actor_cur = factory
+        .call_to_i32("swift_actor_counter_current_blocking")
+        .unwrap_or(i32::MIN);
+    println!("actor => create={actor_create} inc={actor_inc} cur={actor_cur}");
+
+    // ── Generic metadata instantiation parity ───────────────────────────────
+    let generic_meta_distinct = factory
+        .call_to_i32("swift_generic_metadata_distinct")
+        .unwrap_or(0);
+    let generic_constrained = factory
+        .call_to_i32("swift_generic_constrained_call")
+        .unwrap_or(i32::MIN);
+    println!(
+        "generic metadata => distinct={generic_meta_distinct} constrained={generic_constrained}"
+    );
+
+    // ── Value existential dispatch parity ───────────────────────────────────
+    let value_existential_current = factory
+        .call_to_i32("swift_value_existential_current")
+        .unwrap_or(i32::MIN);
+    println!("value existential => current={value_existential_current}");
+
+    // ── Resilient layout parity checks ─────────────────────────────────────
+    let point_size = factory.call_to_i32("swift_layout_point_size").unwrap_or(i32::MIN);
+    let point_stride = factory
+        .call_to_i32("swift_layout_point_stride")
+        .unwrap_or(i32::MIN);
+    let point_align = factory
+        .call_to_i32("swift_layout_point_alignment")
+        .unwrap_or(i32::MIN);
+    let resilient_size = factory
+        .call_to_i32("swift_layout_resilient_size")
+        .unwrap_or(i32::MIN);
+    let resilient_stride = factory
+        .call_to_i32("swift_layout_resilient_stride")
+        .unwrap_or(i32::MIN);
+    let resilient_align = factory
+        .call_to_i32("swift_layout_resilient_alignment")
+        .unwrap_or(i32::MIN);
+    let resilient_b_offset = factory
+        .call_to_i32("swift_layout_resilient_b_offset")
+        .unwrap_or(i32::MIN);
+    println!(
+        "resilient layout => point_size={point_size} point_stride={point_stride} point_align={point_align} resilient_size={resilient_size} resilient_stride={resilient_stride} resilient_align={resilient_align} b_offset={resilient_b_offset}"
+    );
+
+    // ── ARC edge-case stress checks ────────────────────────────────────────
+    let arc_swift_edge = factory
+        .call_i32_to_i32("swift_arc_edge_stress", 1000)
+        .unwrap_or(0);
+
+    let arc_runtime_balanced = unsafe {
+        let new_counter = factory
+            .symbol_address("swift_counter_new")
+            .map(|p| std::mem::transmute::<*mut c_void, CdeclI32ToPtr>(p));
+        let drop_counter = factory
+            .symbol_address("swift_counter_drop")
+            .map(|p| std::mem::transmute::<*mut c_void, CdeclPtrToVoid>(p));
+
+        match (new_counter, drop_counter) {
+            (Ok(new_f), Ok(drop_f)) => {
+                let obj = new_f(1);
+                let before = factory.retain_count(obj).unwrap_or(0);
+                for _ in 0..1000 {
+                    let _ = factory.retain(obj);
+                    let _ = factory.release(obj);
+                }
+                let after = factory.retain_count(obj).unwrap_or(0);
+                drop_f(obj);
+                if before == 1 && after == 1 { 1 } else { 0 }
+            }
+            _ => 0,
+        }
+    };
+    println!("arc stress => swift_edge={arc_swift_edge} runtime_balance={arc_runtime_balanced}");
+
+    // ── Randomized parity fuzz checks (seeded, deterministic per seed) ─────
+    let fuzz_cases = std::env::var("RUNTIME_FUZZ_CASES")
+        .ok()
+        .and_then(|s| s.parse::<usize>().ok())
+        .filter(|n| *n > 0)
+        .unwrap_or(64);
+    let fuzz_seed = std::env::var("RUNTIME_FUZZ_SEED")
+        .ok()
+        .and_then(|s| s.parse::<u64>().ok())
+        .unwrap_or(0x5A17_62F4);
+
+    let mut state = fuzz_seed;
+    let mut add_ok = 1i32;
+    let mut divide_ok = 1i32;
+    let mut throw_ok = 1i32;
+    let throws_sym = "$s10RustBridge10safeDivideys5Int32VAD_ADtKF";
+
+    for _ in 0..fuzz_cases {
+        let a = ((lcg_next(&mut state) % 1_000_001) as i64 - 500_000) as i32;
+        let b_raw = ((lcg_next(&mut state) % 1_001) as i64 - 500) as i32;
+        let b = if b_raw == 0 { 1 } else { b_raw };
+
+        let add_actual = factory
+            .call_i32_i32_to_i32("$s10RustBridge9swift_addys5Int32VAD_ADtF", a, b)
+            .unwrap_or(i32::MIN);
+        if add_actual != a.wrapping_add(b) {
+            add_ok = 0;
+        }
+
+        let div_result = factory.call_throws_i32_i32(throws_sym, a, b);
+        match div_result {
+            Ok(swift_runtime_sys::RuntimeFactory::ThrowsResult::Ok(v)) => {
+                if v != (a / b) {
+                    divide_ok = 0;
+                }
+            }
+            _ => {
+                divide_ok = 0;
+            }
+        }
+
+        let should_throw = (lcg_next(&mut state) & 1) == 0;
+        let throw_b = if should_throw { 0 } else { b };
+        let throw_result = factory.call_throws_i32_i32(throws_sym, a, throw_b);
+        match (should_throw, throw_result) {
+            (true, Ok(swift_runtime_sys::RuntimeFactory::ThrowsResult::Threw(_))) => {}
+            (false, Ok(swift_runtime_sys::RuntimeFactory::ThrowsResult::Ok(_))) => {}
+            _ => {
+                throw_ok = 0;
+            }
+        }
+    }
+
+    println!(
+        "fuzz parity => add_ok={add_ok} divide_ok={divide_ok} throw_ok={throw_ok} cases={fuzz_cases} seed={fuzz_seed}"
+    );
 }

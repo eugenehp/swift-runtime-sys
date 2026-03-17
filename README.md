@@ -199,6 +199,24 @@ Generate a full parity matrix report (probe + tmux lldb):
 ./scripts/run_parity_matrix.sh
 ```
 
+Run stress mode (repeated full matrix runs):
+
+```shell
+./scripts/run_parity_stress.sh 20
+```
+
+Stress mode now varies randomized probe seeds per run. Tune randomized coverage with:
+
+```shell
+FUZZ_CASES=128 ./scripts/run_parity_stress.sh 20
+```
+
+Optional fail-fast mode:
+
+```shell
+STOP_ON_FAIL=1 ./scripts/run_parity_stress.sh 100
+```
+
 Run isolated protocol-dispatch ABI matrix (one variant per process):
 
 ```shell
@@ -218,6 +236,9 @@ Artifacts:
 - `target/runtime-probe/lldb_tmux.log`
 - `target/runtime-probe/parity-report.json`
 - `target/runtime-probe/parity-report.md`
+- `target/runtime-probe/history/*.json`
+- `target/runtime-probe/stress/stress-summary-*.md`
+- `target/runtime-probe/stress/run-*.log`
 
 The parity report now also tracks:
 
@@ -227,6 +248,7 @@ The parity report now also tracks:
 - probe constructor evidence plus clean LLDB exit without `EXC_BAD_ACCESS`
 - protocol witness slot inspection parity (detects requirement thunk symbol in witness table)
 - raw `swift_allocObject` header parity (object header metadata pointer equals accessor metadata)
+- seeded randomized parity fuzz checks (`fuzz parity => ...`) validating add/divide/throw invariants
 
 Note: protocol witness dispatch check is currently an experimental callability
 signal (non-crashing dispatch through a witness entry), not yet strict semantic

@@ -1,4 +1,6 @@
 import Foundation
+import Dispatch
+import ObjectiveC.runtime
 
 public var globalCounterValue: Int32 = 123
 
@@ -232,6 +234,23 @@ public func swift_string_utf8_length(_ p: UnsafeMutableRawPointer) -> Int32 {
     Int32(Unmanaged<StringBox>.fromOpaque(p).takeUnretainedValue().value.utf8.count)
 }
 
+@_cdecl("swift_string_storage_probe_flags")
+public func swift_string_storage_probe_flags() -> Int32 {
+    let short = "abc"
+    let long = String(repeating: "a", count: 80)
+
+    let nsShort = short as NSString
+    let nsLong = long as NSString
+    let shortClassName = String(cString: object_getClassName(nsShort))
+    let longClassName = String(cString: object_getClassName(nsLong))
+
+    var flags: Int32 = 0
+    if shortClassName != longClassName { flags |= 1 }
+    if short.utf8.count == 3 { flags |= 2 }
+    if long.utf8.count == 80 { flags |= 4 }
+    return flags
+}
+
 @_cdecl("swift_string_drop")
 public func swift_string_drop(_ p: UnsafeMutableRawPointer) {
     _ = Unmanaged<StringBox>.fromOpaque(p).takeRetainedValue()
@@ -275,6 +294,34 @@ public func swift_array_get(_ idx: Int32) -> Int32 {
 @_cdecl("swift_array_append")
 public func swift_array_append(_ v: Int32) { sharedArray.append(v) }
 
+@_cdecl("swift_array_cow_probe_flags")
+public func swift_array_cow_probe_flags() -> Int32 {
+    let a: [Int32] = [1, 2, 3, 4]
+    var b = a
+
+    let sharedBefore = a.withUnsafeBufferPointer { ap in
+        b.withUnsafeBufferPointer { bp in
+            ap.baseAddress == bp.baseAddress
+        }
+    }
+
+    b.append(5)
+
+    let splitAfter = a.withUnsafeBufferPointer { ap in
+        b.withUnsafeBufferPointer { bp in
+            ap.baseAddress != bp.baseAddress
+        }
+    }
+
+    let originalUnchanged = (a.count == 4 && b.count == 5 && a[0] == 1 && a[3] == 4)
+
+    var flags: Int32 = 0
+    if sharedBefore { flags |= 1 }
+    if splitAfter { flags |= 2 }
+    if originalUnchanged { flags |= 4 }
+    return flags
+}
+
 // ── Closure (thick fn ptr stored globally, invoked via bridge) ─────────────
 private var _storedClosure: ((Int32) -> Int32)?
 
@@ -310,4 +357,283 @@ public func swift_make_math_error() -> UnsafeMutableRawPointer {
 @_cdecl("swift_drop_error")
 public func swift_drop_error(_ p: UnsafeMutableRawPointer) {
     _ = Unmanaged<NSError>.fromOpaque(p).takeRetainedValue()
+}
+
+@_cdecl("swift_check_math_error")
+public func swift_check_math_error(_ p: UnsafeMutableRawPointer) -> Int32 {
+    let e = Unmanaged<NSError>.fromOpaque(p).takeUnretainedValue()
+    var flags: Int32 = 0
+    if e.domain == "RustBridge.MathError" { flags |= 1 }
+    if e.code == 0 { flags |= 2 }
+    if e.localizedDescription.contains("divisionByZero") { flags |= 4 }
+    return flags
+}
+
+@objcMembers
+public final class ObjCBridgeCounter: NSObject {
+    public dynamic var value: Int32
+
+    public init(_ start: Int32) {
+        self.value = start
+        super.init()
+    }
+
+    public dynamic func bump(_ delta: NSNumber) -> NSNumber {
+        value += delta.int32Value
+        return NSNumber(value: value)
+    }
+}
+
+@_cdecl("swift_objc_interop_probe_flags")
+public func swift_objc_interop_probe_flags() -> Int32 {
+    let counter = ObjCBridgeCounter(10)
+    let bumpSel = #selector(ObjCBridgeCounter.bump(_:))
+    let responds = counter.responds(to: bumpSel)
+
+    var selectorOk = false
+    if responds,
+       let out = counter.perform(bumpSel, with: NSNumber(value: 5))?.takeUnretainedValue() as? NSNumber {
+        selectorOk = (out.int32Value == 15)
+    }
+
+    let nsStr = NSString(string: "bridge")
+    let stringBridgeOk = ((nsStr as String) == "bridge")
+
+    let nsArr: NSArray = [NSNumber(value: 1), NSNumber(value: 2), NSNumber(value: 3)]
+    let swiftArr = nsArr as? [NSNumber]
+    let arrayBridgeOk = (swiftArr?.count == 3 && swiftArr?[2].int32Value == 3)
+
+    var flags: Int32 = 0
+    if selectorOk { flags |= 1 }
+    if stringBridgeOk { flags |= 2 }
+    if arrayBridgeOk { flags |= 4 }
+    return flags
+}
+
+// ── Async/task runtime ───────────────────────────────────────────────────────
+public func asyncAdd(_ a: Int32, _ b: Int32) async -> Int32 {
+    a + b
+}
+
+public func asyncSafeDivide(_ a: Int32, _ b: Int32) async throws -> Int32 {
+    try safeDivide(a, b)
+}
+
+@_cdecl("swift_async_add_blocking")
+public func swift_async_add_blocking(_ a: Int32, _ b: Int32) -> Int32 {
+    let sem = DispatchSemaphore(value: 0)
+    var out = Int32.min
+    Task {
+        out = await asyncAdd(a, b)
+        sem.signal()
+    }
+    sem.wait()
+    return out
+}
+
+@_cdecl("swift_async_divide_try_blocking")
+public func swift_async_divide_try_blocking(_ a: Int32, _ b: Int32) -> Int32 {
+    let sem = DispatchSemaphore(value: 0)
+    var out = Int32.min
+    Task {
+        do {
+            out = try await asyncSafeDivide(a, b)
+        } catch {
+            out = Int32.min
+        }
+        sem.signal()
+    }
+    sem.wait()
+    return out
+}
+
+@_cdecl("swift_async_divide_did_throw_blocking")
+public func swift_async_divide_did_throw_blocking(_ a: Int32, _ b: Int32) -> Int32 {
+    let sem = DispatchSemaphore(value: 0)
+    var didThrow: Int32 = 0
+    Task {
+        do {
+            _ = try await asyncSafeDivide(a, b)
+            didThrow = 0
+        } catch {
+            didThrow = 1
+        }
+        sem.signal()
+    }
+    sem.wait()
+    return didThrow
+}
+
+// ── Actor/executor behavior ─────────────────────────────────────────────────
+public actor CounterActor {
+    private var value: Int32
+
+    public init(start: Int32) {
+        self.value = start
+    }
+
+    public func increment(by delta: Int32) -> Int32 {
+        value += delta
+        return value
+    }
+
+    public func current() -> Int32 {
+        value
+    }
+}
+
+private var _sharedActorCounter: CounterActor?
+
+@_cdecl("swift_actor_counter_create")
+public func swift_actor_counter_create(_ start: Int32) -> Int32 {
+    _sharedActorCounter = CounterActor(start: start)
+    return 1
+}
+
+@_cdecl("swift_actor_counter_increment_blocking")
+public func swift_actor_counter_increment_blocking(_ delta: Int32) -> Int32 {
+    guard let actor = _sharedActorCounter else { return Int32.min }
+    let sem = DispatchSemaphore(value: 0)
+    var out = Int32.min
+    Task {
+        out = await actor.increment(by: delta)
+        sem.signal()
+    }
+    sem.wait()
+    return out
+}
+
+@_cdecl("swift_actor_counter_current_blocking")
+public func swift_actor_counter_current_blocking() -> Int32 {
+    guard let actor = _sharedActorCounter else { return Int32.min }
+    let sem = DispatchSemaphore(value: 0)
+    var out = Int32.min
+    Task {
+        out = await actor.current()
+        sem.signal()
+    }
+    sem.wait()
+    return out
+}
+
+// ── Generic metadata parity (multi-type instantiation) ─────────────────────
+private protocol ValueLike {
+    func value() -> Int32
+}
+
+private struct ValueHolder: ValueLike {
+    let v: Int32
+    func value() -> Int32 { v }
+}
+
+private func consumeValueLike<T: ValueLike>(_ t: T) -> Int32 {
+    t.value()
+}
+
+@_cdecl("swift_generic_metadata_distinct")
+public func swift_generic_metadata_distinct() -> Int32 {
+    let a = ObjectIdentifier(TypedBox<Int32>.self)
+    let b = ObjectIdentifier(TypedBox<String>.self)
+    let c = ObjectIdentifier(TypedBox<TypedBox<Int32>>.self)
+    return (a != b && b != c && a != c) ? 1 : 0
+}
+
+@_cdecl("swift_generic_constrained_call")
+public func swift_generic_constrained_call() -> Int32 {
+    consumeValueLike(ValueHolder(v: 77))
+}
+
+// ── Value existential dispatch parity ───────────────────────────────────────
+public protocol ValueCurrentLike {
+    func current() -> Int32
+}
+
+public struct ValueCounter: ValueCurrentLike {
+    public var value: Int32
+    public init(_ value: Int32) { self.value = value }
+    public func current() -> Int32 { value }
+}
+
+@_cdecl("swift_value_existential_current")
+public func swift_value_existential_current() -> Int32 {
+    let anyValue: any ValueCurrentLike = ValueCounter(88)
+    return anyValue.current()
+}
+
+// ── Resilient layout parity probes ──────────────────────────────────────────
+public struct ResilientLike {
+    public var a: Int32
+    public var b: Int64
+    public init(a: Int32, b: Int64) {
+        self.a = a
+        self.b = b
+    }
+}
+
+@_cdecl("swift_layout_point_size")
+public func swift_layout_point_size() -> Int32 {
+    Int32(MemoryLayout<Point>.size)
+}
+
+@_cdecl("swift_layout_point_stride")
+public func swift_layout_point_stride() -> Int32 {
+    Int32(MemoryLayout<Point>.stride)
+}
+
+@_cdecl("swift_layout_point_alignment")
+public func swift_layout_point_alignment() -> Int32 {
+    Int32(MemoryLayout<Point>.alignment)
+}
+
+@_cdecl("swift_layout_resilient_size")
+public func swift_layout_resilient_size() -> Int32 {
+    Int32(MemoryLayout<ResilientLike>.size)
+}
+
+@_cdecl("swift_layout_resilient_stride")
+public func swift_layout_resilient_stride() -> Int32 {
+    Int32(MemoryLayout<ResilientLike>.stride)
+}
+
+@_cdecl("swift_layout_resilient_alignment")
+public func swift_layout_resilient_alignment() -> Int32 {
+    Int32(MemoryLayout<ResilientLike>.alignment)
+}
+
+@_cdecl("swift_layout_resilient_b_offset")
+public func swift_layout_resilient_b_offset() -> Int32 {
+    var x = ResilientLike(a: 1, b: 2)
+    return withUnsafeMutablePointer(to: &x) { base in
+        withUnsafeMutablePointer(to: &base.pointee.b) { bptr in
+            Int32(Int(bitPattern: bptr) - Int(bitPattern: base))
+        }
+    }
+}
+
+// ── ARC edge-case stress probes ─────────────────────────────────────────────
+private final class ArcTracked {
+    static var deinitCount: Int32 = 0
+    deinit { ArcTracked.deinitCount += 1 }
+}
+
+@_cdecl("swift_arc_edge_stress")
+public func swift_arc_edge_stress(_ iterations: Int32) -> Int32 {
+    ArcTracked.deinitCount = 0
+    var strong: ArcTracked? = ArcTracked()
+    weak let weakRef = strong
+
+    if let obj = strong {
+        let n = max(0, Int(iterations))
+        for _ in 0..<n {
+            let p = Unmanaged.passRetained(obj).toOpaque()
+            _ = Unmanaged<ArcTracked>.fromOpaque(p).takeRetainedValue()
+        }
+    }
+
+    let beforeDrop = ArcTracked.deinitCount
+    strong = nil
+    let afterDrop = ArcTracked.deinitCount
+    let weakCleared = (weakRef == nil)
+
+    return (beforeDrop == 0 && afterDrop == 1 && weakCleared) ? 1 : 0
 }
