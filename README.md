@@ -283,6 +283,8 @@ The parity report now also tracks:
 - decimal semantics parity (`Decimal` add/multiply/round and invalid-parse rejection invariants)
 - URLRequest semantics parity (URL/method/header/timeout/body invariants)
 - data base64 semantics parity (encode/decode, ignore-unknown decode, and invalid-input rejection invariants)
+- HTTPURLResponse semantics parity (status code, header extraction, URL preservation, content-type parsing)
+- JSONEncoder/JSONDecoder semantics parity (encode, decode, nested structures, null-value handling)
 - seeded randomized parity fuzz checks (`fuzz parity => ...`) validating add/divide/throw invariants
 
 Note: protocol witness dispatch check is currently an experimental callability

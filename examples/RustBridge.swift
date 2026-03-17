@@ -1641,6 +1641,58 @@ public func swift_data_base64_probe_flags() -> Int32 {
     return flags
 }
 
+@_cdecl("swift_http_url_response_probe_flags")
+public func swift_http_url_response_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+    let testURL = URL(string: "https://example.com/path")!
+    let response = HTTPURLResponse(url: testURL, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: ["Content-Type": "application/json", "X-Custom": "test-value"])!
+
+    if response.statusCode == 200 { flags |= 1 }
+
+    if let header = response.value(forHTTPHeaderField: "X-Custom"), header == "test-value" { flags |= 2 }
+
+    if response.url == testURL { flags |= 4 }
+
+    if response.value(forHTTPHeaderField: "Content-Type") == "application/json" { flags |= 8 }
+
+    return flags
+}
+
+@_cdecl("swift_json_encoder_probe_flags")
+public func swift_json_encoder_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+
+    struct TestPayload: Codable {
+        let id: Int
+        let name: String
+        let nested: NestedData
+        let optional: String?
+    }
+
+    struct NestedData: Codable {
+        let value: Double
+    }
+
+    let encoder = JSONEncoder()
+    let decoder = JSONDecoder()
+
+    let original = TestPayload(id: 42, name: "test", nested: NestedData(value: 3.14), optional: nil)
+
+    do {
+        let json = try encoder.encode(original)
+        if !json.isEmpty { flags |= 1 }
+
+        let decoded = try decoder.decode(TestPayload.self, from: json)
+        if decoded.id == original.id && decoded.name == original.name { flags |= 2 }
+
+        if abs(decoded.nested.value - original.nested.value) < 0.001 { flags |= 4 }
+
+        if decoded.optional == nil { flags |= 8 }
+    } catch { }
+
+    return flags
+}
+
 // ── Value existential dispatch parity ───────────────────────────────────────
 public protocol ValueCurrentLike {
     func current() -> Int32

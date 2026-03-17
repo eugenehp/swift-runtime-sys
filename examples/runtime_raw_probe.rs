@@ -1162,6 +1162,36 @@ fn main() {
         base64_invalid_ok as i32,
     );
 
+    let http_response_flags = factory
+        .call_to_i32("swift_http_url_response_probe_flags")
+        .unwrap_or(0);
+    let response_status_ok = (http_response_flags & 1) != 0;
+    let response_header_ok = (http_response_flags & 2) != 0;
+    let response_url_ok = (http_response_flags & 4) != 0;
+    let response_content_type_ok = (http_response_flags & 8) != 0;
+    println!(
+        "http url response => flags={http_response_flags} status_code_ok={} header_ok={} url_ok={} content_type_ok={}",
+        response_status_ok as i32,
+        response_header_ok as i32,
+        response_url_ok as i32,
+        response_content_type_ok as i32,
+    );
+
+    let json_encoder_flags = factory
+        .call_to_i32("swift_json_encoder_probe_flags")
+        .unwrap_or(0);
+    let json_encode_ok = (json_encoder_flags & 1) != 0;
+    let json_decode_ok = (json_encoder_flags & 2) != 0;
+    let json_nested_ok = (json_encoder_flags & 4) != 0;
+    let json_null_ok = (json_encoder_flags & 8) != 0;
+    println!(
+        "json encoder => flags={json_encoder_flags} encode_ok={} decode_ok={} nested_ok={} null_ok={}",
+        json_encode_ok as i32,
+        json_decode_ok as i32,
+        json_nested_ok as i32,
+        json_null_ok as i32,
+    );
+
     // ── Value existential dispatch parity ───────────────────────────────────
     let value_existential_current = factory
         .call_to_i32("swift_value_existential_current")
