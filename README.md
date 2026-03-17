@@ -230,6 +230,36 @@ Artifact:
 The parity pipeline now runs the crate example binary `runtime_raw_probe`
 through Cargo, so probe/parity/debug paths all exercise `RuntimeFactory`.
 
+## Parity Scope (v1)
+
+This repository's parity claim is scoped and versioned. "100% parity" means
+all items marked as required in this scope pass on supported environments.
+
+Required:
+
+- `scripts/run_parity_matrix.sh` reports full pass count (`N/N PASS`).
+- `scripts/run_parity_stress.sh` gate passes at configured CI budget.
+- `scripts/run_protocol_dispatch_matrix.sh` completes and publishes matrix output.
+- CI uploads parity/stress/protocol artifacts for each run.
+
+Optional:
+
+- Additional deterministic domains beyond required parity scope.
+- Expanded stress budgets for release hardening.
+- Extra OS/Swift version cells beyond the required support matrix.
+
+Experimental (excluded from 100% claim):
+
+- Opt-in direct `swiftcall` increment path (`RUNTIME_TRY_INCREMENT=1`).
+- Witness `x1` opt-in variants that may crash depending on ABI shape.
+- Raw runtime-only integration paths documented as research mode.
+
+Claim policy:
+
+- We only claim parity against required scope items.
+- Experimental features are tracked but do not block required parity unless promoted.
+- Scope changes must be documented here before parity percentages are reinterpreted.
+
 Artifacts:
 
 - `target/runtime-probe/probe.log`
