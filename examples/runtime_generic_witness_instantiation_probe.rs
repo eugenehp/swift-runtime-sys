@@ -145,9 +145,7 @@ fn test_build_context_constrained_i32(
         && json.contains("\"name\":\"Comparable\",\"satisfied\":true"))
 }
 
-fn test_build_context_box_string(
-    contract: &RuntimeContract,
-) -> Result<bool, RuntimeContractError> {
+fn test_build_context_box_string(contract: &RuntimeContract) -> Result<bool, RuntimeContractError> {
     let json = contract.n3_build_context_json("ContractGenericBox<String>", "")?;
     Ok(json.contains("\"supported\":true")
         && json.contains("\"generic_base\":\"ContractGenericBox\"")

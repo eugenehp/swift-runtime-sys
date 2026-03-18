@@ -2668,6 +2668,21 @@ public func swift_contract_n2_lowering_strategy_json(_ signaturePtr: UnsafePoint
     return strdup(json)
 }
 
+// MARK: - Unsafe Runtime Ops Isolation & Recovery (Track N.4)
+
+/// Deterministic safe operation used by the broker path to prove non-crashing subprocess execution.
+@_cdecl("swift_contract_n4_safe_ping")
+public func swift_contract_n4_safe_ping(_ value: Int32) -> Int32 {
+    value &+ 1000
+}
+
+/// Deliberately abort the current process. This must only be invoked from the broker subprocess.
+/// The parent probe captures structured context before invoking this symbol and verifies isolation.
+@_cdecl("swift_contract_n4_trigger_abort")
+public func swift_contract_n4_trigger_abort() {
+    Darwin.abort()
+}
+
 // MARK: - Backtrace & Crash Symbolication (Track E.2)
 
 @inline(never)

@@ -357,6 +357,9 @@ type ContractN3ValidateRequirementsJson =
     unsafe extern "C" fn(*const c_char, *const c_char) -> *mut c_char;
 type ContractN3InvokeGenericI32 =
     unsafe extern "C" fn(*const c_char, *const c_char, *const c_char, i32, i32, *mut i32) -> i32;
+// Track N.4 – Unsafe Runtime Ops Isolation & Recovery
+type ContractN4SafePing = unsafe extern "C" fn(i32) -> i32;
+type ContractN4TriggerAbort = unsafe extern "C" fn();
 type ContractBacktraceCapture = unsafe extern "C" fn() -> *mut c_char;
 type ContractBacktraceAnchorAddress = unsafe extern "C" fn() -> u64;
 
@@ -2425,6 +2428,24 @@ impl<'a> RuntimeContract<'a> {
             });
         }
         Ok(out)
+    }
+
+    // MARK: - Unsafe Runtime Ops Isolation & Recovery (Track N.4)
+
+    /// Deterministic safe op for subprocess/broker validation.
+    pub fn n4_safe_ping(&self, value: i32) -> Result<i32, RuntimeContractError> {
+        let func: ContractN4SafePing = self.resolve("swift_contract_n4_safe_ping")?;
+        Ok(unsafe { func(value) })
+    }
+
+    /// Deliberately abort the current process. Must only be used from the broker subprocess.
+    pub fn n4_trigger_abort(&self) -> Result<(), RuntimeContractError> {
+        let func: ContractN4TriggerAbort = self.resolve("swift_contract_n4_trigger_abort")?;
+        unsafe { func() };
+        Err(RuntimeContractError::InvalidInvoke {
+            type_id: 73,
+            method_id: 2,
+        })
     }
 
     // MARK: - Foundation Date/Time (Track I.1)

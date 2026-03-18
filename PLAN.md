@@ -517,11 +517,12 @@ These tracks target dynamic, version-adaptive runtime control beyond contract-sc
 - **Status**: COMPLETE - Added Track N.3 bridge exports (`swift_contract_n3_build_context_json`, `swift_contract_n3_resolve_witness_json`, `swift_contract_n3_validate_requirements_json`, `swift_contract_n3_invoke_generic_i32`) plus a recursive generic-family rule engine over `ContractGenericBox<T>`, `Array<T>`, and `Dictionary<K,V>` instead of the prior exact-name finite set. Rust wrappers build contexts, resolve witnesses, validate associated-type/protocol requirements, and dispatch generic operations using only type names, protocol names, and requirement strings. Probe `examples/runtime_generic_witness_instantiation_probe.rs` now PASS (21/21), including proof beyond static registries: `generic_validate_substitution("Array<String>")` still returns false in the older H.1 path, while N.3 successfully builds context, resolves `Sequence` witness/requirements, and dispatches operations for `Array<String>`, `ContractGenericBox<String>`, `Dictionary<String,String>`, and nested `Array<Array<Int32>>`. Exit criterion satisfied: Rust can instantiate and dispatch generic/protocol-bound operations that were not pre-modeled in the existing static registry/substitution tables.
 
 ### N.4) Unsafe Runtime Ops Isolation & Recovery
-- [ ] Add subprocess/broker sandbox mode for high-risk runtime operations.
-- [ ] Add structured crash capture (signal, backtrace, faulting symbol, operation context).
-- [ ] Add replay harness for reproducing failed runtime invocations.
-- [ ] Add policy controls to gate dangerous operations by risk level.
-- [ ] Exit criteria: Runtime crashes in exploratory flows are isolated and diagnosable without taking down primary orchestration.
+- [x] Add subprocess/broker sandbox mode for high-risk runtime operations.
+- [x] Add structured crash capture (signal, backtrace, faulting symbol, operation context).
+- [x] Add replay harness for reproducing failed runtime invocations.
+- [x] Add policy controls to gate dangerous operations by risk level.
+- [x] Exit criteria: Runtime crashes in exploratory flows are isolated and diagnosable without taking down primary orchestration.
+- **Status**: COMPLETE - Added Track N.4 Swift exports (`swift_contract_n4_safe_ping`, `swift_contract_n4_trigger_abort`) and Rust wrappers (`n4_safe_ping`, `n4_trigger_abort`) plus a broker subprocess example `examples/runtime_n4_broker.rs` that executes risky operations out-of-process under policy control. High-risk operations are denied by default unless explicitly allowed, and the crash path emits structured context before aborting: signal, backtrace, faulting symbol, and operation context. Parent probe `examples/runtime_isolation_recovery_probe.rs` validates 10 cases covering safe low-risk broker execution, high-risk policy denial, child crash isolation, structured crash capture fields, replay request generation/re-execution, and crash-report artifact generation. Exit criterion satisfied: the primary orchestrator survives the child crash while retaining enough structured context to diagnose and replay it. Current N.4 probe PASS (10/10).
 
 ### N.5) Cross-Version ABI Adaptation Layer
 - [ ] Add per-toolchain adapter table for symbol/layout/witness drift.
