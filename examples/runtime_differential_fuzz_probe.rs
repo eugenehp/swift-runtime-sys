@@ -38,16 +38,28 @@ fn main() {
     let args: Vec<String> = env::args().collect();
 
     if args.get(1).map(String::as_str) == Some("--campaign") {
-        let runs = args.get(2).and_then(|v| v.parse::<usize>().ok()).unwrap_or(16);
-        let fragment_count = args.get(3).and_then(|v| v.parse::<i32>().ok()).unwrap_or(12);
+        let runs = args
+            .get(2)
+            .and_then(|v| v.parse::<usize>().ok())
+            .unwrap_or(16);
+        let fragment_count = args
+            .get(3)
+            .and_then(|v| v.parse::<i32>().ok())
+            .unwrap_or(12);
         let out_dir = args
             .get(4)
             .cloned()
             .unwrap_or_else(|| "target/runtime-probe/n6-corpus".to_string());
         let factory = build_factory();
         let contract = RuntimeContract::new(&factory);
-        run_campaign(&factory, &contract, runs, fragment_count, Path::new(&out_dir))
-            .unwrap_or_else(|e| panic!("campaign failed: {e:?}"));
+        run_campaign(
+            &factory,
+            &contract,
+            runs,
+            fragment_count,
+            Path::new(&out_dir),
+        )
+        .unwrap_or_else(|e| panic!("campaign failed: {e:?}"));
         return;
     }
 
@@ -59,17 +71,47 @@ fn main() {
 
     println!("\n=== Differential Fuzzing & Semantic Oracle (Track N.6) ===");
 
-    let tests: [(&str, fn(&RuntimeFactory, &RuntimeContract) -> Result<bool, RuntimeContractError>); 10] = [
-        ("Program generator is deterministic", test_generator_is_deterministic),
-        ("Program generator emits Swift source", test_generator_emits_source),
-        ("Native Swift executor runs generated program", test_native_executor_runs_program),
-        ("Rust-driven executor matches native Swift", test_rust_matches_native),
-        ("Comparator stays clean on matching traces", test_matching_trace_has_no_mismatch),
-        ("Comparator detects injected mismatch", test_injected_mismatch_detected),
+    let tests: [(
+        &str,
+        fn(&RuntimeFactory, &RuntimeContract) -> Result<bool, RuntimeContractError>,
+    ); 10] = [
+        (
+            "Program generator is deterministic",
+            test_generator_is_deterministic,
+        ),
+        (
+            "Program generator emits Swift source",
+            test_generator_emits_source,
+        ),
+        (
+            "Native Swift executor runs generated program",
+            test_native_executor_runs_program,
+        ),
+        (
+            "Rust-driven executor matches native Swift",
+            test_rust_matches_native,
+        ),
+        (
+            "Comparator stays clean on matching traces",
+            test_matching_trace_has_no_mismatch,
+        ),
+        (
+            "Comparator detects injected mismatch",
+            test_injected_mismatch_detected,
+        ),
         ("Triage artifact is written", test_triage_artifact_written),
-        ("Corpus minimizer shrinks mismatch", test_corpus_minimizer_shrinks),
-        ("Campaign passes multi-seed differential run", test_campaign_passes),
-        ("Campaign summary artifact is written", test_campaign_summary_written),
+        (
+            "Corpus minimizer shrinks mismatch",
+            test_corpus_minimizer_shrinks,
+        ),
+        (
+            "Campaign passes multi-seed differential run",
+            test_campaign_passes,
+        ),
+        (
+            "Campaign summary artifact is written",
+            test_campaign_summary_written,
+        ),
     ];
 
     for (name, test_fn) in tests {
@@ -101,9 +143,10 @@ fn main() {
 }
 
 fn build_factory() -> RuntimeFactory {
-    let factory = RuntimeFactory::with_thunk_library("./libRustBridge.dylib", "./libRuntimeThunks.dylib")
-        .or_else(|_| RuntimeFactory::new("./libRustBridge.dylib"))
-        .unwrap_or_else(|e| panic!("failed to init RuntimeFactory: {e:?}"));
+    let factory =
+        RuntimeFactory::with_thunk_library("./libRustBridge.dylib", "./libRuntimeThunks.dylib")
+            .or_else(|_| RuntimeFactory::new("./libRustBridge.dylib"))
+            .unwrap_or_else(|e| panic!("failed to init RuntimeFactory: {e:?}"));
     factory
         .validate_runtime_contract(1)
         .unwrap_or_else(|e| panic!("runtime contract validation failed: {e:?}"));
@@ -134,22 +177,30 @@ fn compare_executions(native: &N6Execution, rust: &N6Execution) -> Vec<N6Mismatc
                 native.results.len(),
                 rust.results.len()
             ),
-            native: native.results.get(index).cloned().unwrap_or_else(|| N6Result {
-                id: -1,
-                kind: "missing".to_string(),
-                status: "missing".to_string(),
-                value: None,
-                error: None,
-                side_effect: None,
-            }),
-            rust: rust.results.get(index).cloned().unwrap_or_else(|| N6Result {
-                id: -1,
-                kind: "missing".to_string(),
-                status: "missing".to_string(),
-                value: None,
-                error: None,
-                side_effect: None,
-            }),
+            native: native
+                .results
+                .get(index)
+                .cloned()
+                .unwrap_or_else(|| N6Result {
+                    id: -1,
+                    kind: "missing".to_string(),
+                    status: "missing".to_string(),
+                    value: None,
+                    error: None,
+                    side_effect: None,
+                }),
+            rust: rust
+                .results
+                .get(index)
+                .cloned()
+                .unwrap_or_else(|| N6Result {
+                    id: -1,
+                    kind: "missing".to_string(),
+                    status: "missing".to_string(),
+                    value: None,
+                    error: None,
+                    side_effect: None,
+                }),
         });
     }
 
@@ -157,7 +208,12 @@ fn compare_executions(native: &N6Execution, rust: &N6Execution) -> Vec<N6Mismatc
 }
 
 fn error_side_effect(payload: &ContractErrorContextPayload) -> String {
-    format!("{}|{}|chain={}", payload.domain, payload.message, payload.chain.len())
+    format!(
+        "{}|{}|chain={}",
+        payload.domain,
+        payload.message,
+        payload.chain.len()
+    )
 }
 
 fn rust_execute_program(
@@ -182,7 +238,11 @@ fn rust_execute_program(
                 side_effect: None,
             },
             "safe_divide" => match factory
-                .call_throws_i32_i32("$s10RustBridge10safeDivideys5Int32VAD_ADtKF", fragment.a, fragment.b)
+                .call_throws_i32_i32(
+                    "$s10RustBridge10safeDivideys5Int32VAD_ADtKF",
+                    fragment.a,
+                    fragment.b,
+                )
                 .map_err(RuntimeContractError::from)?
             {
                 ThrowsResult::Ok(value) => N6Result {
@@ -274,7 +334,10 @@ fn rust_execute_program(
                 )?;
                 let parsed: Value = serde_json::from_str(&witness)
                     .map_err(|error| RuntimeContractError::DescriptorParse(error.to_string()))?;
-                let supported = parsed.get("supported").and_then(Value::as_bool).unwrap_or(false);
+                let supported = parsed
+                    .get("supported")
+                    .and_then(Value::as_bool)
+                    .unwrap_or(false);
                 let token = parsed.get("token").and_then(Value::as_u64).unwrap_or(0);
                 N6Result {
                     id: fragment.id,
@@ -344,7 +407,10 @@ where
             .map(|fragment| fragment.source.clone())
             .collect::<Vec<_>>()
             .join("\n");
-        if mismatches_for(&candidate).map(|m| !m.is_empty()).unwrap_or(false) {
+        if mismatches_for(&candidate)
+            .map(|m| !m.is_empty())
+            .unwrap_or(false)
+        {
             program = candidate;
         } else {
             index += 1;
@@ -373,7 +439,8 @@ fn run_campaign(
     fragment_count: i32,
     out_dir: &Path,
 ) -> Result<(), RuntimeContractError> {
-    fs::create_dir_all(out_dir).map_err(|error| RuntimeContractError::DescriptorParse(error.to_string()))?;
+    fs::create_dir_all(out_dir)
+        .map_err(|error| RuntimeContractError::DescriptorParse(error.to_string()))?;
     let mismatches = 0usize;
 
     for seed in 1..=runs {
