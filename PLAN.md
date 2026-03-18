@@ -566,8 +566,8 @@ This section defines the work required to approach a defensible "absolute parity
 - [ ] Fail the claim if any declared cell is not exercised by evidence artifacts.
 
 ### AP.2) Runtime Drift & Private-Surface Hardening
-- [ ] Inventory all private/unstable runtime touchpoints and classify by risk.
-- [ ] Add release-over-release drift detector against upstream Swift symbols/layout assumptions.
+- [x] Inventory all private/unstable runtime touchpoints and classify by risk.
+- [x] Add release-over-release drift detector against upstream Swift symbols/layout assumptions.
 - [ ] Add mandatory fallback path and kill-switch policy for each high-risk touchpoint.
 
 ### AP.3) ABI Shape Closure
@@ -629,3 +629,9 @@ This section defines the work required to approach a defensible "absolute parity
 - [x] Updated CI artifact names to include profile (`parity-report-<cell>-<profile>-<sha>`, `contract-parity-<cell>-<profile>-<sha>`).
 - [x] Updated `scripts/validate_support_matrix_artifacts.sh` to require and validate each required profile per required cell.
 - [x] Sanity-validated profile-aware support-matrix validation locally with `REQUIRED_CELLS='macos-26-arm64-local' REQUIRED_PROFILES='debug release'` against AP.1 artifacts: PASS.
+
+### 2026-03-18 (Wave 5, AP.2 inventory + drift tooling)
+- [x] Added `scripts/inventory_runtime_touchpoints.sh` to inventory runtime/private touchpoints and classify by risk, with artifacts `target/runtime-probe/ap2-private-surface-inventory.json` and `target/runtime-probe/ap2-private-surface-inventory.md`.
+- [x] Added `scripts/check_runtime_drift.sh` to compare current runtime surface against baseline and fail on removed critical surfaces (contract exports, thunk exports, high-risk touchpoints).
+- [x] Initialized AP.2 baseline (`UPDATE_BASELINE=1`) and re-ran drift check: PASS.
+- [x] Current AP.2 inventory summary: total symbols `415`, contract exports `224`, runtime exports `149`, thunk exports `13`, mangled symbols `29`, high-risk touchpoints `5`.
