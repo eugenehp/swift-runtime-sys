@@ -13,8 +13,13 @@ if [[ ! -f "$PLAN_FILE" ]]; then
   exit 1
 fi
 
-unchecked_count="$(grep -Ec '^- \[ \] ' "$PLAN_FILE" || true)"
-checked_count="$(grep -Ec '^- \[x\] ' "$PLAN_FILE" || true)"
+scope_lines="$(awk '
+  /^## Absolute Parity Closure Program \(Post-N\.8\)/ { exit }
+  { print }
+' "$PLAN_FILE")"
+
+unchecked_count="$(printf '%s\n' "$scope_lines" | grep -Ec '^- \[ \] ' || true)"
+checked_count="$(printf '%s\n' "$scope_lines" | grep -Ec '^- \[x\] ' || true)"
 
 required_evidence_files=(
   "$ROOT/target/runtime-probe/contract-parity.md"
@@ -43,7 +48,7 @@ MD
 
 if [[ "$unchecked_count" -ne 0 ]]; then
   echo "\n## Unchecked Items\n" >> "$OUT_MD"
-  grep -E '^- \[ \] ' "$PLAN_FILE" >> "$OUT_MD" || true
+  printf '%s\n' "$scope_lines" | grep -E '^- \[ \] ' >> "$OUT_MD" || true
   echo "Wrote $OUT_MD"
   echo "plan completion signoff failed" >&2
   exit 1

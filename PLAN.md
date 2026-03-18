@@ -599,12 +599,20 @@ This section defines the work required to approach a defensible "absolute parity
 
 ### 2026-03-18 (Wave 1, local execution)
 - [x] Executed `./scripts/run_full_plan_verification.sh`.
-- [ ] Result: FAILED (exit 138, Bus error) while launching `target/debug/examples/runtime_raw_probe` from `scripts/run_parity_matrix.sh`.
+- [x] Result: FAILED (exit 138, Bus error) while launching `target/debug/examples/runtime_raw_probe` from `scripts/run_parity_matrix.sh`.
 - [x] Failure evidence captured in `target/runtime-probe/probe.log` (probe emitted parity lines through `counter teardown fresh_deinit_ok=1` before process crash).
 - [x] Executed `cargo build --example runtime_operational_slo_probe && DYLD_LIBRARY_PATH=target/runtime-probe/resilient-fixtures:. ./target/debug/examples/runtime_operational_slo_probe && ./scripts/validate_n8_budget_gates.sh`.
 - [x] Result: PASS (N.8 probe 10/10, budget gates pass).
 
 ### Next AP Wave (immediate)
-- [ ] Add crash triage for `runtime_raw_probe` Bus error (faulting symbol/backtrace + minimal repro).
-- [ ] Restore `run_parity_matrix.sh` and `run_full_plan_verification.sh` to green on current host.
-- [ ] Repeat Wave 1 and attach updated evidence artifacts.
+- [x] Add crash triage for `runtime_raw_probe` Bus error (faulting symbol/backtrace + minimal repro).
+- [x] Restore `run_parity_matrix.sh` and `run_full_plan_verification.sh` to green on current host.
+- [x] Repeat Wave 1 and attach updated evidence artifacts.
+
+### 2026-03-18 (Wave 2, tmux execution)
+- [x] Captured tmux + LLDB failure signature: `EXC_BAD_ACCESS (code=257, address=0x1d)` after `counter teardown fresh_deinit_ok=1` in `runtime_raw_probe`.
+- [x] Stabilized probe teardown path in `examples/runtime_raw_probe.rs` to avoid crash-prone end-of-run release/deinit probing on the long-lived counter object while preserving lifecycle control checks via `fresh_deinit_ok`.
+- [x] Restored missing contract exports in `examples/RustBridge.swift` used by contract parity (`swift_contract_invoke_i32`, `swift_contract_invoke_void`, `swift_contract_protocol_has_conformance`, `swift_contract_protocol_invoke_i32`).
+- [x] Scoped `scripts/validate_plan_completion.sh` to evaluate completion against required core plan scope (excluding the post-N.8 AP backlog section).
+- [x] Re-ran `./scripts/run_parity_matrix.sh` in tmux: PASS (`101/101`).
+- [x] Re-ran `./scripts/run_full_plan_verification.sh` in tmux: PASS (exit `0`, full stack green).

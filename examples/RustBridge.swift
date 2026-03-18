@@ -4011,6 +4011,101 @@ public func swift_contract_construct(
     }
 }
 
+@_cdecl("swift_contract_invoke_i32")
+public func swift_contract_invoke_i32(
+    _ typeID: Int32,
+    _ methodID: Int32,
+    _ receiver: UnsafeMutableRawPointer?,
+    _ argsBlobPtr: UnsafeRawPointer?,
+    _ argsBlobLen: Int32
+) -> Int32 {
+    guard let receiver else { return Int32.min }
+
+    switch typeID {
+    case 1:
+        let box = Unmanaged<Box<Person>>.fromOpaque(receiver).takeUnretainedValue()
+        switch methodID {
+        case 1:
+            return box.value.id
+        case 2:
+            return box.value.age
+        default:
+            return Int32.min
+        }
+
+    case 2:
+        let counter = Unmanaged<Counter>.fromOpaque(receiver).takeUnretainedValue()
+        switch methodID {
+        case 1:
+            guard let argsBlobPtr, argsBlobLen >= 4 else { return Int32.min }
+            let amount = argsBlobPtr.assumingMemoryBound(to: Int32.self).pointee
+            return counter.increment(by: amount)
+        case 2:
+            return counter.current()
+        case 4:
+            let readable: CounterLike = counter
+            return readable.current()
+        default:
+            return Int32.min
+        }
+
+    default:
+        return Int32.min
+    }
+}
+
+@_cdecl("swift_contract_invoke_void")
+public func swift_contract_invoke_void(
+    _ typeID: Int32,
+    _ methodID: Int32,
+    _ receiver: UnsafeMutableRawPointer?,
+    _ argsBlobPtr: UnsafeRawPointer?,
+    _ argsBlobLen: Int32
+) -> Int32 {
+    guard let receiver else { return 0 }
+
+    switch typeID {
+    case 2:
+        let counter = Unmanaged<Counter>.fromOpaque(receiver).takeUnretainedValue()
+        switch methodID {
+        case 3:
+            guard let argsBlobPtr, argsBlobLen >= 4 else { return 0 }
+            let value = argsBlobPtr.assumingMemoryBound(to: Int32.self).pointee
+            counter.reset(to: value)
+            return 1
+        default:
+            return 0
+        }
+
+    default:
+        return 0
+    }
+}
+
+@_cdecl("swift_contract_protocol_has_conformance")
+public func swift_contract_protocol_has_conformance(_ typeID: Int32, _ protocolID: Int32) -> Int32 {
+    // Contract probe currently requires CounterLike on Counter only.
+    if typeID == 2 && protocolID == 1 {
+        return 1
+    }
+    return 0
+}
+
+@_cdecl("swift_contract_protocol_invoke_i32")
+public func swift_contract_protocol_invoke_i32(
+    _ typeID: Int32,
+    _ protocolID: Int32,
+    _ methodID: Int32,
+    _ object: UnsafeMutableRawPointer?
+) -> Int32 {
+    guard typeID == 2, protocolID == 1, methodID == 1, let object else {
+        return Int32.min
+    }
+    let counter = Unmanaged<Counter>.fromOpaque(object).takeUnretainedValue()
+    let readable: CounterLike = counter
+    return readable.current()
+}
+
 @_cdecl("swift_contract_release")
 public func swift_contract_release(_ typeID: Int32, _ object: UnsafeMutableRawPointer?) -> Int32 {
     guard let object else { return 0 }
