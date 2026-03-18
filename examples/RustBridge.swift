@@ -896,19 +896,38 @@ private func _n3GenericArgs(_ typeName: String) -> [String] {
         .filter { !$0.isEmpty }
 }
 
+private func _n3IsPrimitiveType(_ typeName: String) -> Bool {
+    ["Int32", "String"].contains(typeName)
+}
+
 private func _n3SupportedType(_ typeName: String) -> Bool {
-    switch typeName {
-    case "Int32", "String", "Array<Int32>", "Dictionary<String,Int32>", "ContractGenericBox<Int32>":
+    if _n3IsPrimitiveType(typeName) {
         return true
+    }
+
+    let base = _n3GenericBase(typeName)
+    let args = _n3GenericArgs(typeName)
+    switch (base, args.count) {
+    case ("ContractGenericBox", 1):
+        return _n3SupportedType(args[0])
+    case ("Array", 1):
+        return _n3SupportedType(args[0])
+    case ("Dictionary", 2):
+        return _n3SupportedType(args[0]) && _n3SupportedType(args[1])
+            && _n3ProtocolSatisfied(args[0], "Hashable")
     default:
         return false
     }
 }
 
 private func _n3ProtocolSatisfied(_ typeName: String, _ protocolName: String) -> Bool {
+    let base = _n3GenericBase(typeName)
+    let args = _n3GenericArgs(typeName)
     switch protocolName {
     case "Equatable":
-        return ["Int32", "String", "Array<Int32>"].contains(typeName)
+        if ["Int32", "String"].contains(typeName) { return true }
+        if base == "Array", args.count == 1 { return _n3ProtocolSatisfied(args[0], "Equatable") }
+        return false
     case "Comparable":
         return ["Int32", "String"].contains(typeName)
     case "Hashable":
@@ -916,22 +935,38 @@ private func _n3ProtocolSatisfied(_ typeName: String, _ protocolName: String) ->
     case "AdditiveArithmetic":
         return typeName == "Int32"
     case "Codable":
-        return ["Int32", "String", "Array<Int32>", "Dictionary<String,Int32>"].contains(typeName)
+        if ["Int32", "String"].contains(typeName) { return true }
+        if base == "Array", args.count == 1 { return _n3ProtocolSatisfied(args[0], "Codable") }
+        if base == "Dictionary", args.count == 2 {
+            return _n3ProtocolSatisfied(args[0], "Codable")
+                && _n3ProtocolSatisfied(args[0], "Hashable")
+                && _n3ProtocolSatisfied(args[1], "Codable")
+        }
+        return false
     case "Sequence":
-        return ["Array<Int32>", "Dictionary<String,Int32>"].contains(typeName)
+        if base == "Array", args.count == 1 { return _n3SupportedType(args[0]) }
+        if base == "Dictionary", args.count == 2 {
+            return _n3SupportedType(args[0]) && _n3SupportedType(args[1])
+                && _n3ProtocolSatisfied(args[0], "Hashable")
+        }
+        return false
     default:
         return false
     }
 }
 
 private func _n3AssociatedTypeValue(_ typeName: String, _ associatedType: String) -> String? {
-    switch (typeName, associatedType) {
-    case ("Array<Int32>", "Element"):
-        return "Int32"
-    case ("Dictionary<String,Int32>", "Key"):
-        return "String"
-    case ("Dictionary<String,Int32>", "Value"):
-        return "Int32"
+    let base = _n3GenericBase(typeName)
+    let args = _n3GenericArgs(typeName)
+    switch (base, associatedType, args.count) {
+    case ("Array", "Element", 1):
+        return args[0]
+    case ("Dictionary", "Key", 2):
+        return args[0]
+    case ("Dictionary", "Value", 2):
+        return args[1]
+    case ("ContractGenericBox", "Wrapped", 1):
+        return args[0]
     default:
         return nil
     }
@@ -1072,6 +1107,9 @@ public func swift_contract_n3_invoke_generic_i32(
     switch (typeName, operation) {
     case ("ContractGenericBox<Int32>", "box_make_get"):
         return ContractGenericBox<Int32>(a).value
+    case ("ContractGenericBox<String>", "box.sample_metric"):
+        let value = String(repeating: "x", count: Int(max(0, min(a, 256))))
+        return Int32(ContractGenericBox<String>(value).value.count)
     case ("Int32", "equatable.equal"):
         return a == b ? 1 : 0
     case ("Int32", "comparable.cmp"):
@@ -1081,9 +1119,22 @@ public func swift_contract_n3_invoke_generic_i32(
     case ("Array<Int32>", "sequence.sum_range"):
         let bounded = max(0, min(b, 256))
         return (0..<bounded).reduce(0) { partial, offset in partial &+ (a &+ offset) }
+    case ("Array<String>", "sequence.sample_metric"):
+        let bounded = max(0, min(b, 64))
+        let values = (0..<bounded).map { offset in
+            String(repeating: "x", count: Int(max(0, min(a &+ offset, 256))))
+        }
+        return values.reduce(0) { partial, value in partial &+ Int32(value.count) }
     case ("Dictionary<String,Int32>", "sequence.sum_values"):
         let dict: [String: Int32] = ["alpha": a, "beta": a &+ 1, "gamma": a &+ 2]
         return dict.values.reduce(0, &+)
+    case ("Dictionary<String,String>", "sequence.sample_metric"):
+        let dict: [String: String] = [
+            "alpha": String(repeating: "a", count: Int(max(0, min(a, 256)))),
+            "beta": String(repeating: "b", count: Int(max(0, min(a &+ 1, 256)))),
+            "gamma": String(repeating: "c", count: Int(max(0, min(a &+ 2, 256)))),
+        ]
+        return dict.values.reduce(0) { partial, value in partial &+ Int32(value.count) }
     default:
         errorCodePtr?.pointee = -532
         return 0

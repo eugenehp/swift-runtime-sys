@@ -2279,15 +2279,17 @@ impl<'a> RuntimeContract<'a> {
         type_name: &str,
         constraints: &str,
     ) -> Result<String, RuntimeContractError> {
-        let func: ContractN3BuildContextJson = self.resolve("swift_contract_n3_build_context_json")?;
+        let func: ContractN3BuildContextJson =
+            self.resolve("swift_contract_n3_build_context_json")?;
         let c_type = CString::new(type_name).map_err(|_| RuntimeContractError::InvalidInvoke {
             type_id: 72,
             method_id: 1,
         })?;
-        let c_constraints = CString::new(constraints).map_err(|_| RuntimeContractError::InvalidInvoke {
-            type_id: 72,
-            method_id: 1,
-        })?;
+        let c_constraints =
+            CString::new(constraints).map_err(|_| RuntimeContractError::InvalidInvoke {
+                type_id: 72,
+                method_id: 1,
+            })?;
         let ptr = unsafe { func(c_type.as_ptr(), c_constraints.as_ptr()) };
         if ptr.is_null() {
             return Err(RuntimeContractError::InvalidInvoke {
@@ -2295,7 +2297,9 @@ impl<'a> RuntimeContract<'a> {
                 method_id: 1,
             });
         }
-        let out = unsafe { CStr::from_ptr(ptr) }.to_string_lossy().into_owned();
+        let out = unsafe { CStr::from_ptr(ptr) }
+            .to_string_lossy()
+            .into_owned();
         unsafe { libc::free(ptr as *mut c_void) };
         Ok(out)
     }
@@ -2307,27 +2311,38 @@ impl<'a> RuntimeContract<'a> {
         protocol_name: &str,
         requirements: &str,
     ) -> Result<String, RuntimeContractError> {
-        let func: ContractN3ResolveWitnessJson = self.resolve("swift_contract_n3_resolve_witness_json")?;
+        let func: ContractN3ResolveWitnessJson =
+            self.resolve("swift_contract_n3_resolve_witness_json")?;
         let c_type = CString::new(type_name).map_err(|_| RuntimeContractError::InvalidInvoke {
             type_id: 72,
             method_id: 2,
         })?;
-        let c_protocol = CString::new(protocol_name).map_err(|_| RuntimeContractError::InvalidInvoke {
-            type_id: 72,
-            method_id: 2,
-        })?;
-        let c_requirements = CString::new(requirements).map_err(|_| RuntimeContractError::InvalidInvoke {
-            type_id: 72,
-            method_id: 2,
-        })?;
-        let ptr = unsafe { func(c_type.as_ptr(), c_protocol.as_ptr(), c_requirements.as_ptr()) };
+        let c_protocol =
+            CString::new(protocol_name).map_err(|_| RuntimeContractError::InvalidInvoke {
+                type_id: 72,
+                method_id: 2,
+            })?;
+        let c_requirements =
+            CString::new(requirements).map_err(|_| RuntimeContractError::InvalidInvoke {
+                type_id: 72,
+                method_id: 2,
+            })?;
+        let ptr = unsafe {
+            func(
+                c_type.as_ptr(),
+                c_protocol.as_ptr(),
+                c_requirements.as_ptr(),
+            )
+        };
         if ptr.is_null() {
             return Err(RuntimeContractError::InvalidInvoke {
                 type_id: 72,
                 method_id: 2,
             });
         }
-        let out = unsafe { CStr::from_ptr(ptr) }.to_string_lossy().into_owned();
+        let out = unsafe { CStr::from_ptr(ptr) }
+            .to_string_lossy()
+            .into_owned();
         unsafe { libc::free(ptr as *mut c_void) };
         Ok(out)
     }
@@ -2344,10 +2359,11 @@ impl<'a> RuntimeContract<'a> {
             type_id: 72,
             method_id: 3,
         })?;
-        let c_requirements = CString::new(requirements).map_err(|_| RuntimeContractError::InvalidInvoke {
-            type_id: 72,
-            method_id: 3,
-        })?;
+        let c_requirements =
+            CString::new(requirements).map_err(|_| RuntimeContractError::InvalidInvoke {
+                type_id: 72,
+                method_id: 3,
+            })?;
         let ptr = unsafe { func(c_type.as_ptr(), c_requirements.as_ptr()) };
         if ptr.is_null() {
             return Err(RuntimeContractError::InvalidInvoke {
@@ -2355,7 +2371,9 @@ impl<'a> RuntimeContract<'a> {
                 method_id: 3,
             });
         }
-        let out = unsafe { CStr::from_ptr(ptr) }.to_string_lossy().into_owned();
+        let out = unsafe { CStr::from_ptr(ptr) }
+            .to_string_lossy()
+            .into_owned();
         unsafe { libc::free(ptr as *mut c_void) };
         Ok(out)
     }
@@ -2369,19 +2387,22 @@ impl<'a> RuntimeContract<'a> {
         a: i32,
         b: i32,
     ) -> Result<i32, RuntimeContractError> {
-        let func: ContractN3InvokeGenericI32 = self.resolve("swift_contract_n3_invoke_generic_i32")?;
+        let func: ContractN3InvokeGenericI32 =
+            self.resolve("swift_contract_n3_invoke_generic_i32")?;
         let c_type = CString::new(type_name).map_err(|_| RuntimeContractError::InvalidInvoke {
             type_id: 72,
             method_id: 4,
         })?;
-        let c_requirements = CString::new(requirements).map_err(|_| RuntimeContractError::InvalidInvoke {
-            type_id: 72,
-            method_id: 4,
-        })?;
-        let c_operation = CString::new(operation).map_err(|_| RuntimeContractError::InvalidInvoke {
-            type_id: 72,
-            method_id: 4,
-        })?;
+        let c_requirements =
+            CString::new(requirements).map_err(|_| RuntimeContractError::InvalidInvoke {
+                type_id: 72,
+                method_id: 4,
+            })?;
+        let c_operation =
+            CString::new(operation).map_err(|_| RuntimeContractError::InvalidInvoke {
+                type_id: 72,
+                method_id: 4,
+            })?;
         let mut error = 0i32;
         let out = unsafe {
             func(
