@@ -2980,6 +2980,359 @@ public func swift_contract_n5_select_adapter_json() -> UnsafeMutablePointer<CCha
     _n5EncodeJSON(_n5SelectedAdapter())
 }
 
+// MARK: - Differential Fuzzing & Semantic Oracle (Track N.6)
+
+private struct _N6FragmentPayload: Codable {
+    let id: Int
+    let kind: String
+    let a: Int32
+    let b: Int32
+    let source: String
+}
+
+private struct _N6ProgramPayload: Codable {
+    let seed: Int64
+    let fragments: [_N6FragmentPayload]
+    let swiftSource: String
+
+    enum CodingKeys: String, CodingKey {
+        case seed
+        case fragments
+        case swiftSource = "swift_source"
+    }
+}
+
+private struct _N6ResultPayload: Codable {
+    let id: Int
+    let kind: String
+    let status: String
+    let value: Int32?
+    let error: String?
+    let sideEffect: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case kind
+        case status
+        case value
+        case error
+        case sideEffect = "side_effect"
+    }
+}
+
+private struct _N6ExecutionPayload: Codable {
+    let seed: Int64
+    let resultCount: Int
+    let results: [_N6ResultPayload]
+
+    enum CodingKeys: String, CodingKey {
+        case seed
+        case resultCount = "result_count"
+        case results
+    }
+}
+
+private func _n6LCGNext(_ state: inout UInt64) -> UInt64 {
+    state = state
+        .wrappingMul(6364136223846793005)
+        .wrappingAdd(1442695040888963407)
+    return state
+}
+
+private func _n6BoundedSigned(_ state: inout UInt64, _ range: ClosedRange<Int32>) -> Int32 {
+    let width = UInt64(Int64(range.upperBound) - Int64(range.lowerBound) + 1)
+    return Int32(Int64(_n6LCGNext(&state) % width) + Int64(range.lowerBound))
+}
+
+private func _n6BoundedCount(_ value: Int32, _ maxValue: Int32) -> Int32 {
+    max(0, min(value, maxValue))
+}
+
+private func _n6MakeFragment(_ state: inout UInt64, _ id: Int) -> _N6FragmentPayload {
+    let kindIndex = Int(_n6LCGNext(&state) % 9)
+    let a = _n6BoundedSigned(&state, -20...20)
+    let bGeneric = _n6BoundedSigned(&state, -6...12)
+
+    switch kindIndex {
+    case 0:
+        return _N6FragmentPayload(
+            id: id,
+            kind: "add",
+            a: a,
+            b: bGeneric,
+            source: "let r\(id) = swift_add(\(a), \(bGeneric))"
+        )
+    case 1:
+        let divisor = _n6BoundedSigned(&state, -2...2)
+        return _N6FragmentPayload(
+            id: id,
+            kind: "safe_divide",
+            a: a,
+            b: divisor,
+            source: "let r\(id) = try? safeDivide(\(a), \(divisor))"
+        )
+    case 2:
+        return _N6FragmentPayload(
+            id: id,
+            kind: "async_add",
+            a: a,
+            b: bGeneric,
+            source: "let r\(id) = await asyncAdd(\(a), \(bGeneric))"
+        )
+    case 3:
+        let taskValue = _n6BoundedSigned(&state, -15...15)
+        let delta = _n6BoundedSigned(&state, -5...5)
+        return _N6FragmentPayload(
+            id: id,
+            kind: "task_local",
+            a: taskValue,
+            b: delta,
+            source: "let r\(id) = await ProbeTaskLocal.$value.withValue(\(taskValue)) { let inherited = await Task { ProbeTaskLocal.value }.value; return inherited + \(delta) }"
+        )
+    case 4:
+        let code = _n6BoundedSigned(&state, 100...140)
+        let cause = _n6BoundedSigned(&state, 1...9)
+        return _N6FragmentPayload(
+            id: id,
+            kind: "error_context_validation",
+            a: code,
+            b: cause,
+            source: "swift_contract_error_context_make_validation(\(code), \(cause))"
+        )
+    case 5:
+        let start = _n6BoundedSigned(&state, -12...12)
+        let count = _n6BoundedSigned(&state, 0...12)
+        return _N6FragmentPayload(
+            id: id,
+            kind: "generic_array_i32",
+            a: start,
+            b: count,
+            source: "let r\(id) = (0..<\(count)).reduce(0) { partial, offset in partial + (\(start) + Int32(offset)) }"
+        )
+    case 6:
+        let base = _n6BoundedSigned(&state, 0...8)
+        let count = _n6BoundedSigned(&state, 0...8)
+        return _N6FragmentPayload(
+            id: id,
+            kind: "generic_array_string",
+            a: base,
+            b: count,
+            source: "let r\(id) = (0..<\(count)).map { String(repeating: \"x\", count: Int(\(base) + Int32($0))) }.joined().count"
+        )
+    case 7:
+        return _N6FragmentPayload(
+            id: id,
+            kind: "generic_sequence_witness",
+            a: 0,
+            b: 0,
+            source: "let r\(id) = ([\"a\", \"bb\"] as any Sequence) is [String]"
+        )
+    default:
+        let metric = _n6BoundedSigned(&state, 0...16)
+        return _N6FragmentPayload(
+            id: id,
+            kind: "generic_box_string",
+            a: metric,
+            b: 0,
+            source: "let r\(id) = ContractGenericBox<String>(String(repeating: \"x\", count: Int(\(metric)))).value.count"
+        )
+    }
+}
+
+private func _n6GenerateProgram(seed: Int64, fragmentCount: Int32) -> _N6ProgramPayload {
+    let count = Int(max(1, min(fragmentCount, 64)))
+    var state = UInt64(bitPattern: seed)
+    var fragments: [_N6FragmentPayload] = []
+    for id in 0..<count {
+        fragments.append(_n6MakeFragment(&state, id))
+    }
+    let source = fragments.map(\.source).joined(separator: "\n")
+    return _N6ProgramPayload(seed: seed, fragments: fragments, swiftSource: source)
+}
+
+private func _n6AsyncAddBlocking(_ a: Int32, _ b: Int32) -> Int32 {
+    let sem = DispatchSemaphore(value: 0)
+    var out = Int32.min
+    Task {
+        out = await asyncAdd(a, b)
+        sem.signal()
+    }
+    sem.wait()
+    return out
+}
+
+private func _n6TaskLocalBlocking(_ value: Int32, _ delta: Int32) -> (Int32, String) {
+    let sem = DispatchSemaphore(value: 0)
+    var out = Int32.min
+    var sideEffect = ""
+    Task {
+        out = await ProbeTaskLocal.$value.withValue(value) {
+            let inherited = await Task { ProbeTaskLocal.value }.value
+            let detached = await Task.detached { ProbeTaskLocal.value }.value
+            sideEffect = "inherited=\(inherited)|detached=\(detached)"
+            return inherited &+ delta
+        }
+        sem.signal()
+    }
+    sem.wait()
+    return (out, sideEffect)
+}
+
+private func _n6ValidationContextBlocking(_ code: Int32, _ cause: Int32) -> (Int32, String) {
+    _ = swift_contract_error_context_make_validation(code, cause)
+    defer { swift_contract_error_context_clear() }
+    guard let ptr = swift_contract_error_context_get_json() else {
+        return (Int32.min, "")
+    }
+    let json = String(cString: ptr)
+    free(ptr)
+    guard let data = json.data(using: .utf8),
+          let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+        return (Int32.min, "")
+    }
+    let parsedCode = object["code"] as? Int ?? Int(code)
+    let domain = object["domain"] as? String ?? ""
+    let message = object["message"] as? String ?? ""
+    let chainCount = (object["chain"] as? [Any])?.count ?? 0
+    return (Int32(parsedCode), "\(domain)|\(message)|chain=\(chainCount)")
+}
+
+private func _n6DirectResult(_ fragment: _N6FragmentPayload) -> _N6ResultPayload {
+    switch fragment.kind {
+    case "add":
+        return _N6ResultPayload(
+            id: fragment.id,
+            kind: fragment.kind,
+            status: "value",
+            value: fragment.a &+ fragment.b,
+            error: nil,
+            sideEffect: nil
+        )
+    case "safe_divide":
+        if fragment.b == 0 {
+            return _N6ResultPayload(
+                id: fragment.id,
+                kind: fragment.kind,
+                status: "error",
+                value: nil,
+                error: "division_by_zero",
+                sideEffect: nil
+            )
+        }
+        return _N6ResultPayload(
+            id: fragment.id,
+            kind: fragment.kind,
+            status: "value",
+            value: fragment.a / fragment.b,
+            error: nil,
+            sideEffect: nil
+        )
+    case "async_add":
+        return _N6ResultPayload(
+            id: fragment.id,
+            kind: fragment.kind,
+            status: "value",
+            value: _n6AsyncAddBlocking(fragment.a, fragment.b),
+            error: nil,
+            sideEffect: nil
+        )
+    case "task_local":
+        let (value, sideEffect) = _n6TaskLocalBlocking(fragment.a, fragment.b)
+        return _N6ResultPayload(
+            id: fragment.id,
+            kind: fragment.kind,
+            status: "value",
+            value: value,
+            error: nil,
+            sideEffect: sideEffect
+        )
+    case "error_context_validation":
+        let (value, sideEffect) = _n6ValidationContextBlocking(fragment.a, fragment.b)
+        return _N6ResultPayload(
+            id: fragment.id,
+            kind: fragment.kind,
+            status: "context",
+            value: value,
+            error: nil,
+            sideEffect: sideEffect
+        )
+    case "generic_array_i32":
+        let bounded = _n6BoundedCount(fragment.b, 256)
+        let value = (0..<bounded).reduce(Int32(0)) { partial, offset in
+            partial &+ (fragment.a &+ offset)
+        }
+        return _N6ResultPayload(
+            id: fragment.id,
+            kind: fragment.kind,
+            status: "value",
+            value: value,
+            error: nil,
+            sideEffect: nil
+        )
+    case "generic_array_string":
+        let bounded = _n6BoundedCount(fragment.b, 64)
+        let values = (0..<bounded).map { offset in
+            String(repeating: "x", count: Int(_n6BoundedCount(fragment.a &+ offset, 256)))
+        }
+        return _N6ResultPayload(
+            id: fragment.id,
+            kind: fragment.kind,
+            status: "value",
+            value: Int32(values.joined().count),
+            error: nil,
+            sideEffect: nil
+        )
+    case "generic_sequence_witness":
+        return _N6ResultPayload(
+            id: fragment.id,
+            kind: fragment.kind,
+            status: "value",
+            value: 1,
+            error: nil,
+            sideEffect: "Sequence<Element=String>"
+        )
+    case "generic_box_string":
+        let value = String(repeating: "x", count: Int(_n6BoundedCount(fragment.a, 256))).count
+        return _N6ResultPayload(
+            id: fragment.id,
+            kind: fragment.kind,
+            status: "value",
+            value: Int32(value),
+            error: nil,
+            sideEffect: nil
+        )
+    default:
+        return _N6ResultPayload(
+            id: fragment.id,
+            kind: fragment.kind,
+            status: "error",
+            value: nil,
+            error: "unsupported_fragment",
+            sideEffect: nil
+        )
+    }
+}
+
+private func _n6ExecuteProgram(_ program: _N6ProgramPayload) -> _N6ExecutionPayload {
+    let results = program.fragments.map(_n6DirectResult)
+    return _N6ExecutionPayload(seed: program.seed, resultCount: results.count, results: results)
+}
+
+@_cdecl("swift_contract_n6_generate_program_json")
+public func swift_contract_n6_generate_program_json(_ seed: Int64, _ fragmentCount: Int32) -> UnsafeMutablePointer<CChar>? {
+    _n5EncodeJSON(_n6GenerateProgram(seed: seed, fragmentCount: fragmentCount))
+}
+
+@_cdecl("swift_contract_n6_execute_program_json")
+public func swift_contract_n6_execute_program_json(_ jsonPtr: UnsafePointer<CChar>?) -> UnsafeMutablePointer<CChar>? {
+    guard let jsonPtr else { return nil }
+    let data = Data(bytes: jsonPtr, count: Int(strlen(jsonPtr)))
+    guard let program = try? JSONDecoder().decode(_N6ProgramPayload.self, from: data) else {
+        return nil
+    }
+    return _n5EncodeJSON(_n6ExecuteProgram(program))
+}
+
 // MARK: - Unsafe Runtime Ops Isolation & Recovery (Track N.4)
 
 /// Deterministic safe operation used by the broker path to prove non-crashing subprocess execution.

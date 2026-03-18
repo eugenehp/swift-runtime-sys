@@ -364,6 +364,9 @@ type ContractN4TriggerAbort = unsafe extern "C" fn();
 type ContractN5AdapterTableJson = unsafe extern "C" fn() -> *mut c_char;
 type ContractN5FeatureProbeJson = unsafe extern "C" fn() -> *mut c_char;
 type ContractN5SelectAdapterJson = unsafe extern "C" fn() -> *mut c_char;
+// Track N.6 – Differential Fuzzing & Semantic Oracle
+type ContractN6GenerateProgramJson = unsafe extern "C" fn(i64, i32) -> *mut c_char;
+type ContractN6ExecuteProgramJson = unsafe extern "C" fn(*const c_char) -> *mut c_char;
 type ContractBacktraceCapture = unsafe extern "C" fn() -> *mut c_char;
 type ContractBacktraceAnchorAddress = unsafe extern "C" fn() -> u64;
 
@@ -489,6 +492,39 @@ pub struct N5DriftReport {
     pub mode: String,
     pub drift_detected: bool,
     pub issues: Vec<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct N6Fragment {
+    pub id: i32,
+    pub kind: String,
+    pub a: i32,
+    pub b: i32,
+    pub source: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct N6Program {
+    pub seed: i64,
+    pub fragments: Vec<N6Fragment>,
+    pub swift_source: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct N6Result {
+    pub id: i32,
+    pub kind: String,
+    pub status: String,
+    pub value: Option<i32>,
+    pub error: Option<String>,
+    pub side_effect: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct N6Execution {
+    pub seed: i64,
+    pub result_count: i32,
+    pub results: Vec<N6Result>,
 }
 
 pub struct RuntimeContract<'a> {
@@ -2530,7 +2566,8 @@ impl<'a> RuntimeContract<'a> {
 
     /// Return the exported adapter table describing supported Swift toolchain families.
     pub fn n5_adapter_table_json(&self) -> Result<String, RuntimeContractError> {
-        let func: ContractN5AdapterTableJson = self.resolve("swift_contract_n5_adapter_table_json")?;
+        let func: ContractN5AdapterTableJson =
+            self.resolve("swift_contract_n5_adapter_table_json")?;
         let ptr = unsafe { func() };
         if ptr.is_null() {
             return Err(RuntimeContractError::InvalidInvoke {
@@ -2554,7 +2591,8 @@ impl<'a> RuntimeContract<'a> {
 
     /// Return the current runtime feature probe snapshot.
     pub fn n5_feature_probe_json(&self) -> Result<String, RuntimeContractError> {
-        let func: ContractN5FeatureProbeJson = self.resolve("swift_contract_n5_feature_probe_json")?;
+        let func: ContractN5FeatureProbeJson =
+            self.resolve("swift_contract_n5_feature_probe_json")?;
         let ptr = unsafe { func() };
         if ptr.is_null() {
             return Err(RuntimeContractError::InvalidInvoke {
@@ -2578,7 +2616,8 @@ impl<'a> RuntimeContract<'a> {
 
     /// Return the adapter profile selected by the Swift bridge for the current runtime.
     pub fn n5_select_adapter_json(&self) -> Result<String, RuntimeContractError> {
-        let func: ContractN5SelectAdapterJson = self.resolve("swift_contract_n5_select_adapter_json")?;
+        let func: ContractN5SelectAdapterJson =
+            self.resolve("swift_contract_n5_select_adapter_json")?;
         let ptr = unsafe { func() };
         if ptr.is_null() {
             return Err(RuntimeContractError::InvalidInvoke {
@@ -2701,6 +2740,79 @@ impl<'a> RuntimeContract<'a> {
             drift_detected: !issues.is_empty(),
             issues,
         }
+    }
+
+    // MARK: - Differential Fuzzing & Semantic Oracle (Track N.6)
+
+    /// Generate a deterministic Swift-side random program corpus for the given seed.
+    pub fn n6_generate_program_json(
+        &self,
+        seed: i64,
+        fragment_count: i32,
+    ) -> Result<String, RuntimeContractError> {
+        let func: ContractN6GenerateProgramJson =
+            self.resolve("swift_contract_n6_generate_program_json")?;
+        let ptr = unsafe { func(seed, fragment_count) };
+        if ptr.is_null() {
+            return Err(RuntimeContractError::InvalidInvoke {
+                type_id: 75,
+                method_id: 1,
+            });
+        }
+        let out = unsafe { CStr::from_ptr(ptr) }
+            .to_string_lossy()
+            .into_owned();
+        unsafe { libc::free(ptr as *mut c_void) };
+        Ok(out)
+    }
+
+    /// Parse a deterministic Swift-side random program corpus for the given seed.
+    pub fn n6_generate_program(
+        &self,
+        seed: i64,
+        fragment_count: i32,
+    ) -> Result<N6Program, RuntimeContractError> {
+        let json = self.n6_generate_program_json(seed, fragment_count)?;
+        serde_json::from_str(&json)
+            .map_err(|error| RuntimeContractError::DescriptorParse(error.to_string()))
+    }
+
+    /// Execute a generated program natively on the Swift side and return the semantic trace JSON.
+    pub fn n6_execute_program_json(
+        &self,
+        program_json: &str,
+    ) -> Result<String, RuntimeContractError> {
+        let func: ContractN6ExecuteProgramJson =
+            self.resolve("swift_contract_n6_execute_program_json")?;
+        let json_c =
+            CString::new(program_json).map_err(|_| RuntimeContractError::InvalidInvoke {
+                type_id: 75,
+                method_id: 2,
+            })?;
+        let ptr = unsafe { func(json_c.as_ptr()) };
+        if ptr.is_null() {
+            return Err(RuntimeContractError::InvalidInvoke {
+                type_id: 75,
+                method_id: 2,
+            });
+        }
+        let out = unsafe { CStr::from_ptr(ptr) }
+            .to_string_lossy()
+            .into_owned();
+        unsafe { libc::free(ptr as *mut c_void) };
+        Ok(out)
+    }
+
+    /// Execute a generated program natively on the Swift side and parse the semantic trace.
+    pub fn n6_execute_program(
+        &self,
+        program: &N6Program,
+    ) -> Result<N6Execution, RuntimeContractError> {
+        let json = serde_json::to_string(program)
+            .map_err(|error| RuntimeContractError::DescriptorParse(error.to_string()))?;
+        let output = self.n6_execute_program_json(&json)?;
+        serde_json::from_str(&output)
+            .map_err(|error| RuntimeContractError::DescriptorParse(error.to_string()))
     }
 
     // MARK: - Foundation Date/Time (Track I.1)

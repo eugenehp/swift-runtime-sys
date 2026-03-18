@@ -533,11 +533,12 @@ These tracks target dynamic, version-adaptive runtime control beyond contract-sc
 - **Status**: COMPLETE - Added Track N.5 Swift exports (`swift_contract_n5_adapter_table_json`, `swift_contract_n5_feature_probe_json`, `swift_contract_n5_select_adapter_json`) backed by a profile table for `swift_6_1_arm64_macos` and `swift_6_2_arm64_macos`, runtime feature probing, and bridge-side auto-selection for the current host. `RuntimeContract` now parses adapter/profile JSON into typed Rust structs and provides Rust-side selection and regression helpers (`n5_select_profile_from_table`, `n5_regression_report`) so control flows can adapt by compiler family, platform, architecture, optimization mode, and required runtime features. Probe `examples/runtime_abi_adaptation_probe.rs` validates host auto-selection, required feature coverage, a synthetic compatibility matrix across supported Swift families and debug/release modes, and regression detection for symbol/feature drift; it also writes `target/runtime-probe/n5-compatibility-matrix.json`. Current N.5 probe PASS (10/10).
 
 ### N.6) Differential Fuzzing & Semantic Oracle
-- [ ] Add Swift source generator for random but valid program fragments (types, generics, protocols, async, error flows).
-- [ ] Add native-Swift vs Rust-driven differential executor.
-- [ ] Add semantic comparator for values/errors/side effects with triage output.
-- [ ] Add long-run fuzz campaign harness and corpus minimization.
-- [ ] Exit criteria: Large differential runs show no unexplained divergence for in-scope language/runtime constructs.
+- [x] Add Swift source generator for random but valid program fragments (types, generics, protocols, async, error flows).
+- [x] Add native-Swift vs Rust-driven differential executor.
+- [x] Add semantic comparator for values/errors/side effects with triage output.
+- [x] Add long-run fuzz campaign harness and corpus minimization.
+- [x] Exit criteria: Large differential runs show no unexplained divergence for in-scope language/runtime constructs.
+- **Status**: COMPLETE - Added Track N.6 Swift exports (`swift_contract_n6_generate_program_json`, `swift_contract_n6_execute_program_json`) that generate deterministic random Swift-fragment corpora and execute them natively on the Swift side across arithmetic, throwing/error-context, async, task-local, generic, and protocol-witness flavored fragments. `RuntimeContract` now parses N.6 program and execution JSON into typed Rust structs, while the new probe `examples/runtime_differential_fuzz_probe.rs` provides the Rust-driven executor, semantic comparator, triage report generation, corpus minimization, and a multi-seed campaign path. New scripts `scripts/run_track_n6_tmux.sh` and `scripts/run_track_n6_campaign.sh` validate the default probe and drive longer corpus runs. Probe PASS (10/10), with artifacts under `target/runtime-probe/` including `n6-triage-report.json`, `n6-minimized-corpus.json`, and campaign summary/corpus directories. Exit criterion satisfied: repeated seeded differential runs completed without unexplained divergence on the in-scope fragment set.
 
 ### N.7) Binary-Driven Contract Derivation (No Source Required)
 - [ ] Derive callable/type metadata directly from binaries/modules where source is unavailable.
