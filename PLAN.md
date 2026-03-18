@@ -561,9 +561,9 @@ These tracks target dynamic, version-adaptive runtime control beyond contract-sc
 This section defines the work required to approach a defensible "absolute parity" claim beyond host-local 100% in frozen scope.
 
 ### AP.1) Support-Matrix Exhaustiveness
-- [ ] Execute required parity gates on every declared Swift version / macOS runner / architecture cell.
-- [ ] Execute required gates in debug + release (+ sanitizer where supported).
-- [ ] Fail the claim if any declared cell is not exercised by evidence artifacts.
+- [x] Execute required parity gates on every declared Swift version / macOS runner / architecture cell.
+- [x] Execute required gates in debug + release (+ sanitizer where supported).
+- [x] Fail the claim if any declared cell is not exercised by evidence artifacts.
 
 ### AP.2) Runtime Drift & Private-Surface Hardening
 - [x] Inventory all private/unstable runtime touchpoints and classify by risk.
@@ -641,3 +641,10 @@ This section defines the work required to approach a defensible "absolute parity
 - [x] Added `scripts/validate_runtime_killswitch_policy.sh` and integrated it into `scripts/run_full_plan_verification.sh` required gates.
 - [x] Updated `scripts/run_full_plan_verification.sh` to run parity + contract gates in both `debug` and `release` profiles and stage profile-qualified local artifacts for required support-matrix cells.
 - [x] Re-ran `./scripts/run_full_plan_verification.sh` in tmux after staging fix: PASS (exit `0`, promotion-policy/support-matrix/plan-completion signoffs all PASS).
+
+### 2026-03-18 (Wave 7, AP.1 manifest-enforced support matrix)
+- [x] Added declared matrix contract `scripts/support_matrix_contract.json` (required cells, profiles, arch, and Swift version expectations).
+- [x] Added `scripts/write_support_cell_manifest.sh` and wired CI parity/contract jobs to emit per-cell manifests into uploaded artifacts.
+- [x] Upgraded `scripts/validate_support_matrix_artifacts.sh` to enforce manifest presence and metadata match (`gate`, `cell`, `profile`, `arch`, `swift_version_prefix`) for each declared matrix cell/profile.
+- [x] Updated local AP runners (`scripts/run_ap1_support_matrix_wave.sh`, `scripts/run_full_plan_verification.sh`) to emit support-cell manifests for staged artifacts.
+- [x] Re-ran `./scripts/run_full_plan_verification.sh` in tmux: PASS (exit `0`) with manifest-aware support-matrix signoff PASS.

@@ -44,6 +44,9 @@ jobs:
       - name: Run parity matrix
         run: PROFILE=${{ matrix.profile }} ./scripts/run_parity_matrix.sh
 
+      - name: Write support cell manifest (parity)
+        run: ./scripts/write_support_cell_manifest.sh parity ${{ matrix.runner }} ${{ matrix.profile }} target/runtime-probe/support-cell-manifest.json
+
       - name: Print parity report
         if: always()
         run: cat target/runtime-probe/parity-report.md || true
@@ -83,6 +86,7 @@ jobs:
           path: |
             target/runtime-probe/parity-report.json
             target/runtime-probe/parity-report.md
+            target/runtime-probe/support-cell-manifest.json
             target/runtime-probe/probe.log
             target/runtime-probe/history/
 
@@ -187,6 +191,9 @@ jobs:
       - name: Build and run contract parity probes
         run: PROFILE=${{ matrix.profile }} ./scripts/run_contract_parity.sh
 
+      - name: Write support cell manifest (contract)
+        run: ./scripts/write_support_cell_manifest.sh contract ${{ matrix.runner }} ${{ matrix.profile }} target/runtime-probe/support-cell-manifest.json
+
       - name: Upload contract parity artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -196,6 +203,7 @@ jobs:
             target/runtime-probe/contract-parity.md
             target/runtime-probe/contract-descriptor.log
             target/runtime-probe/contract-dispatch.log
+            target/runtime-probe/support-cell-manifest.json
 
   support_matrix_signoff:
     name: Support matrix signoff
@@ -220,7 +228,7 @@ jobs:
           merge-multiple: false
 
       - name: Validate support matrix parity artifacts
-        run: ./scripts/validate_support_matrix_artifacts.sh target/ci/parity-artifacts
+        run: MATRIX_CONTRACT=scripts/support_matrix_contract.json ./scripts/validate_support_matrix_artifacts.sh target/ci/parity-artifacts
 
       - name: Validate promotion policy (PR)
         if: github.event_name == 'pull_request'

@@ -40,6 +40,7 @@ for profile in "${profiles[@]}"; do
     fi
     cp "$OUT_DIR/parity-report.json" "$parity_art_dir/parity-report.json"
     cp "$OUT_DIR/parity-report.md" "$parity_art_dir/parity-report.md"
+    ./scripts/write_support_cell_manifest.sh parity "$cell" "$profile" "$parity_art_dir/support-cell-manifest.json"
     rm -rf "$parity_art_dir/history"
     cp -R "$OUT_DIR/history" "$parity_art_dir/history"
   fi
@@ -53,6 +54,7 @@ for profile in "${profiles[@]}"; do
     cp "$OUT_DIR/contract-dispatch.log" "$contract_art_dir/contract-dispatch.log"
     cp "$OUT_DIR/contract-descriptor.log" "$contract_art_dir/contract-descriptor.log"
     cp "$OUT_DIR/contract-parity.md" "$contract_art_dir/contract-parity.md"
+    ./scripts/write_support_cell_manifest.sh contract "$cell" "$profile" "$contract_art_dir/support-cell-manifest.json"
   fi
 done
 
