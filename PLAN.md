@@ -525,11 +525,12 @@ These tracks target dynamic, version-adaptive runtime control beyond contract-sc
 - **Status**: COMPLETE - Added Track N.4 Swift exports (`swift_contract_n4_safe_ping`, `swift_contract_n4_trigger_abort`) and Rust wrappers (`n4_safe_ping`, `n4_trigger_abort`) plus a broker subprocess example `examples/runtime_n4_broker.rs` that executes risky operations out-of-process under policy control. High-risk operations are denied by default unless explicitly allowed, and the crash path emits structured context before aborting: signal, backtrace, faulting symbol, and operation context. Parent probe `examples/runtime_isolation_recovery_probe.rs` validates 10 cases covering safe low-risk broker execution, high-risk policy denial, child crash isolation, structured crash capture fields, replay request generation/re-execution, and crash-report artifact generation. Exit criterion satisfied: the primary orchestrator survives the child crash while retaining enough structured context to diagnose and replay it. Current N.4 probe PASS (10/10).
 
 ### N.5) Cross-Version ABI Adaptation Layer
-- [ ] Add per-toolchain adapter table for symbol/layout/witness drift.
-- [ ] Add runtime feature probes to auto-select adapter profile.
-- [ ] Add compatibility matrix tests across supported Swift versions.
-- [ ] Add regression checker that flags behavior drift by version and optimization mode.
-- [ ] Exit criteria: Same Rust control flows remain operational across supported Swift releases via adaptive runtime strategy.
+- [x] Add per-toolchain adapter table for symbol/layout/witness drift.
+- [x] Add runtime feature probes to auto-select adapter profile.
+- [x] Add compatibility matrix tests across supported Swift versions.
+- [x] Add regression checker that flags behavior drift by version and optimization mode.
+- [x] Exit criteria: Same Rust control flows remain operational across supported Swift releases via adaptive runtime strategy.
+- **Status**: COMPLETE - Added Track N.5 Swift exports (`swift_contract_n5_adapter_table_json`, `swift_contract_n5_feature_probe_json`, `swift_contract_n5_select_adapter_json`) backed by a profile table for `swift_6_1_arm64_macos` and `swift_6_2_arm64_macos`, runtime feature probing, and bridge-side auto-selection for the current host. `RuntimeContract` now parses adapter/profile JSON into typed Rust structs and provides Rust-side selection and regression helpers (`n5_select_profile_from_table`, `n5_regression_report`) so control flows can adapt by compiler family, platform, architecture, optimization mode, and required runtime features. Probe `examples/runtime_abi_adaptation_probe.rs` validates host auto-selection, required feature coverage, a synthetic compatibility matrix across supported Swift families and debug/release modes, and regression detection for symbol/feature drift; it also writes `target/runtime-probe/n5-compatibility-matrix.json`. Current N.5 probe PASS (10/10).
 
 ### N.6) Differential Fuzzing & Semantic Oracle
 - [ ] Add Swift source generator for random but valid program fragments (types, generics, protocols, async, error flows).

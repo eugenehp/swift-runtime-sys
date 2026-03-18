@@ -360,6 +360,10 @@ type ContractN3InvokeGenericI32 =
 // Track N.4 – Unsafe Runtime Ops Isolation & Recovery
 type ContractN4SafePing = unsafe extern "C" fn(i32) -> i32;
 type ContractN4TriggerAbort = unsafe extern "C" fn();
+// Track N.5 – Cross-Version ABI Adaptation Layer
+type ContractN5AdapterTableJson = unsafe extern "C" fn() -> *mut c_char;
+type ContractN5FeatureProbeJson = unsafe extern "C" fn() -> *mut c_char;
+type ContractN5SelectAdapterJson = unsafe extern "C" fn() -> *mut c_char;
 type ContractBacktraceCapture = unsafe extern "C" fn() -> *mut c_char;
 type ContractBacktraceAnchorAddress = unsafe extern "C" fn() -> u64;
 
@@ -411,6 +415,80 @@ pub struct ContractErrorContextPayload {
     pub user_info: std::collections::HashMap<String, String>,
     #[serde(rename = "recovery_hints")]
     pub recovery_hints: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct N5FeatureFlags {
+    pub swift5_types_scan: bool,
+    pub objc_class_scan: bool,
+    pub dynamic_symbol_lowering: bool,
+    pub recursive_generic_solver: bool,
+    pub broker_isolation: bool,
+    pub private_type_kind_fallback: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct N5FeatureProbe {
+    pub compiler_family: String,
+    pub platform: String,
+    pub architecture: String,
+    pub os_major: i32,
+    pub os_minor: i32,
+    pub os_patch: i32,
+    pub optimization_mode: String,
+    pub features: N5FeatureFlags,
+}
+
+impl N5FeatureProbe {
+    pub fn feature_enabled(&self, feature: &str) -> bool {
+        match feature {
+            "swift5_types_scan" => self.features.swift5_types_scan,
+            "objc_class_scan" => self.features.objc_class_scan,
+            "dynamic_symbol_lowering" => self.features.dynamic_symbol_lowering,
+            "recursive_generic_solver" => self.features.recursive_generic_solver,
+            "broker_isolation" => self.features.broker_isolation,
+            "private_type_kind_fallback" => self.features.private_type_kind_fallback,
+            _ => false,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct N5AdapterProfile {
+    pub profile_id: String,
+    pub compiler_family: String,
+    pub platforms: Vec<String>,
+    pub architectures: Vec<String>,
+    pub supported_optimization_modes: Vec<String>,
+    pub required_features: Vec<String>,
+    pub symbol_aliases: std::collections::HashMap<String, Vec<String>>,
+    pub layout_rules: std::collections::HashMap<String, String>,
+    pub witness_rules: std::collections::HashMap<String, String>,
+    pub adaptation_notes: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct N5AdapterTable {
+    pub profiles: Vec<N5AdapterProfile>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct N5SelectedAdapter {
+    pub profile_id: String,
+    pub compatible: bool,
+    pub reason: String,
+    pub compiler_family: String,
+    pub optimization_mode: String,
+    pub selected_symbols: std::collections::HashMap<String, String>,
+    pub missing_features: Vec<String>,
+    pub adaptation_notes: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct N5DriftReport {
+    pub mode: String,
+    pub drift_detected: bool,
+    pub issues: Vec<String>,
 }
 
 pub struct RuntimeContract<'a> {
@@ -2446,6 +2524,183 @@ impl<'a> RuntimeContract<'a> {
             type_id: 73,
             method_id: 2,
         })
+    }
+
+    // MARK: - Cross-Version ABI Adaptation Layer (Track N.5)
+
+    /// Return the exported adapter table describing supported Swift toolchain families.
+    pub fn n5_adapter_table_json(&self) -> Result<String, RuntimeContractError> {
+        let func: ContractN5AdapterTableJson = self.resolve("swift_contract_n5_adapter_table_json")?;
+        let ptr = unsafe { func() };
+        if ptr.is_null() {
+            return Err(RuntimeContractError::InvalidInvoke {
+                type_id: 74,
+                method_id: 1,
+            });
+        }
+        let out = unsafe { CStr::from_ptr(ptr) }
+            .to_string_lossy()
+            .into_owned();
+        unsafe { libc::free(ptr as *mut c_void) };
+        Ok(out)
+    }
+
+    /// Parse the exported adapter table for use in Rust-side selection and validation.
+    pub fn n5_adapter_table(&self) -> Result<N5AdapterTable, RuntimeContractError> {
+        let json = self.n5_adapter_table_json()?;
+        serde_json::from_str(&json)
+            .map_err(|error| RuntimeContractError::DescriptorParse(error.to_string()))
+    }
+
+    /// Return the current runtime feature probe snapshot.
+    pub fn n5_feature_probe_json(&self) -> Result<String, RuntimeContractError> {
+        let func: ContractN5FeatureProbeJson = self.resolve("swift_contract_n5_feature_probe_json")?;
+        let ptr = unsafe { func() };
+        if ptr.is_null() {
+            return Err(RuntimeContractError::InvalidInvoke {
+                type_id: 74,
+                method_id: 2,
+            });
+        }
+        let out = unsafe { CStr::from_ptr(ptr) }
+            .to_string_lossy()
+            .into_owned();
+        unsafe { libc::free(ptr as *mut c_void) };
+        Ok(out)
+    }
+
+    /// Parse the current runtime feature probe snapshot.
+    pub fn n5_feature_probe(&self) -> Result<N5FeatureProbe, RuntimeContractError> {
+        let json = self.n5_feature_probe_json()?;
+        serde_json::from_str(&json)
+            .map_err(|error| RuntimeContractError::DescriptorParse(error.to_string()))
+    }
+
+    /// Return the adapter profile selected by the Swift bridge for the current runtime.
+    pub fn n5_select_adapter_json(&self) -> Result<String, RuntimeContractError> {
+        let func: ContractN5SelectAdapterJson = self.resolve("swift_contract_n5_select_adapter_json")?;
+        let ptr = unsafe { func() };
+        if ptr.is_null() {
+            return Err(RuntimeContractError::InvalidInvoke {
+                type_id: 74,
+                method_id: 3,
+            });
+        }
+        let out = unsafe { CStr::from_ptr(ptr) }
+            .to_string_lossy()
+            .into_owned();
+        unsafe { libc::free(ptr as *mut c_void) };
+        Ok(out)
+    }
+
+    /// Parse the adapter profile selected by the Swift bridge for the current runtime.
+    pub fn n5_select_adapter(&self) -> Result<N5SelectedAdapter, RuntimeContractError> {
+        let json = self.n5_select_adapter_json()?;
+        serde_json::from_str(&json)
+            .map_err(|error| RuntimeContractError::DescriptorParse(error.to_string()))
+    }
+
+    /// Select the best adapter profile for a given feature probe using the exported adapter table.
+    pub fn n5_select_profile_from_table(
+        table: &N5AdapterTable,
+        probe: &N5FeatureProbe,
+    ) -> Option<N5SelectedAdapter> {
+        table.profiles.iter().find_map(|profile| {
+            if profile.compiler_family != probe.compiler_family
+                || !profile.platforms.iter().any(|platform| platform == &probe.platform)
+                || !profile
+                    .architectures
+                    .iter()
+                    .any(|architecture| architecture == &probe.architecture)
+                || !profile
+                    .supported_optimization_modes
+                    .iter()
+                    .any(|mode| mode == &probe.optimization_mode)
+            {
+                return None;
+            }
+
+            let missing_features: Vec<String> = profile
+                .required_features
+                .iter()
+                .filter(|feature| !probe.feature_enabled(feature))
+                .cloned()
+                .collect();
+            if !missing_features.is_empty() {
+                return None;
+            }
+
+            let selected_symbols = profile
+                .symbol_aliases
+                .iter()
+                .filter_map(|(name, aliases)| {
+                    aliases
+                        .first()
+                        .map(|alias| (name.clone(), alias.clone()))
+                })
+                .collect();
+
+            Some(N5SelectedAdapter {
+                profile_id: profile.profile_id.clone(),
+                compatible: true,
+                reason: "selected from exported adapter table using compiler family, platform, architecture, optimization mode, and feature probes".to_string(),
+                compiler_family: probe.compiler_family.clone(),
+                optimization_mode: probe.optimization_mode.clone(),
+                selected_symbols,
+                missing_features,
+                adaptation_notes: profile.adaptation_notes.clone(),
+            })
+        })
+    }
+
+    /// Compare an expected and observed adapter selection and report any behavior drift.
+    pub fn n5_regression_report(
+        expected: &N5SelectedAdapter,
+        observed: &N5SelectedAdapter,
+        mode: &str,
+    ) -> N5DriftReport {
+        let mut issues = Vec::new();
+
+        if expected.profile_id != observed.profile_id {
+            issues.push(format!(
+                "profile drift: expected {} but observed {}",
+                expected.profile_id, observed.profile_id
+            ));
+        }
+        if expected.compiler_family != observed.compiler_family {
+            issues.push(format!(
+                "compiler-family drift: expected {} but observed {}",
+                expected.compiler_family, observed.compiler_family
+            ));
+        }
+        if observed.optimization_mode != mode {
+            issues.push(format!(
+                "optimization-mode drift: expected {} but observed {}",
+                mode, observed.optimization_mode
+            ));
+        }
+        if !observed.missing_features.is_empty() {
+            issues.push(format!(
+                "missing required features: {}",
+                observed.missing_features.join(",")
+            ));
+        }
+        for (name, expected_symbol) in &expected.selected_symbols {
+            match observed.selected_symbols.get(name) {
+                Some(observed_symbol) if observed_symbol == expected_symbol => {}
+                Some(observed_symbol) => issues.push(format!(
+                    "symbol drift for {}: expected {} but observed {}",
+                    name, expected_symbol, observed_symbol
+                )),
+                None => issues.push(format!("symbol missing for {}", name)),
+            }
+        }
+
+        N5DriftReport {
+            mode: mode.to_string(),
+            drift_detected: !issues.is_empty(),
+            issues,
+        }
     }
 
     // MARK: - Foundation Date/Time (Track I.1)

@@ -2668,6 +2668,318 @@ public func swift_contract_n2_lowering_strategy_json(_ signaturePtr: UnsafePoint
     return strdup(json)
 }
 
+// MARK: - Cross-Version ABI Adaptation Layer (Track N.5)
+
+private struct _N5FeatureFlags: Encodable {
+    let swift5TypesScan: Bool
+    let objcClassScan: Bool
+    let dynamicSymbolLowering: Bool
+    let recursiveGenericSolver: Bool
+    let brokerIsolation: Bool
+    let privateTypeKindFallback: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case swift5TypesScan = "swift5_types_scan"
+        case objcClassScan = "objc_class_scan"
+        case dynamicSymbolLowering = "dynamic_symbol_lowering"
+        case recursiveGenericSolver = "recursive_generic_solver"
+        case brokerIsolation = "broker_isolation"
+        case privateTypeKindFallback = "private_type_kind_fallback"
+    }
+}
+
+private struct _N5FeatureProbePayload: Encodable {
+    let compilerFamily: String
+    let platform: String
+    let architecture: String
+    let osMajor: Int
+    let osMinor: Int
+    let osPatch: Int
+    let optimizationMode: String
+    let features: _N5FeatureFlags
+
+    enum CodingKeys: String, CodingKey {
+        case compilerFamily = "compiler_family"
+        case platform
+        case architecture
+        case osMajor = "os_major"
+        case osMinor = "os_minor"
+        case osPatch = "os_patch"
+        case optimizationMode = "optimization_mode"
+        case features
+    }
+}
+
+private struct _N5AdapterProfilePayload: Encodable {
+    let profileID: String
+    let compilerFamily: String
+    let platforms: [String]
+    let architectures: [String]
+    let supportedOptimizationModes: [String]
+    let requiredFeatures: [String]
+    let symbolAliases: [String: [String]]
+    let layoutRules: [String: String]
+    let witnessRules: [String: String]
+    let adaptationNotes: [String]
+
+    enum CodingKeys: String, CodingKey {
+        case profileID = "profile_id"
+        case compilerFamily = "compiler_family"
+        case platforms
+        case architectures
+        case supportedOptimizationModes = "supported_optimization_modes"
+        case requiredFeatures = "required_features"
+        case symbolAliases = "symbol_aliases"
+        case layoutRules = "layout_rules"
+        case witnessRules = "witness_rules"
+        case adaptationNotes = "adaptation_notes"
+    }
+}
+
+private struct _N5AdapterTablePayload: Encodable {
+    let profiles: [_N5AdapterProfilePayload]
+}
+
+private struct _N5SelectedAdapterPayload: Encodable {
+    let profileID: String
+    let compatible: Bool
+    let reason: String
+    let compilerFamily: String
+    let optimizationMode: String
+    let selectedSymbols: [String: String]
+    let missingFeatures: [String]
+    let adaptationNotes: [String]
+
+    enum CodingKeys: String, CodingKey {
+        case profileID = "profile_id"
+        case compatible
+        case reason
+        case compilerFamily = "compiler_family"
+        case optimizationMode = "optimization_mode"
+        case selectedSymbols = "selected_symbols"
+        case missingFeatures = "missing_features"
+        case adaptationNotes = "adaptation_notes"
+    }
+}
+
+private func _n5CompilerFamily() -> String {
+#if compiler(>=6.3)
+    return "swift_6_3_or_newer"
+#elseif compiler(>=6.2)
+    return "swift_6_2"
+#elseif compiler(>=6.1)
+    return "swift_6_1"
+#else
+    return "pre_swift_6_1"
+#endif
+}
+
+private func _n5Architecture() -> String {
+#if arch(arm64)
+    return "arm64"
+#elseif arch(x86_64)
+    return "x86_64"
+#else
+    return "unknown"
+#endif
+}
+
+private func _n5Platform() -> String {
+#if os(macOS)
+    return "macos"
+#elseif os(Linux)
+    return "linux"
+#else
+    return "unknown"
+#endif
+}
+
+private func _n5OptimizationMode() -> String {
+    if let override = ProcessInfo.processInfo.environment["SWIFT_RUNTIME_SYS_OPT_MODE"]?.lowercased(),
+       override == "debug" || override == "release" {
+        return override
+    }
+    return "debug"
+}
+
+private func _n5FeatureFlags() -> _N5FeatureFlags {
+    _N5FeatureFlags(
+        swift5TypesScan: true,
+        objcClassScan: true,
+        dynamicSymbolLowering: true,
+        recursiveGenericSolver: true,
+        brokerIsolation: true,
+        privateTypeKindFallback: true
+    )
+}
+
+private func _n5FeatureEnabled(_ probe: _N5FeatureProbePayload, _ name: String) -> Bool {
+    switch name {
+    case "swift5_types_scan":
+        return probe.features.swift5TypesScan
+    case "objc_class_scan":
+        return probe.features.objcClassScan
+    case "dynamic_symbol_lowering":
+        return probe.features.dynamicSymbolLowering
+    case "recursive_generic_solver":
+        return probe.features.recursiveGenericSolver
+    case "broker_isolation":
+        return probe.features.brokerIsolation
+    case "private_type_kind_fallback":
+        return probe.features.privateTypeKindFallback
+    default:
+        return false
+    }
+}
+
+private func _n5CurrentFeatureProbe() -> _N5FeatureProbePayload {
+    let os = ProcessInfo.processInfo.operatingSystemVersion
+    return _N5FeatureProbePayload(
+        compilerFamily: _n5CompilerFamily(),
+        platform: _n5Platform(),
+        architecture: _n5Architecture(),
+        osMajor: os.majorVersion,
+        osMinor: os.minorVersion,
+        osPatch: os.patchVersion,
+        optimizationMode: _n5OptimizationMode(),
+        features: _n5FeatureFlags()
+    )
+}
+
+private func _n5AdapterProfiles() -> [_N5AdapterProfilePayload] {
+    let requiredFeatures = [
+        "swift5_types_scan",
+        "objc_class_scan",
+        "dynamic_symbol_lowering",
+        "recursive_generic_solver",
+        "broker_isolation",
+        "private_type_kind_fallback",
+    ]
+    let symbolAliases = [
+        "metadata_enumeration": ["swift_contract_n1_enumerate_all_types_json"],
+        "dynamic_invoke": ["swift_contract_n2_invoke_auto", "swift_contract_n2_invoke_symbol_i32"],
+        "generic_context": ["swift_contract_n3_build_context_json", "swift_contract_n3_resolve_witness_json"],
+        "broker_abort": ["swift_contract_n4_trigger_abort"],
+    ]
+
+    return [
+        _N5AdapterProfilePayload(
+            profileID: "swift_6_1_arm64_macos",
+            compilerFamily: "swift_6_1",
+            platforms: ["macos"],
+            architectures: ["arm64"],
+            supportedOptimizationModes: ["debug", "release"],
+            requiredFeatures: requiredFeatures,
+            symbolAliases: symbolAliases,
+            layoutRules: [
+                "relative_pointer_low_bit_mask": "required",
+                "private_type_kind_fallback": "section_name_lookup",
+                "function_metadata_kind": "normalize_pre_6_2",
+            ],
+            witnessRules: [
+                "sequence_requirement_token": "stable_string_v1",
+                "dictionary_associated_types": "Key,Value",
+            ],
+            adaptationNotes: [
+                "Prefer section-name fallback when private type names do not map to canonical kind strings.",
+                "Normalize pre-6.2 function metadata kind observations before selecting call-lowering strategy.",
+            ]
+        ),
+        _N5AdapterProfilePayload(
+            profileID: "swift_6_2_arm64_macos",
+            compilerFamily: "swift_6_2",
+            platforms: ["macos"],
+            architectures: ["arm64"],
+            supportedOptimizationModes: ["debug", "release"],
+            requiredFeatures: requiredFeatures,
+            symbolAliases: symbolAliases,
+            layoutRules: [
+                "relative_pointer_low_bit_mask": "required",
+                "private_type_kind_fallback": "section_name_lookup",
+                "function_metadata_kind": "normalize_6_2",
+            ],
+            witnessRules: [
+                "sequence_requirement_token": "stable_string_v1",
+                "dictionary_associated_types": "Key,Value",
+            ],
+            adaptationNotes: [
+                "Prefer canonical 6.2 metadata-kind normalization before graph traversal.",
+                "Treat symbol registry results as the primary lowering selector for unknown call shapes.",
+            ]
+        ),
+    ]
+}
+
+private func _n5EncodeJSON<T: Encodable>(_ value: T) -> UnsafeMutablePointer<CChar>? {
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = [.sortedKeys]
+    guard let data = try? encoder.encode(value),
+          let json = String(data: data, encoding: .utf8) else {
+        return nil
+    }
+    return strdup(json)
+}
+
+private func _n5SelectedAdapter() -> _N5SelectedAdapterPayload {
+    let probe = _n5CurrentFeatureProbe()
+
+    for profile in _n5AdapterProfiles() {
+        guard profile.compilerFamily == probe.compilerFamily,
+              profile.platforms.contains(probe.platform),
+              profile.architectures.contains(probe.architecture),
+              profile.supportedOptimizationModes.contains(probe.optimizationMode) else {
+            continue
+        }
+
+        let missing = profile.requiredFeatures.filter { !_n5FeatureEnabled(probe, $0) }
+        if !missing.isEmpty {
+            continue
+        }
+
+        var selectedSymbols: [String: String] = [:]
+        for (key, aliases) in profile.symbolAliases {
+            selectedSymbols[key] = aliases.first ?? ""
+        }
+
+        return _N5SelectedAdapterPayload(
+            profileID: profile.profileID,
+            compatible: true,
+            reason: "compiler family, platform, architecture, optimization mode, and required feature probes matched adapter profile",
+            compilerFamily: probe.compilerFamily,
+            optimizationMode: probe.optimizationMode,
+            selectedSymbols: selectedSymbols,
+            missingFeatures: [],
+            adaptationNotes: profile.adaptationNotes
+        )
+    }
+
+    return _N5SelectedAdapterPayload(
+        profileID: "unsupported",
+        compatible: false,
+        reason: "no adapter profile matched the current compiler family, platform, architecture, and feature probe set",
+        compilerFamily: probe.compilerFamily,
+        optimizationMode: probe.optimizationMode,
+        selectedSymbols: [:],
+        missingFeatures: _n5AdapterProfiles().first(where: { $0.compilerFamily == probe.compilerFamily })?.requiredFeatures.filter { !_n5FeatureEnabled(probe, $0) } ?? [],
+        adaptationNotes: []
+    )
+}
+
+@_cdecl("swift_contract_n5_adapter_table_json")
+public func swift_contract_n5_adapter_table_json() -> UnsafeMutablePointer<CChar>? {
+    _n5EncodeJSON(_N5AdapterTablePayload(profiles: _n5AdapterProfiles()))
+}
+
+@_cdecl("swift_contract_n5_feature_probe_json")
+public func swift_contract_n5_feature_probe_json() -> UnsafeMutablePointer<CChar>? {
+    _n5EncodeJSON(_n5CurrentFeatureProbe())
+}
+
+@_cdecl("swift_contract_n5_select_adapter_json")
+public func swift_contract_n5_select_adapter_json() -> UnsafeMutablePointer<CChar>? {
+    _n5EncodeJSON(_n5SelectedAdapter())
+}
+
 // MARK: - Unsafe Runtime Ops Isolation & Recovery (Track N.4)
 
 /// Deterministic safe operation used by the broker path to prove non-crashing subprocess execution.
