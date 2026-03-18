@@ -13,6 +13,7 @@ FUZZ_CASES=64 STOP_ON_FAIL=1 ./scripts/run_parity_stress.sh 3
 ./scripts/run_protocol_dispatch_matrix.sh
 ./scripts/run_abi_shape_closure.sh
 ./scripts/run_ap4_differential_oracle.sh
+./scripts/run_ap5_reliability_soak.sh
 ./scripts/run_contract_parity.sh
 ./scripts/validate_runtime_killswitch_policy.sh
 

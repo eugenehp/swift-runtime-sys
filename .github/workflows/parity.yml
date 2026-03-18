@@ -228,6 +228,41 @@ jobs:
             target/runtime-probe/ap4-differential-oracle.md
             target/runtime-probe/ap4-differential-campaign/
 
+  reliability_soak:
+    name: Reliability soak gate (macOS arm64)
+    runs-on: macos-15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-reliability-soak-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-reliability-soak-
+
+      - name: Run AP.5 reliability soak gate
+        env:
+          AP5_SOAK_RUNS: ${{ github.event_name == 'pull_request' && '3' || '5' }}
+          AP5_HISTORY_WINDOW: '5'
+          AP5_FLAKE_BUDGET: '0'
+        run: ./scripts/run_ap5_reliability_soak.sh
+
+      - name: Upload reliability soak artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reliability-soak-${{ github.sha }}
+          path: |
+            target/runtime-probe/ap5-soak/
+
   contract_parity:
     name: Contract parity (${{ matrix.runner }}, ${{ matrix.profile }})
     runs-on: ${{ matrix.runner }}
@@ -273,7 +308,7 @@ jobs:
   support_matrix_signoff:
     name: Support matrix signoff
     runs-on: macos-15
-    needs: [parity, stress, protocol_dispatch, abi_shape_closure, differential_oracle, contract_parity]
+    needs: [parity, stress, protocol_dispatch, abi_shape_closure, differential_oracle, reliability_soak, contract_parity]
 
     steps:
       - uses: actions/checkout@v4
@@ -322,3 +357,6 @@ jobs:
             target/runtime-probe/abi-shape-closure.md
             target/runtime-probe/abi-shape-closure.json
             target/runtime-probe/ap4-differential-oracle.md
+            target/runtime-probe/ap5-soak/ap5-soak-summary.md
+            target/runtime-probe/ap5-soak/ap5-soak-summary.json
+            target/runtime-probe/ap5-soak/ap5-stability-trend.md

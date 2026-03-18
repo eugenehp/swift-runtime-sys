@@ -581,9 +581,9 @@ This section defines the work required to approach a defensible "absolute parity
 - [x] Require triage artifacts and minimized corpus for every unexplained divergence.
 
 ### AP.5) Reliability Soak & Flake Elimination
-- [ ] Add long-duration soak runs with rolling-window flake budget = 0 for required gates.
-- [ ] Add deterministic retry policy that marks non-determinism as failure (not pass-on-retry).
-- [ ] Track gate stability trend artifacts across CI history.
+- [x] Add long-duration soak runs with rolling-window flake budget = 0 for required gates.
+- [x] Add deterministic retry policy that marks non-determinism as failure (not pass-on-retry).
+- [x] Track gate stability trend artifacts across CI history.
 
 ### AP.6) Claim Contract & Reproducibility
 - [ ] Add machine-checkable parity-claim contract (scope, required gates, minimum budgets, allowed deviations).
@@ -662,3 +662,9 @@ This section defines the work required to approach a defensible "absolute parity
 - [x] Added required AP.4 gate `scripts/run_ap4_differential_oracle.sh` with declared stable seed catalog `scripts/ap4_seed_catalog.json` (32 required seeds, fragment count `10`) and signoff artifact `target/runtime-probe/ap4-differential-oracle.md`.
 - [x] Divergence policy now requires corpus + triage + minimized artifacts for every unexplained divergence before failing the campaign.
 - [x] Promoted AP.4 differential oracle gate to required local full verification and CI (`.github/workflows/parity.yml` job `differential_oracle`, wired into `support_matrix_signoff.needs`).
+
+### 2026-03-18 (Wave 10, AP.5 reliability soak)
+- [x] Added required soak gate `scripts/run_ap5_reliability_soak.sh` covering required gates across repeated iterations with rolling-window flake budget `0`.
+- [x] Deterministic retry policy now classifies `failed-then-passed-on-retry` as `FLAKY` and still fails the gate instead of pass-on-retry.
+- [x] Added AP.5 artifacts `target/runtime-probe/ap5-soak/ap5-soak-summary.json`, `target/runtime-probe/ap5-soak/ap5-soak-summary.md`, and `target/runtime-probe/ap5-soak/ap5-stability-trend.md`.
+- [x] Promoted AP.5 soak gate to required local full verification and CI (`.github/workflows/parity.yml` job `reliability_soak`, wired into `support_matrix_signoff.needs`).
