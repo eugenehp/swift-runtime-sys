@@ -105,7 +105,11 @@ fn test_full_enumeration_nonempty(
     // Extract count from "count":N
     let count = json
         .find("\"count\":")
-        .and_then(|i| json[i + 8..].find([',', '}']).map(|e| &json[i + 8..i + 8 + e]))
+        .and_then(|i| {
+            json[i + 8..]
+                .find([',', '}'])
+                .map(|e| &json[i + 8..i + 8 + e])
+        })
         .and_then(|s| s.trim().parse::<usize>().ok())
         .unwrap_or(0);
     Ok(count > 0)
@@ -133,16 +137,18 @@ fn test_full_count_exceeds_curated(
     let json = contract.n1_enumerate_all_types_json()?;
     let count = json
         .find("\"count\":")
-        .and_then(|i| json[i + 8..].find([',', '}']).map(|e| &json[i + 8..i + 8 + e]))
+        .and_then(|i| {
+            json[i + 8..]
+                .find([',', '}'])
+                .map(|e| &json[i + 8..i + 8 + e])
+        })
         .and_then(|s| s.trim().parse::<usize>().ok())
         .unwrap_or(0);
     // The curated N.1 list had 9 names; runtime-wide scan should find many more.
     Ok(count > 9)
 }
 
-fn test_image_level_finds_types(
-    contract: &RuntimeContract,
-) -> Result<bool, RuntimeContractError> {
+fn test_image_level_finds_types(contract: &RuntimeContract) -> Result<bool, RuntimeContractError> {
     let image_count = contract.n1_image_count()?;
     for i in 0..image_count {
         let json = contract.n1_image_types_json(i)?;
@@ -150,7 +156,11 @@ fn test_image_level_finds_types(
             // Found the image containing our types.
             let count = json
                 .find("\"count\":")
-                .and_then(|idx| json[idx + 8..].find([',', '}']).map(|e| &json[idx + 8..idx + 8 + e]))
+                .and_then(|idx| {
+                    json[idx + 8..]
+                        .find([',', '}'])
+                        .map(|e| &json[idx + 8..idx + 8 + e])
+                })
                 .and_then(|s| s.trim().parse::<usize>().ok())
                 .unwrap_or(0);
             return Ok(count > 0);
@@ -161,7 +171,11 @@ fn test_image_level_finds_types(
         let json = contract.n1_image_types_json(i)?;
         let count = json
             .find("\"count\":")
-            .and_then(|idx| json[idx + 8..].find([',', '}']).map(|e| &json[idx + 8..idx + 8 + e]))
+            .and_then(|idx| {
+                json[idx + 8..]
+                    .find([',', '}'])
+                    .map(|e| &json[idx + 8..idx + 8 + e])
+            })
             .and_then(|s| s.trim().parse::<usize>().ok())
             .unwrap_or(0);
         if count > 0 {
@@ -171,9 +185,7 @@ fn test_image_level_finds_types(
     Ok(false)
 }
 
-fn test_image_scan_all_stable(
-    contract: &RuntimeContract,
-) -> Result<bool, RuntimeContractError> {
+fn test_image_scan_all_stable(contract: &RuntimeContract) -> Result<bool, RuntimeContractError> {
     let image_count = contract.n1_image_count()?;
     // Scan all images; none should return an error or null (stable for any valid index).
     for i in 0..image_count {
@@ -185,16 +197,12 @@ fn test_image_scan_all_stable(
     Ok(true)
 }
 
-fn test_type_info_struct_kind(
-    contract: &RuntimeContract,
-) -> Result<bool, RuntimeContractError> {
+fn test_type_info_struct_kind(contract: &RuntimeContract) -> Result<bool, RuntimeContractError> {
     let json = contract.n1_type_info_json("N1LayoutStruct")?;
     Ok(json.contains("\"kind\":\"struct\""))
 }
 
-fn test_type_info_field_count(
-    contract: &RuntimeContract,
-) -> Result<bool, RuntimeContractError> {
+fn test_type_info_field_count(contract: &RuntimeContract) -> Result<bool, RuntimeContractError> {
     let json = contract.n1_type_info_json("N1LayoutStruct")?;
     Ok(json.contains("\"field_count\":"))
 }

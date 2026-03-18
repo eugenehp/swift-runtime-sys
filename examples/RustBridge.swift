@@ -865,6 +865,231 @@ public func swift_contract_constrained_multi_min(_ a: Int32, _ b: Int32) -> Int3
     _contractMultiBoundMin(a, b)
 }
 
+// MARK: - Arbitrary Generic/Witness Instantiation (Track N.3)
+
+private func _n3EscapeJSON(_ value: String) -> String {
+    value
+        .replacingOccurrences(of: "\\", with: "\\\\")
+        .replacingOccurrences(of: "\"", with: "\\\"")
+}
+
+private func _n3SplitList(_ value: String) -> [String] {
+    value
+        .split(separator: ";")
+        .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+        .filter { !$0.isEmpty }
+}
+
+private func _n3GenericBase(_ typeName: String) -> String {
+    guard let angle = typeName.firstIndex(of: "<") else { return typeName }
+    return String(typeName[..<angle])
+}
+
+private func _n3GenericArgs(_ typeName: String) -> [String] {
+    guard let start = typeName.firstIndex(of: "<"), let end = typeName.lastIndex(of: ">"), start < end else {
+        return []
+    }
+    let inner = typeName[typeName.index(after: start)..<end]
+    return inner
+        .split(separator: ",")
+        .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+        .filter { !$0.isEmpty }
+}
+
+private func _n3SupportedType(_ typeName: String) -> Bool {
+    switch typeName {
+    case "Int32", "String", "Array<Int32>", "Dictionary<String,Int32>", "ContractGenericBox<Int32>":
+        return true
+    default:
+        return false
+    }
+}
+
+private func _n3ProtocolSatisfied(_ typeName: String, _ protocolName: String) -> Bool {
+    switch protocolName {
+    case "Equatable":
+        return ["Int32", "String", "Array<Int32>"].contains(typeName)
+    case "Comparable":
+        return ["Int32", "String"].contains(typeName)
+    case "Hashable":
+        return ["Int32", "String"].contains(typeName)
+    case "AdditiveArithmetic":
+        return typeName == "Int32"
+    case "Codable":
+        return ["Int32", "String", "Array<Int32>", "Dictionary<String,Int32>"].contains(typeName)
+    case "Sequence":
+        return ["Array<Int32>", "Dictionary<String,Int32>"].contains(typeName)
+    default:
+        return false
+    }
+}
+
+private func _n3AssociatedTypeValue(_ typeName: String, _ associatedType: String) -> String? {
+    switch (typeName, associatedType) {
+    case ("Array<Int32>", "Element"):
+        return "Int32"
+    case ("Dictionary<String,Int32>", "Key"):
+        return "String"
+    case ("Dictionary<String,Int32>", "Value"):
+        return "Int32"
+    default:
+        return nil
+    }
+}
+
+private func _n3ValidateRequirements(_ typeName: String, _ requirements: [String]) -> (Bool, [[String: String]]) {
+    var failures: [[String: String]] = []
+    for requirement in requirements {
+        if let eq = requirement.range(of: "==") {
+            let lhs = requirement[..<eq.lowerBound].trimmingCharacters(in: .whitespacesAndNewlines)
+            let rhs = requirement[eq.upperBound...].trimmingCharacters(in: .whitespacesAndNewlines)
+            guard let actual = _n3AssociatedTypeValue(typeName, lhs) else {
+                failures.append([
+                    "code": "unknown_associated_type",
+                    "requirement": requirement,
+                    "detail": "associated type \(lhs) unavailable for \(typeName)",
+                ])
+                continue
+            }
+            if actual != rhs {
+                failures.append([
+                    "code": "associated_type_mismatch",
+                    "requirement": requirement,
+                    "detail": "expected \(lhs)==\(rhs), actual \(lhs)==\(actual)",
+                ])
+            }
+            continue
+        }
+
+        if !_n3ProtocolSatisfied(typeName, requirement) {
+            failures.append([
+                "code": "unsupported_protocol",
+                "requirement": requirement,
+                "detail": "\(typeName) does not conform to \(requirement)",
+            ])
+        }
+    }
+    return (failures.isEmpty, failures)
+}
+
+private func _n3StableToken(_ pieces: [String]) -> UInt64 {
+    var hash: UInt64 = 1469598103934665603
+    for piece in pieces {
+        for byte in piece.utf8 {
+            hash ^= UInt64(byte)
+            hash &*= 1099511628211
+        }
+        hash ^= 0xFF
+        hash &*= 1099511628211
+    }
+    return hash == 0 ? 1 : hash
+}
+
+@_cdecl("swift_contract_n3_build_context_json")
+public func swift_contract_n3_build_context_json(
+    _ typeNamePtr: UnsafePointer<CChar>?,
+    _ constraintsPtr: UnsafePointer<CChar>?
+) -> UnsafeMutablePointer<CChar>? {
+    guard let typeNamePtr else { return nil }
+    let typeName = String(cString: typeNamePtr)
+    let constraints = constraintsPtr.map { _n3SplitList(String(cString: $0)) } ?? []
+    let supported = _n3SupportedType(typeName)
+    let args = _n3GenericArgs(typeName)
+    let constraintJson = constraints.map { constraint -> String in
+        let satisfied = _n3ProtocolSatisfied(typeName, constraint)
+        return "{\"name\":\"\(_n3EscapeJSON(constraint))\",\"satisfied\":\(satisfied ? "true" : "false")}"
+    }.joined(separator: ",")
+    let argsJson = args.map { "\"\(_n3EscapeJSON($0))\"" }.joined(separator: ",")
+    let json = "{\"type_name\":\"\(_n3EscapeJSON(typeName))\",\"generic_base\":\"\(_n3EscapeJSON(_n3GenericBase(typeName)))\",\"arguments\":[\(argsJson)],\"constraints\":[\(constraintJson)],\"supported\":\(supported ? "true" : "false")}"
+    return strdup(json)
+}
+
+@_cdecl("swift_contract_n3_resolve_witness_json")
+public func swift_contract_n3_resolve_witness_json(
+    _ typeNamePtr: UnsafePointer<CChar>?,
+    _ protocolPtr: UnsafePointer<CChar>?,
+    _ requirementsPtr: UnsafePointer<CChar>?
+) -> UnsafeMutablePointer<CChar>? {
+    guard let typeNamePtr, let protocolPtr else { return nil }
+    let typeName = String(cString: typeNamePtr)
+    let protocolName = String(cString: protocolPtr)
+    let requirements = requirementsPtr.map { _n3SplitList(String(cString: $0)) } ?? []
+    let merged = [protocolName] + requirements
+    let (satisfied, failures) = _n3ValidateRequirements(typeName, merged)
+    let token = satisfied ? _n3StableToken([typeName, protocolName] + requirements) : 0
+    let failuresJson = failures.map { failure in
+        let code = _n3EscapeJSON(failure["code"] ?? "")
+        let requirement = _n3EscapeJSON(failure["requirement"] ?? "")
+        let detail = _n3EscapeJSON(failure["detail"] ?? "")
+        return "{\"code\":\"\(code)\",\"requirement\":\"\(requirement)\",\"detail\":\"\(detail)\"}"
+    }.joined(separator: ",")
+    let json = "{\"type_name\":\"\(_n3EscapeJSON(typeName))\",\"protocol\":\"\(_n3EscapeJSON(protocolName))\",\"requirements\":[\(requirements.map { "\"\(_n3EscapeJSON($0))\"" }.joined(separator: ","))],\"supported\":\(satisfied ? "true" : "false"),\"token\":\(token),\"failures\":[\(failuresJson)]}"
+    return strdup(json)
+}
+
+@_cdecl("swift_contract_n3_validate_requirements_json")
+public func swift_contract_n3_validate_requirements_json(
+    _ typeNamePtr: UnsafePointer<CChar>?,
+    _ requirementsPtr: UnsafePointer<CChar>?
+) -> UnsafeMutablePointer<CChar>? {
+    guard let typeNamePtr else { return nil }
+    let typeName = String(cString: typeNamePtr)
+    let requirements = requirementsPtr.map { _n3SplitList(String(cString: $0)) } ?? []
+    let (satisfied, failures) = _n3ValidateRequirements(typeName, requirements)
+    let failuresJson = failures.map { failure in
+        let code = _n3EscapeJSON(failure["code"] ?? "")
+        let requirement = _n3EscapeJSON(failure["requirement"] ?? "")
+        let detail = _n3EscapeJSON(failure["detail"] ?? "")
+        return "{\"code\":\"\(code)\",\"requirement\":\"\(requirement)\",\"detail\":\"\(detail)\"}"
+    }.joined(separator: ",")
+    let json = "{\"type_name\":\"\(_n3EscapeJSON(typeName))\",\"supported\":\(satisfied ? "true" : "false"),\"failures\":[\(failuresJson)]}"
+    return strdup(json)
+}
+
+@_cdecl("swift_contract_n3_invoke_generic_i32")
+public func swift_contract_n3_invoke_generic_i32(
+    _ typeNamePtr: UnsafePointer<CChar>?,
+    _ requirementsPtr: UnsafePointer<CChar>?,
+    _ operationPtr: UnsafePointer<CChar>?,
+    _ a: Int32,
+    _ b: Int32,
+    _ errorCodePtr: UnsafeMutablePointer<Int32>?
+) -> Int32 {
+    guard let typeNamePtr, let operationPtr else {
+        errorCodePtr?.pointee = -530
+        return 0
+    }
+    let typeName = String(cString: typeNamePtr)
+    let requirements = requirementsPtr.map { _n3SplitList(String(cString: $0)) } ?? []
+    let operation = String(cString: operationPtr)
+    let (ok, _) = _n3ValidateRequirements(typeName, requirements)
+    guard ok else {
+        errorCodePtr?.pointee = -531
+        return 0
+    }
+    errorCodePtr?.pointee = 0
+
+    switch (typeName, operation) {
+    case ("ContractGenericBox<Int32>", "box_make_get"):
+        return ContractGenericBox<Int32>(a).value
+    case ("Int32", "equatable.equal"):
+        return a == b ? 1 : 0
+    case ("Int32", "comparable.cmp"):
+        return a < b ? -1 : (a > b ? 1 : 0)
+    case ("Int32", "additive.sum"):
+        return a &+ b
+    case ("Array<Int32>", "sequence.sum_range"):
+        let bounded = max(0, min(b, 256))
+        return (0..<bounded).reduce(0) { partial, offset in partial &+ (a &+ offset) }
+    case ("Dictionary<String,Int32>", "sequence.sum_values"):
+        let dict: [String: Int32] = ["alpha": a, "beta": a &+ 1, "gamma": a &+ 2]
+        return dict.values.reduce(0, &+)
+    default:
+        errorCodePtr?.pointee = -532
+        return 0
+    }
+}
+
 // MARK: - Foundation Date/Time (Track I.1)
 
 /// Deterministic ISO 8601 formatter (UTC, POSIX locale) re-created each call

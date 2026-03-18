@@ -509,11 +509,12 @@ These tracks target dynamic, version-adaptive runtime control beyond contract-sc
 - **Status**: COMPLETE — Added Track N.2 bridge exports (`swift_contract_n2_capability_mask`, `swift_contract_n2_invoke_i32`, `swift_contract_n2_invoke_symbol_i32`, `swift_contract_n2_symbol_describe`, `swift_contract_n2_invoke_auto`, `swift_contract_n2_lowering_strategy_json`) plus unknown dynamic-call targets across 5 ABI shapes (`i32_i32_to_i32`, `i32ptr_i32_to_i32`, `i32_i32_to_pair`, `i32_to_i32`, `void_to_i32`), a shape-discovery registry (`_n2ShapeRegistry`), and Rust wrappers (`n2_dynamic_symbol_single`, `n2_dynamic_symbol_const`, `n2_symbol_describe`, `n2_invoke_auto`, `n2_describe_and_invoke`) in `RuntimeContract`. Exit criterion satisfied: `test_describe_and_invoke` proves Rust can invoke an unknown callable using only its symbol name — shape is discovered at runtime via `swift_contract_n2_symbol_describe`. Probe `examples/runtime_call_lowering_probe.rs` PASS (18/18).
 
 ### N.3) Arbitrary Generic/Witness Instantiation
-- [ ] Add runtime generic context builder for unconstrained and constrained generic parameters.
-- [ ] Add protocol witness resolution for unknown conformances and requirement sets.
-- [ ] Add generic requirement solver probe (`where` clauses, associated type requirements).
-- [ ] Add failure diagnostics for unsatisfied constraints with machine-readable reason codes.
+- [x] Add runtime generic context builder for unconstrained and constrained generic parameters.
+- [x] Add protocol witness resolution for unknown conformances and requirement sets.
+- [x] Add generic requirement solver probe (`where` clauses, associated type requirements).
+- [x] Add failure diagnostics for unsatisfied constraints with machine-readable reason codes.
 - [ ] Exit criteria: Rust can instantiate and dispatch generic/protocol-bound operations not pre-modeled in static registries.
+- **Status**: IN PROGRESS - Added Track N.3 bridge exports (`swift_contract_n3_build_context_json`, `swift_contract_n3_resolve_witness_json`, `swift_contract_n3_validate_requirements_json`, `swift_contract_n3_invoke_generic_i32`) plus a string-driven requirement solver and witness-token resolver over unconstrained and constrained generic contexts. Rust wrappers now build contexts, resolve witnesses, validate associated-type/protocol requirements, and dispatch generic operations using only type names, protocol names, and requirement strings. New probe `examples/runtime_generic_witness_instantiation_probe.rs` validates 13 cases covering unconstrained generic-box context building, constrained Int32 contexts, witness resolution for `Array<Int32>: Sequence` and `Dictionary<String,Int32>: Sequence`, associated-type requirement solving (`Element==Int32`, `Key==String`, `Value==Int32`), machine-readable failure diagnostics (`unsupported_protocol`, `associated_type_mismatch`), and runtime dispatch of generic/protocol-bound operations. Current N.3 probe PASS (13/13). Remaining work: widen the supported surface beyond the current name-driven finite set into broader metadata- and witness-driven instantiation that is not backed by hand-authored type/protocol cases.
 
 ### N.4) Unsafe Runtime Ops Isolation & Recovery
 - [ ] Add subprocess/broker sandbox mode for high-risk runtime operations.

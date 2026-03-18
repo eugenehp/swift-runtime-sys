@@ -349,6 +349,14 @@ type ContractN2LoweringStrategyJson = unsafe extern "C" fn(*const c_char) -> *mu
 type ContractN2SymbolDescribe = unsafe extern "C" fn(*const c_char) -> *mut c_char;
 type ContractN2InvokeAuto =
     unsafe extern "C" fn(*const c_char, i32, i32, *mut i32, *mut i32, *mut i32) -> i32;
+// Track N.3 – Arbitrary Generic/Witness Instantiation
+type ContractN3BuildContextJson = unsafe extern "C" fn(*const c_char, *const c_char) -> *mut c_char;
+type ContractN3ResolveWitnessJson =
+    unsafe extern "C" fn(*const c_char, *const c_char, *const c_char) -> *mut c_char;
+type ContractN3ValidateRequirementsJson =
+    unsafe extern "C" fn(*const c_char, *const c_char) -> *mut c_char;
+type ContractN3InvokeGenericI32 =
+    unsafe extern "C" fn(*const c_char, *const c_char, *const c_char, i32, i32, *mut i32) -> i32;
 type ContractBacktraceCapture = unsafe extern "C" fn() -> *mut c_char;
 type ContractBacktraceAnchorAddress = unsafe extern "C" fn() -> u64;
 
@@ -2263,6 +2271,141 @@ impl<'a> RuntimeContract<'a> {
         Ok(unsafe { func(a, b) })
     }
 
+    // MARK: - Arbitrary Generic/Witness Instantiation (Track N.3)
+
+    /// Build a runtime generic context from a type name and optional semicolon-separated constraints.
+    pub fn n3_build_context_json(
+        &self,
+        type_name: &str,
+        constraints: &str,
+    ) -> Result<String, RuntimeContractError> {
+        let func: ContractN3BuildContextJson = self.resolve("swift_contract_n3_build_context_json")?;
+        let c_type = CString::new(type_name).map_err(|_| RuntimeContractError::InvalidInvoke {
+            type_id: 72,
+            method_id: 1,
+        })?;
+        let c_constraints = CString::new(constraints).map_err(|_| RuntimeContractError::InvalidInvoke {
+            type_id: 72,
+            method_id: 1,
+        })?;
+        let ptr = unsafe { func(c_type.as_ptr(), c_constraints.as_ptr()) };
+        if ptr.is_null() {
+            return Err(RuntimeContractError::InvalidInvoke {
+                type_id: 72,
+                method_id: 1,
+            });
+        }
+        let out = unsafe { CStr::from_ptr(ptr) }.to_string_lossy().into_owned();
+        unsafe { libc::free(ptr as *mut c_void) };
+        Ok(out)
+    }
+
+    /// Resolve a protocol witness path for a type plus optional semicolon-separated requirements.
+    pub fn n3_resolve_witness_json(
+        &self,
+        type_name: &str,
+        protocol_name: &str,
+        requirements: &str,
+    ) -> Result<String, RuntimeContractError> {
+        let func: ContractN3ResolveWitnessJson = self.resolve("swift_contract_n3_resolve_witness_json")?;
+        let c_type = CString::new(type_name).map_err(|_| RuntimeContractError::InvalidInvoke {
+            type_id: 72,
+            method_id: 2,
+        })?;
+        let c_protocol = CString::new(protocol_name).map_err(|_| RuntimeContractError::InvalidInvoke {
+            type_id: 72,
+            method_id: 2,
+        })?;
+        let c_requirements = CString::new(requirements).map_err(|_| RuntimeContractError::InvalidInvoke {
+            type_id: 72,
+            method_id: 2,
+        })?;
+        let ptr = unsafe { func(c_type.as_ptr(), c_protocol.as_ptr(), c_requirements.as_ptr()) };
+        if ptr.is_null() {
+            return Err(RuntimeContractError::InvalidInvoke {
+                type_id: 72,
+                method_id: 2,
+            });
+        }
+        let out = unsafe { CStr::from_ptr(ptr) }.to_string_lossy().into_owned();
+        unsafe { libc::free(ptr as *mut c_void) };
+        Ok(out)
+    }
+
+    /// Validate a generic requirement set and return machine-readable JSON diagnostics.
+    pub fn n3_validate_requirements_json(
+        &self,
+        type_name: &str,
+        requirements: &str,
+    ) -> Result<String, RuntimeContractError> {
+        let func: ContractN3ValidateRequirementsJson =
+            self.resolve("swift_contract_n3_validate_requirements_json")?;
+        let c_type = CString::new(type_name).map_err(|_| RuntimeContractError::InvalidInvoke {
+            type_id: 72,
+            method_id: 3,
+        })?;
+        let c_requirements = CString::new(requirements).map_err(|_| RuntimeContractError::InvalidInvoke {
+            type_id: 72,
+            method_id: 3,
+        })?;
+        let ptr = unsafe { func(c_type.as_ptr(), c_requirements.as_ptr()) };
+        if ptr.is_null() {
+            return Err(RuntimeContractError::InvalidInvoke {
+                type_id: 72,
+                method_id: 3,
+            });
+        }
+        let out = unsafe { CStr::from_ptr(ptr) }.to_string_lossy().into_owned();
+        unsafe { libc::free(ptr as *mut c_void) };
+        Ok(out)
+    }
+
+    /// Dispatch a generic/protocol-bound operation using only type and requirement strings.
+    pub fn n3_invoke_generic_i32(
+        &self,
+        type_name: &str,
+        requirements: &str,
+        operation: &str,
+        a: i32,
+        b: i32,
+    ) -> Result<i32, RuntimeContractError> {
+        let func: ContractN3InvokeGenericI32 = self.resolve("swift_contract_n3_invoke_generic_i32")?;
+        let c_type = CString::new(type_name).map_err(|_| RuntimeContractError::InvalidInvoke {
+            type_id: 72,
+            method_id: 4,
+        })?;
+        let c_requirements = CString::new(requirements).map_err(|_| RuntimeContractError::InvalidInvoke {
+            type_id: 72,
+            method_id: 4,
+        })?;
+        let c_operation = CString::new(operation).map_err(|_| RuntimeContractError::InvalidInvoke {
+            type_id: 72,
+            method_id: 4,
+        })?;
+        let mut error = 0i32;
+        let out = unsafe {
+            func(
+                c_type.as_ptr(),
+                c_requirements.as_ptr(),
+                c_operation.as_ptr(),
+                a,
+                b,
+                &mut error,
+            )
+        };
+        if error != 0 {
+            return Err(RuntimeContractError::InvalidInvoke {
+                type_id: 72,
+                method_id: match error {
+                    -531 => 5,
+                    -532 => 6,
+                    _ => 4,
+                },
+            });
+        }
+        Ok(out)
+    }
+
     // MARK: - Foundation Date/Time (Track I.1)
 
     /// Format a Unix timestamp as ISO 8601 (UTC). Returns owned String.
@@ -3261,77 +3404,76 @@ impl<'a> RuntimeContract<'a> {
         Ok(out)
     }
 
-        /// Enumerate ALL Swift nominal types from loaded dyld images without pre-registered seeds.
-        /// JSON: {"types":[{"name":"..."},...], "count": N}
-        pub fn n1_enumerate_all_types_json(&self) -> Result<String, RuntimeContractError> {
-            let func: ContractN1EnumerateAllTypesJson =
-                self.resolve("swift_contract_n1_enumerate_all_types_json")?;
-            let ptr = unsafe { func() };
-            if ptr.is_null() {
-                return Err(RuntimeContractError::InvalidInvoke {
-                    type_id: 70,
-                    method_id: 10,
-                });
-            }
-            let out = unsafe { CStr::from_ptr(ptr) }
-                .to_string_lossy()
-                .into_owned();
-            unsafe { libc::free(ptr as *mut c_void) };
-            Ok(out)
+    /// Enumerate ALL Swift nominal types from loaded dyld images without pre-registered seeds.
+    /// JSON: {"types":[{"name":"..."},...], "count": N}
+    pub fn n1_enumerate_all_types_json(&self) -> Result<String, RuntimeContractError> {
+        let func: ContractN1EnumerateAllTypesJson =
+            self.resolve("swift_contract_n1_enumerate_all_types_json")?;
+        let ptr = unsafe { func() };
+        if ptr.is_null() {
+            return Err(RuntimeContractError::InvalidInvoke {
+                type_id: 70,
+                method_id: 10,
+            });
         }
+        let out = unsafe { CStr::from_ptr(ptr) }
+            .to_string_lossy()
+            .into_owned();
+        unsafe { libc::free(ptr as *mut c_void) };
+        Ok(out)
+    }
 
-        /// JSON type info (kind, kind_id, field_count) for any runtime-discoverable name.
-        pub fn n1_type_info_json(&self, name: &str) -> Result<String, RuntimeContractError> {
-            let func: ContractN1TypeInfoJson =
-                self.resolve("swift_contract_n1_type_info_json")?;
-            let c_name = CString::new(name).map_err(|_| RuntimeContractError::InvalidInvoke {
+    /// JSON type info (kind, kind_id, field_count) for any runtime-discoverable name.
+    pub fn n1_type_info_json(&self, name: &str) -> Result<String, RuntimeContractError> {
+        let func: ContractN1TypeInfoJson = self.resolve("swift_contract_n1_type_info_json")?;
+        let c_name = CString::new(name).map_err(|_| RuntimeContractError::InvalidInvoke {
+            type_id: 70,
+            method_id: 11,
+        })?;
+        let ptr = unsafe { func(c_name.as_ptr()) };
+        if ptr.is_null() {
+            return Err(RuntimeContractError::InvalidInvoke {
                 type_id: 70,
                 method_id: 11,
-            })?;
-            let ptr = unsafe { func(c_name.as_ptr()) };
-            if ptr.is_null() {
-                return Err(RuntimeContractError::InvalidInvoke {
-                    type_id: 70,
-                    method_id: 11,
-                });
-            }
-            let out = unsafe { CStr::from_ptr(ptr) }
-                .to_string_lossy()
-                .into_owned();
-            unsafe { libc::free(ptr as *mut c_void) };
-            Ok(out)
+            });
         }
+        let out = unsafe { CStr::from_ptr(ptr) }
+            .to_string_lossy()
+            .into_owned();
+        unsafe { libc::free(ptr as *mut c_void) };
+        Ok(out)
+    }
 
-        /// Number of loaded dyld images (for incremental per-image traversal).
-        pub fn n1_image_count(&self) -> Result<i32, RuntimeContractError> {
-            let func: ContractN1ImageCount = self.resolve("swift_contract_n1_image_count")?;
-            let out = unsafe { func() };
-            if out < 0 {
-                return Err(RuntimeContractError::InvalidInvoke {
-                    type_id: 70,
-                    method_id: 12,
-                });
-            }
-            Ok(out)
+    /// Number of loaded dyld images (for incremental per-image traversal).
+    pub fn n1_image_count(&self) -> Result<i32, RuntimeContractError> {
+        let func: ContractN1ImageCount = self.resolve("swift_contract_n1_image_count")?;
+        let out = unsafe { func() };
+        if out < 0 {
+            return Err(RuntimeContractError::InvalidInvoke {
+                type_id: 70,
+                method_id: 12,
+            });
         }
+        Ok(out)
+    }
 
-        /// Swift nominal types in a specific dyld image by 0-based index.
-        /// JSON: {"image":"...", "types":[{"name":"..."},...], "count": N}
-        pub fn n1_image_types_json(&self, index: i32) -> Result<String, RuntimeContractError> {
-            let func: ContractN1ImageTypesJson = self.resolve("swift_contract_n1_image_types_json")?;
-            let ptr = unsafe { func(index) };
-            if ptr.is_null() {
-                return Err(RuntimeContractError::InvalidInvoke {
-                    type_id: 70,
-                    method_id: 13,
-                });
-            }
-            let out = unsafe { CStr::from_ptr(ptr) }
-                .to_string_lossy()
-                .into_owned();
-            unsafe { libc::free(ptr as *mut c_void) };
-            Ok(out)
+    /// Swift nominal types in a specific dyld image by 0-based index.
+    /// JSON: {"image":"...", "types":[{"name":"..."},...], "count": N}
+    pub fn n1_image_types_json(&self, index: i32) -> Result<String, RuntimeContractError> {
+        let func: ContractN1ImageTypesJson = self.resolve("swift_contract_n1_image_types_json")?;
+        let ptr = unsafe { func(index) };
+        if ptr.is_null() {
+            return Err(RuntimeContractError::InvalidInvoke {
+                type_id: 70,
+                method_id: 13,
+            });
         }
+        let out = unsafe { CStr::from_ptr(ptr) }
+            .to_string_lossy()
+            .into_owned();
+        unsafe { libc::free(ptr as *mut c_void) };
+        Ok(out)
+    }
 
     // MARK: - Universal Call Lowering & Invocation (Track N.2)
 
