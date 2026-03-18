@@ -196,6 +196,38 @@ jobs:
             target/runtime-probe/abi-shape-closure.md
             target/runtime-probe/abi-shape-results/
 
+  differential_oracle:
+    name: Differential oracle gate (macOS arm64)
+    runs-on: macos-15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-differential-oracle-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-differential-oracle-
+
+      - name: Run AP.4 differential oracle gate
+        run: ./scripts/run_ap4_differential_oracle.sh
+
+      - name: Upload differential oracle artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: differential-oracle-${{ github.sha }}
+          path: |
+            target/runtime-probe/ap4-differential-oracle.md
+            target/runtime-probe/ap4-differential-campaign/
+
   contract_parity:
     name: Contract parity (${{ matrix.runner }}, ${{ matrix.profile }})
     runs-on: ${{ matrix.runner }}
@@ -241,7 +273,7 @@ jobs:
   support_matrix_signoff:
     name: Support matrix signoff
     runs-on: macos-15
-    needs: [parity, stress, protocol_dispatch, abi_shape_closure, contract_parity]
+    needs: [parity, stress, protocol_dispatch, abi_shape_closure, differential_oracle, contract_parity]
 
     steps:
       - uses: actions/checkout@v4
@@ -289,3 +321,4 @@ jobs:
             target/runtime-probe/plan-completion-signoff.md
             target/runtime-probe/abi-shape-closure.md
             target/runtime-probe/abi-shape-closure.json
+            target/runtime-probe/ap4-differential-oracle.md

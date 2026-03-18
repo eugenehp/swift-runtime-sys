@@ -576,9 +576,9 @@ This section defines the work required to approach a defensible "absolute parity
 - [x] Promote shape coverage to required gate with per-shape pass/fail artifact output.
 
 ### AP.4) Differential Oracle Expansion
-- [ ] Increase long-run differential fuzz campaign budget and seed diversity.
-- [ ] Add cross-oracle validation to reduce single-oracle blind spots.
-- [ ] Require triage artifacts and minimized corpus for every unexplained divergence.
+- [x] Increase long-run differential fuzz campaign budget and seed diversity.
+- [x] Add cross-oracle validation to reduce single-oracle blind spots.
+- [x] Require triage artifacts and minimized corpus for every unexplained divergence.
 
 ### AP.5) Reliability Soak & Flake Elimination
 - [ ] Add long-duration soak runs with rolling-window flake budget = 0 for required gates.
@@ -655,3 +655,10 @@ This section defines the work required to approach a defensible "absolute parity
 - [x] Added focused shape probe binary `examples/runtime_abi_shape_probe.rs` for N.2 lowering classes used by AP.3 gate.
 - [x] Added AP.3 required artifacts `target/runtime-probe/abi-shape-closure.json` and `target/runtime-probe/abi-shape-closure.md` with per-shape PASS/FAIL output.
 - [x] Promoted ABI shape closure to required gates in local full verification and CI (`.github/workflows/parity.yml` job `abi_shape_closure`, wired into `support_matrix_signoff.needs`).
+
+### 2026-03-18 (Wave 9, AP.4 differential oracle expansion)
+- [x] Upgraded `examples/runtime_differential_fuzz_probe.rs` campaign summary to record executed seeds, oracle set, cross-oracle replay coverage, and divergence-artifact completeness state.
+- [x] Added cross-oracle validation (`native_swift`, `native_swift_replay`, `rust_runtime`) with per-seed reports `seed-*-cross-oracle.json` in AP.4 campaign output.
+- [x] Added required AP.4 gate `scripts/run_ap4_differential_oracle.sh` with declared stable seed catalog `scripts/ap4_seed_catalog.json` (32 required seeds, fragment count `10`) and signoff artifact `target/runtime-probe/ap4-differential-oracle.md`.
+- [x] Divergence policy now requires corpus + triage + minimized artifacts for every unexplained divergence before failing the campaign.
+- [x] Promoted AP.4 differential oracle gate to required local full verification and CI (`.github/workflows/parity.yml` job `differential_oracle`, wired into `support_matrix_signoff.needs`).

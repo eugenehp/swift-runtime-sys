@@ -32,10 +32,48 @@ struct N6CampaignSummary {
     fragment_count: i32,
     mismatches: usize,
     corpus_dir: String,
+    seeds: Vec<i64>,
+    oracles: Vec<String>,
+    divergence_artifacts_complete: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct N6CrossOracleReport {
+    seed: i64,
+    native_repeat_match: bool,
+    native_vs_rust_match: bool,
+    native_result_count: i32,
+    rust_result_count: i32,
 }
 
 fn main() {
     let args: Vec<String> = env::args().collect();
+
+    if args.get(1).map(String::as_str) == Some("--seed-check") {
+        let seed = args
+            .get(2)
+            .and_then(|v| v.parse::<i64>().ok())
+            .unwrap_or(1);
+        let fragment_count = args
+            .get(3)
+            .and_then(|v| v.parse::<i32>().ok())
+            .unwrap_or(12);
+        let out_dir = args
+            .get(4)
+            .cloned()
+            .unwrap_or_else(|| "target/runtime-probe/n6-corpus".to_string());
+        let factory = build_factory();
+        let contract = RuntimeContract::new(&factory);
+        let outcome = run_seed_check(&factory, &contract, seed, fragment_count, Path::new(&out_dir))
+            .unwrap_or_else(|e| panic!("seed check failed: {e:?}"));
+        if !outcome.pass {
+            panic!(
+                "seed check failed for seed {} (artifacts_complete={})",
+                outcome.seed, outcome.divergence_artifacts_complete
+            );
+        }
+        return;
+    }
 
     if args.get(1).map(String::as_str) == Some("--campaign") {
         let runs = args
@@ -442,33 +480,19 @@ fn run_campaign(
     fs::create_dir_all(out_dir)
         .map_err(|error| RuntimeContractError::DescriptorParse(error.to_string()))?;
     let mismatches = 0usize;
+    let mut seeds = Vec::with_capacity(runs);
+    let mut divergence_artifacts_complete = true;
 
     for seed in 1..=runs {
-        let program = contract.n6_generate_program(seed as i64, fragment_count)?;
-        let native = contract.n6_execute_program(&program)?;
-        let rust = rust_execute_program(factory, contract, &program)?;
-        let diff = compare_executions(&native, &rust);
-        if !diff.is_empty() {
-            let triage = N6TriageReport {
-                seed: program.seed,
-                mismatch_count: diff.len(),
-                mismatches: diff,
-                swift_source: program.swift_source.clone(),
-            };
-            let corpus_path = out_dir.join(format!("seed-{}-corpus.json", program.seed));
-            let triage_path = out_dir.join(format!("seed-{}-triage.json", program.seed));
-            let minimized = minimize_program(program.clone(), |candidate| {
-                let native_candidate = contract.n6_execute_program(candidate)?;
-                let rust_candidate = rust_execute_program(factory, contract, candidate)?;
-                Ok(compare_executions(&native_candidate, &rust_candidate))
-            });
-            let minimized_path = out_dir.join(format!("seed-{}-minimized.json", program.seed));
-            let _ = write_json(&corpus_path, &program);
-            let _ = write_json(&triage_path, &triage);
-            let _ = write_json(&minimized_path, &minimized);
+        let outcome = run_seed_check(factory, contract, seed as i64, fragment_count, out_dir)?;
+        seeds.push(outcome.seed);
+        if !outcome.divergence_artifacts_complete {
+            divergence_artifacts_complete = false;
+        }
+        if !outcome.pass {
             return Err(RuntimeContractError::DescriptorParse(format!(
-                "differential mismatch at seed {}",
-                program.seed
+                "differential mismatch at seed {} (artifacts_complete={})",
+                outcome.seed, outcome.divergence_artifacts_complete
             )));
         }
     }
@@ -478,10 +502,106 @@ fn run_campaign(
         fragment_count,
         mismatches,
         corpus_dir: out_dir.to_string_lossy().into_owned(),
+        seeds,
+        oracles: vec![
+            "native_swift".to_string(),
+            "native_swift_replay".to_string(),
+            "rust_runtime".to_string(),
+        ],
+        divergence_artifacts_complete,
     };
     let summary_path = out_dir.join("campaign-summary.json");
     let _ = write_json(&summary_path, &summary);
     Ok(())
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct N6SeedOutcome {
+    seed: i64,
+    pass: bool,
+    divergence_artifacts_complete: bool,
+}
+
+fn run_seed_check(
+    factory: &RuntimeFactory,
+    contract: &RuntimeContract,
+    seed: i64,
+    fragment_count: i32,
+    out_dir: &Path,
+) -> Result<N6SeedOutcome, RuntimeContractError> {
+    fs::create_dir_all(out_dir)
+        .map_err(|error| RuntimeContractError::DescriptorParse(error.to_string()))?;
+    let program = contract.n6_generate_program(seed, fragment_count)?;
+    let native = contract.n6_execute_program(&program)?;
+    let native_repeat = contract.n6_execute_program(&program)?;
+    let rust = rust_execute_program(factory, contract, &program)?;
+    let native_repeat_diff = compare_executions(&native, &native_repeat);
+    let diff = compare_executions(&native, &rust);
+    let cross_oracle = N6CrossOracleReport {
+        seed: program.seed,
+        native_repeat_match: native_repeat_diff.is_empty(),
+        native_vs_rust_match: diff.is_empty(),
+        native_result_count: native.result_count,
+        rust_result_count: rust.result_count,
+    };
+    let oracle_path = out_dir.join(format!("seed-{}-cross-oracle.json", program.seed));
+    let _ = write_json(&oracle_path, &cross_oracle);
+
+    if !native_repeat_diff.is_empty() {
+        let triage = N6TriageReport {
+            seed: program.seed,
+            mismatch_count: native_repeat_diff.len(),
+            mismatches: native_repeat_diff,
+            swift_source: program.swift_source.clone(),
+        };
+        let corpus_path = out_dir.join(format!("seed-{}-corpus.json", program.seed));
+        let triage_path = out_dir.join(format!("seed-{}-triage.json", program.seed));
+        let minimized = minimize_program(program.clone(), |candidate| {
+            let native_candidate = contract.n6_execute_program(candidate)?;
+            let native_repeat_candidate = contract.n6_execute_program(candidate)?;
+            Ok(compare_executions(&native_candidate, &native_repeat_candidate))
+        });
+        let minimized_path = out_dir.join(format!("seed-{}-minimized.json", program.seed));
+        let corpus_ok = write_json(&corpus_path, &program);
+        let triage_ok = write_json(&triage_path, &triage);
+        let minimized_ok = write_json(&minimized_path, &minimized);
+        return Ok(N6SeedOutcome {
+            seed: program.seed,
+            pass: false,
+            divergence_artifacts_complete: corpus_ok && triage_ok && minimized_ok,
+        });
+    }
+
+    if !diff.is_empty() {
+        let triage = N6TriageReport {
+            seed: program.seed,
+            mismatch_count: diff.len(),
+            mismatches: diff,
+            swift_source: program.swift_source.clone(),
+        };
+        let corpus_path = out_dir.join(format!("seed-{}-corpus.json", program.seed));
+        let triage_path = out_dir.join(format!("seed-{}-triage.json", program.seed));
+        let minimized = minimize_program(program.clone(), |candidate| {
+            let native_candidate = contract.n6_execute_program(candidate)?;
+            let rust_candidate = rust_execute_program(factory, contract, candidate)?;
+            Ok(compare_executions(&native_candidate, &rust_candidate))
+        });
+        let minimized_path = out_dir.join(format!("seed-{}-minimized.json", program.seed));
+        let corpus_ok = write_json(&corpus_path, &program);
+        let triage_ok = write_json(&triage_path, &triage);
+        let minimized_ok = write_json(&minimized_path, &minimized);
+        return Ok(N6SeedOutcome {
+            seed: program.seed,
+            pass: false,
+            divergence_artifacts_complete: corpus_ok && triage_ok && minimized_ok,
+        });
+    }
+
+    Ok(N6SeedOutcome {
+        seed: program.seed,
+        pass: true,
+        divergence_artifacts_complete: true,
+    })
 }
 
 fn test_generator_is_deterministic(
