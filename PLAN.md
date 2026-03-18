@@ -555,3 +555,56 @@ These tracks target dynamic, version-adaptive runtime control beyond contract-sc
 - [x] Add runbook for degraded-mode behavior when capability probes fail.
 - [x] Exit criteria: Near-unbounded control paths are production-operable with measurable reliability and performance guarantees.
 - **Status**: COMPLETE - Added Track N.8 operational APIs in `RuntimeContract` (`n8_default_slos`, `n8_run_benchmarks`, `n8_evaluate_budget_gates`, `n8_ci_budget_alerts`, `n8_degraded_mode_runbook`, `n8_operational_report`) covering SLO definitions for dynamic invoke/metadata traversal/graph operations plus latency-throughput-memory sampling and CI gate evaluation. New probe `examples/runtime_operational_slo_probe.rs` validates SLO coverage, benchmark collection, regression alerting, degraded-mode runbook generation, and exit-criterion readiness. Added scripts `scripts/run_track_n8_tmux.sh` and `scripts/validate_n8_budget_gates.sh` for tmux execution and CI budget checks. Probe PASS (10/10), budget-gate validator PASS, with artifacts under `target/runtime-probe/` including `n8-budget-gates.json`, `n8-alerts.txt`, and `n8-degraded-mode-runbook.md`.
+
+## Absolute Parity Closure Program (Post-N.8)
+
+This section defines the work required to approach a defensible "absolute parity" claim beyond host-local 100% in frozen scope.
+
+### AP.1) Support-Matrix Exhaustiveness
+- [ ] Execute required parity gates on every declared Swift version / macOS runner / architecture cell.
+- [ ] Execute required gates in debug + release (+ sanitizer where supported).
+- [ ] Fail the claim if any declared cell is not exercised by evidence artifacts.
+
+### AP.2) Runtime Drift & Private-Surface Hardening
+- [ ] Inventory all private/unstable runtime touchpoints and classify by risk.
+- [ ] Add release-over-release drift detector against upstream Swift symbols/layout assumptions.
+- [ ] Add mandatory fallback path and kill-switch policy for each high-risk touchpoint.
+
+### AP.3) ABI Shape Closure
+- [ ] Expand and freeze full ABI lowering shape catalog (ownership/indirect/throwing/async/existential/generic combinations).
+- [ ] Add process-isolated probe cases for all high-risk shapes.
+- [ ] Promote shape coverage to required gate with per-shape pass/fail artifact output.
+
+### AP.4) Differential Oracle Expansion
+- [ ] Increase long-run differential fuzz campaign budget and seed diversity.
+- [ ] Add cross-oracle validation to reduce single-oracle blind spots.
+- [ ] Require triage artifacts and minimized corpus for every unexplained divergence.
+
+### AP.5) Reliability Soak & Flake Elimination
+- [ ] Add long-duration soak runs with rolling-window flake budget = 0 for required gates.
+- [ ] Add deterministic retry policy that marks non-determinism as failure (not pass-on-retry).
+- [ ] Track gate stability trend artifacts across CI history.
+
+### AP.6) Claim Contract & Reproducibility
+- [ ] Add machine-checkable parity-claim contract (scope, required gates, minimum budgets, allowed deviations).
+- [ ] Pin toolchain/dependency inputs for reproducible claim builds.
+- [ ] Add one-command verifier that emits signed claim evidence bundle.
+
+### AP.7) Continuous Upstream Conformance
+- [ ] Add scheduled upstream-conformance jobs against tracked Swift releases/branches.
+- [ ] Auto-open regression records with failing gate + artifact links when drift occurs.
+- [ ] Add promotion policy for new Swift release adoption only after full gate convergence.
+
+## AP Execution Log
+
+### 2026-03-18 (Wave 1, local execution)
+- [x] Executed `./scripts/run_full_plan_verification.sh`.
+- [ ] Result: FAILED (exit 138, Bus error) while launching `target/debug/examples/runtime_raw_probe` from `scripts/run_parity_matrix.sh`.
+- [x] Failure evidence captured in `target/runtime-probe/probe.log` (probe emitted parity lines through `counter teardown fresh_deinit_ok=1` before process crash).
+- [x] Executed `cargo build --example runtime_operational_slo_probe && DYLD_LIBRARY_PATH=target/runtime-probe/resilient-fixtures:. ./target/debug/examples/runtime_operational_slo_probe && ./scripts/validate_n8_budget_gates.sh`.
+- [x] Result: PASS (N.8 probe 10/10, budget gates pass).
+
+### Next AP Wave (immediate)
+- [ ] Add crash triage for `runtime_raw_probe` Bus error (faulting symbol/backtrace + minimal repro).
+- [ ] Restore `run_parity_matrix.sh` and `run_full_plan_verification.sh` to green on current host.
+- [ ] Repeat Wave 1 and attach updated evidence artifacts.
