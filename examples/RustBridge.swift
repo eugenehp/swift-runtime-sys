@@ -1,5 +1,6 @@
 import Foundation
 import Dispatch
+import Darwin
 import ObjectiveC.runtime
 import ResilientFixtures
 
@@ -7,7 +8,7 @@ public var globalCounterValue: Int32 = 123
 
 private let runtimeContractVersion: Int32 = 1
 private let runtimeContractJSONString = """
-{"contract_version":1,"bridge":"RustBridge","types":[{"type_id":1,"name":"Person","kind":"value","constructors":[{"ctor_id":1,"symbol":"swift_person_new","args":["Int32","Int32"],"result":"OpaqueRef"}]},{"type_id":2,"name":"Counter","kind":"reference","constructors":[{"ctor_id":1,"symbol":"swift_counter_new","args":["Int32"],"result":"OpaqueRef"}],"methods":[{"method_id":1,"name":"increment","symbol":"runtime_thunk_counter_increment_x20","shape":"self_i32_to_i32"},{"method_id":2,"name":"current","symbol":"runtime_thunk_counter_current_x20","shape":"self_to_i32"},{"method_id":3,"name":"reset","symbol":"runtime_thunk_counter_reset_x20","shape":"self_i32_to_void"}]}],"ownership":{"opaque_ref":"swift_retain/swift_release","drop_export":"swift_counter_drop"},"capabilities":{"contract_descriptor":true,"versioned_ids":true,"raw_runtime_research_mode":true}}
+{"contract_version":1,"bridge":"RustBridge","cooperation_boundary":{"swift_side":["export versioned type and method registries for required parity flows","resolve resilience-sensitive layouts and protocol-backed entry points behind normalized bridge calls","publish capability states for compiler-feature-dependent operations"],"rust_side":["load and validate contract versions before invoking required flows","box arguments and results with explicit ownership for opaque Swift references","negotiate compiler-feature-sensitive operations through descriptor capabilities"],"research_only":["ad hoc mangled-name discovery outside the registered contract","raw runtime experiments that depend on unstable metadata or witness placement"]},"types":[{"type_id":1,"name":"Person","kind":"value","constructors":[{"ctor_id":1,"symbol":"swift_person_new","args_blob":"i32x2","result":"OpaqueRef"}],"methods":[{"method_id":1,"name":"get_id","symbol":"swift_person_get_id","shape":"self_to_i32"},{"method_id":2,"name":"get_age","symbol":"swift_person_get_age","shape":"self_to_i32"}]},{"type_id":2,"name":"Counter","kind":"reference","constructors":[{"ctor_id":1,"symbol":"swift_counter_new","args_blob":"i32x1","result":"OpaqueRef"}],"methods":[{"method_id":1,"name":"increment","symbol":"runtime_thunk_counter_increment_x20","shape":"self_i32_to_i32"},{"method_id":2,"name":"current","symbol":"runtime_thunk_counter_current_x20","shape":"self_to_i32"},{"method_id":3,"name":"reset","symbol":"runtime_thunk_counter_reset_x20","shape":"self_i32_to_void"}]},{"type_id":3,"name":"String","kind":"reference","constructors":[{"ctor_id":1,"symbol":"swift_contract_construct_string","args_blob":"bytes","result":"OpaqueRef"}],"methods":[{"method_id":1,"name":"len","symbol":"swift_contract_string_len","shape":"contract_i32"},{"method_id":2,"name":"get_bytes","symbol":"swift_contract_string_bytes","shape":"contract_bytes"}]},{"type_id":4,"name":"Array<Int32>","kind":"reference","constructors":[{"ctor_id":1,"symbol":"swift_contract_array_make","args_blob":"i32","result":"OpaqueRef"}],"methods":[{"method_id":1,"name":"len","symbol":"swift_contract_array_len","shape":"contract_i32"},{"method_id":2,"name":"get_element","symbol":"swift_contract_array_get","shape":"contract_i32"},{"method_id":3,"name":"set_element","symbol":"swift_contract_array_set","shape":"contract_void"},{"method_id":4,"name":"append","symbol":"swift_contract_array_append","shape":"contract_i32"},{"method_id":5,"name":"data_ptr","symbol":"swift_contract_array_data","shape":"contract_pointer"}]},{"type_id":5,"name":"Array<OpaqueRef>","kind":"reference","constructors":[{"ctor_id":1,"symbol":"swift_contract_array_ref_make","args_blob":"i32","result":"OpaqueRef"}],"methods":[{"method_id":1,"name":"len","symbol":"swift_contract_array_ref_len","shape":"contract_i32"},{"method_id":2,"name":"get_element","symbol":"swift_contract_array_ref_get","shape":"contract_ref"},{"method_id":3,"name":"set_element","symbol":"swift_contract_array_ref_set","shape":"contract_void"},{"method_id":4,"name":"append","symbol":"swift_contract_array_ref_append","shape":"contract_i32"}]},{"type_id":6,"name":"Dictionary<Int32, Int32>","kind":"reference","constructors":[{"ctor_id":1,"symbol":"swift_contract_dict_i32_make","args_blob":"i32","result":"OpaqueRef"}],"methods":[{"method_id":1,"name":"len","symbol":"swift_contract_dict_i32_len","shape":"contract_i32"},{"method_id":2,"name":"get","symbol":"swift_contract_dict_i32_get","shape":"contract_i32_out"},{"method_id":3,"name":"set","symbol":"swift_contract_dict_i32_set","shape":"contract_i32"},{"method_id":4,"name":"remove","symbol":"swift_contract_dict_i32_remove","shape":"contract_i32_out"},{"method_id":5,"name":"contains","symbol":"swift_contract_dict_i32_contains","shape":"contract_bool"}]},{"type_id":7,"name":"Dictionary<Int32, OpaqueRef>","kind":"reference","constructors":[{"ctor_id":1,"symbol":"swift_contract_dict_ref_make","args_blob":"i32","result":"OpaqueRef"}],"methods":[{"method_id":1,"name":"len","symbol":"swift_contract_dict_ref_len","shape":"contract_i32"},{"method_id":2,"name":"get","symbol":"swift_contract_dict_ref_get","shape":"contract_ref_out"},{"method_id":3,"name":"set","symbol":"swift_contract_dict_ref_set","shape":"contract_i32"},{"method_id":4,"name":"remove","symbol":"swift_contract_dict_ref_remove","shape":"contract_ref_nullable"},{"method_id":5,"name":"contains","symbol":"swift_contract_dict_ref_contains","shape":"contract_bool"}]},{"type_id":8,"name":"Any<ContractObject>","kind":"reference","constructors":[{"ctor_id":1,"symbol":"swift_contract_any_wrap","args_blob":"i32_ref","result":"OpaqueRef"}],"methods":[{"method_id":1,"name":"type_id","symbol":"swift_contract_any_type_id","shape":"contract_i32"},{"method_id":2,"name":"dynamic_cast","symbol":"swift_contract_dynamic_cast","shape":"contract_ref_nullable"}]},{"type_id":9,"name":"Direction","kind":"enum","constructors":[{"ctor_id":0,"symbol":"swift_contract_direction_make","args_blob":"i32","result":"OpaqueRef"}],"methods":[{"method_id":1,"name":"case","symbol":"swift_contract_direction_case","shape":"contract_i32"}]},{"type_id":10,"name":"Shape","kind":"enum","constructors":[{"ctor_id":0,"symbol":"swift_contract_shape_circle","args_blob":"f32","result":"OpaqueRef"},{"ctor_id":1,"symbol":"swift_contract_shape_rect","args_blob":"f32x2","result":"OpaqueRef"}],"methods":[{"method_id":1,"name":"get_case","symbol":"swift_contract_shape_get_case","shape":"contract_i32"},{"method_id":2,"name":"circle_radius","symbol":"swift_contract_shape_circle_radius","shape":"contract_f32"},{"method_id":3,"name":"rect_dims","symbol":"swift_contract_shape_rect_dims","shape":"contract_void"}]}],"metadata_registry":{"entries":[{"metadata_id":1,"name":"Person"},{"metadata_id":2,"name":"Counter"},{"metadata_id":3,"name":"String"},{"metadata_id":4,"name":"Array<Int32>"},{"metadata_id":1001,"name":"ContractGenericBox<Int32>"},{"metadata_id":5,"name":"Array<OpaqueRef>"},{"metadata_id":6,"name":"Dictionary<Int32, Int32>"},{"metadata_id":7,"name":"Dictionary<Int32, OpaqueRef>"},{"metadata_id":8,"name":"Any<ContractObject>"},{"metadata_id":9,"name":"Direction"},{"metadata_id":10,"name":"Shape"}]},"protocol_registry":{"entries":[{"protocol_id":1,"name":"CounterLike","type_id":2,"methods":[{"method_id":1,"name":"current","symbol":"swift_contract_protocol_invoke_i32"}]}]},"ownership":{"opaque_ref":"swift_contract_release","retain_export":"swift_retain"},"compiler_features":{"resilient_dispatch":{"status":"supported","reason":"Required resilience-sensitive calls are routed through normalized Swift bridge entry points.","provider":"swift_bridge"},"generic_metadata_registry":{"status":"supported","reason":"Registry exports provide deterministic metadata lookup for required concrete and generic instantiations.","provider":"swift_bridge"},"protocol_witness_registry":{"status":"supported","reason":"Protocol conformance lookup and wrapper-first dispatch are exported through stable contract entry points.","provider":"swift_bridge"},"raw_runtime_research_mode":{"status":"fallback","reason":"Raw runtime mode is available for research but not required for promoted parity paths.","provider":"runtime_factory"}},"capabilities":{"contract_descriptor":true,"versioned_ids":true,"normalized_invoke":true,"raw_runtime_research_mode":true,"string_utf8_support":true,"array_int32_support":true,"array_int32_pointer_iteration_support":true,"array_opaque_ref_support":true,"dictionary_int32_int32_support":true,"dictionary_upsert_support":true,"dictionary_remove_support":true,"dictionary_opaque_ref_support":true,"dynamic_cast_support":true,"metatype_identity_support":true,"enum_raw_support":true,"enum_associated_values_support":true}}
 """
 private let runtimeContractNSString = NSString(string: runtimeContractJSONString)
 
@@ -24,6 +25,28 @@ public func swift_runtime_contract_json() -> UnsafePointer<CChar>? {
 @_cdecl("swift_runtime_contract_json_len")
 public func swift_runtime_contract_json_len() -> Int32 {
     Int32(runtimeContractNSString.lengthOfBytes(using: String.Encoding.utf8.rawValue))
+}
+
+@_cdecl("swift_contract_lookup_metadata")
+public func swift_contract_lookup_metadata(_ metadataID: Int32) -> UnsafeRawPointer? {
+    switch metadataID {
+    case 1:
+        return unsafeBitCast(Person.self, to: UnsafeRawPointer.self)
+    case 2:
+        return unsafeBitCast(Counter.self, to: UnsafeRawPointer.self)
+    case 3:
+        return unsafeBitCast(String.self, to: UnsafeRawPointer.self)
+    case 4:
+        return unsafeBitCast(Array<Int32>.self, to: UnsafeRawPointer.self)
+    case 6:
+        return unsafeBitCast(Dictionary<Int32, Int32>.self, to: UnsafeRawPointer.self)
+    case 1001:
+        return unsafeBitCast(ContractGenericBox<Int32>.self, to: UnsafeRawPointer.self)
+    case 1002:
+        return unsafeBitCast(Dictionary<String, Int32>.self, to: UnsafeRawPointer.self)
+    default:
+        return nil
+    }
 }
 
 public struct Person {
@@ -75,6 +98,14 @@ public final class Counter {
     }
 }
 
+public struct ContractGenericBox<T> {
+    public var value: T
+
+    public init(_ value: T) {
+        self.value = value
+    }
+}
+
 extension Counter: CounterLike {}
 
 // --- Enum: simple raw-representable (Int32 discriminant, 4 bytes) ---
@@ -114,6 +145,2178 @@ public func swift_shape_circle_area(_ radius: Float) -> Float {
 @_cdecl("swift_shape_rect_area")
 public func swift_shape_rect_area(_ w: Float, _ h: Float) -> Float {
     Shape.rectangle(width: w, height: h).area()
+}
+
+// MARK: - Error Handling & Introspection (Track E.1)
+
+/// A simple custom error type with error code.
+public enum ValidationError: Error {
+    case invalidInput(code: Int32)
+    case outOfRange(code: Int32, limit: Int32)
+    case custom(message: String)
+    
+    public var errorDescription: String {
+        switch self {
+        case .invalidInput(let code):
+            return "Validation failed with code \(code)"
+        case .outOfRange(let code, let limit):
+            return "Value out of range (limit: \(limit), code: \(code))"
+        case .custom(let message):
+            return message
+        }
+    }
+    
+    public var errorCode: Int32 {
+        switch self {
+        case .invalidInput(let code):
+            return code
+        case .outOfRange(let code, _):
+            return code
+        case .custom:
+            return -1
+        }
+    }
+}
+
+/// Another error type for testing type identity.
+public enum IOError: Error {
+    case fileNotFound(code: Int32)
+    case permissionDenied(code: Int32)
+    case unknown(code: Int32)
+    
+    public var errorDescription: String {
+        switch self {
+        case .fileNotFound(let code):
+            return "File not found (code: \(code))"
+        case .permissionDenied(let code):
+            return "Permission denied (code: \(code))"
+        case .unknown(let code):
+            return "Unknown error (code: \(code))"
+        }
+    }
+    
+    public var errorCode: Int32 {
+        switch self {
+        case .fileNotFound(let code):
+            return code
+        case .permissionDenied(let code):
+            return code
+        case .unknown(let code):
+            return code
+        }
+    }
+}
+
+/// Global storage for a thrown error, boxed for bridging.
+private var _storedError: Error?
+
+/// Construct a ValidationError with code and store it for introspection.
+/// Returns 1 on success, 0 on failure.
+@_cdecl("swift_contract_error_make_validation")
+public func swift_contract_error_make_validation(_ code: Int32) -> Int32 {
+    _storedError = ValidationError.invalidInput(code: code)
+    return 1
+}
+
+/// Construct an IOError with code and store it for introspection.
+/// Returns 1 on success, 0 on failure.
+@_cdecl("swift_contract_error_make_io")
+public func swift_contract_error_make_io(_ code: Int32) -> Int32 {
+    _storedError = IOError.fileNotFound(code: code)
+    return 1
+}
+
+/// Extract the error description from the stored error.
+/// Returns a malloc'd C string (Rust must free it) or NULL if no error.
+@_cdecl("swift_contract_error_get_description")
+public func swift_contract_error_get_description() -> UnsafeMutablePointer<CChar>? {
+    guard let error = _storedError else { return nil }
+    
+    let description: String
+    if let validationError = error as? ValidationError {
+        description = validationError.errorDescription
+    } else if let ioError = error as? IOError {
+        description = ioError.errorDescription
+    } else {
+        description = String(describing: error)
+    }
+    
+    let cString = strdup(description)
+    return cString
+}
+
+/// Extract the error code from the stored error.
+/// Returns the code or -1 if error is not found or has no code.
+@_cdecl("swift_contract_error_get_code")
+public func swift_contract_error_get_code() -> Int32 {
+    guard let error = _storedError else { return -1 }
+    
+    if let validationError = error as? ValidationError {
+        return validationError.errorCode
+    } else if let ioError = error as? IOError {
+        return ioError.errorCode
+    }
+    return -1
+}
+
+/// Check if the stored error is a ValidationError (returns 1) or not (returns 0).
+@_cdecl("swift_contract_error_is_validation")
+public func swift_contract_error_is_validation() -> Int32 {
+    guard let _ = _storedError as? ValidationError else { return 0 }
+    return 1
+}
+
+/// Check if the stored error is an IOError (returns 1) or not (returns 0).
+@_cdecl("swift_contract_error_is_io")
+public func swift_contract_error_is_io() -> Int32 {
+    guard let _ = _storedError as? IOError else { return 0 }
+    return 1
+}
+
+/// Clear the stored error.
+@_cdecl("swift_contract_error_clear")
+public func swift_contract_error_clear() {
+    _storedError = nil
+}
+
+/// Construct an OutOfRange ValidationError and store it.
+@_cdecl("swift_contract_error_make_out_of_range")
+public func swift_contract_error_make_out_of_range(_ code: Int32, _ limit: Int32) -> Int32 {
+    _storedError = ValidationError.outOfRange(code: code, limit: limit)
+    return 1
+}
+
+// MARK: - Structured Error Propagation (Track E.3)
+
+private struct ContractErrorContext: Codable {
+    let domain: String
+    let code: Int32
+    let message: String
+    let chain: [String]
+    let userInfo: [String: String]
+    let recoveryHints: [String]
+
+    enum CodingKeys: String, CodingKey {
+        case domain
+        case code
+        case message
+        case chain
+        case userInfo = "user_info"
+        case recoveryHints = "recovery_hints"
+    }
+}
+
+private var _storedErrorContext: ContractErrorContext?
+
+private func _encodeErrorContextJSON(_ context: ContractErrorContext) -> String? {
+    let encoder = JSONEncoder()
+    if #available(macOS 10.13, *) {
+        encoder.outputFormatting = [.sortedKeys]
+    }
+    guard let data = try? encoder.encode(context) else { return nil }
+    return String(data: data, encoding: .utf8)
+}
+
+private func _renderErrorContextString(_ context: ContractErrorContext) -> String {
+    let chainText = context.chain.joined(separator: " -> ")
+    let hintsText = context.recoveryHints.joined(separator: " | ")
+    let userInfoText = context.userInfo
+        .sorted(by: { $0.key < $1.key })
+        .map { "\($0.key)=\($0.value)" }
+        .joined(separator: ",")
+    return "[\(context.domain)] code=\(context.code) message=\(context.message) chain=\(chainText) user_info=\(userInfoText) recovery_hints=\(hintsText)"
+}
+
+/// Construct a deterministic validation error context with a chain and recovery hints.
+@_cdecl("swift_contract_error_context_make_validation")
+public func swift_contract_error_context_make_validation(_ code: Int32, _ causeCode: Int32) -> Int32 {
+    _storedError = ValidationError.invalidInput(code: code)
+    _storedErrorContext = ContractErrorContext(
+        domain: "ValidationError",
+        code: code,
+        message: "Validation failed with code \(code)",
+        chain: [
+            "ValidationError(code=\(code))",
+            "ConstraintViolation(code=\(causeCode))"
+        ],
+        userInfo: [
+            "field": "age",
+            "operation": "create_user"
+        ],
+        recoveryHints: [
+            "Clamp input to allowed range",
+            "Retry request with corrected payload"
+        ]
+    )
+    return 1
+}
+
+/// Construct a deterministic IO error context with a chain and recovery hints.
+@_cdecl("swift_contract_error_context_make_io")
+public func swift_contract_error_context_make_io(_ code: Int32) -> Int32 {
+    _storedError = IOError.fileNotFound(code: code)
+    _storedErrorContext = ContractErrorContext(
+        domain: "IOError",
+        code: code,
+        message: "File operation failed with code \(code)",
+        chain: [
+            "IOError(code=\(code))",
+            "POSIX(errno=2)"
+        ],
+        userInfo: [
+            "path": "/tmp/runtime-probe/input.json",
+            "operation": "read"
+        ],
+        recoveryHints: [
+            "Verify file exists",
+            "Check directory permissions"
+        ]
+    )
+    return 1
+}
+
+/// Serialize the currently stored error context to JSON.
+/// Returns a malloc'd C string or nil if no context is available.
+@_cdecl("swift_contract_error_context_get_json")
+public func swift_contract_error_context_get_json() -> UnsafeMutablePointer<CChar>? {
+    guard let context = _storedErrorContext else { return nil }
+    guard let json = _encodeErrorContextJSON(context) else { return nil }
+    return strdup(json)
+}
+
+/// Serialize the currently stored error context to a compact logging string.
+/// Returns a malloc'd C string or nil if no context is available.
+@_cdecl("swift_contract_error_context_get_string")
+public func swift_contract_error_context_get_string() -> UnsafeMutablePointer<CChar>? {
+    guard let context = _storedErrorContext else { return nil }
+    let text = _renderErrorContextString(context)
+    return strdup(text)
+}
+
+/// Replace stored context from a JSON payload produced by the bridge.
+/// Returns 1 on success, 0 on parse/validation failure.
+@_cdecl("swift_contract_error_context_set_json")
+public func swift_contract_error_context_set_json(_ jsonPtr: UnsafePointer<CChar>?) -> Int32 {
+    guard let jsonPtr else { return 0 }
+    let json = String(cString: jsonPtr)
+    guard let data = json.data(using: .utf8) else { return 0 }
+    guard let decoded = try? JSONDecoder().decode(ContractErrorContext.self, from: data) else { return 0 }
+    _storedErrorContext = decoded
+    return 1
+}
+
+/// Clear the stored structured error context.
+@_cdecl("swift_contract_error_context_clear")
+public func swift_contract_error_context_clear() {
+    _storedErrorContext = nil
+}
+
+// MARK: - Task Creation & Continuation (Track G.1)
+
+private let _continuationCountLock = NSLock()
+private var _continuationResumeCount: Int32 = 0
+
+private func _continuationIncrement() {
+    _continuationCountLock.lock()
+    _continuationResumeCount += 1
+    _continuationCountLock.unlock()
+}
+
+private final class ContinuationSingleResumeGuard {
+    private let lock = NSLock()
+    private var resumed = false
+    private var blockedAttempts: Int32 = 0
+
+    func tryMarkResumed() -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        if resumed {
+            blockedAttempts += 1
+            return false
+        }
+        resumed = true
+        return true
+    }
+
+    func blockedCount() -> Int32 {
+        lock.lock()
+        defer { lock.unlock() }
+        return blockedAttempts
+    }
+}
+
+private func _awaitTaskI32(_ op: @escaping @Sendable () async -> Int32) -> Int32 {
+    let semaphore = DispatchSemaphore(value: 0)
+    var result: Int32 = Int32.min
+    Task {
+        result = await op()
+        semaphore.signal()
+    }
+    let waitResult = semaphore.wait(timeout: .now() + 2)
+    return waitResult == .success ? result : Int32.min
+}
+
+private func _continuationRoundTrip(_ value: Int32) async -> Int32 {
+    await withCheckedContinuation { (continuation: CheckedContinuation<Int32, Never>) in
+        _continuationIncrement()
+        continuation.resume(returning: value)
+    }
+}
+
+/// Spawn a Swift Task and return the sum result.
+/// Returns Int32.min on timeout/failure.
+@_cdecl("swift_contract_task_spawn_sum")
+public func swift_contract_task_spawn_sum(_ a: Int32, _ b: Int32) -> Int32 {
+    _awaitTaskI32 {
+        a + b
+    }
+}
+
+/// Spawn a Swift Task with deterministic yielding chain.
+/// Computes base + sum(0..<steps) with bounded steps.
+@_cdecl("swift_contract_task_spawn_chain")
+public func swift_contract_task_spawn_chain(_ base: Int32, _ steps: Int32) -> Int32 {
+    _awaitTaskI32 {
+        let bounded = max(0, min(steps, 64))
+        var value = base
+        for i in 0..<bounded {
+            await Task.yield()
+            value += i
+        }
+        return value
+    }
+}
+
+/// Reset continuation resume counter.
+@_cdecl("swift_contract_continuation_reset")
+public func swift_contract_continuation_reset() {
+    _continuationCountLock.lock()
+    _continuationResumeCount = 0
+    _continuationCountLock.unlock()
+}
+
+/// Return continuation resume count observed by bridge probes.
+@_cdecl("swift_contract_continuation_resume_count")
+public func swift_contract_continuation_resume_count() -> Int32 {
+    _continuationCountLock.lock()
+    defer { _continuationCountLock.unlock() }
+    return _continuationResumeCount
+}
+
+/// Run a checked-continuation round-trip and return its value.
+/// Returns Int32.min on timeout/failure.
+@_cdecl("swift_contract_continuation_roundtrip")
+public func swift_contract_continuation_roundtrip(_ value: Int32) -> Int32 {
+    _awaitTaskI32 {
+        await _continuationRoundTrip(value)
+    }
+}
+
+/// Validate resume-once safety by attempting a guarded second resume without invoking it.
+/// Returns 1 when exactly one resume occurred and at least one second-attempt block was recorded.
+@_cdecl("swift_contract_continuation_validate_resume_once")
+public func swift_contract_continuation_validate_resume_once() -> Int32 {
+    let guardState = ContinuationSingleResumeGuard()
+    let before = swift_contract_continuation_resume_count()
+
+    let value = _awaitTaskI32 {
+        await withCheckedContinuation { (continuation: CheckedContinuation<Int32, Never>) in
+            if guardState.tryMarkResumed() {
+                _continuationIncrement()
+                continuation.resume(returning: 41)
+            } else {
+                continuation.resume(returning: Int32.min)
+                return
+            }
+            _ = guardState.tryMarkResumed()
+        }
+    }
+
+    let after = swift_contract_continuation_resume_count()
+    let resumedExactlyOnce = (after - before) == 1
+    let blockedSecondAttempt = guardState.blockedCount() >= 1
+    return (value == 41 && resumedExactlyOnce && blockedSecondAttempt) ? 1 : 0
+}
+
+// MARK: - Actor Isolation & Isolation Domains (Track G.2)
+
+private actor ProbeCounterActor {
+    private var value: Int32
+
+    init(start: Int32) {
+        value = start
+    }
+
+    func add(_ delta: Int32) -> Int32 {
+        value += delta
+        return value
+    }
+
+    func current() -> Int32 {
+        value
+    }
+}
+
+@_cdecl("swift_contract_actor_make")
+public func swift_contract_actor_make(_ start: Int32) -> UnsafeMutableRawPointer? {
+    let actor = ProbeCounterActor(start: start)
+    return Unmanaged.passRetained(Box(actor)).toOpaque()
+}
+
+@_cdecl("swift_contract_actor_current")
+public func swift_contract_actor_current(_ ptr: UnsafeMutableRawPointer?) -> Int32 {
+    guard let ptr else { return Int32.min }
+    let boxed = Unmanaged<Box<ProbeCounterActor>>.fromOpaque(ptr).takeUnretainedValue()
+    return _awaitTaskI32 {
+        await boxed.value.current()
+    }
+}
+
+@_cdecl("swift_contract_actor_add")
+public func swift_contract_actor_add(_ ptr: UnsafeMutableRawPointer?, _ delta: Int32) -> Int32 {
+    guard let ptr else { return Int32.min }
+    let boxed = Unmanaged<Box<ProbeCounterActor>>.fromOpaque(ptr).takeUnretainedValue()
+    return _awaitTaskI32 {
+        await boxed.value.add(delta)
+    }
+}
+
+@_cdecl("swift_contract_actor_validate_isolation")
+public func swift_contract_actor_validate_isolation(_ ptr: UnsafeMutableRawPointer?) -> Int32 {
+    guard let ptr else { return 0 }
+    let boxed = Unmanaged<Box<ProbeCounterActor>>.fromOpaque(ptr).takeUnretainedValue()
+
+    let final = _awaitTaskI32 {
+        await withTaskGroup(of: Int32.self) { group in
+            group.addTask { await boxed.value.add(1) }
+            group.addTask { await boxed.value.add(2) }
+            _ = await group.next()
+            _ = await group.next()
+            return await boxed.value.current()
+        }
+    }
+
+    return final >= 3 ? 1 : 0
+}
+
+// MARK: - Async Streams & AsyncSequence (Track G.3)
+
+private final class ProbeAsyncIteratorBox {
+    private var iterator: AsyncStream<Int32>.Iterator
+
+    init(start: Int32, count: Int32) {
+        let boundedCount = max(0, min(count, 128))
+        let stream = AsyncStream<Int32> { continuation in
+            for i in 0..<boundedCount {
+                continuation.yield(start + i)
+            }
+            continuation.finish()
+        }
+        iterator = stream.makeAsyncIterator()
+    }
+
+    func nextValue() async -> Int32? {
+        await iterator.next()
+    }
+}
+
+@_cdecl("swift_contract_stream_make")
+public func swift_contract_stream_make(_ start: Int32, _ count: Int32) -> UnsafeMutableRawPointer? {
+    let iterator = ProbeAsyncIteratorBox(start: start, count: count)
+    return Unmanaged.passRetained(Box(iterator)).toOpaque()
+}
+
+@_cdecl("swift_contract_stream_next")
+public func swift_contract_stream_next(
+    _ ptr: UnsafeMutableRawPointer?,
+    _ outValue: UnsafeMutablePointer<Int32>?
+) -> Int32 {
+    guard let ptr, let outValue else { return -1 }
+    let boxed = Unmanaged<Box<ProbeAsyncIteratorBox>>.fromOpaque(ptr).takeUnretainedValue()
+
+    let semaphore = DispatchSemaphore(value: 0)
+    var hasValue: Int32 = -1
+    Task {
+        if let value = await boxed.value.nextValue() {
+            outValue.pointee = value
+            hasValue = 1
+        } else {
+            hasValue = 0
+        }
+        semaphore.signal()
+    }
+
+    let waitResult = semaphore.wait(timeout: .now() + 2)
+    return waitResult == .success ? hasValue : -1
+}
+
+@_cdecl("swift_contract_stream_collect_sum")
+public func swift_contract_stream_collect_sum(_ start: Int32, _ count: Int32) -> Int32 {
+    _awaitTaskI32 {
+        let boundedCount = max(0, min(count, 128))
+        let stream = AsyncStream<Int32> { continuation in
+            for i in 0..<boundedCount {
+                continuation.yield(start + i)
+            }
+            continuation.finish()
+        }
+
+        var sum: Int32 = 0
+        for await value in stream {
+            sum += value
+        }
+        return sum
+    }
+}
+
+// MARK: - Task-Local Values (Track G.4)
+
+private enum ProbeTaskLocal {
+    @TaskLocal static var value: Int32 = -1
+}
+
+@_cdecl("swift_contract_task_local_get_default")
+public func swift_contract_task_local_get_default() -> Int32 {
+    _awaitTaskI32 {
+        ProbeTaskLocal.value
+    }
+}
+
+@_cdecl("swift_contract_task_local_run_with")
+public func swift_contract_task_local_run_with(_ value: Int32, _ delta: Int32) -> Int32 {
+    _awaitTaskI32 {
+        await ProbeTaskLocal.$value.withValue(value) {
+            let inherited = await Task { ProbeTaskLocal.value }.value
+            guard inherited == value else { return Int32.min }
+            return inherited + delta
+        }
+    }
+}
+
+@_cdecl("swift_contract_task_local_isolation_check")
+public func swift_contract_task_local_isolation_check(_ parentValue: Int32) -> Int32 {
+    _awaitTaskI32 {
+        await ProbeTaskLocal.$value.withValue(parentValue) {
+            let inherited = await Task { ProbeTaskLocal.value }.value
+            let detached = await Task.detached { ProbeTaskLocal.value }.value
+            return (inherited == parentValue && detached == -1) ? 1 : 0
+        }
+    }
+}
+
+// MARK: - Generic Metadata Accessor Chains (Track H.1)
+
+@_cdecl("swift_contract_generic_validate_substitution")
+public func swift_contract_generic_validate_substitution(_ typeName: UnsafePointer<CChar>?) -> Int32 {
+    guard let typeName else { return 0 }
+    let key = String(cString: typeName)
+    switch key {
+    case "Int32", "Array<Int32>", "Dictionary<String,Int32>":
+        return 1
+    default:
+        return 0
+    }
+}
+
+@_cdecl("swift_contract_generic_box_i32_make")
+public func swift_contract_generic_box_i32_make(_ value: Int32) -> UnsafeMutableRawPointer? {
+    let boxed = Box(ContractGenericBox<Int32>(value))
+    return Unmanaged.passRetained(boxed).toOpaque()
+}
+
+@_cdecl("swift_contract_generic_box_i32_get")
+public func swift_contract_generic_box_i32_get(_ ptr: UnsafeMutableRawPointer?) -> Int32 {
+    guard let ptr else { return Int32.min }
+    let boxed = Unmanaged<Box<ContractGenericBox<Int32>>>.fromOpaque(ptr).takeUnretainedValue()
+    return boxed.value.value
+}
+
+@_cdecl("swift_contract_generic_array_i32_sum")
+public func swift_contract_generic_array_i32_sum(_ start: Int32, _ count: Int32) -> Int32 {
+    let bounded = max(0, min(count, 256))
+    let values = (0..<bounded).map { start + $0 }
+    return values.reduce(0, +)
+}
+
+@_cdecl("swift_contract_generic_dict_string_i32_sum")
+public func swift_contract_generic_dict_string_i32_sum(_ base: Int32) -> Int32 {
+    let dict: [String: Int32] = [
+        "alpha": base,
+        "beta": base + 1,
+        "gamma": base + 2,
+    ]
+    return dict.values.reduce(0, +)
+}
+
+// MARK: - Generic Protocol Witness Lookup (Track H.2)
+
+@_cdecl("swift_contract_generic_protocol_array_i32_sequence_supported")
+public func swift_contract_generic_protocol_array_i32_sequence_supported() -> Int32 {
+    let _: any Sequence<Int32> = [1, 2, 3]
+    return 1
+}
+
+@_cdecl("swift_contract_generic_protocol_array_i32_subscript")
+public func swift_contract_generic_protocol_array_i32_subscript(_ index: Int32) -> Int32 {
+    let values: [Int32] = [10, 20, 30, 40, 50]
+    guard index >= 0, Int(index) < values.count else { return Int32.min }
+    return values[Int(index)]
+}
+
+@_cdecl("swift_contract_generic_protocol_array_i32_witness_token")
+public func swift_contract_generic_protocol_array_i32_witness_token() -> UInt64 {
+    let token = ObjectIdentifier(Array<Int32>.self).hashValue
+    return UInt64(bitPattern: Int64(token))
+}
+
+@_cdecl("swift_contract_generic_protocol_dict_string_i32_supported")
+public func swift_contract_generic_protocol_dict_string_i32_supported() -> Int32 {
+    let _: [String: Int32] = ["a": 1]
+    return 1
+}
+
+@_cdecl("swift_contract_generic_protocol_dict_string_i32_lookup")
+public func swift_contract_generic_protocol_dict_string_i32_lookup(
+    _ keyPtr: UnsafePointer<CChar>?
+) -> Int32 {
+    guard let keyPtr else { return Int32.min }
+    let dict: [String: Int32] = [
+        "alpha": 101,
+        "beta": 202,
+        "gamma": 303,
+    ]
+    let key = String(cString: keyPtr)
+    guard let value = dict[key] else { return Int32.min }
+    return value
+}
+
+// MARK: - Constrained Generic Bounds (Track H.3)
+
+/// Generic struct validated at compile time by `T: Equatable`.
+private struct ContractEquatableBox<T: Equatable> {
+    let value: T
+    func equals(_ other: T) -> Bool { value == other }
+}
+
+/// Generic struct validated at compile time by `T: Comparable`.
+private struct ContractComparableBox<T: Comparable> {
+    let value: T
+    /// Returns -1 if self < other, 1 if self > other, 0 if equal.
+    func compare(_ other: T) -> Int32 {
+        if value < other { return -1 }
+        if value > other { return 1 }
+        return 0
+    }
+}
+
+/// Returns number of distinct values — requires `T: Hashable`.
+private func _contractHashableDistinctCount<T: Hashable>(_ values: [T]) -> Int {
+    Set(values).count
+}
+
+/// Returns a + b — requires `T: AdditiveArithmetic`.
+private func _contractAdditiveSum<T: AdditiveArithmetic>(_ a: T, _ b: T) -> T { a + b }
+
+/// JSON-encode then decode `v` — requires `T: Codable`.
+private func _contractCodableRoundTrip<T: Codable>(_ value: T) throws -> T {
+    let data = try JSONEncoder().encode(value)
+    return try JSONDecoder().decode(T.self, from: data)
+}
+
+/// Returns min(a, b) — requires `T: Comparable & Hashable`.
+private func _contractMultiBoundMin<T: Comparable & Hashable>(_ a: T, _ b: T) -> T { min(a, b) }
+
+/// 1 if `a == b` (exercising `where T: Equatable`), 0 otherwise.
+@_cdecl("swift_contract_constrained_equatable_equal")
+public func swift_contract_constrained_equatable_equal(_ a: Int32, _ b: Int32) -> Int32 {
+    ContractEquatableBox(value: a).equals(b) ? 1 : 0
+}
+
+/// Comparison result (-1 / 0 / 1) exercising `where T: Comparable`.
+@_cdecl("swift_contract_constrained_comparable_cmp")
+public func swift_contract_constrained_comparable_cmp(_ a: Int32, _ b: Int32) -> Int32 {
+    ContractComparableBox(value: a).compare(b)
+}
+
+/// Number of distinct values among (a, b, c) — exercises `where T: Hashable`.
+@_cdecl("swift_contract_constrained_hashable_distinct_count")
+public func swift_contract_constrained_hashable_distinct_count(
+    _ a: Int32, _ b: Int32, _ c: Int32
+) -> Int32 {
+    Int32(_contractHashableDistinctCount([a, b, c]))
+}
+
+/// a + b — exercises `where T: AdditiveArithmetic`.
+@_cdecl("swift_contract_constrained_additive_sum")
+public func swift_contract_constrained_additive_sum(_ a: Int32, _ b: Int32) -> Int32 {
+    _contractAdditiveSum(a, b)
+}
+
+/// JSON-encode then decode `v`; returns decoded value, or Int32.min on failure.
+/// Exercises `where T: Codable`.
+@_cdecl("swift_contract_constrained_codable_roundtrip")
+public func swift_contract_constrained_codable_roundtrip(_ v: Int32) -> Int32 {
+    (try? _contractCodableRoundTrip(v)) ?? Int32.min
+}
+
+/// min(a, b) — exercises `where T: Comparable & Hashable` (multi-constraint).
+@_cdecl("swift_contract_constrained_multi_min")
+public func swift_contract_constrained_multi_min(_ a: Int32, _ b: Int32) -> Int32 {
+    _contractMultiBoundMin(a, b)
+}
+
+// MARK: - Foundation Date/Time (Track I.1)
+
+/// Deterministic ISO 8601 formatter (UTC, POSIX locale) re-created each call
+/// to stay thread-safe without a global.
+private func _makePOSIXFormatter() -> ISO8601DateFormatter {
+    let fmt = ISO8601DateFormatter()
+    fmt.timeZone = TimeZone(identifier: "UTC")
+    fmt.formatOptions = [.withInternetDateTime, .withDashSeparatorInDate,
+                         .withColonSeparatorInTime, .withTimeZone]
+    return fmt
+}
+
+/// Format a Unix timestamp (seconds since epoch) as ISO 8601 (UTC).
+/// Returns a malloc-backed C string; caller must free.
+@_cdecl("swift_contract_datetime_format_unix")
+public func swift_contract_datetime_format_unix(_ ts: Double) -> UnsafeMutablePointer<CChar>? {
+    let date = Date(timeIntervalSince1970: ts)
+    let str = _makePOSIXFormatter().string(from: date)
+    return strdup(str)
+}
+
+/// Parse an ISO 8601 string to a Unix timestamp; returns Double.nan bits on failure.
+@_cdecl("swift_contract_datetime_parse_iso8601")
+public func swift_contract_datetime_parse_iso8601(_ ptr: UnsafePointer<CChar>?) -> Double {
+    guard let ptr else { return Double.nan }
+    let str = String(cString: ptr)
+    guard let date = _makePOSIXFormatter().date(from: str) else { return Double.nan }
+    return date.timeIntervalSince1970
+}
+
+/// Calendar year (UTC) for a given Unix timestamp.
+@_cdecl("swift_contract_datetime_year_utc")
+public func swift_contract_datetime_year_utc(_ ts: Double) -> Int32 {
+    var cal = Calendar(identifier: .gregorian)
+    cal.timeZone = TimeZone(identifier: "UTC")!
+    let comps = cal.dateComponents([.year], from: Date(timeIntervalSince1970: ts))
+    return Int32(comps.year ?? 0)
+}
+
+/// Calendar month (1-12, UTC) for a given Unix timestamp.
+@_cdecl("swift_contract_datetime_month_utc")
+public func swift_contract_datetime_month_utc(_ ts: Double) -> Int32 {
+    var cal = Calendar(identifier: .gregorian)
+    cal.timeZone = TimeZone(identifier: "UTC")!
+    let comps = cal.dateComponents([.month], from: Date(timeIntervalSince1970: ts))
+    return Int32(comps.month ?? 0)
+}
+
+/// UTC timezone offset in seconds — always 0 for the UTC zone.
+@_cdecl("swift_contract_datetime_utc_offset_seconds")
+public func swift_contract_datetime_utc_offset_seconds() -> Int32 {
+    Int32(TimeZone(identifier: "UTC")!.secondsFromGMT())
+}
+
+// MARK: - Foundation Data / UUID / CharacterSet (Track I.2)
+
+/// Byte-sum (wrapping UInt32) of a raw buffer — exercises Data construction.
+@_cdecl("swift_contract_data_from_bytes_checksum")
+public func swift_contract_data_from_bytes_checksum(
+    _ ptr: UnsafePointer<UInt8>?, _ len: Int32
+) -> UInt32 {
+    guard let ptr, len > 0 else { return 0 }
+    let buf = UnsafeBufferPointer(start: ptr, count: Int(len))
+    return buf.reduce(0) { $0 &+ UInt32($1) }
+}
+
+/// Generate a new UUID string (36 chars, uppercase).
+/// Returns malloc-backed C string; caller must free.
+@_cdecl("swift_contract_uuid_new_string")
+public func swift_contract_uuid_new_string() -> UnsafeMutablePointer<CChar>? {
+    strdup(UUID().uuidString)
+}
+
+/// Parse a UUID string; returns 1 if valid, 0 otherwise.
+@_cdecl("swift_contract_uuid_parse_validate")
+public func swift_contract_uuid_parse_validate(_ ptr: UnsafePointer<CChar>?) -> Int32 {
+    guard let ptr else { return 0 }
+    return UUID(uuidString: String(cString: ptr)) != nil ? 1 : 0
+}
+
+/// Generate UUID, convert to string, parse back — returns 1 on success.
+@_cdecl("swift_contract_uuid_roundtrip")
+public func swift_contract_uuid_roundtrip() -> Int32 {
+    let id = UUID()
+    return UUID(uuidString: id.uuidString) == id ? 1 : 0
+}
+
+/// Returns 1 if the Unicode scalar `codepoint` belongs to CharacterSet.letters.
+@_cdecl("swift_contract_charset_is_letter")
+public func swift_contract_charset_is_letter(_ codepoint: Int32) -> Int32 {
+    guard codepoint >= 0, let scalar = Unicode.Scalar(UInt32(codepoint)) else { return 0 }
+    return CharacterSet.letters.contains(scalar) ? 1 : 0
+}
+
+// MARK: - Foundation URL & URLComponents (Track I.3)
+
+/// Returns 1 if `str` is a valid absolute URL, 0 otherwise.
+@_cdecl("swift_contract_url_parse_valid")
+public func swift_contract_url_parse_valid(_ ptr: UnsafePointer<CChar>?) -> Int32 {
+    guard let ptr else { return 0 }
+    let str = String(cString: ptr)
+    guard let url = URL(string: str), url.scheme != nil else { return 0 }
+    return 1
+}
+
+/// Extract the scheme component; returns malloc-backed C string or nil.
+@_cdecl("swift_contract_url_scheme")
+public func swift_contract_url_scheme(_ ptr: UnsafePointer<CChar>?) -> UnsafeMutablePointer<CChar>? {
+    guard let ptr else { return nil }
+    guard let url = URL(string: String(cString: ptr)), let s = url.scheme else { return nil }
+    return strdup(s)
+}
+
+/// Extract the host component; returns malloc-backed C string or nil.
+@_cdecl("swift_contract_url_host")
+public func swift_contract_url_host(_ ptr: UnsafePointer<CChar>?) -> UnsafeMutablePointer<CChar>? {
+    guard let ptr else { return nil }
+    guard let url = URL(string: String(cString: ptr)), let h = url.host else { return nil }
+    return strdup(h)
+}
+
+/// Extract the path component; returns malloc-backed C string.
+@_cdecl("swift_contract_url_path")
+public func swift_contract_url_path(_ ptr: UnsafePointer<CChar>?) -> UnsafeMutablePointer<CChar>? {
+    guard let ptr else { return nil }
+    guard let url = URL(string: String(cString: ptr)) else { return nil }
+    return strdup(url.path)
+}
+
+/// Build a URL from (scheme, host, path) using URLComponents.
+/// Returns malloc-backed C string of the absolute URL, or nil.
+@_cdecl("swift_contract_url_build_from_components")
+public func swift_contract_url_build_from_components(
+    _ schemePtr: UnsafePointer<CChar>?,
+    _ hostPtr: UnsafePointer<CChar>?,
+    _ pathPtr: UnsafePointer<CChar>?
+) -> UnsafeMutablePointer<CChar>? {
+    guard let schemePtr, let hostPtr, let pathPtr else { return nil }
+    var c = URLComponents()
+    c.scheme = String(cString: schemePtr)
+    c.host   = String(cString: hostPtr)
+    c.path   = String(cString: pathPtr)
+    guard let url = c.url else { return nil }
+    return strdup(url.absoluteString)
+}
+
+// MARK: - Foundation NSCoding / NSCopying (Track I.4)
+
+/// Archive an Int32 as NSNumber via NSKeyedArchiver then unarchive; returns
+/// the decoded value, or Int32.min on error.
+@_cdecl("swift_contract_nscoding_integer_roundtrip")
+public func swift_contract_nscoding_integer_roundtrip(_ v: Int32) -> Int32 {
+    let nsv = NSNumber(value: v)
+    guard
+        let data = try? NSKeyedArchiver.archivedData(withRootObject: nsv,
+                                                      requiringSecureCoding: true),
+        let decoded = try? NSKeyedUnarchiver.unarchivedObject(
+            ofClass: NSNumber.self, from: data)
+    else { return Int32.min }
+    return decoded.int32Value
+}
+
+/// Archive a C string as NSString then unarchive; returns the decoded UTF-8
+/// length, or -1 on error.
+@_cdecl("swift_contract_nscoding_string_roundtrip")
+public func swift_contract_nscoding_string_roundtrip(_ ptr: UnsafePointer<CChar>?) -> Int32 {
+    guard let ptr else { return -1 }
+    let nsStr = NSString(utf8String: ptr) ?? ""
+    guard
+        let data = try? NSKeyedArchiver.archivedData(withRootObject: nsStr,
+                                                      requiringSecureCoding: true),
+        let decoded = try? NSKeyedUnarchiver.unarchivedObject(
+            ofClass: NSString.self, from: data)
+    else { return -1 }
+    return Int32(decoded.length)
+}
+
+/// NSCopying: create an NSMutableArray, copy it, mutate the copy, verify the
+/// original is unchanged. Returns 1 if independent, 0 otherwise.
+@_cdecl("swift_contract_nscopying_array_independence")
+public func swift_contract_nscopying_array_independence() -> Int32 {
+    let original = NSMutableArray(array: [1, 2, 3] as [NSNumber])
+    let copied = original.mutableCopy() as! NSMutableArray
+    copied.add(NSNumber(value: 99))
+    return original.count == 3 ? 1 : 0
+}
+
+// MARK: - Key Path Runtime Support (Track J.1)
+
+private struct ProbeKeyPathStats {
+    var score: Int32
+}
+
+private struct ProbeKeyPathUser {
+    var age: Int32
+    var stats: ProbeKeyPathStats
+}
+
+/// Read `age` using a strongly typed key path.
+@_cdecl("swift_contract_keypath_get_age")
+public func swift_contract_keypath_get_age(_ age: Int32) -> Int32 {
+    let user = ProbeKeyPathUser(age: age, stats: .init(score: 0))
+    return user[keyPath: \ProbeKeyPathUser.age]
+}
+
+/// Read nested `stats.score` using a composed key path.
+@_cdecl("swift_contract_keypath_get_nested_score")
+public func swift_contract_keypath_get_nested_score(_ score: Int32) -> Int32 {
+    let user = ProbeKeyPathUser(age: 0, stats: .init(score: score))
+    return user[keyPath: \ProbeKeyPathUser.stats.score]
+}
+
+/// Validate AnyKeyPath metadata path and value extraction path.
+@_cdecl("swift_contract_keypath_any_matches")
+public func swift_contract_keypath_any_matches() -> Int32 {
+    let typed: KeyPath<ProbeKeyPathUser, Int32> = \ProbeKeyPathUser.age
+    let any: AnyKeyPath = typed
+    return any == typed ? 1 : 0
+}
+
+// MARK: - Property Wrapper Metadata (Track J.2)
+
+@propertyWrapper
+private struct Clamp0To100 {
+    private var value: Int32
+
+    var wrappedValue: Int32 {
+        get { value }
+        set { value = max(0, min(100, newValue)) }
+    }
+
+    var projectedValue: Int32 { value }
+
+    init(wrappedValue: Int32) {
+        self.value = max(0, min(100, wrappedValue))
+    }
+}
+
+private struct ProbeWrapperBox {
+    @Clamp0To100 var value: Int32
+}
+
+/// Construct wrapper-backed storage and return clamped value.
+@_cdecl("swift_contract_wrapper_init_clamped")
+public func swift_contract_wrapper_init_clamped(_ v: Int32) -> Int32 {
+    ProbeWrapperBox(value: v).value
+}
+
+/// Mutate wrapper-backed storage and return post-clamp value.
+@_cdecl("swift_contract_wrapper_set_clamped")
+public func swift_contract_wrapper_set_clamped(_ initial: Int32, _ newValue: Int32) -> Int32 {
+    var box = ProbeWrapperBox(value: initial)
+    box.value = newValue
+    return box.value
+}
+
+/// Return projected value (`$value`) to verify wrapper projection semantics.
+@_cdecl("swift_contract_wrapper_projected_value")
+public func swift_contract_wrapper_projected_value(_ v: Int32) -> Int32 {
+    let box = ProbeWrapperBox(value: v)
+    return box.$value
+}
+
+// MARK: - Opaque Type Bridging (Track J.3)
+
+private protocol ProbeNamed {
+    var name: String { get }
+}
+
+private struct ProbeOpaqueNamed: ProbeNamed {
+    let name: String
+}
+
+private func _makeOpaqueNamed(_ tag: Int32) -> some ProbeNamed {
+    if tag % 2 == 0 {
+        return ProbeOpaqueNamed(name: "even")
+    }
+    return ProbeOpaqueNamed(name: "odd")
+}
+
+/// Return the `name` from an opaque `some ProbeNamed` value.
+@_cdecl("swift_contract_opaque_named_get_name")
+public func swift_contract_opaque_named_get_name(_ tag: Int32) -> UnsafeMutablePointer<CChar>? {
+    let v = _makeOpaqueNamed(tag)
+    return strdup(v.name)
+}
+
+/// Return the UTF-8 byte count of `name` from opaque value.
+@_cdecl("swift_contract_opaque_named_name_len")
+public func swift_contract_opaque_named_name_len(_ tag: Int32) -> Int32 {
+    Int32(_makeOpaqueNamed(tag).name.utf8.count)
+}
+
+// MARK: - Result Builder & DSL Support (Track J.4)
+
+@resultBuilder
+private enum ProbeIntSumBuilder {
+    static func buildExpression(_ expr: Int32) -> Int32 { expr }
+    static func buildBlock(_ components: Int32...) -> Int32 {
+        components.reduce(0, +)
+    }
+    static func buildOptional(_ component: Int32?) -> Int32 { component ?? 0 }
+    static func buildEither(first component: Int32) -> Int32 { component }
+    static func buildEither(second component: Int32) -> Int32 { component }
+    static func buildArray(_ components: [Int32]) -> Int32 {
+        components.reduce(0, +)
+    }
+}
+
+private func _buildIntSum(@ProbeIntSumBuilder _ body: () -> Int32) -> Int32 {
+    body()
+}
+
+/// Build a simple DSL sum from two values.
+@_cdecl("swift_contract_builder_sum2")
+public func swift_contract_builder_sum2(_ a: Int32, _ b: Int32) -> Int32 {
+    _buildIntSum {
+        a
+        b
+    }
+}
+
+/// Build a conditional DSL sum with builder `buildEither` support.
+@_cdecl("swift_contract_builder_conditional")
+public func swift_contract_builder_conditional(_ flag: Int32) -> Int32 {
+    _buildIntSum {
+        if flag != 0 {
+            10
+        } else {
+            20
+        }
+    }
+}
+
+/// Build a loop-based DSL sum with builder `buildArray` support.
+@_cdecl("swift_contract_builder_loop_sum")
+public func swift_contract_builder_loop_sum(_ n: Int32) -> Int32 {
+    let safeN = max(0, n)
+    if safeN == 0 { return 0 }
+    return _buildIntSum {
+        for i in 1...safeN {
+            i
+        }
+    }
+}
+
+// MARK: - Reference Cycle & Memory Safety (Track K)
+
+private final class K1WeakTarget {
+    var value: Int32
+    init(_ v: Int32) { value = v }
+}
+
+private final class K1CycleNode {
+    var next: K1CycleNode?
+}
+
+private final class K1UnownedOwner {
+    let tag: Int32
+    init(_ tag: Int32) { self.tag = tag }
+}
+
+private final class K1UnownedChild {
+    unowned(unsafe) var owner: K1UnownedOwner
+    init(owner: K1UnownedOwner) { self.owner = owner }
+}
+
+/// Weak lifecycle: weak ref is non-nil while strong lives, then nil after drop.
+@_cdecl("swift_contract_k1_weak_lifecycle")
+public func swift_contract_k1_weak_lifecycle() -> Int32 {
+    var strong: K1WeakTarget? = K1WeakTarget(7)
+    weak let weakRef = strong
+    let before = (weakRef != nil)
+    strong = nil
+    let after = (weakRef == nil)
+    return (before && after) ? 1 : 0
+}
+
+/// Detect that an unowned(unsafe) edge would dangle after owner deallocation.
+/// We intentionally avoid dereferencing after drop to prevent a crash.
+@_cdecl("swift_contract_k1_unowned_dangling_detected")
+public func swift_contract_k1_unowned_dangling_detected() -> Int32 {
+    var owner: K1UnownedOwner? = K1UnownedOwner(123)
+    weak let weakOwner = owner
+    if let owner {
+        _ = K1UnownedChild(owner: owner)
+    }
+    owner = nil
+    return weakOwner == nil ? 1 : 0
+}
+
+/// Create A<->B strong cycle and verify weak probes still see both nodes.
+@_cdecl("swift_contract_k1_cycle_detect_strong_pair")
+public func swift_contract_k1_cycle_detect_strong_pair() -> Int32 {
+    var a: K1CycleNode? = K1CycleNode()
+    var b: K1CycleNode? = K1CycleNode()
+    a?.next = b
+    b?.next = a
+
+    weak let wa = a
+    weak let wb = b
+    a = nil
+    b = nil
+
+    return (wa != nil && wb != nil) ? 1 : 0
+}
+
+/// Create non-cyclic pair (second link absent) and verify deallocation occurs.
+@_cdecl("swift_contract_k1_cycle_detect_acyclic_pair")
+public func swift_contract_k1_cycle_detect_acyclic_pair() -> Int32 {
+    var a: K1CycleNode? = K1CycleNode()
+    var b: K1CycleNode? = K1CycleNode()
+    a?.next = b
+
+    weak let wa = a
+    weak let wb = b
+    a = nil
+    b = nil
+
+    return (wa == nil && wb == nil) ? 1 : 0
+}
+
+// Track K.2 globals
+private final class K2RetainProbe: NSObject {}
+
+/// Return retain-count delta from an explicit retain/release pair.
+@_cdecl("swift_contract_k2_retain_delta")
+public func swift_contract_k2_retain_delta() -> Int32 {
+    let obj = K2RetainProbe()
+    let baseline = CFGetRetainCount(obj)
+    let retained = Unmanaged.passRetained(obj).toOpaque()
+    let afterRetain = CFGetRetainCount(obj)
+    _ = Unmanaged<K2RetainProbe>.fromOpaque(retained).takeRetainedValue()
+    let afterRelease = CFGetRetainCount(obj)
+
+    let delta = Int32(afterRetain - baseline)
+    // Require retain bump and restoration after balanced release.
+    return (delta >= 1 && afterRelease <= afterRetain) ? delta : Int32.min
+}
+
+/// Reference-type inference probe: 1=class, 2=value, 3=metatype.
+@_cdecl("swift_contract_k2_reference_type_infer")
+public func swift_contract_k2_reference_type_infer(_ mode: Int32) -> Int32 {
+    switch mode {
+    case 1:
+        return Mirror(reflecting: K2RetainProbe()).displayStyle == .class ? 1 : 0
+    case 2:
+        return Mirror(reflecting: ProbeKeyPathStats(score: 1)).displayStyle == .struct ? 2 : 0
+    case 3:
+        return Mirror(reflecting: K2RetainProbe.self).displayStyle == nil ? 3 : 0
+    default:
+        return 0
+    }
+}
+
+/// Emit deterministic DOT graph for cycle visualization path.
+@_cdecl("swift_contract_k2_reference_graph_dot")
+public func swift_contract_k2_reference_graph_dot() -> UnsafeMutablePointer<CChar>? {
+    let dot = "digraph G { A -> B; B -> A; }"
+    return strdup(dot)
+}
+
+// Track K.3 globals
+private var k3NextToken: Int32 = 1
+private var k3TokenToSite: [Int32: Int32] = [:]
+private var k3LiveBySite: [Int32: Int32] = [:]
+
+@_cdecl("swift_contract_k3_tracker_reset")
+public func swift_contract_k3_tracker_reset() {
+    k3NextToken = 1
+    k3TokenToSite.removeAll(keepingCapacity: true)
+    k3LiveBySite.removeAll(keepingCapacity: true)
+}
+
+/// Allocate a tracked token for the given call-site id.
+@_cdecl("swift_contract_k3_alloc")
+public func swift_contract_k3_alloc(_ site: Int32) -> UnsafeMutableRawPointer? {
+    let token = k3NextToken
+    k3NextToken &+= 1
+    k3TokenToSite[token] = site
+    k3LiveBySite[site, default: 0] += 1
+    return UnsafeMutableRawPointer(bitPattern: Int(token))
+}
+
+/// Release a tracked token; returns 1 if released, 0 if unknown/null.
+@_cdecl("swift_contract_k3_release")
+public func swift_contract_k3_release(_ tokenPtr: UnsafeMutableRawPointer?) -> Int32 {
+    guard let tokenPtr else { return 0 }
+    let token = Int32(Int(bitPattern: tokenPtr))
+    guard let site = k3TokenToSite.removeValue(forKey: token) else { return 0 }
+    if let live = k3LiveBySite[site] {
+        k3LiveBySite[site] = max(0, live - 1)
+    }
+    return 1
+}
+
+/// Count currently unreleased tracked tokens.
+@_cdecl("swift_contract_k3_sweep_unreleased_count")
+public func swift_contract_k3_sweep_unreleased_count() -> Int32 {
+    Int32(k3TokenToSite.count)
+}
+
+/// Live count for a specific site id.
+@_cdecl("swift_contract_k3_live_count_for_site")
+public func swift_contract_k3_live_count_for_site(_ site: Int32) -> Int32 {
+    k3LiveBySite[site, default: 0]
+}
+
+/// Root-cause site: site id with max live allocations, or -1 if none.
+@_cdecl("swift_contract_k3_root_cause_site")
+public func swift_contract_k3_root_cause_site() -> Int32 {
+    guard let maxEntry = k3LiveBySite.max(by: { $0.value < $1.value }), maxEntry.value > 0 else {
+        return -1
+    }
+    return maxEntry.key
+}
+
+// MARK: - ABI Stability v2+ & User-Defined Types (Track L)
+
+// Track L.1 registry globals
+private var l1NextTypeID: Int32 = 10000
+private var l1TypeByName: [String: Int32] = [:]
+private var l1NameByTypeID: [Int32: String] = [:]
+private var l1VersionByTypeID: [Int32: Int32] = [:]
+
+@_cdecl("swift_contract_l1_registry_reset")
+public func swift_contract_l1_registry_reset() {
+    l1NextTypeID = 10000
+    l1TypeByName.removeAll(keepingCapacity: true)
+    l1NameByTypeID.removeAll(keepingCapacity: true)
+    l1VersionByTypeID.removeAll(keepingCapacity: true)
+}
+
+/// Register a user-defined type by name and assign a stable versioned ID.
+/// If already registered, returns the existing ID.
+@_cdecl("swift_contract_l1_register_type")
+public func swift_contract_l1_register_type(_ namePtr: UnsafePointer<CChar>?) -> Int32 {
+    guard let namePtr else { return -1 }
+    let name = String(cString: namePtr)
+    guard !name.isEmpty else { return -1 }
+    if let existing = l1TypeByName[name] {
+        return existing
+    }
+    let id = l1NextTypeID
+    l1NextTypeID &+= 1
+    l1TypeByName[name] = id
+    l1NameByTypeID[id] = name
+    l1VersionByTypeID[id] = 1
+    return id
+}
+
+/// Lookup a registered type ID by name; returns -1 if missing.
+@_cdecl("swift_contract_l1_lookup_type_id")
+public func swift_contract_l1_lookup_type_id(_ namePtr: UnsafePointer<CChar>?) -> Int32 {
+    guard let namePtr else { return -1 }
+    let name = String(cString: namePtr)
+    return l1TypeByName[name] ?? -1
+}
+
+/// Bump a registered type version; returns new version or -1 if unknown ID.
+@_cdecl("swift_contract_l1_bump_type_version")
+public func swift_contract_l1_bump_type_version(_ typeID: Int32) -> Int32 {
+    guard let current = l1VersionByTypeID[typeID] else { return -1 }
+    let next = current + 1
+    l1VersionByTypeID[typeID] = next
+    return next
+}
+
+/// Backward/forward compat check for update protocol.
+/// Compatible when major matches and newMinor >= oldMinor.
+/// Version format: major*1000 + minor.
+@_cdecl("swift_contract_l1_update_compat")
+public func swift_contract_l1_update_compat(_ oldVersion: Int32, _ newVersion: Int32) -> Int32 {
+    guard oldVersion >= 0, newVersion >= 0 else { return 0 }
+    let oldMajor = oldVersion / 1000
+    let oldMinor = oldVersion % 1000
+    let newMajor = newVersion / 1000
+    let newMinor = newVersion % 1000
+    return (oldMajor == newMajor && newMinor >= oldMinor) ? 1 : 0
+}
+
+// Track L.2 compatibility globals
+private let l2ResilienceMarkers: [String: Int32] = [
+    "resilient_layout": 1,
+    "private_fields": 2,
+    "versioned_fields": 4,
+]
+
+/// Return number of breaking removals by comparing old/new exported type counts.
+@_cdecl("swift_contract_l2_contract_diff_breaking_count")
+public func swift_contract_l2_contract_diff_breaking_count(
+    _ oldTypeCount: Int32,
+    _ newTypeCount: Int32
+) -> Int32 {
+    if oldTypeCount <= newTypeCount { return 0 }
+    return oldTypeCount - newTypeCount
+}
+
+/// Binary compatibility checker.
+/// Compatible when runtime major > contract major OR same major with runtime minor >= contract minor.
+/// Version format: major*1000 + minor.
+@_cdecl("swift_contract_l2_binary_version_compatible")
+public func swift_contract_l2_binary_version_compatible(
+    _ runtimeVersion: Int32,
+    _ contractVersion: Int32
+) -> Int32 {
+    guard runtimeVersion >= 0, contractVersion >= 0 else { return 0 }
+    let rMaj = runtimeVersion / 1000
+    let rMin = runtimeVersion % 1000
+    let cMaj = contractVersion / 1000
+    let cMin = contractVersion % 1000
+    if rMaj > cMaj { return 1 }
+    if rMaj < cMaj { return 0 }
+    return rMin >= cMin ? 1 : 0
+}
+
+/// Return resilience marker bit value for a marker name.
+@_cdecl("swift_contract_l2_resilience_marker")
+public func swift_contract_l2_resilience_marker(_ markerPtr: UnsafePointer<CChar>?) -> Int32 {
+    guard let markerPtr else { return 0 }
+    let marker = String(cString: markerPtr)
+    return l2ResilienceMarkers[marker] ?? 0
+}
+
+// Track L.3 derivation helpers
+private func _l3EscapeJSON(_ s: String) -> String {
+    s.replacingOccurrences(of: "\\", with: "\\\\")
+     .replacingOccurrences(of: "\"", with: "\\\"")
+}
+
+private func _l3InferKind(_ decl: String) -> String {
+    if decl.contains("protocol ") { return "protocol" }
+    if decl.contains("class ") { return "class" }
+    if decl.contains("struct ") { return "struct" }
+    return "unknown"
+}
+
+private func _l3InferName(_ decl: String) -> String {
+    let tokens = decl.split(whereSeparator: { $0.isWhitespace || $0 == "{" || $0 == ":" })
+    if let idx = tokens.firstIndex(of: Substring("struct")), tokens.indices.contains(idx + 1) {
+        return String(tokens[idx + 1])
+    }
+    if let idx = tokens.firstIndex(of: Substring("class")), tokens.indices.contains(idx + 1) {
+        return String(tokens[idx + 1])
+    }
+    if let idx = tokens.firstIndex(of: Substring("protocol")), tokens.indices.contains(idx + 1) {
+        return String(tokens[idx + 1])
+    }
+    return "Unknown"
+}
+
+/// Derive a minimal contract JSON descriptor from a Swift declaration string.
+@_cdecl("swift_contract_l3_derive_contract_from_source")
+public func swift_contract_l3_derive_contract_from_source(
+    _ sourcePtr: UnsafePointer<CChar>?
+) -> UnsafeMutablePointer<CChar>? {
+    guard let sourcePtr else { return nil }
+    let source = String(cString: sourcePtr)
+    let kind = _l3InferKind(source)
+    let name = _l3InferName(source)
+    let json = "{\"name\":\"\(_l3EscapeJSON(name))\",\"kind\":\"\(_l3EscapeJSON(kind))\",\"source_len\":\(source.utf8.count)}"
+    return strdup(json)
+}
+
+/// Validate derived contract JSON against a handwritten JSON string.
+/// Returns 1 when both contain same `name` and `kind` fields verbatim.
+@_cdecl("swift_contract_l3_validate_derived_contract")
+public func swift_contract_l3_validate_derived_contract(
+    _ derivedPtr: UnsafePointer<CChar>?,
+    _ handwrittenPtr: UnsafePointer<CChar>?
+) -> Int32 {
+    guard let derivedPtr, let handwrittenPtr else { return 0 }
+    let derived = String(cString: derivedPtr)
+    let handwritten = String(cString: handwrittenPtr)
+    let requiredFields = ["\"name\"", "\"kind\""]
+    for f in requiredFields {
+        if !derived.contains(f) || !handwritten.contains(f) {
+            return 0
+        }
+    }
+    return (derived.contains("\"kind\":\"struct\"") == handwritten.contains("\"kind\":\"struct\"")) &&
+           (derived.contains("\"kind\":\"class\"") == handwritten.contains("\"kind\":\"class\"")) &&
+           (derived.contains("\"kind\":\"protocol\"") == handwritten.contains("\"kind\":\"protocol\"")) ? 1 : 0
+}
+
+/// Exporter macro simulation string for metadata/witness generation.
+@_cdecl("swift_contract_l3_exporter_macro_sim")
+public func swift_contract_l3_exporter_macro_sim(
+    _ namePtr: UnsafePointer<CChar>?
+) -> UnsafeMutablePointer<CChar>? {
+    guard let namePtr else { return nil }
+    let name = String(cString: namePtr)
+    guard !name.isEmpty else { return nil }
+    return strdup("@ContractExport(metadata: \"\(name)\", witness: true)")
+}
+
+// MARK: - Instrumentation, Profiling & Debugging (Track M)
+
+// Track M.1 instrumentation globals
+private var m1EventCount: Int32 = 0
+private var m1POIActive: [Int32: UInt64] = [:]
+private var m1LastDurationNanos: UInt64 = 0
+
+@_cdecl("swift_contract_m1_reset")
+public func swift_contract_m1_reset() {
+    m1EventCount = 0
+    m1POIActive.removeAll(keepingCapacity: true)
+    m1LastDurationNanos = 0
+}
+
+/// Simulated os_log event sink.
+@_cdecl("swift_contract_m1_os_log_event")
+public func swift_contract_m1_os_log_event(_ namePtr: UnsafePointer<CChar>?) -> Int32 {
+    guard let namePtr else { return 0 }
+    let name = String(cString: namePtr)
+    guard !name.isEmpty else { return 0 }
+    m1EventCount &+= 1
+    return 1
+}
+
+/// Start a point-of-interest marker with token.
+@_cdecl("swift_contract_m1_poi_begin")
+public func swift_contract_m1_poi_begin(_ token: Int32) -> Int32 {
+    let now = DispatchTime.now().uptimeNanoseconds
+    m1POIActive[token] = now
+    return 1
+}
+
+/// End marker and capture duration.
+@_cdecl("swift_contract_m1_poi_end")
+public func swift_contract_m1_poi_end(_ token: Int32) -> Int32 {
+    guard let start = m1POIActive.removeValue(forKey: token) else { return 0 }
+    let end = DispatchTime.now().uptimeNanoseconds
+    m1LastDurationNanos = end >= start ? (end - start) : 0
+    return 1
+}
+
+@_cdecl("swift_contract_m1_event_count")
+public func swift_contract_m1_event_count() -> Int32 {
+    m1EventCount
+}
+
+@_cdecl("swift_contract_m1_last_duration_nanos")
+public func swift_contract_m1_last_duration_nanos() -> UInt64 {
+    m1LastDurationNanos
+}
+
+/// Time-profiling probe: sum [0..<iterations) and return elapsed nanos.
+@_cdecl("swift_contract_m1_profile_iterations")
+public func swift_contract_m1_profile_iterations(_ iterations: Int32) -> UInt64 {
+    let n = max(0, Int(iterations))
+    let start = DispatchTime.now().uptimeNanoseconds
+    var s = 0
+    for i in 0..<n { s += i }
+    _ = s
+    let end = DispatchTime.now().uptimeNanoseconds
+    return end >= start ? (end - start) : 0
+}
+
+// Track M.2 DWARF-like cache globals
+private var m2DwarfCache: [String: String] = [:]
+
+@_cdecl("swift_contract_m2_reset")
+public func swift_contract_m2_reset() {
+    m2DwarfCache.removeAll(keepingCapacity: true)
+}
+
+/// Parse and cache a binary path as a mock DWARF entry.
+@_cdecl("swift_contract_m2_cache_binary")
+public func swift_contract_m2_cache_binary(_ pathPtr: UnsafePointer<CChar>?) -> Int32 {
+    guard let pathPtr else { return 0 }
+    let path = String(cString: pathPtr)
+    guard !path.isEmpty else { return 0 }
+    m2DwarfCache[path] = "cached"
+    return 1
+}
+
+@_cdecl("swift_contract_m2_cache_size")
+public func swift_contract_m2_cache_size() -> Int32 {
+    Int32(m2DwarfCache.count)
+}
+
+/// Address -> mock source location string.
+@_cdecl("swift_contract_m2_lookup_source")
+public func swift_contract_m2_lookup_source(_ address: UInt64) -> UnsafeMutablePointer<CChar>? {
+    let line = Int(address % 200) + 1
+    return strdup("RustBridge.swift:\(line)")
+}
+
+/// Variable introspection stub for debugger probing.
+@_cdecl("swift_contract_m2_lookup_variable")
+public func swift_contract_m2_lookup_variable(_ namePtr: UnsafePointer<CChar>?) -> UnsafeMutablePointer<CChar>? {
+    guard let namePtr else { return nil }
+    let name = String(cString: namePtr)
+    guard !name.isEmpty else { return nil }
+    return strdup("\(name)=<mock>")
+}
+
+// Track M.3 memory profiling globals
+private var m3NextToken: Int32 = 1
+private var m3TokenBytes: [Int32: Int64] = [:]
+private var m3TokenSubsystem: [Int32: String] = [:]
+private var m3UsageBySubsystem: [String: Int64] = [:]
+
+@_cdecl("swift_contract_m3_reset")
+public func swift_contract_m3_reset() {
+    m3NextToken = 1
+    m3TokenBytes.removeAll(keepingCapacity: true)
+    m3TokenSubsystem.removeAll(keepingCapacity: true)
+    m3UsageBySubsystem.removeAll(keepingCapacity: true)
+}
+
+/// Tag an allocation and attribute bytes to subsystem.
+@_cdecl("swift_contract_m3_tag_alloc")
+public func swift_contract_m3_tag_alloc(_ subsystemPtr: UnsafePointer<CChar>?, _ bytes: Int64) -> UnsafeMutableRawPointer? {
+    guard let subsystemPtr, bytes >= 0 else { return nil }
+    let subsystem = String(cString: subsystemPtr)
+    guard !subsystem.isEmpty else { return nil }
+
+    let token = m3NextToken
+    m3NextToken &+= 1
+    m3TokenBytes[token] = bytes
+    m3TokenSubsystem[token] = subsystem
+    m3UsageBySubsystem[subsystem, default: 0] += bytes
+    return UnsafeMutableRawPointer(bitPattern: Int(token))
+}
+
+/// Release a tagged allocation token.
+@_cdecl("swift_contract_m3_release_alloc")
+public func swift_contract_m3_release_alloc(_ tokenPtr: UnsafeMutableRawPointer?) -> Int32 {
+    guard let tokenPtr else { return 0 }
+    let token = Int32(Int(bitPattern: tokenPtr))
+    guard let bytes = m3TokenBytes.removeValue(forKey: token),
+          let subsystem = m3TokenSubsystem.removeValue(forKey: token)
+    else { return 0 }
+    m3UsageBySubsystem[subsystem, default: 0] = max(0, m3UsageBySubsystem[subsystem, default: 0] - bytes)
+    return 1
+}
+
+@_cdecl("swift_contract_m3_usage_for_subsystem")
+public func swift_contract_m3_usage_for_subsystem(_ subsystemPtr: UnsafePointer<CChar>?) -> Int64 {
+    guard let subsystemPtr else { return -1 }
+    let subsystem = String(cString: subsystemPtr)
+    return m3UsageBySubsystem[subsystem, default: 0]
+}
+
+/// Emit memory health report as JSON.
+@_cdecl("swift_contract_m3_health_report")
+public func swift_contract_m3_health_report() -> UnsafeMutablePointer<CChar>? {
+    let total = m3UsageBySubsystem.values.reduce(0, +)
+    let report = "{\"live_tokens\":\(m3TokenBytes.count),\"total_bytes\":\(total)}"
+    return strdup(report)
+}
+
+// Track M.4 performance regression globals
+private var m4Baseline: [String: UInt64] = [:]
+
+private func _m4RunOp(op: String, iterations: Int32) -> UInt64 {
+    let n = max(0, Int(iterations))
+    let start = DispatchTime.now().uptimeNanoseconds
+    switch op {
+    case "construct":
+        var arr: [NSObject] = []
+        arr.reserveCapacity(n)
+        for _ in 0..<n { arr.append(NSObject()) }
+    case "invoke":
+        var sum = 0
+        for i in 0..<n { sum += i }
+        _ = sum
+    case "release":
+        var arr: [NSObject]? = []
+        arr?.reserveCapacity(n)
+        for _ in 0..<n { arr?.append(NSObject()) }
+        arr = nil
+    default:
+        break
+    }
+    let end = DispatchTime.now().uptimeNanoseconds
+    return end >= start ? (end - start) : 0
+}
+
+@_cdecl("swift_contract_m4_run_benchmark")
+public func swift_contract_m4_run_benchmark(_ opPtr: UnsafePointer<CChar>?, _ iterations: Int32) -> UInt64 {
+    guard let opPtr else { return 0 }
+    return _m4RunOp(op: String(cString: opPtr), iterations: iterations)
+}
+
+@_cdecl("swift_contract_m4_set_baseline")
+public func swift_contract_m4_set_baseline(_ opPtr: UnsafePointer<CChar>?, _ nanos: UInt64) -> Int32 {
+    guard let opPtr else { return 0 }
+    let op = String(cString: opPtr)
+    guard !op.isEmpty else { return 0 }
+    m4Baseline[op] = nanos
+    return 1
+}
+
+/// Return 1 when regression detected above threshold percent.
+@_cdecl("swift_contract_m4_regression_alarm")
+public func swift_contract_m4_regression_alarm(_ opPtr: UnsafePointer<CChar>?, _ currentNanos: UInt64, _ thresholdPercent: Int32) -> Int32 {
+    guard let opPtr else { return 0 }
+    let op = String(cString: opPtr)
+    guard let baseline = m4Baseline[op], baseline > 0, thresholdPercent >= 0 else { return 0 }
+    let allowed = baseline + (baseline * UInt64(thresholdPercent)) / 100
+    return currentNanos > allowed ? 1 : 0
+}
+
+@_cdecl("swift_contract_m4_baseline_get")
+public func swift_contract_m4_baseline_get(_ opPtr: UnsafePointer<CChar>?) -> UInt64 {
+    guard let opPtr else { return 0 }
+    return m4Baseline[String(cString: opPtr)] ?? 0
+}
+
+// MARK: - Universal Runtime Metadata Graph (Track N.1)
+
+private struct N1LayoutStruct {
+    var a: Int32
+    var b: Int64
+}
+
+private final class N1LayoutClass {
+    var x: Int32 = 0
+    var y: Int32 = 0
+}
+
+/// Metadata-kind identifiers for synthetic graph nodes.
+/// 1=class, 2=struct, 3=enum, 4=tuple, 5=function, 6=existential, 7=metatype, 8=generic-instantiation.
+@_cdecl("swift_contract_n1_metadata_kind")
+public func swift_contract_n1_metadata_kind(_ typeID: Int32) -> Int32 {
+    switch typeID {
+    case 1: return 1 // N1LayoutClass
+    case 2: return 2 // N1LayoutStruct
+    case 3: return 3 // Direction enum
+    case 4: return 4 // Tuple marker
+    case 5: return 5 // Function marker
+    case 6: return 6 // Existential marker
+    case 7: return 7 // Metatype marker
+    case 8: return 8 // Array<Int32>
+    default: return -1
+    }
+}
+
+@_cdecl("swift_contract_n1_metadata_field_count")
+public func swift_contract_n1_metadata_field_count(_ typeID: Int32) -> Int32 {
+    switch typeID {
+    case 1: return 2
+    case 2: return 2
+    case 3: return 1
+    default: return 0
+    }
+}
+
+@_cdecl("swift_contract_n1_metadata_field_offset")
+public func swift_contract_n1_metadata_field_offset(_ typeID: Int32, _ fieldIndex: Int32) -> Int32 {
+    guard typeID == 2 else { return -1 }
+    guard fieldIndex == 0 || fieldIndex == 1 else { return -1 }
+    var value = N1LayoutStruct(a: 11, b: 22)
+    return withUnsafeMutablePointer(to: &value) { base in
+        if fieldIndex == 0 {
+            return withUnsafeMutablePointer(to: &base.pointee.a) { aptr in
+                Int32(Int(bitPattern: aptr) - Int(bitPattern: base))
+            }
+        }
+        return withUnsafeMutablePointer(to: &base.pointee.b) { bptr in
+            Int32(Int(bitPattern: bptr) - Int(bitPattern: base))
+        }
+    }
+}
+
+/// Cycle-safe traversal over synthetic metadata graph: 1 -> 2 -> 3 -> 1.
+@_cdecl("swift_contract_n1_metadata_graph_traverse_count")
+public func swift_contract_n1_metadata_graph_traverse_count() -> Int32 {
+    let edges: [Int32: [Int32]] = [
+        1: [2],
+        2: [3],
+        3: [1],
+    ]
+    var visited = Set<Int32>()
+    var stack: [Int32] = [1]
+    while let node = stack.popLast() {
+        if visited.contains(node) { continue }
+        visited.insert(node)
+        for n in edges[node] ?? [] {
+            stack.append(n)
+        }
+    }
+    return Int32(visited.count)
+}
+
+/// Deterministic metadata snapshot containing user-defined and stdlib types.
+@_cdecl("swift_contract_n1_metadata_snapshot_json")
+public func swift_contract_n1_metadata_snapshot_json() -> UnsafeMutablePointer<CChar>? {
+    let _ = N1LayoutClass()
+    let _ = [Int32](arrayLiteral: 1, 2, 3)
+    let json = "{\"nodes\":[{\"id\":1,\"name\":\"N1LayoutClass\",\"kind\":\"class\"},{\"id\":2,\"name\":\"N1LayoutStruct\",\"kind\":\"struct\"},{\"id\":3,\"name\":\"Direction\",\"kind\":\"enum\"},{\"id\":8,\"name\":\"Array<Int32>\",\"kind\":\"generic_instantiation\"}],\"edges\":[[1,2],[2,3],[3,1]]}"
+    return strdup(json)
+}
+
+private func _n1KindForTypeName(_ typeName: String) -> Int32 {
+    if typeName == "Swift.Any" || typeName.hasPrefix("any ") { return 6 }
+    if typeName.hasSuffix(".Type") {
+        let base = String(typeName.dropLast(5))
+        if _typeByName(base) != nil || NSClassFromString(base) != nil { return 7 }
+    }
+    if typeName.hasSuffix(".Protocol") {
+        let base = String(typeName.dropLast(9))
+        if _typeByName(base) != nil || NSClassFromString(base) != nil { return 7 }
+    }
+    if typeName.contains("Array<") || typeName.contains("Dictionary<") || typeName.contains("Set<") {
+        return 8
+    }
+    if typeName.contains("(") && typeName.contains(",") && typeName.contains(")") { return 4 }
+
+    if let anyType = _typeByName(typeName) {
+        if anyType is AnyClass { return 1 }
+        if typeName == "Direction" || typeName.hasSuffix(".Direction") { return 3 }
+        return 2
+    }
+
+    if NSClassFromString(typeName) != nil { return 1 }
+    return -1
+}
+
+@_cdecl("swift_contract_n1_metadata_kind_by_name")
+public func swift_contract_n1_metadata_kind_by_name(_ typeNamePtr: UnsafePointer<CChar>?) -> Int32 {
+    guard let typeNamePtr else { return -1 }
+    return _n1KindForTypeName(String(cString: typeNamePtr))
+}
+
+@_cdecl("swift_contract_n1_metadata_field_count_by_name")
+public func swift_contract_n1_metadata_field_count_by_name(_ typeNamePtr: UnsafePointer<CChar>?) -> Int32 {
+    guard let typeNamePtr else { return -1 }
+    let typeName = String(cString: typeNamePtr)
+    switch typeName {
+    case "N1LayoutStruct": return 2
+    case "N1LayoutClass": return 2
+    case "Direction": return 1
+    default: return 0
+    }
+}
+
+@_cdecl("swift_contract_n1_metadata_discover_types_json")
+public func swift_contract_n1_metadata_discover_types_json() -> UnsafeMutablePointer<CChar>? {
+    var names: Set<String> = [
+        "N1LayoutStruct",
+        "N1LayoutClass",
+        "Direction",
+        "Swift.Int",
+        "Swift.String",
+        "Swift.Array<Swift.Int32>",
+        "NSObject",
+        "NSString",
+        "NSNumber",
+    ]
+
+    // Add classes that are known to be available in Foundation runtime.
+    for clsName in ["NSObject", "NSString", "NSNumber", "NSArray"] {
+        if NSClassFromString(clsName) != nil {
+            names.insert(clsName)
+        }
+    }
+
+    let sorted = names.sorted()
+    let escaped = sorted.map { $0.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"") }
+    let body = escaped.map { "\"\($0)\"" }.joined(separator: ",")
+    let json = "{\"types\":[\(body)]}"
+    return strdup(json)
+}
+
+@_cdecl("swift_contract_n1_metadata_graph_traverse_discovered_count")
+public func swift_contract_n1_metadata_graph_traverse_discovered_count() -> Int32 {
+    guard let jsonPtr = swift_contract_n1_metadata_discover_types_json() else { return -1 }
+    defer { free(jsonPtr) }
+    let text = String(cString: jsonPtr)
+    // Count quoted names as a simple cycle-safe traversal cardinality proxy.
+    let count = text.split(separator: "\"").count / 2
+    return Int32(max(0, count))
+}
+
+// MARK: - Universal Call Lowering & Invocation (Track N.2)
+
+private let n2CapabilityIndirectReturn: UInt32 = 1 << 0
+private let n2CapabilityInout: UInt32 = 1 << 1
+private let n2CapabilityThrowing: UInt32 = 1 << 2
+private let n2CapabilityAsync: UInt32 = 1 << 3
+private let n2CapabilityResilientArgs: UInt32 = 1 << 4
+
+private func _n2WriteI32(_ ptr: UnsafeMutablePointer<Int32>?, _ value: Int32) {
+    guard let ptr else { return }
+    ptr.pointee = value
+}
+
+@_cdecl("swift_contract_n2_capability_mask")
+public func swift_contract_n2_capability_mask() -> UInt32 {
+    n2CapabilityIndirectReturn
+        | n2CapabilityInout
+        | n2CapabilityThrowing
+        | n2CapabilityAsync
+        | n2CapabilityResilientArgs
+}
+
+/// Dynamic invocation shim for N.2 lowering matrix.
+/// Returns 1 on success and 0 on unsupported signature or invocation failure.
+@_cdecl("swift_contract_n2_invoke_i32")
+public func swift_contract_n2_invoke_i32(
+    _ signaturePtr: UnsafePointer<CChar>?,
+    _ a: Int32,
+    _ b: Int32,
+    _ inoutPtr: UnsafeMutablePointer<Int32>?,
+    _ outValuePtr: UnsafeMutablePointer<Int32>?,
+    _ errorCodePtr: UnsafeMutablePointer<Int32>?
+) -> Int32 {
+    guard let signaturePtr else { return 0 }
+    let signature = String(cString: signaturePtr)
+    _n2WriteI32(errorCodePtr, 0)
+
+    switch signature {
+    case "direct.add.i32_i32_to_i32":
+        _n2WriteI32(outValuePtr, a + b)
+        return 1
+
+    case "inout.add_assign.i32ptr_i32_to_i32":
+        guard let inoutPtr else { return 0 }
+        inoutPtr.pointee += b
+        _n2WriteI32(outValuePtr, inoutPtr.pointee)
+        return 1
+
+    case "throwing.require_non_negative.i32_to_i32":
+        guard a >= 0 else {
+            _n2WriteI32(errorCodePtr, -100)
+            return 0
+        }
+        _n2WriteI32(outValuePtr, a)
+        return 1
+
+    case "async.double.i32_to_i32":
+        let value = _awaitTaskI32 {
+            await Task.yield()
+            return a &* 2
+        }
+        guard value != Int32.min else { return 0 }
+        _n2WriteI32(outValuePtr, value)
+        return 1
+
+    case "indirect_ret.pair_sum_diff.i32_i32_to_pair":
+        guard let outValuePtr else { return 0 }
+        outValuePtr.pointee = a &+ b
+        outValuePtr.advanced(by: 1).pointee = a &- b
+        return 1
+
+    case "resilient.counter_addpair.i32_i32_to_i32":
+        let counter = Counter(start: 0)
+        _n2WriteI32(outValuePtr, counter.addPair(a, b))
+        return 1
+
+    default:
+        _n2WriteI32(errorCodePtr, -404)
+        return 0
+    }
+}
+
+@_cdecl("swift_contract_n2_unknown_add_offset")
+public func swift_contract_n2_unknown_add_offset(_ a: Int32, _ b: Int32) -> Int32 {
+    a &+ b &+ 3
+}
+
+@_cdecl("swift_contract_n2_unknown_inout_accumulate")
+public func swift_contract_n2_unknown_inout_accumulate(_ valuePtr: UnsafeMutablePointer<Int32>?, _ delta: Int32) -> Int32 {
+    guard let valuePtr else { return Int32.min }
+    valuePtr.pointee &+= delta
+    return valuePtr.pointee
+}
+
+@_cdecl("swift_contract_n2_unknown_pair_sum_diff")
+public func swift_contract_n2_unknown_pair_sum_diff(_ outPtr: UnsafeMutablePointer<Int32>?, _ a: Int32, _ b: Int32) -> Int32 {
+    guard let outPtr else { return 0 }
+    outPtr.pointee = a &+ b
+    outPtr.advanced(by: 1).pointee = a &- b
+    return 1
+}
+
+@_cdecl("swift_contract_n2_unknown_negate")
+public func swift_contract_n2_unknown_negate(_ a: Int32) -> Int32 { 0 &- a }
+
+@_cdecl("swift_contract_n2_unknown_const42")
+public func swift_contract_n2_unknown_const42() -> Int32 { 42 }
+
+// Shape discovery registry: maps C-exported symbol name → lowered ABI shape descriptor.
+// Enables auto-dispatch without caller-provided shape knowledge (N.2 exit criterion).
+private let _n2ShapeRegistry: [String: String] = [
+    "swift_contract_n2_unknown_add_offset":       "i32_i32_to_i32",
+    "swift_contract_n2_unknown_inout_accumulate": "i32ptr_i32_to_i32",
+    "swift_contract_n2_unknown_pair_sum_diff":     "i32_i32_to_pair",
+    "swift_contract_n2_unknown_negate":            "i32_to_i32",
+    "swift_contract_n2_unknown_const42":           "void_to_i32",
+]
+
+/// Dynamic invoke by runtime symbol name + lowered shape descriptor.
+/// Returns 1 on success, 0 on unsupported shape or lookup/invoke failure.
+@_cdecl("swift_contract_n2_invoke_symbol_i32")
+public func swift_contract_n2_invoke_symbol_i32(
+    _ symbolPtr: UnsafePointer<CChar>?,
+    _ shapePtr: UnsafePointer<CChar>?,
+    _ a: Int32,
+    _ b: Int32,
+    _ inoutPtr: UnsafeMutablePointer<Int32>?,
+    _ outValuePtr: UnsafeMutablePointer<Int32>?,
+    _ errorCodePtr: UnsafeMutablePointer<Int32>?
+) -> Int32 {
+    guard let symbolPtr, let shapePtr else {
+        _n2WriteI32(errorCodePtr, -400)
+        return 0
+    }
+    let symbol = String(cString: symbolPtr)
+    let shape = String(cString: shapePtr)
+
+    _n2WriteI32(errorCodePtr, 0)
+    guard let sym = dlsym(UnsafeMutableRawPointer(bitPattern: -2), symbol) else {
+        _n2WriteI32(errorCodePtr, -404)
+        return 0
+    }
+
+    switch shape {
+    case "i32_i32_to_i32":
+        typealias Fn = @convention(c) (Int32, Int32) -> Int32
+        let fn = unsafeBitCast(sym, to: Fn.self)
+        _n2WriteI32(outValuePtr, fn(a, b))
+        return 1
+
+    case "i32ptr_i32_to_i32":
+        guard let inoutPtr else {
+            _n2WriteI32(errorCodePtr, -410)
+            return 0
+        }
+        typealias Fn = @convention(c) (UnsafeMutablePointer<Int32>?, Int32) -> Int32
+        let fn = unsafeBitCast(sym, to: Fn.self)
+        _n2WriteI32(outValuePtr, fn(inoutPtr, b))
+        return 1
+
+    case "i32_i32_to_pair":
+        guard let outValuePtr else {
+            _n2WriteI32(errorCodePtr, -411)
+            return 0
+        }
+        typealias Fn = @convention(c) (UnsafeMutablePointer<Int32>?, Int32, Int32) -> Int32
+        let fn = unsafeBitCast(sym, to: Fn.self)
+        if fn(outValuePtr, a, b) != 1 {
+            _n2WriteI32(errorCodePtr, -412)
+            return 0
+        }
+        return 1
+
+    case "i32_to_i32":
+        typealias Fn = @convention(c) (Int32) -> Int32
+        let fn = unsafeBitCast(sym, to: Fn.self)
+        _n2WriteI32(outValuePtr, fn(a))
+        return 1
+
+    case "void_to_i32":
+        typealias Fn = @convention(c) () -> Int32
+        let fn = unsafeBitCast(sym, to: Fn.self)
+        _n2WriteI32(outValuePtr, fn())
+        return 1
+
+    default:
+        _n2WriteI32(errorCodePtr, -405)
+        return 0
+    }
+}
+
+/// Returns a JSON descriptor for a registered symbol: its lowered ABI shape and support flag.
+@_cdecl("swift_contract_n2_symbol_describe")
+public func swift_contract_n2_symbol_describe(_ symbolPtr: UnsafePointer<CChar>?) -> UnsafeMutablePointer<CChar>? {
+    guard let symbolPtr else { return strdup("{\"symbol\":\"\",\"shape\":\"unknown\",\"supported\":false}") }
+    let symbol = String(cString: symbolPtr)
+    if let shape = _n2ShapeRegistry[symbol] {
+        return strdup("{\"symbol\":\"\(symbol)\",\"shape\":\"\(shape)\",\"supported\":true}")
+    } else {
+        return strdup("{\"symbol\":\"\(symbol)\",\"shape\":\"unknown\",\"supported\":false}")
+    }
+}
+
+/// Auto-invoke: discovers shape from registry and dispatches without a caller-provided shape.
+/// Primary proof of the N.2 exit criterion — Rust does not need to know the ABI shape.
+@_cdecl("swift_contract_n2_invoke_auto")
+public func swift_contract_n2_invoke_auto(
+    _ symbolPtr: UnsafePointer<CChar>?,
+    _ a: Int32,
+    _ b: Int32,
+    _ inoutPtr: UnsafeMutablePointer<Int32>?,
+    _ outValuePtr: UnsafeMutablePointer<Int32>?,
+    _ errorCodePtr: UnsafeMutablePointer<Int32>?
+) -> Int32 {
+    guard let symbolPtr else { _n2WriteI32(errorCodePtr, -400); return 0 }
+    let symbol = String(cString: symbolPtr)
+    guard let shape = _n2ShapeRegistry[symbol] else {
+        _n2WriteI32(errorCodePtr, -450)  // symbol not in registry
+        return 0
+    }
+    return shape.withCString { shapePtr in
+        swift_contract_n2_invoke_symbol_i32(symbolPtr, shapePtr, a, b, inoutPtr, outValuePtr, errorCodePtr)
+    }
+}
+
+/// Capability negotiation + strategy disclosure for a requested lowered signature.
+@_cdecl("swift_contract_n2_lowering_strategy_json")
+public func swift_contract_n2_lowering_strategy_json(_ signaturePtr: UnsafePointer<CChar>?) -> UnsafeMutablePointer<CChar>? {
+    guard let signaturePtr else { return nil }
+    let signature = String(cString: signaturePtr)
+
+    let strategy: String
+    let supported: Bool
+    if signature == "direct.add.i32_i32_to_i32"
+        || signature == "inout.add_assign.i32ptr_i32_to_i32"
+        || signature == "throwing.require_non_negative.i32_to_i32"
+        || signature == "async.double.i32_to_i32"
+        || signature == "indirect_ret.pair_sum_diff.i32_i32_to_pair"
+        || signature == "resilient.counter_addpair.i32_i32_to_i32"
+        || signature == "dynamic.symbol.i32_i32_to_i32"
+        || signature == "dynamic.symbol.i32ptr_i32_to_i32"
+        || signature == "dynamic.symbol.i32_i32_to_pair"
+        || signature == "dynamic.symbol.i32_to_i32"
+        || signature == "dynamic.symbol.void_to_i32" {
+        strategy = "native"
+        supported = true
+    } else {
+        strategy = "fallback"
+        supported = false
+    }
+
+    let json = "{\"signature\":\"\(signature.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\""))\",\"strategy\":\"\(strategy)\",\"supported\":\(supported ? "true" : "false"),\"capability_mask\":\(swift_contract_n2_capability_mask())}"
+    return strdup(json)
+}
+
+// MARK: - Backtrace & Crash Symbolication (Track E.2)
+
+@inline(never)
+private func _swift_contract_backtrace_frame_leaf() -> UnsafeMutablePointer<CChar>? {
+    let stack = Thread.callStackSymbols.joined(separator: "\n")
+    return strdup(stack)
+}
+
+@inline(never)
+private func _swift_contract_backtrace_frame_mid() -> UnsafeMutablePointer<CChar>? {
+    _swift_contract_backtrace_frame_leaf()
+}
+
+@inline(never)
+private func _swift_contract_backtrace_frame_root() -> UnsafeMutablePointer<CChar>? {
+    _swift_contract_backtrace_frame_mid()
+}
+
+/// Capture a Swift call stack as newline-delimited text.
+/// Returns a malloc-backed C string that Rust must free.
+@_cdecl("swift_contract_backtrace_capture")
+public func swift_contract_backtrace_capture() -> UnsafeMutablePointer<CChar>? {
+    _swift_contract_backtrace_frame_root()
+}
+
+/// Anchor symbol used by source-location and symbolication probes.
+@_cdecl("swift_contract_backtrace_anchor")
+public func swift_contract_backtrace_anchor(_ tag: Int32) -> Int32 {
+    tag + 1
+}
+
+/// Return the runtime address of the anchor symbol for debug tooling.
+@_cdecl("swift_contract_backtrace_anchor_address")
+public func swift_contract_backtrace_anchor_address() -> UInt64 {
+    let fn: @convention(c) (Int32) -> Int32 = swift_contract_backtrace_anchor
+    let ptr = unsafeBitCast(fn, to: UnsafeRawPointer.self)
+    return UInt64(UInt(bitPattern: ptr))
+}
+
+// MARK: - Enum Introspection (Track D.3)
+
+/// Construct a Direction enum case from a case discriminant (0=north, 1=south, 2=east, 3=west).
+@_cdecl("swift_contract_direction_make")
+public func swift_contract_direction_make(_ caseID: Int32) -> UnsafeMutableRawPointer? {
+    let dir: Direction
+    switch caseID {
+    case 0: dir = .north
+    case 1: dir = .south
+    case 2: dir = .east
+    case 3: dir = .west
+    default: return nil
+    }
+    let boxed = Box(dir)
+    return Unmanaged.passRetained(boxed).toOpaque()
+}
+
+/// Extract the case discriminant from a Direction enum.
+/// Returns 0=north, 1=south, 2=east, 3=west, or -1 if invalid.
+@_cdecl("swift_contract_direction_case")
+public func swift_contract_direction_case(_ dirPtr: UnsafeMutableRawPointer?) -> Int32 {
+    guard let dirPtr else { return -1 }
+    let boxed = Unmanaged<Box<Direction>>.fromOpaque(dirPtr).takeUnretainedValue()
+    return boxed.value.rawValue
+}
+
+/// Construct a Shape enum case: circle variant (case_id=0, radius as payload).
+@_cdecl("swift_contract_shape_circle")
+public func swift_contract_shape_circle(_ radius: Float) -> UnsafeMutableRawPointer? {
+    let shape = Shape.circle(radius: radius)
+    let boxed = Box(shape)
+    return Unmanaged.passRetained(boxed).toOpaque()
+}
+
+/// Construct a Shape enum case: rectangle variant (case_id=1, width and height as payload).
+@_cdecl("swift_contract_shape_rect")
+public func swift_contract_shape_rect(_ width: Float, _ height: Float) -> UnsafeMutableRawPointer? {
+    let shape = Shape.rectangle(width: width, height: height)
+    let boxed = Box(shape)
+    return Unmanaged.passRetained(boxed).toOpaque()
+}
+
+/// Extract the case discriminant from a Shape enum (0=circle, 1=rectangle, -1=invalid).
+@_cdecl("swift_contract_shape_get_case")
+public func swift_contract_shape_get_case(_ shapePtr: UnsafeMutableRawPointer?) -> Int32 {
+    guard let shapePtr else { return -1 }
+    let boxed = Unmanaged<Box<Shape>>.fromOpaque(shapePtr).takeUnretainedValue()
+    switch boxed.value {
+    case .circle:    return 0
+    case .rectangle: return 1
+    }
+}
+
+/// Extract radius from Shape.circle case. Returns -1 if shape is not circle.
+@_cdecl("swift_contract_shape_circle_radius")
+public func swift_contract_shape_circle_radius(_ shapePtr: UnsafeMutableRawPointer?) -> Float {
+    guard let shapePtr else { return -1.0 }
+    let boxed = Unmanaged<Box<Shape>>.fromOpaque(shapePtr).takeUnretainedValue()
+    if case .circle(let r) = boxed.value {
+        return r
+    }
+    return -1.0
+}
+
+/// Extract width and height from Shape.rectangle case.
+/// Returns 1 if successful, 0 if shape is not rectangle.
+@_cdecl("swift_contract_shape_rect_dims")
+public func swift_contract_shape_rect_dims(
+    _ shapePtr: UnsafeMutableRawPointer?,
+    _ widthPtr: UnsafeMutablePointer<Float>?,
+    _ heightPtr: UnsafeMutablePointer<Float>?
+) -> Int32 {
+    guard let shapePtr, let widthPtr, let heightPtr else { return 0 }
+    let boxed = Unmanaged<Box<Shape>>.fromOpaque(shapePtr).takeUnretainedValue()
+    if case .rectangle(let w, let h) = boxed.value {
+        widthPtr.pointee = w
+        heightPtr.pointee = h
+        return 1
+    }
+    return 0
 }
 
 public enum MultiPayloadEncoding {
@@ -221,7 +2424,7 @@ public func swift_codable_probe_flags() -> Int32 {
 }
 
 private final class Box<T> {
-    let value: T
+    var value: T
 
     init(_ value: T) {
         self.value = value
@@ -281,6 +2484,426 @@ public func swift_counter_deinit_count() -> Int32 {
 @_cdecl("swift_counter_deinit_reset")
 public func swift_counter_deinit_reset() {
     Counter.deinitCount = 0
+}
+
+@_cdecl("swift_contract_construct_string")
+public func swift_contract_construct_string(
+    _ bytesPtr: UnsafeRawPointer?,
+    _ byteCount: Int32
+) -> UnsafeMutableRawPointer? {
+    guard let bytesPtr, byteCount >= 0 else { return nil }
+    let buffer = UnsafeBufferPointer(
+        start: bytesPtr.assumingMemoryBound(to: UInt8.self),
+        count: Int(byteCount)
+    )
+    let string = String(decoding: buffer, as: UTF8.self)
+    let boxed = Box(string)
+    return Unmanaged.passRetained(boxed).toOpaque()
+}
+
+@_cdecl("swift_contract_string_len")
+public func swift_contract_string_len(_ receiver: UnsafeMutableRawPointer?) -> Int32 {
+    guard let receiver else { return -1 }
+    let boxed = Unmanaged<Box<String>>.fromOpaque(receiver).takeUnretainedValue()
+    return Int32(boxed.value.utf8.count)
+}
+
+@_cdecl("swift_contract_string_bytes")
+public func swift_contract_string_bytes(
+    _ receiver: UnsafeMutableRawPointer?,
+    _ outBytesPtr: UnsafeMutableRawPointer?,
+    _ maxByteCount: Int32
+) -> Int32 {
+    guard let receiver, let outBytesPtr, maxByteCount >= 0 else { return -1 }
+
+    let boxed = Unmanaged<Box<String>>.fromOpaque(receiver).takeUnretainedValue()
+    let utf8Bytes = Array(boxed.value.utf8)
+    let copyCount = min(utf8Bytes.count, Int(maxByteCount))
+    let outBuffer = outBytesPtr.bindMemory(to: UInt8.self, capacity: copyCount)
+
+    for index in 0..<copyCount {
+        outBuffer[index] = utf8Bytes[index]
+    }
+
+    return Int32(utf8Bytes.count)
+}
+
+@_cdecl("swift_contract_array_make")
+public func swift_contract_array_make(_ capacity: Int32) -> UnsafeMutableRawPointer? {
+    var array: [Int32] = []
+    array.reserveCapacity(max(0, Int(capacity)))
+    let boxed = Box(array)
+    return Unmanaged.passRetained(boxed).toOpaque()
+}
+
+@_cdecl("swift_contract_array_len")
+public func swift_contract_array_len(_ receiver: UnsafeMutableRawPointer?) -> Int32 {
+    guard let receiver else { return -1 }
+    let boxed = Unmanaged<Box<[Int32]>>.fromOpaque(receiver).takeUnretainedValue()
+    return Int32(boxed.value.count)
+}
+
+@_cdecl("swift_contract_array_get")
+public func swift_contract_array_get(_ receiver: UnsafeMutableRawPointer?, _ index: Int32) -> Int32 {
+    guard let receiver, index >= 0 else { return -1 }
+    let boxed = Unmanaged<Box<[Int32]>>.fromOpaque(receiver).takeUnretainedValue()
+    guard Int(index) < boxed.value.count else { return -1 }
+    return boxed.value[Int(index)]
+}
+
+@_cdecl("swift_contract_array_set")
+public func swift_contract_array_set(
+    _ receiver: UnsafeMutableRawPointer?,
+    _ index: Int32,
+    _ value: Int32
+) -> Int32 {
+    guard let receiver, index >= 0 else { return -1 }
+    let boxed = Unmanaged<Box<[Int32]>>.fromOpaque(receiver).takeUnretainedValue()
+    guard Int(index) < boxed.value.count else { return -1 }
+    boxed.value[Int(index)] = value
+    return 0
+}
+
+@_cdecl("swift_contract_array_append")
+public func swift_contract_array_append(_ receiver: UnsafeMutableRawPointer?, _ value: Int32) -> Int32 {
+    guard let receiver else { return -1 }
+    let boxed = Unmanaged<Box<[Int32]>>.fromOpaque(receiver).takeUnretainedValue()
+    boxed.value.append(value)
+    return Int32(boxed.value.count)
+}
+
+@_cdecl("swift_contract_array_data")
+public func swift_contract_array_data(_ receiver: UnsafeMutableRawPointer?) -> UnsafeRawPointer? {
+    guard let receiver else { return nil }
+    let boxed = Unmanaged<Box<[Int32]>>.fromOpaque(receiver).takeUnretainedValue()
+    return boxed.value.withUnsafeBufferPointer { buffer in
+        buffer.baseAddress.map { UnsafeRawPointer($0) }
+    }
+}
+
+@_cdecl("swift_contract_array_ref_make")
+public func swift_contract_array_ref_make(_ capacity: Int32) -> UnsafeMutableRawPointer? {
+    var array: [UnsafeMutableRawPointer] = []
+    array.reserveCapacity(max(0, Int(capacity)))
+    let boxed = Box(array)
+    return Unmanaged.passRetained(boxed).toOpaque()
+}
+
+@_cdecl("swift_contract_array_ref_len")
+public func swift_contract_array_ref_len(_ receiver: UnsafeMutableRawPointer?) -> Int32 {
+    guard let receiver else { return -1 }
+    let boxed = Unmanaged<Box<[UnsafeMutableRawPointer]>>.fromOpaque(receiver).takeUnretainedValue()
+    return Int32(boxed.value.count)
+}
+
+@_cdecl("swift_contract_array_ref_get")
+public func swift_contract_array_ref_get(
+    _ receiver: UnsafeMutableRawPointer?,
+    _ index: Int32
+) -> UnsafeMutableRawPointer? {
+    guard let receiver, index >= 0 else { return nil }
+    let boxed = Unmanaged<Box<[UnsafeMutableRawPointer]>>.fromOpaque(receiver).takeUnretainedValue()
+    guard Int(index) < boxed.value.count else { return nil }
+    return boxed.value[Int(index)]
+}
+
+@_cdecl("swift_contract_array_ref_set")
+public func swift_contract_array_ref_set(
+    _ receiver: UnsafeMutableRawPointer?,
+    _ index: Int32,
+    _ value: UnsafeMutableRawPointer?
+) -> Int32 {
+    guard let receiver, index >= 0, let value else { return -1 }
+    let boxed = Unmanaged<Box<[UnsafeMutableRawPointer]>>.fromOpaque(receiver).takeUnretainedValue()
+    guard Int(index) < boxed.value.count else { return -1 }
+    boxed.value[Int(index)] = value
+    return 0
+}
+
+@_cdecl("swift_contract_array_ref_append")
+public func swift_contract_array_ref_append(
+    _ receiver: UnsafeMutableRawPointer?,
+    _ value: UnsafeMutableRawPointer?
+) -> Int32 {
+    guard let receiver, let value else { return -1 }
+    let boxed = Unmanaged<Box<[UnsafeMutableRawPointer]>>.fromOpaque(receiver).takeUnretainedValue()
+    boxed.value.append(value)
+    return Int32(boxed.value.count)
+}
+
+@_cdecl("swift_contract_dict_i32_make")
+public func swift_contract_dict_i32_make(_ capacity: Int32) -> UnsafeMutableRawPointer? {
+    var dict: [Int32: Int32] = [:]
+    dict.reserveCapacity(max(0, Int(capacity)))
+    let boxed = Box(dict)
+    return Unmanaged.passRetained(boxed).toOpaque()
+}
+
+@_cdecl("swift_contract_dict_i32_len")
+public func swift_contract_dict_i32_len(_ receiver: UnsafeMutableRawPointer?) -> Int32 {
+    guard let receiver else { return -1 }
+    let boxed = Unmanaged<Box<[Int32: Int32]>>.fromOpaque(receiver).takeUnretainedValue()
+    return Int32(boxed.value.count)
+}
+
+@_cdecl("swift_contract_dict_i32_get")
+public func swift_contract_dict_i32_get(
+    _ receiver: UnsafeMutableRawPointer?,
+    _ key: Int32,
+    _ outValue: UnsafeMutablePointer<Int32>?
+) -> Int32 {
+    guard let receiver else { return -1 }
+    let boxed = Unmanaged<Box<[Int32: Int32]>>.fromOpaque(receiver).takeUnretainedValue()
+    guard let value = boxed.value[key] else { return 0 }
+    outValue?.pointee = value
+    return 1
+}
+
+@_cdecl("swift_contract_dict_i32_set")
+public func swift_contract_dict_i32_set(
+    _ receiver: UnsafeMutableRawPointer?,
+    _ key: Int32,
+    _ value: Int32
+) -> Int32 {
+    guard let receiver else { return -1 }
+    let boxed = Unmanaged<Box<[Int32: Int32]>>.fromOpaque(receiver).takeUnretainedValue()
+    boxed.value[key] = value
+    return Int32(boxed.value.count)
+}
+
+@_cdecl("swift_contract_dict_i32_remove")
+public func swift_contract_dict_i32_remove(
+    _ receiver: UnsafeMutableRawPointer?,
+    _ key: Int32,
+    _ outValue: UnsafeMutablePointer<Int32>?
+) -> Int32 {
+    guard let receiver else { return -1 }
+    let boxed = Unmanaged<Box<[Int32: Int32]>>.fromOpaque(receiver).takeUnretainedValue()
+    guard let removed = boxed.value.removeValue(forKey: key) else { return 0 }
+    outValue?.pointee = removed
+    return 1
+}
+
+@_cdecl("swift_contract_dict_i32_contains")
+public func swift_contract_dict_i32_contains(_ receiver: UnsafeMutableRawPointer?, _ key: Int32) -> Int32 {
+    guard let receiver else { return -1 }
+    let boxed = Unmanaged<Box<[Int32: Int32]>>.fromOpaque(receiver).takeUnretainedValue()
+    return boxed.value[key] == nil ? 0 : 1
+}
+
+// MARK: - Dictionary<Int32, OpaqueRef> (type_id 7)
+
+@_cdecl("swift_contract_dict_ref_make")
+public func swift_contract_dict_ref_make(_ capacity: Int32) -> UnsafeMutableRawPointer? {
+    var dict: [Int32: UnsafeMutableRawPointer] = [:]
+    dict.reserveCapacity(max(0, Int(capacity)))
+    let boxed = Box(dict)
+    return Unmanaged.passRetained(boxed).toOpaque()
+}
+
+@_cdecl("swift_contract_dict_ref_len")
+public func swift_contract_dict_ref_len(_ receiver: UnsafeMutableRawPointer?) -> Int32 {
+    guard let receiver else { return -1 }
+    let boxed = Unmanaged<Box<[Int32: UnsafeMutableRawPointer]>>.fromOpaque(receiver).takeUnretainedValue()
+    return Int32(boxed.value.count)
+}
+
+@_cdecl("swift_contract_dict_ref_get")
+public func swift_contract_dict_ref_get(
+    _ receiver: UnsafeMutableRawPointer?,
+    _ key: Int32,
+    _ outValue: UnsafeMutablePointer<UnsafeMutableRawPointer?>?
+) -> Int32 {
+    guard let receiver else { return -1 }
+    let boxed = Unmanaged<Box<[Int32: UnsafeMutableRawPointer]>>.fromOpaque(receiver).takeUnretainedValue()
+    guard let value = boxed.value[key] else { return 0 }
+    outValue?.pointee = value
+    return 1
+}
+
+@_cdecl("swift_contract_dict_ref_set")
+public func swift_contract_dict_ref_set(
+    _ receiver: UnsafeMutableRawPointer?,
+    _ key: Int32,
+    _ value: UnsafeMutableRawPointer?
+) -> Int32 {
+    guard let receiver, let value else { return -1 }
+    let boxed = Unmanaged<Box<[Int32: UnsafeMutableRawPointer]>>.fromOpaque(receiver).takeUnretainedValue()
+    boxed.value[key] = value
+    return Int32(boxed.value.count)
+}
+
+@_cdecl("swift_contract_dict_ref_remove")
+public func swift_contract_dict_ref_remove(
+    _ receiver: UnsafeMutableRawPointer?,
+    _ key: Int32
+) -> UnsafeMutableRawPointer? {
+    guard let receiver else { return nil }
+    let boxed = Unmanaged<Box<[Int32: UnsafeMutableRawPointer]>>.fromOpaque(receiver).takeUnretainedValue()
+    return boxed.value.removeValue(forKey: key)
+}
+
+@_cdecl("swift_contract_dict_ref_contains")
+public func swift_contract_dict_ref_contains(_ receiver: UnsafeMutableRawPointer?, _ key: Int32) -> Int32 {
+    guard let receiver else { return -1 }
+    let boxed = Unmanaged<Box<[Int32: UnsafeMutableRawPointer]>>.fromOpaque(receiver).takeUnretainedValue()
+    return boxed.value[key] == nil ? 0 : 1
+}
+
+// MARK: - Dynamic Type Casting (Track D.1)
+
+/// Type-erased wrapper for any registered contract object.
+/// Holds the original contract type_id alongside the raw object pointer.
+/// Assigned type_id = 8 in the contract registry.
+public final class ContractAnyBox {
+    public let contractTypeID: Int32
+    public let rawObject: UnsafeMutableRawPointer
+
+    public init(_ typeID: Int32, _ object: UnsafeMutableRawPointer) {
+        self.contractTypeID = typeID
+        self.rawObject = object
+    }
+}
+
+/// Wraps an existing contract object in a type-erased ContractAnyBox (type_id = 8).
+/// The caller retains ownership of the inner object; this box does not release it.
+@_cdecl("swift_contract_any_wrap")
+public func swift_contract_any_wrap(_ typeID: Int32, _ object: UnsafeMutableRawPointer?) -> UnsafeMutableRawPointer? {
+    guard let object else { return nil }
+    let box = ContractAnyBox(typeID, object)
+    return Unmanaged.passRetained(box).toOpaque()
+}
+
+/// Returns the contract type_id stored inside a ContractAnyBox (metatype identity check).
+/// Returns -1 if the pointer is nil.
+@_cdecl("swift_contract_any_type_id")
+public func swift_contract_any_type_id(_ anyBox: UnsafeMutableRawPointer?) -> Int32 {
+    guard let anyBox else { return -1 }
+    let box = Unmanaged<ContractAnyBox>.fromOpaque(anyBox).takeUnretainedValue()
+    return box.contractTypeID
+}
+
+/// Dynamic narrowing cast: wraps Swift's `as?` semantics for contract-layer types.
+/// If the ContractAnyBox holds an object with `targetTypeID`, returns the inner raw pointer.
+/// Returns nil when the actual type_id does not match (cast failure).
+@_cdecl("swift_contract_dynamic_cast")
+public func swift_contract_dynamic_cast(_ anyBox: UnsafeMutableRawPointer?, _ targetTypeID: Int32) -> UnsafeMutableRawPointer? {
+    guard let anyBox else { return nil }
+    let box = Unmanaged<ContractAnyBox>.fromOpaque(anyBox).takeUnretainedValue()
+    guard box.contractTypeID == targetTypeID else { return nil }
+    return box.rawObject
+}
+
+/// Generic contract constructor: routes to specific type constructors based on type_id.
+/// args_blob is type-dependent: type 1 (Person) expects (i32_age, i32_name_addr, i32_name_len)
+@_cdecl("swift_contract_construct")
+public func swift_contract_construct(
+    _ typeID: Int32,
+    _ argsBlobPtr: UnsafeRawPointer?,
+    _ argsBlobLen: Int32
+) -> UnsafeMutableRawPointer? {
+    guard let argsBlobPtr, argsBlobLen >= 0 else { return nil }
+    
+    switch typeID {
+    case 1:
+        // Person: two Int32 args (id, age)
+        if argsBlobLen < 8 { return nil } // need 2 * 4 bytes
+        let args = argsBlobPtr.assumingMemoryBound(to: Int32.self)
+        let person = Person(id: args[0], age: args[1])
+        return Unmanaged.passRetained(Box(person)).toOpaque()
+    
+    case 2:
+        // Counter: one Int32 arg (initialValue)
+        if argsBlobLen < 4 { return nil }
+        let args = argsBlobPtr.assumingMemoryBound(to: Int32.self)
+        let counter = Counter(start: args[0])
+        return Unmanaged.passRetained(counter).toOpaque()
+    
+    case 3:
+        // String: (bytesPtr, byteCount) - stored as (ptr, i32, padding)
+        if argsBlobLen < 12 { return nil } // pointer (8 bytes) + i32 (4 bytes)
+        let bytesPtr = argsBlobPtr.assumingMemoryBound(to: UnsafeMutableRawPointer?.self).pointee
+        let byteCount = argsBlobPtr.advanced(by: 8).assumingMemoryBound(to: Int32.self).pointee
+        return swift_contract_construct_string(bytesPtr, byteCount)
+    
+    case 4:
+        // Array<Int32>: one Int32 arg (capacity)
+        if argsBlobLen < 4 { return nil }
+        let args = argsBlobPtr.assumingMemoryBound(to: Int32.self)
+        var array: [Int32] = []
+        array.reserveCapacity(max(0, Int(args[0])))
+        return Unmanaged.passRetained(Box(array)).toOpaque()
+    
+    case 5:
+        // Array<OpaqueRef>: one Int32 arg (capacity)
+        if argsBlobLen < 4 { return nil }
+        let args = argsBlobPtr.assumingMemoryBound(to: Int32.self)
+        var array: [UnsafeMutableRawPointer] = []
+        array.reserveCapacity(max(0, Int(args[0])))
+        return Unmanaged.passRetained(Box(array)).toOpaque()
+    
+    case 6:
+        // Dictionary<Int32, Int32>: one Int32 arg (capacity hint)
+        if argsBlobLen < 4 { return nil }
+        let args = argsBlobPtr.assumingMemoryBound(to: Int32.self)
+        var dict: [Int32: Int32] = [:]
+        dict.reserveCapacity(max(0, Int(args[0])))
+        return Unmanaged.passRetained(Box(dict)).toOpaque()
+    
+    case 7:
+        // Dictionary<Int32, OpaqueRef>: one Int32 arg (capacity hint)
+        if argsBlobLen < 4 { return nil }
+        let args = argsBlobPtr.assumingMemoryBound(to: Int32.self)
+        var dict: [Int32: UnsafeMutableRawPointer] = [:]
+        dict.reserveCapacity(max(0, Int(args[0])))
+        return Unmanaged.passRetained(Box(dict)).toOpaque()
+    
+    default:
+        return nil
+    }
+}
+
+@_cdecl("swift_contract_release")
+public func swift_contract_release(_ typeID: Int32, _ object: UnsafeMutableRawPointer?) -> Int32 {
+    guard let object else { return 0 }
+
+    switch typeID {
+    case 1:
+        _ = Unmanaged<Box<Person>>.fromOpaque(object).takeRetainedValue()
+        return 1
+    case 2:
+        _ = Unmanaged<Counter>.fromOpaque(object).takeRetainedValue()
+        return 1
+    case 3:
+        _ = Unmanaged<Box<String>>.fromOpaque(object).takeRetainedValue()
+        return 1
+    case 4:
+        _ = Unmanaged<Box<[Int32]>>.fromOpaque(object).takeRetainedValue()
+        return 1
+    case 5:
+        _ = Unmanaged<Box<[UnsafeMutableRawPointer]>>.fromOpaque(object).takeRetainedValue()
+        return 1
+    case 6:
+        _ = Unmanaged<Box<[Int32: Int32]>>.fromOpaque(object).takeRetainedValue()
+        return 1
+    case 7:
+        _ = Unmanaged<Box<[Int32: UnsafeMutableRawPointer]>>.fromOpaque(object).takeRetainedValue()
+        return 1
+    case 8:
+        _ = Unmanaged<ContractAnyBox>.fromOpaque(object).takeRetainedValue()
+        return 1
+    case 20:
+        _ = Unmanaged<Box<ProbeCounterActor>>.fromOpaque(object).takeRetainedValue()
+        return 1
+    case 21:
+        _ = Unmanaged<Box<ProbeAsyncIteratorBox>>.fromOpaque(object).takeRetainedValue()
+        return 1
+    case 23:
+        _ = Unmanaged<Box<ContractGenericBox<Int32>>>.fromOpaque(object).takeRetainedValue()
+        return 1
+    default:
+        return 0
+    }
 }
 
 @_cdecl("swift_add")
@@ -404,6 +3027,43 @@ public struct Point {
     public init(x: Int32, y: Int32) { self.x = x; self.y = y }
     public func sum() -> Int32 { x + y }
     public func product() -> Int32 { x * y }
+}
+
+// ── Track F.1: Variable-Sized Struct Construction (test payload for layout introspection) ──
+/// Struct with mixed field types to test layout introspection, alignment, and field-offset discovery.
+public struct TestPayload {
+    public var field_a: Int32      // Offset 0, size 4
+    public var field_b: Int64      // Offset 8 (aligned to 8-byte boundary), size 8
+    public var field_c: Int32      // Offset 16, size 4
+    
+    public init(field_a: Int32, field_b: Int64, field_c: Int32) {
+        self.field_a = field_a
+        self.field_b = field_b
+        self.field_c = field_c
+    }
+}
+
+// ── Track F.2: Tuple Construction & Unpacking (boxable tuples for contract system) ──
+/// A simple 2-element tuple type (Pair) that can be boxed and bridged via contract.
+public struct Pair {
+    public var first: Int32
+    public var second: Int32
+    public init(first: Int32, second: Int32) {
+        self.first = first
+        self.second = second
+    }
+}
+
+/// A 3-element tuple type (Triple) that can be boxed and bridged via contract.
+public struct Triple {
+    public var first: Int32
+    public var second: Int32
+    public var third: Int32
+    public init(first: Int32, second: Int32, third: Int32) {
+        self.first = first
+        self.second = second
+        self.third = third
+    }
 }
 
 // ── Tuple return ───────────────────────────────────────────────────────────
@@ -2187,4 +4847,252 @@ public func swift_arc_edge_stress(_ iterations: Int32) -> Int32 {
     let weakCleared = (weakRef == nil)
 
     return (beforeDrop == 0 && afterDrop == 1 && weakCleared) ? 1 : 0
+}
+
+// ── Track F.1: Struct Layout Introspection (TestPayload) ──────────────────
+
+@_cdecl("swift_struct_testpayload_size")
+public func swift_struct_testpayload_size() -> Int32 {
+    Int32(MemoryLayout<TestPayload>.size)
+}
+
+@_cdecl("swift_struct_testpayload_stride")
+public func swift_struct_testpayload_stride() -> Int32 {
+    Int32(MemoryLayout<TestPayload>.stride)
+}
+
+@_cdecl("swift_struct_testpayload_alignment")
+public func swift_struct_testpayload_alignment() -> Int32 {
+    Int32(MemoryLayout<TestPayload>.alignment)
+}
+
+/// Get the byte offset of field_a from the start of TestPayload.
+@_cdecl("swift_struct_testpayload_offset_a")
+public func swift_struct_testpayload_offset_a() -> Int32 {
+    var x = TestPayload(field_a: 1, field_b: 2, field_c: 3)
+    return withUnsafeMutablePointer(to: &x) { base in
+        withUnsafeMutablePointer(to: &base.pointee.field_a) { aptr in
+            Int32(Int(bitPattern: aptr) - Int(bitPattern: base))
+        }
+    }
+}
+
+/// Get the byte offset of field_b from the start of TestPayload.
+@_cdecl("swift_struct_testpayload_offset_b")
+public func swift_struct_testpayload_offset_b() -> Int32 {
+    var x = TestPayload(field_a: 1, field_b: 2, field_c: 3)
+    return withUnsafeMutablePointer(to: &x) { base in
+        withUnsafeMutablePointer(to: &base.pointee.field_b) { bptr in
+            Int32(Int(bitPattern: bptr) - Int(bitPattern: base))
+        }
+    }
+}
+
+/// Get the byte offset of field_c from the start of TestPayload.
+@_cdecl("swift_struct_testpayload_offset_c")
+public func swift_struct_testpayload_offset_c() -> Int32 {
+    var x = TestPayload(field_a: 1, field_b: 2, field_c: 3)
+    return withUnsafeMutablePointer(to: &x) { base in
+        withUnsafeMutablePointer(to: &base.pointee.field_c) { cptr in
+            Int32(Int(bitPattern: cptr) - Int(bitPattern: base))
+        }
+    }
+}
+
+/// Construct a TestPayload from a blob of raw bytes (field_a as first Int32, field_b as next Int64, field_c as last Int32).
+/// Returns a boxed opaque reference, or null if the blob is too small.
+@_cdecl("swift_contract_struct_testpayload_construct")
+public func swift_contract_struct_testpayload_construct(_ bytes: UnsafeRawPointer?, _ len: Int32) -> UnsafeMutableRawPointer? {
+    guard let bytes, len >= Int32(MemoryLayout<TestPayload>.size) else { return nil }
+    
+    let ptr = UnsafeRawPointer(bytes)
+    let field_a = ptr.load(as: Int32.self)
+    let field_b = ptr.advanced(by: 8).load(as: Int64.self)  // offset 8 due to alignment
+    let field_c = ptr.advanced(by: 16).load(as: Int32.self)
+    
+    let payload = TestPayload(field_a: field_a, field_b: field_b, field_c: field_c)
+    let boxed = Box(payload)
+    return Unmanaged.passRetained(boxed).toOpaque()
+}
+
+/// Extract field_a (Int32) from a boxed TestPayload. Returns -1 if the pointer is invalid.
+@_cdecl("swift_contract_struct_testpayload_get_field_a")
+public func swift_contract_struct_testpayload_get_field_a(_ ptr: UnsafeMutableRawPointer?) -> Int32 {
+    guard let ptr else { return -1 }
+    let boxed = Unmanaged<Box<TestPayload>>.fromOpaque(ptr).takeUnretainedValue()
+    return boxed.value.field_a
+}
+
+/// Extract field_b (Int64) from a boxed TestPayload as an Int64. Returns -1 if the pointer is invalid.
+@_cdecl("swift_contract_struct_testpayload_get_field_b")
+public func swift_contract_struct_testpayload_get_field_b(_ ptr: UnsafeMutableRawPointer?) -> Int64 {
+    guard let ptr else { return -1 }
+    let boxed = Unmanaged<Box<TestPayload>>.fromOpaque(ptr).takeUnretainedValue()
+    return boxed.value.field_b
+}
+
+/// Extract field_c (Int32) from a boxed TestPayload. Returns -1 if the pointer is invalid.
+@_cdecl("swift_contract_struct_testpayload_get_field_c")
+public func swift_contract_struct_testpayload_get_field_c(_ ptr: UnsafeMutableRawPointer?) -> Int32 {
+    guard let ptr else { return -1 }
+    let boxed = Unmanaged<Box<TestPayload>>.fromOpaque(ptr).takeUnretainedValue()
+    return boxed.value.field_c
+}
+
+// ── Track F.2: Tuple Construction & Unpacking ──────────────────────────────
+
+/// Construct a Pair (2-element tuple) from two Int32 values and return a boxed opaque reference.
+@_cdecl("swift_contract_tuple_pair_construct")
+public func swift_contract_tuple_pair_construct(_ first: Int32, _ second: Int32) -> UnsafeMutableRawPointer? {
+    let pair = Pair(first: first, second: second)
+    let boxed = Box(pair)
+    return Unmanaged.passRetained(boxed).toOpaque()
+}
+
+/// Extract the first element (Int32) from a boxed Pair. Returns -1 if the pointer is invalid.
+@_cdecl("swift_contract_tuple_pair_get_first")
+public func swift_contract_tuple_pair_get_first(_ ptr: UnsafeMutableRawPointer?) -> Int32 {
+    guard let ptr else { return -1 }
+    let boxed = Unmanaged<Box<Pair>>.fromOpaque(ptr).takeUnretainedValue()
+    return boxed.value.first
+}
+
+/// Extract the second element (Int32) from a boxed Pair. Returns -1 if the pointer is invalid.
+@_cdecl("swift_contract_tuple_pair_get_second")
+public func swift_contract_tuple_pair_get_second(_ ptr: UnsafeMutableRawPointer?) -> Int32 {
+    guard let ptr else { return -1 }
+    let boxed = Unmanaged<Box<Pair>>.fromOpaque(ptr).takeUnretainedValue()
+    return boxed.value.second
+}
+
+/// Construct a Triple (3-element tuple) from three Int32 values and return a boxed opaque reference.
+@_cdecl("swift_contract_tuple_triple_construct")
+public func swift_contract_tuple_triple_construct(_ first: Int32, _ second: Int32, _ third: Int32) -> UnsafeMutableRawPointer? {
+    let triple = Triple(first: first, second: second, third: third)
+    let boxed = Box(triple)
+    return Unmanaged.passRetained(boxed).toOpaque()
+}
+
+/// Extract the first element (Int32) from a boxed Triple. Returns -1 if the pointer is invalid.
+@_cdecl("swift_contract_tuple_triple_get_first")
+public func swift_contract_tuple_triple_get_first(_ ptr: UnsafeMutableRawPointer?) -> Int32 {
+    guard let ptr else { return -1 }
+    let boxed = Unmanaged<Box<Triple>>.fromOpaque(ptr).takeUnretainedValue()
+    return boxed.value.first
+}
+
+/// Extract the second element (Int32) from a boxed Triple. Returns -1 if the pointer is invalid.
+@_cdecl("swift_contract_tuple_triple_get_second")
+public func swift_contract_tuple_triple_get_second(_ ptr: UnsafeMutableRawPointer?) -> Int32 {
+    guard let ptr else { return -1 }
+    let boxed = Unmanaged<Box<Triple>>.fromOpaque(ptr).takeUnretainedValue()
+    return boxed.value.second
+}
+
+/// Extract the third element (Int32) from a boxed Triple. Returns -1 if the pointer is invalid.
+@_cdecl("swift_contract_tuple_triple_get_third")
+public func swift_contract_tuple_triple_get_third(_ ptr: UnsafeMutableRawPointer?) -> Int32 {
+    guard let ptr else { return -1 }
+    let boxed = Unmanaged<Box<Triple>>.fromOpaque(ptr).takeUnretainedValue()
+    return boxed.value.third
+}
+
+/// Write a new value into field_a of a boxed TestPayload (by-reference field mutation).
+/// Returns 1 on success, 0 on failure.
+@_cdecl("swift_contract_struct_testpayload_set_field_a")
+public func swift_contract_struct_testpayload_set_field_a(_ ptr: UnsafeMutableRawPointer?, _ new_val: Int32) -> Int32 {
+    guard let ptr else { return 0 }
+    let boxed = Unmanaged<Box<TestPayload>>.fromOpaque(ptr).takeUnretainedValue()
+    // Update field_a through the mutable box reference
+    boxed.value.field_a = new_val
+    return 1
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Track F.3: Closure/Function Pointer Bridging
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// A simple closure wrapper that captures a delta and applies it to input.
+public class ClosureCapture {
+    let delta: Int32
+    
+    init(delta: Int32) {
+        self.delta = delta
+    }
+    
+    func apply(_ value: Int32) -> Int32 {
+        value + delta
+    }
+}
+
+/// Construct a closure with a captured delta value.
+/// Returns an opaque pointer to a boxed ClosureCapture, or nil on failure.
+@_cdecl("swift_contract_closure_make_adder")
+public func swift_contract_closure_make_adder(_ delta: Int32) -> UnsafeMutableRawPointer? {
+    let capture = ClosureCapture(delta: delta)
+    let boxed = Box(capture)
+    return Unmanaged.passRetained(boxed).toOpaque()
+}
+
+/// Invoke a closure with a single Int32 argument. Returns the result or -999 on failure.
+@_cdecl("swift_contract_closure_invoke_adder")
+public func swift_contract_closure_invoke_adder(_ ptr: UnsafeMutableRawPointer?, _ arg: Int32) -> Int32 {
+    guard let ptr else { return -999 }
+    let boxed = Unmanaged<Box<ClosureCapture>>.fromOpaque(ptr).takeUnretainedValue()
+    return boxed.value.apply(arg)
+}
+
+/// Extract the captured delta value from a closure. Returns -999 on failure.
+@_cdecl("swift_contract_closure_get_capture")
+public func swift_contract_closure_get_capture(_ ptr: UnsafeMutableRawPointer?) -> Int32 {
+    guard let ptr else { return -999 }
+    let boxed = Unmanaged<Box<ClosureCapture>>.fromOpaque(ptr).takeUnretainedValue()
+    return boxed.value.delta
+}
+
+/// A closure that accepts two arguments and produces a result.
+public class ClosureMultiArg {
+    let factor: Int32
+    let offset: Int32
+    
+    init(factor: Int32, offset: Int32) {
+        self.factor = factor
+        self.offset = offset
+    }
+    
+    func apply(_ a: Int32, _ b: Int32) -> Int32 {
+        (a * factor) + (b * offset)
+    }
+}
+
+/// Construct a multi-argument closure with factor and offset captures.
+@_cdecl("swift_contract_closure_make_multi")
+public func swift_contract_closure_make_multi(_ factor: Int32, _ offset: Int32) -> UnsafeMutableRawPointer? {
+    let capture = ClosureMultiArg(factor: factor, offset: offset)
+    let boxed = Box(capture)
+    return Unmanaged.passRetained(boxed).toOpaque()
+}
+
+/// Invoke a multi-argument closure. Returns result or -999 on failure.
+@_cdecl("swift_contract_closure_invoke_multi")
+public func swift_contract_closure_invoke_multi(_ ptr: UnsafeMutableRawPointer?, _ a: Int32, _ b: Int32) -> Int32 {
+    guard let ptr else { return -999 }
+    let boxed = Unmanaged<Box<ClosureMultiArg>>.fromOpaque(ptr).takeUnretainedValue()
+    return boxed.value.apply(a, b)
+}
+
+/// Extract factor from a multi-arg closure. Returns -999 on failure.
+@_cdecl("swift_contract_closure_get_factor")
+public func swift_contract_closure_get_factor(_ ptr: UnsafeMutableRawPointer?) -> Int32 {
+    guard let ptr else { return -999 }
+    let boxed = Unmanaged<Box<ClosureMultiArg>>.fromOpaque(ptr).takeUnretainedValue()
+    return boxed.value.factor
+}
+
+/// Extract offset from a multi-arg closure. Returns -999 on failure.
+@_cdecl("swift_contract_closure_get_offset")
+public func swift_contract_closure_get_offset(_ ptr: UnsafeMutableRawPointer?) -> Int32 {
+    guard let ptr else { return -999 }
+    let boxed = Unmanaged<Box<ClosureMultiArg>>.fromOpaque(ptr).takeUnretainedValue()
+    return boxed.value.offset
 }

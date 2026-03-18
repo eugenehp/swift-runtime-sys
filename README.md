@@ -130,6 +130,24 @@ swiftc -emit-library -g -o libRustBridge.dylib examples/RustBridge.swift
 DYLD_LIBRARY_PATH=. cargo run --example runtime_factory_demo
 ```
 
+Versioned contract descriptor plus normalized construction/dispatch probe:
+
+```shell
+./scripts/run_contract_parity.sh
+```
+
+Compiler-feature cooperation boundary for promoted parity flows:
+
+- Swift side owns resilience-sensitive layouts, protocol-backed wrappers, and any
+	required compiler-generated metadata or witness exports.
+- Rust side owns contract validation, typed argument/result boxing, and capability
+	negotiation for `supported`, `fallback`, and `unsupported` compiler-sensitive flows.
+- Raw runtime symbol chasing remains research mode and is not the required path for
+	promoted contract parity.
+- Required registry exports now include deterministic metadata lookup for
+	`Person`, `Counter`, and `ContractGenericBox<Int32>`, plus protocol-conformance
+	lookup and wrapper-based `CounterLike.current` dispatch.
+
 This is the practical way to scale direct Rust control over Swift memory objects.
 For protocols and fully generic existential construction, public stable runtime ABI
 coverage is still incomplete and remains an active research area.
@@ -286,6 +304,17 @@ Claim policy:
 - Experimental features are tracked but do not block required parity unless promoted.
 - Scope changes must be documented here before parity percentages are reinterpreted.
 
+Promotion policy for compiler-feature-dependent paths:
+
+- Promotion from `optional` to `required` requires green support-matrix cells and
+	zero undocumented deviations in the ledger above.
+- Pull requests enforce a policy smoke gate with `PROMOTION_HISTORY_WINDOW=1`.
+- Main branch currently enforces `PROMOTION_HISTORY_WINDOW=1` in CI; stricter windows
+	(e.g. `PROMOTION_HISTORY_WINDOW=2`) are supported by the same script for promotion
+	signoff workflows that aggregate multiple historical snapshots.
+- Promotion evidence is published as `target/runtime-probe/promotion-policy-signoff.md`.
+- Plan completion evidence is published as `target/runtime-probe/plan-completion-signoff.md`.
+
 ### Full parity verification (local and CI-equivalent)
 
 Local required gate sequence:
@@ -294,6 +323,12 @@ Local required gate sequence:
 ./scripts/run_parity_matrix.sh
 FUZZ_CASES=64 STOP_ON_FAIL=1 ./scripts/run_parity_stress.sh 3
 ./scripts/run_protocol_dispatch_matrix.sh
+```
+
+One-command host verification (includes contract and signoff validators):
+
+```shell
+./scripts/run_full_plan_verification.sh
 ```
 
 CI-equivalent budgets used in `.github/workflows/parity.yml`:

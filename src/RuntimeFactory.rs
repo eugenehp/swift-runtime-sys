@@ -272,11 +272,15 @@ impl RuntimeFactory {
                 "{symbol} returned null"
             )));
         }
-        Ok(unsafe { CStr::from_ptr(ptr) }.to_string_lossy().into_owned())
+        Ok(unsafe { CStr::from_ptr(ptr) }
+            .to_string_lossy()
+            .into_owned())
     }
 
     /// Loads the Swift runtime contract descriptor exposed by the bridge.
-    pub fn runtime_contract_descriptor(&self) -> Result<RuntimeContractDescriptor, RuntimeFactoryError> {
+    pub fn runtime_contract_descriptor(
+        &self,
+    ) -> Result<RuntimeContractDescriptor, RuntimeFactoryError> {
         let version = self.call_to_i32("swift_runtime_contract_version")?;
         let json_len = self.call_to_i32("swift_runtime_contract_json_len")?;
         if json_len <= 0 {

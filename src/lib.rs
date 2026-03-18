@@ -13,9 +13,13 @@ pub mod Paths;
 pub mod Portability;
 pub mod PrebuiltStringMap;
 #[allow(non_snake_case)]
+pub mod RuntimeContract;
+#[allow(non_snake_case)]
 pub mod RuntimeFactory;
 #[allow(non_snake_case)]
 pub mod RuntimeRaw;
 pub mod SwiftDtoa;
+#[allow(non_snake_case)]
+pub mod SymbolDemangler;
 pub mod TracingCommon;
 pub mod VoucherShims;

@@ -158,10 +158,47 @@ jobs:
           name: protocol-dispatch-${{ github.sha }}
           path: target/runtime-probe/protocol-dispatch-matrix.md
 
+  contract_parity:
+    name: Contract parity (${{ matrix.runner }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-14, macos-15]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-${{ matrix.runner }}-cargo-contract-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-${{ matrix.runner }}-cargo-
+
+      - name: Build and run contract parity probes
+        run: ./scripts/run_contract_parity.sh
+
+      - name: Upload contract parity artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: contract-parity-${{ matrix.runner }}-${{ github.sha }}
+          path: |
+            target/runtime-probe/contract-parity.md
+            target/runtime-probe/contract-descriptor.log
+            target/runtime-probe/contract-dispatch.log
+
   support_matrix_signoff:
     name: Support matrix signoff
     runs-on: macos-15
-    needs: [parity, stress, protocol_dispatch]
+    needs: [parity, stress, protocol_dispatch, contract_parity]
 
     steps:
       - uses: actions/checkout@v4
@@ -173,12 +210,37 @@ jobs:
           path: target/ci/parity-artifacts
           merge-multiple: false
 
+      - name: Download contract artifacts from all cells
+        uses: actions/download-artifact@v4
+        with:
+          pattern: contract-parity-*
+          path: target/ci/parity-artifacts
+          merge-multiple: false
+
       - name: Validate support matrix parity artifacts
         run: ./scripts/validate_support_matrix_artifacts.sh target/ci/parity-artifacts
+
+      - name: Validate promotion policy (PR)
+        if: github.event_name == 'pull_request'
+        env:
+          PROMOTION_HISTORY_WINDOW: "1"
+        run: ./scripts/validate_promotion_policy.sh target/ci/parity-artifacts
+
+      - name: Validate promotion policy (main)
+        if: github.event_name != 'pull_request'
+        env:
+          PROMOTION_HISTORY_WINDOW: "1"
+        run: ./scripts/validate_promotion_policy.sh target/ci/parity-artifacts
+
+      - name: Validate plan completion
+        run: ./scripts/validate_plan_completion.sh
 
       - name: Upload support matrix signoff artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: support-matrix-signoff-${{ github.sha }}
-          path: target/runtime-probe/support-matrix-signoff.md
+          path: |
+            target/runtime-probe/support-matrix-signoff.md
+            target/runtime-probe/promotion-policy-signoff.md
+            target/runtime-probe/plan-completion-signoff.md

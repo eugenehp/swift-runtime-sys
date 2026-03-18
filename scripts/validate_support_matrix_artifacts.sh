@@ -9,6 +9,8 @@ set -euo pipefail
 # Expected artifact layout (from actions/download-artifact):
 #   <artifact-root>/parity-report-macos-14-<sha>/parity-report.json
 #   <artifact-root>/parity-report-macos-15-<sha>/parity-report.json
+#   <artifact-root>/contract-parity-macos-14-<sha>/contract-dispatch.log
+#   <artifact-root>/contract-parity-macos-15-<sha>/contract-dispatch.log
 
 ARTIFACT_ROOT="${1:-target/ci/parity-artifacts}"
 REQUIRED_CELLS="${REQUIRED_CELLS:-macos-14 macos-15}"
@@ -35,6 +37,8 @@ cat > "$OUT_MD" <<MD
 
 Required cells: ${REQUIRED_CELLS}
 
+## Parity Matrix
+
 | Cell | Pass Ratio | Artifact JSON | Result |
 |---|---:|---|---|
 MD
@@ -60,6 +64,34 @@ for cell in $REQUIRED_CELLS; do
     echo "| ${cell} | ${passed}/${total} | ${json} | PASS |" >> "$OUT_MD"
   else
     echo "| ${cell} | ${passed}/${total} | ${json} | FAIL |" >> "$OUT_MD"
+    status_ok=0
+  fi
+done
+
+cat >> "$OUT_MD" <<MD
+
+## Contract Parity
+
+| Cell | Dispatch Artifact | Result |
+|---|---|---|
+MD
+
+for cell in $REQUIRED_CELLS; do
+  dispatch_log="$(ls "$ARTIFACT_ROOT"/contract-parity-${cell}-*/contract-dispatch.log 2>/dev/null | head -n 1 || true)"
+  if [[ -z "$dispatch_log" || ! -f "$dispatch_log" ]]; then
+    echo "| ${cell} | missing | FAIL |" >> "$OUT_MD"
+    status_ok=0
+    continue
+  fi
+
+  if grep -q "normalized=true" "$dispatch_log" && \
+     grep -q "metadata_registry=true" "$dispatch_log" && \
+     grep -q "protocol_registry=true" "$dispatch_log" && \
+     grep -q "generic_metadata=Supported" "$dispatch_log" && \
+     grep -q "protocol_registry=Supported" "$dispatch_log"; then
+    echo "| ${cell} | ${dispatch_log} | PASS |" >> "$OUT_MD"
+  else
+    echo "| ${cell} | ${dispatch_log} | FAIL |" >> "$OUT_MD"
     status_ok=0
   fi
 done

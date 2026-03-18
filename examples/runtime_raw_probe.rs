@@ -1322,7 +1322,9 @@ fn main() {
         url_session_cellular_ok as i32,
     );
 
-    let file_manager_flags = factory.call_to_i32("swift_file_manager_probe_flags").unwrap_or(0);
+    let file_manager_flags = factory
+        .call_to_i32("swift_file_manager_probe_flags")
+        .unwrap_or(0);
     let file_manager_temp_dir_ok = (file_manager_flags & 1) != 0;
     let file_manager_create_ok = (file_manager_flags & 2) != 0;
     let file_manager_read_ok = (file_manager_flags & 4) != 0;
@@ -1350,7 +1352,9 @@ fn main() {
         date_components_interval_ok as i32,
     );
 
-    let notification_flags = factory.call_to_i32("swift_notification_probe_flags").unwrap_or(0);
+    let notification_flags = factory
+        .call_to_i32("swift_notification_probe_flags")
+        .unwrap_or(0);
     let notification_name_ok = (notification_flags & 1) != 0;
     let notification_user_info_ok = (notification_flags & 2) != 0;
     let notification_delivery_ok = (notification_flags & 4) != 0;
@@ -1378,7 +1382,9 @@ fn main() {
         byte_count_zero_ok as i32,
     );
 
-    let range_bridge_flags = factory.call_to_i32("swift_range_bridge_probe_flags").unwrap_or(0);
+    let range_bridge_flags = factory
+        .call_to_i32("swift_range_bridge_probe_flags")
+        .unwrap_or(0);
     let range_bridge_ascii_ok = (range_bridge_flags & 1) != 0;
     let range_bridge_nsrange_ok = (range_bridge_flags & 2) != 0;
     let range_bridge_invalid_ok = (range_bridge_flags & 4) != 0;
