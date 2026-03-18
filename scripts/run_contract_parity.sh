@@ -7,6 +7,13 @@ FIXTURE_DIR="$OUT_DIR/resilient-fixtures"
 OUT_MD="$OUT_DIR/contract-parity.md"
 DESCRIPTOR_LOG="$OUT_DIR/contract-descriptor.log"
 DISPATCH_LOG="$OUT_DIR/contract-dispatch.log"
+PROFILE="${PROFILE:-debug}"
+
+if [[ "$PROFILE" == "release" ]]; then
+  BIN_PREFIX="target/release/examples"
+else
+  BIN_PREFIX="target/debug/examples"
+fi
 
 mkdir -p "$OUT_DIR"
 mkdir -p "$FIXTURE_DIR"
@@ -15,10 +22,14 @@ cd "$ROOT"
 ./scripts/build_runtime_thunks.sh
 swiftc -emit-library -emit-module -emit-module-path "$FIXTURE_DIR/ResilientFixtures.swiftmodule" -enable-library-evolution -g -module-name ResilientFixtures -o "$FIXTURE_DIR/libResilientFixtures.dylib" examples/ResilientFixtures.swift
 swiftc -emit-library -g -I "$FIXTURE_DIR" -L "$FIXTURE_DIR" -lResilientFixtures -o libRustBridge.dylib examples/RustBridge.swift
-cargo build --example runtime_contract_probe --example runtime_contract_dispatch_probe > /dev/null
+if [[ "$PROFILE" == "release" ]]; then
+  cargo build --release --example runtime_contract_probe --example runtime_contract_dispatch_probe > /dev/null
+else
+  cargo build --example runtime_contract_probe --example runtime_contract_dispatch_probe > /dev/null
+fi
 
-DYLD_LIBRARY_PATH="$FIXTURE_DIR:." target/debug/examples/runtime_contract_probe > "$DESCRIPTOR_LOG"
-DYLD_LIBRARY_PATH="$FIXTURE_DIR:." target/debug/examples/runtime_contract_dispatch_probe > "$DISPATCH_LOG"
+DYLD_LIBRARY_PATH="$FIXTURE_DIR:." "$BIN_PREFIX/runtime_contract_probe" > "$DESCRIPTOR_LOG"
+DYLD_LIBRARY_PATH="$FIXTURE_DIR:." "$BIN_PREFIX/runtime_contract_dispatch_probe" > "$DISPATCH_LOG"
 
 descriptor_line=$(head -n 1 "$DESCRIPTOR_LOG")
 dispatch_line=$(head -n 1 "$DISPATCH_LOG")

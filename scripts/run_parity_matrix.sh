@@ -8,6 +8,13 @@ PROBE_LOG="$OUT_DIR/probe.log"
 LLDB_LOG="$OUT_DIR/lldb_tmux.log"
 REPORT_JSON="$OUT_DIR/parity-report.json"
 REPORT_MD="$OUT_DIR/parity-report.md"
+PROFILE="${PROFILE:-debug}"
+
+if [[ "$PROFILE" == "release" ]]; then
+  BIN_PREFIX="target/release/examples"
+else
+  BIN_PREFIX="target/debug/examples"
+fi
 
 mkdir -p "$OUT_DIR"
 mkdir -p "$FIXTURE_DIR"
@@ -16,9 +23,13 @@ cd "$ROOT"
 ./scripts/build_runtime_thunks.sh
 swiftc -emit-library -emit-module -emit-module-path "$FIXTURE_DIR/ResilientFixtures.swiftmodule" -enable-library-evolution -g -module-name ResilientFixtures -o "$FIXTURE_DIR/libResilientFixtures.dylib" examples/ResilientFixtures.swift
 swiftc -emit-library -g -I "$FIXTURE_DIR" -L "$FIXTURE_DIR" -lResilientFixtures -o libRustBridge.dylib examples/RustBridge.swift
-cargo build --example runtime_raw_probe
+if [[ "$PROFILE" == "release" ]]; then
+  cargo build --release --example runtime_raw_probe
+else
+  cargo build --example runtime_raw_probe
+fi
 
-DYLD_LIBRARY_PATH="$FIXTURE_DIR:." "target/debug/examples/runtime_raw_probe" > "$PROBE_LOG" 2>&1
+DYLD_LIBRARY_PATH="$FIXTURE_DIR:." "$BIN_PREFIX/runtime_raw_probe" > "$PROBE_LOG" 2>&1
 ./scripts/run_tmux_lldb.sh > /dev/null
 
 line_or_empty() {

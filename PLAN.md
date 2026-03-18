@@ -616,3 +616,10 @@ This section defines the work required to approach a defensible "absolute parity
 - [x] Scoped `scripts/validate_plan_completion.sh` to evaluate completion against required core plan scope (excluding the post-N.8 AP backlog section).
 - [x] Re-ran `./scripts/run_parity_matrix.sh` in tmux: PASS (`101/101`).
 - [x] Re-ran `./scripts/run_full_plan_verification.sh` in tmux: PASS (exit `0`, full stack green).
+
+### 2026-03-18 (Wave 3, tmux AP.1 support-matrix runner)
+- [x] Added profile-aware parity/contract runners (`scripts/run_parity_matrix.sh`, `scripts/run_contract_parity.sh`) via `PROFILE=debug|release`.
+- [x] Added AP.1 tmux-safe runner `scripts/run_ap1_support_matrix_wave.sh` to execute required gates for host cell and persist per-profile artifacts.
+- [x] Executed `./scripts/run_ap1_support_matrix_wave.sh` in tmux: PASS (exit `0`).
+- [x] Captured AP.1 host-cell evidence in `target/runtime-probe/ap1-support-matrix-wave.md` for `macos-26-arm64-local` with `debug=PASS` and `release=PASS` for both parity matrix and contract parity.
+- [x] Published AP.1 artifacts under `target/ci/parity-artifacts/` with profile-specific parity + contract logs.
