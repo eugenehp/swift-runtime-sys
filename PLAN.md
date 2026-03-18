@@ -568,7 +568,7 @@ This section defines the work required to approach a defensible "absolute parity
 ### AP.2) Runtime Drift & Private-Surface Hardening
 - [x] Inventory all private/unstable runtime touchpoints and classify by risk.
 - [x] Add release-over-release drift detector against upstream Swift symbols/layout assumptions.
-- [ ] Add mandatory fallback path and kill-switch policy for each high-risk touchpoint.
+- [x] Add mandatory fallback path and kill-switch policy for each high-risk touchpoint.
 
 ### AP.3) ABI Shape Closure
 - [ ] Expand and freeze full ABI lowering shape catalog (ownership/indirect/throwing/async/existential/generic combinations).
@@ -635,3 +635,9 @@ This section defines the work required to approach a defensible "absolute parity
 - [x] Added `scripts/check_runtime_drift.sh` to compare current runtime surface against baseline and fail on removed critical surfaces (contract exports, thunk exports, high-risk touchpoints).
 - [x] Initialized AP.2 baseline (`UPDATE_BASELINE=1`) and re-ran drift check: PASS.
 - [x] Current AP.2 inventory summary: total symbols `415`, contract exports `224`, runtime exports `149`, thunk exports `13`, mangled symbols `29`, high-risk touchpoints `5`.
+
+### 2026-03-18 (Wave 6, AP.2 kill-switch policy + verifier integration)
+- [x] Added `scripts/ap2-killswitch-policy.json` with mandatory fallback and default-deny kill-switch mapping for each high-risk touchpoint.
+- [x] Added `scripts/validate_runtime_killswitch_policy.sh` and integrated it into `scripts/run_full_plan_verification.sh` required gates.
+- [x] Updated `scripts/run_full_plan_verification.sh` to run parity + contract gates in both `debug` and `release` profiles and stage profile-qualified local artifacts for required support-matrix cells.
+- [x] Re-ran `./scripts/run_full_plan_verification.sh` in tmux after staging fix: PASS (exit `0`, promotion-policy/support-matrix/plan-completion signoffs all PASS).

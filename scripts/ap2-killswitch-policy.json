@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "description": "AP.2 high-risk runtime touchpoint kill-switch policy",
+  "entries": [
+    {
+      "symbol": "swift_allocObject",
+      "risk": "high",
+      "kill_switch_env": "SWIFT_RUNTIME_ALLOW_RAW_ALLOC_OBJECT",
+      "default": "deny",
+      "fallback": "Route allocations through contract constructors (swift_contract_construct)."
+    },
+    {
+      "symbol": "swift_deallocClassInstance",
+      "risk": "high",
+      "kill_switch_env": "SWIFT_RUNTIME_ALLOW_RAW_DEALLOC",
+      "default": "deny",
+      "fallback": "Release through contract ownership/exported release API (swift_contract_release)."
+    },
+    {
+      "symbol": "swift_release",
+      "risk": "high",
+      "kill_switch_env": "SWIFT_RUNTIME_ALLOW_RAW_RELEASE",
+      "default": "deny",
+      "fallback": "Use contract ownership wrappers and bridge-side drop helpers."
+    },
+    {
+      "symbol": "swift_retain",
+      "risk": "high",
+      "kill_switch_env": "SWIFT_RUNTIME_ALLOW_RAW_RETAIN",
+      "default": "deny",
+      "fallback": "Use contract-managed ownership and retain-safe wrapper paths."
+    },
+    {
+      "symbol": "swift_retainCount",
+      "risk": "high",
+      "kill_switch_env": "SWIFT_RUNTIME_ALLOW_RAW_RETAIN_COUNT",
+      "default": "deny",
+      "fallback": "Use logical lifecycle probes instead of direct retain-count dependence."
+    }
+  ]
+}
