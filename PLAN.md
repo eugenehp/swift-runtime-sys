@@ -549,8 +549,9 @@ These tracks target dynamic, version-adaptive runtime control beyond contract-sc
 - **Status**: COMPLETE - Added Track N.7 binary-derivation support in `RuntimeContract` (`n7_derive_contract_from_binary`, `n7_validate_derived_contract`) that scans module binaries with `nm`, demangles/stitches callable surfaces, derives type surfaces by combining binary symbols with runtime metadata observations, validates both against live runtime behavior, and reports confidence plus low-confidence fallback regions. New probe `examples/runtime_binary_contract_derivation_probe.rs` validates binary-only callable/type derivation, demangle stitching, live validator coverage, confidence scoring, fallback reporting, and the exit-criterion bootstrap path from compiled artifacts. New runner `scripts/run_track_n7_tmux.sh` added. Probe PASS (10/10), artifacts written under `target/runtime-probe/` including `n7-derived-contract.json`, `n7-derived-summary.json`, and `n7-confidence-report.md`.
 
 ### N.8) Operational Guarantees & SLOs
-- [ ] Define performance SLOs for dynamic invoke, metadata traversal, and graph operations.
-- [ ] Add latency/throughput/memory benchmarks for adaptive runtime paths.
-- [ ] Add CI budget gates and alerting for SLO regressions.
-- [ ] Add runbook for degraded-mode behavior when capability probes fail.
-- [ ] Exit criteria: Near-unbounded control paths are production-operable with measurable reliability and performance guarantees.
+- [x] Define performance SLOs for dynamic invoke, metadata traversal, and graph operations.
+- [x] Add latency/throughput/memory benchmarks for adaptive runtime paths.
+- [x] Add CI budget gates and alerting for SLO regressions.
+- [x] Add runbook for degraded-mode behavior when capability probes fail.
+- [x] Exit criteria: Near-unbounded control paths are production-operable with measurable reliability and performance guarantees.
+- **Status**: COMPLETE - Added Track N.8 operational APIs in `RuntimeContract` (`n8_default_slos`, `n8_run_benchmarks`, `n8_evaluate_budget_gates`, `n8_ci_budget_alerts`, `n8_degraded_mode_runbook`, `n8_operational_report`) covering SLO definitions for dynamic invoke/metadata traversal/graph operations plus latency-throughput-memory sampling and CI gate evaluation. New probe `examples/runtime_operational_slo_probe.rs` validates SLO coverage, benchmark collection, regression alerting, degraded-mode runbook generation, and exit-criterion readiness. Added scripts `scripts/run_track_n8_tmux.sh` and `scripts/validate_n8_budget_gates.sh` for tmux execution and CI budget checks. Probe PASS (10/10), budget-gate validator PASS, with artifacts under `target/runtime-probe/` including `n8-budget-gates.json`, `n8-alerts.txt`, and `n8-degraded-mode-runbook.md`.

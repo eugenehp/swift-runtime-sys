@@ -2,6 +2,7 @@ use core::ffi::{c_char, c_void};
 use serde::{Deserialize, Serialize};
 use std::ffi::{CStr, CString};
 use std::process::Command;
+use std::time::Instant;
 
 use crate::RuntimeFactory::{OpaqueSwiftRef, RuntimeFactory, RuntimeFactoryError};
 use crate::SymbolDemangler::SymbolDemangler;
@@ -568,6 +569,41 @@ pub struct N7ValidationReport {
     pub validated_types: i32,
     pub confidence: f64,
     pub low_confidence_regions: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct N8SloBudget {
+    pub operation: String,
+    pub p50_latency_ms_budget: f64,
+    pub p95_latency_ms_budget: f64,
+    pub min_throughput_ops_per_sec: f64,
+    pub max_rss_bytes: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct N8BenchmarkSample {
+    pub operation: String,
+    pub iterations: i32,
+    pub p50_latency_ms: f64,
+    pub p95_latency_ms: f64,
+    pub throughput_ops_per_sec: f64,
+    pub rss_bytes: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct N8BudgetGate {
+    pub operation: String,
+    pub passed: bool,
+    pub reasons: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct N8OperationalReport {
+    pub budgets: Vec<N8SloBudget>,
+    pub samples: Vec<N8BenchmarkSample>,
+    pub gates: Vec<N8BudgetGate>,
+    pub alerts: Vec<String>,
+    pub degraded_mode_runbook: String,
 }
 
 pub struct RuntimeContract<'a> {
@@ -3225,6 +3261,352 @@ impl<'a> RuntimeContract<'a> {
             validated_types: type_ok as i32,
             confidence,
             low_confidence_regions: contract.low_confidence_regions.clone(),
+        })
+    }
+
+    // MARK: - Operational Guarantees & SLOs (Track N.8)
+
+    fn n8_percentile(samples: &[f64], ratio: f64) -> f64 {
+        if samples.is_empty() {
+            return 0.0;
+        }
+        let mut sorted = samples.to_vec();
+        sorted.sort_by(|left, right| left.total_cmp(right));
+        let index = ((sorted.len() - 1) as f64 * ratio).round() as usize;
+        sorted[index]
+    }
+
+    fn n8_process_rss_bytes() -> u64 {
+        let mut usage = std::mem::MaybeUninit::<libc::rusage>::zeroed();
+        let ok = unsafe { libc::getrusage(libc::RUSAGE_SELF, usage.as_mut_ptr()) } == 0;
+        if !ok {
+            return 0;
+        }
+        let usage = unsafe { usage.assume_init() };
+        #[cfg(target_os = "macos")]
+        {
+            if usage.ru_maxrss < 0 {
+                0
+            } else {
+                usage.ru_maxrss as u64
+            }
+        }
+        #[cfg(not(target_os = "macos"))]
+        {
+            if usage.ru_maxrss < 0 {
+                0
+            } else {
+                (usage.ru_maxrss as u64) * 1024
+            }
+        }
+    }
+
+    pub fn n8_default_slos(&self) -> Vec<N8SloBudget> {
+        vec![
+            N8SloBudget {
+                operation: "dynamic_invoke".to_string(),
+                p50_latency_ms_budget: 0.40,
+                p95_latency_ms_budget: 1.20,
+                min_throughput_ops_per_sec: 3_000.0,
+                max_rss_bytes: 512 * 1024 * 1024,
+            },
+            N8SloBudget {
+                operation: "metadata_traversal".to_string(),
+                p50_latency_ms_budget: 1.20,
+                p95_latency_ms_budget: 5.00,
+                min_throughput_ops_per_sec: 200.0,
+                max_rss_bytes: 768 * 1024 * 1024,
+            },
+            N8SloBudget {
+                operation: "graph_operations".to_string(),
+                p50_latency_ms_budget: 2.00,
+                p95_latency_ms_budget: 8.00,
+                min_throughput_ops_per_sec: 100.0,
+                max_rss_bytes: 1024 * 1024 * 1024,
+            },
+        ]
+    }
+
+    pub fn n8_measure_dynamic_invoke(
+        &self,
+        iterations: i32,
+    ) -> Result<N8BenchmarkSample, RuntimeContractError> {
+        if iterations <= 0 {
+            return Err(RuntimeContractError::DescriptorParse(
+                "iterations must be > 0".to_string(),
+            ));
+        }
+        let mut latencies_ms = Vec::with_capacity(iterations as usize);
+        let rss_before = Self::n8_process_rss_bytes();
+        let started = Instant::now();
+
+        for _ in 0..iterations {
+            let one_start = Instant::now();
+            let _ = self.n2_invoke_auto("swift_contract_n2_unknown_add_offset", 10, 5)?;
+            latencies_ms.push(one_start.elapsed().as_secs_f64() * 1000.0);
+        }
+
+        let elapsed = started.elapsed().as_secs_f64();
+        let throughput = if elapsed <= 0.0 {
+            iterations as f64
+        } else {
+            iterations as f64 / elapsed
+        };
+        let rss_after = Self::n8_process_rss_bytes();
+
+        Ok(N8BenchmarkSample {
+            operation: "dynamic_invoke".to_string(),
+            iterations,
+            p50_latency_ms: Self::n8_percentile(&latencies_ms, 0.50),
+            p95_latency_ms: Self::n8_percentile(&latencies_ms, 0.95),
+            throughput_ops_per_sec: throughput,
+            rss_bytes: rss_before.max(rss_after),
+        })
+    }
+
+    pub fn n8_measure_metadata_traversal(
+        &self,
+        iterations: i32,
+    ) -> Result<N8BenchmarkSample, RuntimeContractError> {
+        if iterations <= 0 {
+            return Err(RuntimeContractError::DescriptorParse(
+                "iterations must be > 0".to_string(),
+            ));
+        }
+        let mut latencies_ms = Vec::with_capacity(iterations as usize);
+        let rss_before = Self::n8_process_rss_bytes();
+        let started = Instant::now();
+
+        for _ in 0..iterations {
+            let one_start = Instant::now();
+            let traversed = self.n1_metadata_graph_traverse_discovered_count()?;
+            if traversed <= 0 {
+                return Err(RuntimeContractError::DescriptorParse(
+                    "n1 traversal count unexpectedly <= 0".to_string(),
+                ));
+            }
+            latencies_ms.push(one_start.elapsed().as_secs_f64() * 1000.0);
+        }
+
+        let elapsed = started.elapsed().as_secs_f64();
+        let throughput = if elapsed <= 0.0 {
+            iterations as f64
+        } else {
+            iterations as f64 / elapsed
+        };
+        let rss_after = Self::n8_process_rss_bytes();
+
+        Ok(N8BenchmarkSample {
+            operation: "metadata_traversal".to_string(),
+            iterations,
+            p50_latency_ms: Self::n8_percentile(&latencies_ms, 0.50),
+            p95_latency_ms: Self::n8_percentile(&latencies_ms, 0.95),
+            throughput_ops_per_sec: throughput,
+            rss_bytes: rss_before.max(rss_after),
+        })
+    }
+
+    pub fn n8_measure_graph_operations(
+        &self,
+        iterations: i32,
+    ) -> Result<N8BenchmarkSample, RuntimeContractError> {
+        if iterations <= 0 {
+            return Err(RuntimeContractError::DescriptorParse(
+                "iterations must be > 0".to_string(),
+            ));
+        }
+        let mut latencies_ms = Vec::with_capacity(iterations as usize);
+        let rss_before = Self::n8_process_rss_bytes();
+        let started = Instant::now();
+
+        for _ in 0..iterations {
+            let one_start = Instant::now();
+            let snapshot = self.n1_metadata_snapshot_json()?;
+            if snapshot.len() < 16 {
+                return Err(RuntimeContractError::DescriptorParse(
+                    "metadata snapshot unexpectedly tiny".to_string(),
+                ));
+            }
+            latencies_ms.push(one_start.elapsed().as_secs_f64() * 1000.0);
+        }
+
+        let elapsed = started.elapsed().as_secs_f64();
+        let throughput = if elapsed <= 0.0 {
+            iterations as f64
+        } else {
+            iterations as f64 / elapsed
+        };
+        let rss_after = Self::n8_process_rss_bytes();
+
+        Ok(N8BenchmarkSample {
+            operation: "graph_operations".to_string(),
+            iterations,
+            p50_latency_ms: Self::n8_percentile(&latencies_ms, 0.50),
+            p95_latency_ms: Self::n8_percentile(&latencies_ms, 0.95),
+            throughput_ops_per_sec: throughput,
+            rss_bytes: rss_before.max(rss_after),
+        })
+    }
+
+    pub fn n8_run_benchmarks(
+        &self,
+        dynamic_iterations: i32,
+        metadata_iterations: i32,
+        graph_iterations: i32,
+    ) -> Result<Vec<N8BenchmarkSample>, RuntimeContractError> {
+        Ok(vec![
+            self.n8_measure_dynamic_invoke(dynamic_iterations)?,
+            self.n8_measure_metadata_traversal(metadata_iterations)?,
+            self.n8_measure_graph_operations(graph_iterations)?,
+        ])
+    }
+
+    pub fn n8_evaluate_budget_gates(
+        &self,
+        samples: &[N8BenchmarkSample],
+        budgets: &[N8SloBudget],
+    ) -> Vec<N8BudgetGate> {
+        let mut gates = Vec::new();
+        for budget in budgets {
+            let sample = samples.iter().find(|sample| sample.operation == budget.operation);
+            let mut reasons = Vec::new();
+
+            match sample {
+                Some(sample) => {
+                    if sample.p50_latency_ms > budget.p50_latency_ms_budget {
+                        reasons.push(format!(
+                            "p50 latency {:.3}ms exceeded budget {:.3}ms",
+                            sample.p50_latency_ms, budget.p50_latency_ms_budget
+                        ));
+                    }
+                    if sample.p95_latency_ms > budget.p95_latency_ms_budget {
+                        reasons.push(format!(
+                            "p95 latency {:.3}ms exceeded budget {:.3}ms",
+                            sample.p95_latency_ms, budget.p95_latency_ms_budget
+                        ));
+                    }
+                    if sample.throughput_ops_per_sec < budget.min_throughput_ops_per_sec {
+                        reasons.push(format!(
+                            "throughput {:.1} ops/sec below budget {:.1} ops/sec",
+                            sample.throughput_ops_per_sec, budget.min_throughput_ops_per_sec
+                        ));
+                    }
+                    if sample.rss_bytes > budget.max_rss_bytes {
+                        reasons.push(format!(
+                            "rss {} bytes exceeded budget {} bytes",
+                            sample.rss_bytes, budget.max_rss_bytes
+                        ));
+                    }
+                }
+                None => reasons.push("benchmark sample missing".to_string()),
+            }
+
+            gates.push(N8BudgetGate {
+                operation: budget.operation.clone(),
+                passed: reasons.is_empty(),
+                reasons,
+            });
+        }
+        gates
+    }
+
+    pub fn n8_ci_budget_alerts(&self, gates: &[N8BudgetGate]) -> Vec<String> {
+        let mut alerts = Vec::new();
+        for gate in gates {
+            if gate.passed {
+                continue;
+            }
+            let detail = if gate.reasons.is_empty() {
+                "budget gate failed with no reason".to_string()
+            } else {
+                gate.reasons.join("; ")
+            };
+            alerts.push(format!(
+                "ALERT[N8][{}]: {}",
+                gate.operation,
+                detail,
+            ));
+        }
+        alerts
+    }
+
+    pub fn n8_degraded_mode_runbook(&self) -> Result<String, RuntimeContractError> {
+        let descriptor = self.descriptor()?;
+        let probe = self.n5_feature_probe()?;
+        let mut lines = vec![
+            "# N.8 Degraded Mode Runbook".to_string(),
+            "".to_string(),
+            "When capability probes fail, switch to conservative paths to preserve correctness.".to_string(),
+            "".to_string(),
+            "## Capability Snapshot".to_string(),
+            format!("- compiler_family: {}", probe.compiler_family),
+            format!("- platform: {} {}", probe.platform, probe.architecture),
+            format!("- optimization_mode: {}", probe.optimization_mode),
+            "".to_string(),
+            "## Degraded-Mode Steps".to_string(),
+        ];
+
+        let capabilities = descriptor.compiler_features;
+        let feature_rows = [
+            ("resilient_dispatch", capabilities.resilient_dispatch),
+            (
+                "generic_metadata_registry",
+                capabilities.generic_metadata_registry,
+            ),
+            (
+                "protocol_witness_registry",
+                capabilities.protocol_witness_registry,
+            ),
+            (
+                "raw_runtime_research_mode",
+                capabilities.raw_runtime_research_mode,
+            ),
+        ];
+
+        for (name, capability) in feature_rows {
+            let status = match capability.status {
+                CompilerFeatureStatus::Supported => "supported",
+                CompilerFeatureStatus::Fallback => "fallback",
+                CompilerFeatureStatus::Unsupported => "unsupported",
+            };
+            lines.push(format!(
+                "- {}: {} (provider={}, reason={})",
+                name, status, capability.provider, capability.reason
+            ));
+            if capability.status != CompilerFeatureStatus::Supported {
+                lines.push(format!(
+                    "  action: route {} calls through safe contract wrappers and disable direct fast-path dispatch",
+                    name
+                ));
+            }
+        }
+
+        lines.push("".to_string());
+        lines.push("## Incident Response".to_string());
+        lines.push("- Re-run capability probe and refresh adapter/profile selection (Track N.5).".to_string());
+        lines.push("- Enable additional telemetry for N.6 differential fuzzing and N.7 validation coverage.".to_string());
+        lines.push("- If two consecutive CI runs fail budget gates, freeze rollout and investigate runtime drift.".to_string());
+
+        Ok(lines.join("\n"))
+    }
+
+    pub fn n8_operational_report(
+        &self,
+        dynamic_iterations: i32,
+        metadata_iterations: i32,
+        graph_iterations: i32,
+    ) -> Result<N8OperationalReport, RuntimeContractError> {
+        let budgets = self.n8_default_slos();
+        let samples = self.n8_run_benchmarks(dynamic_iterations, metadata_iterations, graph_iterations)?;
+        let gates = self.n8_evaluate_budget_gates(&samples, &budgets);
+        let alerts = self.n8_ci_budget_alerts(&gates);
+        let degraded_mode_runbook = self.n8_degraded_mode_runbook()?;
+        Ok(N8OperationalReport {
+            budgets,
+            samples,
+            gates,
+            alerts,
+            degraded_mode_runbook,
         })
     }
 
