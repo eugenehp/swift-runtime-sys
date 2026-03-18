@@ -571,9 +571,9 @@ This section defines the work required to approach a defensible "absolute parity
 - [x] Add mandatory fallback path and kill-switch policy for each high-risk touchpoint.
 
 ### AP.3) ABI Shape Closure
-- [ ] Expand and freeze full ABI lowering shape catalog (ownership/indirect/throwing/async/existential/generic combinations).
-- [ ] Add process-isolated probe cases for all high-risk shapes.
-- [ ] Promote shape coverage to required gate with per-shape pass/fail artifact output.
+- [x] Expand and freeze full ABI lowering shape catalog (ownership/indirect/throwing/async/existential/generic combinations).
+- [x] Add process-isolated probe cases for all high-risk shapes.
+- [x] Promote shape coverage to required gate with per-shape pass/fail artifact output.
 
 ### AP.4) Differential Oracle Expansion
 - [ ] Increase long-run differential fuzz campaign budget and seed diversity.
@@ -648,3 +648,10 @@ This section defines the work required to approach a defensible "absolute parity
 - [x] Upgraded `scripts/validate_support_matrix_artifacts.sh` to enforce manifest presence and metadata match (`gate`, `cell`, `profile`, `arch`, `swift_version_prefix`) for each declared matrix cell/profile.
 - [x] Updated local AP runners (`scripts/run_ap1_support_matrix_wave.sh`, `scripts/run_full_plan_verification.sh`) to emit support-cell manifests for staged artifacts.
 - [x] Re-ran `./scripts/run_full_plan_verification.sh` in tmux: PASS (exit `0`) with manifest-aware support-matrix signoff PASS.
+
+### 2026-03-18 (Wave 8, AP.3 ABI shape closure)
+- [x] Added frozen ABI lowering shape catalog `scripts/abi_shape_catalog.json` covering ownership, indirect return, throwing (success/error), async, resilient, existential, and generic dispatch classes.
+- [x] Added process-isolated shape probe runner `scripts/run_abi_shape_closure.sh` with per-shape execution logs under `target/runtime-probe/abi-shape-results/`.
+- [x] Added focused shape probe binary `examples/runtime_abi_shape_probe.rs` for N.2 lowering classes used by AP.3 gate.
+- [x] Added AP.3 required artifacts `target/runtime-probe/abi-shape-closure.json` and `target/runtime-probe/abi-shape-closure.md` with per-shape PASS/FAIL output.
+- [x] Promoted ABI shape closure to required gates in local full verification and CI (`.github/workflows/parity.yml` job `abi_shape_closure`, wired into `support_matrix_signoff.needs`).

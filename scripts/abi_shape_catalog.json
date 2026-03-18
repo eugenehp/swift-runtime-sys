@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "description": "AP.3 required ABI lowering shape catalog",
+  "required_shapes": [
+    {
+      "id": "direct.value.i32_i32_to_i32",
+      "class": "direct",
+      "risk": "medium",
+      "description": "Direct value-return call path for two Int32 inputs"
+    },
+    {
+      "id": "inout.mutating.i32ptr_i32_to_i32",
+      "class": "ownership",
+      "risk": "high",
+      "description": "Inout pointer mutation and returned Int32"
+    },
+    {
+      "id": "indirect_ret.pair.i32_i32_to_pair",
+      "class": "indirect_return",
+      "risk": "high",
+      "description": "Indirect return via out buffer carrying pair payload"
+    },
+    {
+      "id": "throwing.success.i32_to_i32",
+      "class": "throwing",
+      "risk": "high",
+      "description": "Throwing call success path with non-throwing payload"
+    },
+    {
+      "id": "throwing.error.i32_to_i32",
+      "class": "throwing",
+      "risk": "high",
+      "description": "Throwing call error path propagation"
+    },
+    {
+      "id": "async.value.i32_to_i32",
+      "class": "async",
+      "risk": "high",
+      "description": "Async lowering path returning Int32"
+    },
+    {
+      "id": "resilient.counter_addpair.i32_i32_to_i32",
+      "class": "resilient",
+      "risk": "high",
+      "description": "Resilient argument path through runtime contract"
+    },
+    {
+      "id": "existential.protocol.dispatch",
+      "class": "existential",
+      "risk": "high",
+      "description": "Protocol witness dispatch through existential path"
+    },
+    {
+      "id": "generic.protocol.dispatch",
+      "class": "generic",
+      "risk": "high",
+      "description": "Generic protocol witness dispatch path"
+    }
+  ]
+}

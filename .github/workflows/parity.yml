@@ -163,6 +163,39 @@ jobs:
           name: protocol-dispatch-${{ github.sha }}
           path: target/runtime-probe/protocol-dispatch-matrix.md
 
+  abi_shape_closure:
+    name: ABI shape closure (macOS arm64)
+    runs-on: macos-15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-abi-shapes-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-abi-shapes-
+
+      - name: Run ABI shape closure gate
+        run: ./scripts/run_abi_shape_closure.sh
+
+      - name: Upload ABI shape artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: abi-shape-closure-${{ github.sha }}
+          path: |
+            target/runtime-probe/abi-shape-closure.json
+            target/runtime-probe/abi-shape-closure.md
+            target/runtime-probe/abi-shape-results/
+
   contract_parity:
     name: Contract parity (${{ matrix.runner }}, ${{ matrix.profile }})
     runs-on: ${{ matrix.runner }}
@@ -208,7 +241,7 @@ jobs:
   support_matrix_signoff:
     name: Support matrix signoff
     runs-on: macos-15
-    needs: [parity, stress, protocol_dispatch, contract_parity]
+    needs: [parity, stress, protocol_dispatch, abi_shape_closure, contract_parity]
 
     steps:
       - uses: actions/checkout@v4
@@ -254,3 +287,5 @@ jobs:
             target/runtime-probe/support-matrix-signoff.md
             target/runtime-probe/promotion-policy-signoff.md
             target/runtime-probe/plan-completion-signoff.md
+            target/runtime-probe/abi-shape-closure.md
+            target/runtime-probe/abi-shape-closure.json
