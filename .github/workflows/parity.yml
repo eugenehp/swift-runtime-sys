@@ -8,12 +8,13 @@ on:
 
 jobs:
   parity:
-    name: Parity matrix (${{ matrix.runner }})
+    name: Parity matrix (${{ matrix.runner }}, ${{ matrix.profile }})
     runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
         runner: [macos-14, macos-15]
+        profile: [debug, release]
 
     steps:
       - uses: actions/checkout@v4
@@ -41,7 +42,7 @@ jobs:
         run: ./scripts/build_runtime_thunks.sh
 
       - name: Run parity matrix
-        run: ./scripts/run_parity_matrix.sh
+        run: PROFILE=${{ matrix.profile }} ./scripts/run_parity_matrix.sh
 
       - name: Print parity report
         if: always()
@@ -78,7 +79,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: parity-report-${{ matrix.runner }}-${{ github.sha }}
+          name: parity-report-${{ matrix.runner }}-${{ matrix.profile }}-${{ github.sha }}
           path: |
             target/runtime-probe/parity-report.json
             target/runtime-probe/parity-report.md
@@ -159,12 +160,13 @@ jobs:
           path: target/runtime-probe/protocol-dispatch-matrix.md
 
   contract_parity:
-    name: Contract parity (${{ matrix.runner }})
+    name: Contract parity (${{ matrix.runner }}, ${{ matrix.profile }})
     runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
         runner: [macos-14, macos-15]
+        profile: [debug, release]
 
     steps:
       - uses: actions/checkout@v4
@@ -183,13 +185,13 @@ jobs:
           restore-keys: ${{ runner.os }}-${{ matrix.runner }}-cargo-
 
       - name: Build and run contract parity probes
-        run: ./scripts/run_contract_parity.sh
+        run: PROFILE=${{ matrix.profile }} ./scripts/run_contract_parity.sh
 
       - name: Upload contract parity artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: contract-parity-${{ matrix.runner }}-${{ github.sha }}
+          name: contract-parity-${{ matrix.runner }}-${{ matrix.profile }}-${{ github.sha }}
           path: |
             target/runtime-probe/contract-parity.md
             target/runtime-probe/contract-descriptor.log

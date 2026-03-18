@@ -623,3 +623,9 @@ This section defines the work required to approach a defensible "absolute parity
 - [x] Executed `./scripts/run_ap1_support_matrix_wave.sh` in tmux: PASS (exit `0`).
 - [x] Captured AP.1 host-cell evidence in `target/runtime-probe/ap1-support-matrix-wave.md` for `macos-26-arm64-local` with `debug=PASS` and `release=PASS` for both parity matrix and contract parity.
 - [x] Published AP.1 artifacts under `target/ci/parity-artifacts/` with profile-specific parity + contract logs.
+
+### 2026-03-18 (Wave 4, AP.1 CI matrix wiring)
+- [x] Updated `.github/workflows/parity.yml` parity and contract jobs to run on `{macos-14, macos-15} × {debug, release}`.
+- [x] Updated CI artifact names to include profile (`parity-report-<cell>-<profile>-<sha>`, `contract-parity-<cell>-<profile>-<sha>`).
+- [x] Updated `scripts/validate_support_matrix_artifacts.sh` to require and validate each required profile per required cell.
+- [x] Sanity-validated profile-aware support-matrix validation locally with `REQUIRED_CELLS='macos-26-arm64-local' REQUIRED_PROFILES='debug release'` against AP.1 artifacts: PASS.
