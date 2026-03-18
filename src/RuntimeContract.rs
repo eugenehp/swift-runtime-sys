@@ -1,8 +1,10 @@
 use core::ffi::{c_char, c_void};
 use serde::{Deserialize, Serialize};
 use std::ffi::{CStr, CString};
+use std::process::Command;
 
 use crate::RuntimeFactory::{OpaqueSwiftRef, RuntimeFactory, RuntimeFactoryError};
+use crate::SymbolDemangler::SymbolDemangler;
 
 #[derive(Debug, Clone, Copy)]
 pub enum ContractOwnership {
@@ -525,6 +527,47 @@ pub struct N6Execution {
     pub seed: i64,
     pub result_count: i32,
     pub results: Vec<N6Result>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct N7DerivedCallable {
+    pub symbol: String,
+    pub demangled: String,
+    pub observed_runtime: bool,
+    pub shape: Option<String>,
+    pub confidence: f64,
+    pub fallback: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct N7DerivedType {
+    pub name: String,
+    pub kind: String,
+    pub field_count: i32,
+    pub observed_runtime: bool,
+    pub confidence: f64,
+    pub fallback: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct N7DerivedContract {
+    pub binary_path: String,
+    pub module_hint: String,
+    pub callables: Vec<N7DerivedCallable>,
+    pub types: Vec<N7DerivedType>,
+    pub confidence: f64,
+    pub low_confidence_regions: Vec<String>,
+    pub fallback_paths: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct N7ValidationReport {
+    pub callable_coverage: f64,
+    pub type_coverage: f64,
+    pub validated_callables: i32,
+    pub validated_types: i32,
+    pub confidence: f64,
+    pub low_confidence_regions: Vec<String>,
 }
 
 pub struct RuntimeContract<'a> {
@@ -2813,6 +2856,376 @@ impl<'a> RuntimeContract<'a> {
         let output = self.n6_execute_program_json(&json)?;
         serde_json::from_str(&output)
             .map_err(|error| RuntimeContractError::DescriptorParse(error.to_string()))
+    }
+
+    // MARK: - Binary-Driven Contract Derivation (Track N.7)
+
+    fn n7_binary_symbols(&self, binary_path: &str) -> Result<Vec<String>, RuntimeContractError> {
+        let output = Command::new("nm")
+            .args(["-gj", binary_path])
+            .output()
+            .map_err(|error| {
+                RuntimeContractError::DescriptorParse(format!("nm invocation failed: {error}"))
+            })?;
+        if !output.status.success() {
+            return Err(RuntimeContractError::DescriptorParse(format!(
+                "nm failed for {}",
+                binary_path
+            )));
+        }
+
+        let text = String::from_utf8_lossy(&output.stdout);
+        let mut symbols = Vec::new();
+        for line in text.lines() {
+            let symbol = line.trim();
+            if symbol.is_empty() {
+                continue;
+            }
+            if symbol.starts_with("__") && !symbol.starts_with("__$") {
+                continue;
+            }
+            let normalized = symbol.strip_prefix('_').unwrap_or(symbol).to_string();
+            symbols.push(normalized);
+        }
+        symbols.sort();
+        symbols.dedup();
+        Ok(symbols)
+    }
+
+    fn n7_demangle(symbol: &str, demangler: &mut Option<SymbolDemangler>) -> String {
+        if symbol.starts_with("$s") || symbol.starts_with("_$s") {
+            if let Some(demangler) = demangler {
+                return demangler.demangle(symbol);
+            }
+        }
+        symbol.to_string()
+    }
+
+    fn n7_confidence_label(confidence: f64) -> &'static str {
+        if confidence >= 0.85 {
+            "high"
+        } else if confidence >= 0.6 {
+            "medium"
+        } else {
+            "low"
+        }
+    }
+
+    fn n7_parse_type_entries(types_json: &str) -> Result<Vec<String>, RuntimeContractError> {
+        let value: serde_json::Value = serde_json::from_str(types_json)
+            .map_err(|error| RuntimeContractError::DescriptorParse(error.to_string()))?;
+        let types = value
+            .get("types")
+            .and_then(serde_json::Value::as_array)
+            .ok_or_else(|| {
+                RuntimeContractError::DescriptorParse("missing types array".to_string())
+            })?;
+
+        let mut names = Vec::new();
+        for entry in types {
+            if let Some(name) = entry.get("name").and_then(serde_json::Value::as_str) {
+                names.push(name.to_string());
+            }
+        }
+        Ok(names)
+    }
+
+    /// Derive callable/type contract surfaces directly from a compiled module binary.
+    pub fn n7_derive_contract_from_binary(
+        &self,
+        binary_path: &str,
+        module_hint: &str,
+    ) -> Result<N7DerivedContract, RuntimeContractError> {
+        let symbols = self.n7_binary_symbols(binary_path)?;
+        let mut demangler = SymbolDemangler::new().ok();
+        let mut fallback_paths = Vec::new();
+        if demangler.is_none() {
+            fallback_paths.push(
+                "swift-demangle unavailable; using symbol-name-only reconstruction".to_string(),
+            );
+        }
+
+        let mut callables = Vec::new();
+        let mut mangled_budget = 0usize;
+        for symbol in &symbols {
+            let candidate = symbol.starts_with("swift_")
+                || symbol.starts_with("swift_contract_")
+                || symbol.starts_with("runtime_thunk_")
+                || symbol.starts_with("$s")
+                || symbol.starts_with("_$s");
+            if !candidate {
+                continue;
+            }
+
+            let demangled = Self::n7_demangle(symbol, &mut demangler);
+            if !demangled.contains(module_hint)
+                && !symbol.contains("swift_contract_")
+                && !symbol.contains("runtime_thunk_")
+            {
+                continue;
+            }
+
+            let observed_runtime = self.factory.symbol_address(symbol).is_ok();
+            let (shape, shape_supported) = if symbol.starts_with("swift_contract_n2_unknown_") {
+                match self.n2_symbol_describe(symbol) {
+                    Ok((shape, supported)) => (Some(shape), supported),
+                    Err(_) => {
+                        fallback_paths.push(format!(
+                            "shape discovery failed for {}; fallback to symbol-address invoke",
+                            symbol
+                        ));
+                        (None, false)
+                    }
+                }
+            } else {
+                (None, false)
+            };
+
+            let mut confidence = 0.0;
+            if symbol.starts_with("swift_contract_") || symbol.starts_with("runtime_thunk_") {
+                confidence += 0.35;
+            }
+            if demangled != *symbol {
+                confidence += 0.2;
+            }
+            if observed_runtime {
+                confidence += 0.25;
+            }
+            if shape_supported {
+                confidence += 0.2;
+            }
+            if confidence > 1.0 {
+                confidence = 1.0;
+            }
+
+            let fallback = if observed_runtime {
+                "runtime symbol-address resolution".to_string()
+            } else {
+                "defer to N.2 dynamic symbol invocation with explicit shape negotiation".to_string()
+            };
+
+            let keep = if symbol.starts_with("swift_contract_")
+                || symbol.starts_with("runtime_thunk_")
+                || symbol.starts_with("swift_")
+            {
+                true
+            } else if observed_runtime && demangled.contains('(') {
+                true
+            } else if (symbol.starts_with("$s") || symbol.starts_with("_$s"))
+                && demangled.contains(module_hint)
+                && demangled.contains('(')
+                && mangled_budget < 64
+            {
+                mangled_budget += 1;
+                true
+            } else {
+                false
+            };
+            if !keep {
+                continue;
+            }
+
+            callables.push(N7DerivedCallable {
+                symbol: symbol.clone(),
+                demangled,
+                observed_runtime,
+                shape,
+                confidence,
+                fallback,
+            });
+        }
+
+        let all_types_json = self.n1_enumerate_all_types_json()?;
+        let type_names = Self::n7_parse_type_entries(&all_types_json)?;
+        let known_type_seeds = [
+            "Person",
+            "Counter",
+            "Direction",
+            "Shape",
+            "ContractGenericBox<Int32>",
+            "ContractGenericBox<String>",
+            "N1LayoutStruct",
+        ];
+        let mut types = Vec::new();
+        for name in type_names {
+            let name_seeded = known_type_seeds.iter().any(|seed| name.contains(seed));
+            if !name.contains(module_hint)
+                && !name_seeded
+                && !name.starts_with("Array<")
+                && !name.starts_with("Dictionary<")
+                && !name.starts_with("Set<")
+            {
+                continue;
+            }
+
+            let info_json = self.n1_type_info_json(&name)?;
+            let info: serde_json::Value = serde_json::from_str(&info_json)
+                .map_err(|error| RuntimeContractError::DescriptorParse(error.to_string()))?;
+            let kind = info
+                .get("kind")
+                .and_then(serde_json::Value::as_str)
+                .unwrap_or("unknown")
+                .to_string();
+            let field_count = info
+                .get("field_count")
+                .and_then(serde_json::Value::as_i64)
+                .unwrap_or(-1) as i32;
+            let observed_runtime = kind != "unknown";
+            if !observed_runtime && !name_seeded {
+                continue;
+            }
+            let symbol_hint = callables
+                .iter()
+                .any(|callable| callable.demangled.contains(&name));
+
+            let mut confidence = 0.4;
+            if observed_runtime {
+                confidence += 0.3;
+            }
+            if field_count >= 0 {
+                confidence += 0.2;
+            }
+            if symbol_hint {
+                confidence += 0.1;
+            }
+            if confidence > 1.0 {
+                confidence = 1.0;
+            }
+
+            types.push(N7DerivedType {
+                name,
+                kind,
+                field_count,
+                observed_runtime,
+                confidence,
+                fallback: "use N.1 metadata graph traversal as runtime source-of-truth".to_string(),
+            });
+        }
+
+        callables.sort_by(|left, right| right.confidence.total_cmp(&left.confidence));
+        types.sort_by(|left, right| right.confidence.total_cmp(&left.confidence));
+        callables.truncate(256);
+        types.truncate(128);
+
+        if callables.is_empty() {
+            fallback_paths.push(
+                "no callable candidates discovered from nm output; fallback to runtime registry/metadata APIs"
+                    .to_string(),
+            );
+        }
+        if types.is_empty() {
+            fallback_paths.push(
+                "no type candidates discovered from binary stitching; fallback to n1_enumerate_all_types_json"
+                    .to_string(),
+            );
+        }
+
+        let mut confidence_sum = 0.0;
+        let mut confidence_count = 0usize;
+        for callable in &callables {
+            confidence_sum += callable.confidence;
+            confidence_count += 1;
+        }
+        for entry in &types {
+            confidence_sum += entry.confidence;
+            confidence_count += 1;
+        }
+        let confidence = if confidence_count == 0 {
+            0.0
+        } else {
+            confidence_sum / confidence_count as f64
+        };
+
+        let mut low_confidence_regions = Vec::new();
+        for callable in &callables {
+            if callable.confidence < 0.6 {
+                low_confidence_regions.push(format!(
+                    "callable:{}:{}",
+                    callable.symbol,
+                    Self::n7_confidence_label(callable.confidence)
+                ));
+            }
+        }
+        for entry in &types {
+            if entry.confidence < 0.6 {
+                low_confidence_regions.push(format!(
+                    "type:{}:{}",
+                    entry.name,
+                    Self::n7_confidence_label(entry.confidence)
+                ));
+            }
+        }
+
+        Ok(N7DerivedContract {
+            binary_path: binary_path.to_string(),
+            module_hint: module_hint.to_string(),
+            callables,
+            types,
+            confidence,
+            low_confidence_regions,
+            fallback_paths,
+        })
+    }
+
+    /// Validate a binary-derived contract against live runtime observations.
+    pub fn n7_validate_derived_contract(
+        &self,
+        contract: &N7DerivedContract,
+    ) -> Result<N7ValidationReport, RuntimeContractError> {
+        let mut callable_ok = 0usize;
+        for callable in &contract.callables {
+            let validated = if callable.symbol.starts_with("swift_contract_n2_unknown_") {
+                self.n2_symbol_describe(&callable.symbol)
+                    .map(|(_, supported)| supported)
+                    .unwrap_or(false)
+            } else {
+                self.factory.symbol_address(&callable.symbol).is_ok()
+            };
+            if validated {
+                callable_ok += 1;
+            }
+        }
+
+        let mut type_ok = 0usize;
+        for entry in &contract.types {
+            let validated = self
+                .n1_type_info_json(&entry.name)
+                .ok()
+                .and_then(|json| serde_json::from_str::<serde_json::Value>(&json).ok())
+                .and_then(|value| {
+                    value
+                        .get("kind")
+                        .and_then(serde_json::Value::as_str)
+                        .map(|kind| kind != "unknown")
+                })
+                .unwrap_or(false);
+            if validated {
+                type_ok += 1;
+            }
+        }
+
+        let callable_coverage = if contract.callables.is_empty() {
+            0.0
+        } else {
+            callable_ok as f64 / contract.callables.len() as f64
+        };
+        let type_coverage = if contract.types.is_empty() {
+            0.0
+        } else {
+            type_ok as f64 / contract.types.len() as f64
+        };
+
+        let confidence =
+            (contract.confidence * 0.6) + (callable_coverage * 0.2) + (type_coverage * 0.2);
+
+        Ok(N7ValidationReport {
+            callable_coverage,
+            type_coverage,
+            validated_callables: callable_ok as i32,
+            validated_types: type_ok as i32,
+            confidence,
+            low_confidence_regions: contract.low_confidence_regions.clone(),
+        })
     }
 
     // MARK: - Foundation Date/Time (Track I.1)

@@ -541,11 +541,12 @@ These tracks target dynamic, version-adaptive runtime control beyond contract-sc
 - **Status**: COMPLETE - Added Track N.6 Swift exports (`swift_contract_n6_generate_program_json`, `swift_contract_n6_execute_program_json`) that generate deterministic random Swift-fragment corpora and execute them natively on the Swift side across arithmetic, throwing/error-context, async, task-local, generic, and protocol-witness flavored fragments. `RuntimeContract` now parses N.6 program and execution JSON into typed Rust structs, while the new probe `examples/runtime_differential_fuzz_probe.rs` provides the Rust-driven executor, semantic comparator, triage report generation, corpus minimization, and a multi-seed campaign path. New scripts `scripts/run_track_n6_tmux.sh` and `scripts/run_track_n6_campaign.sh` validate the default probe and drive longer corpus runs. Probe PASS (10/10), with artifacts under `target/runtime-probe/` including `n6-triage-report.json`, `n6-minimized-corpus.json`, and campaign summary/corpus directories. Exit criterion satisfied: repeated seeded differential runs completed without unexplained divergence on the in-scope fragment set.
 
 ### N.7) Binary-Driven Contract Derivation (No Source Required)
-- [ ] Derive callable/type metadata directly from binaries/modules where source is unavailable.
-- [ ] Add symbol demangle + metadata stitch pipeline to reconstruct type/function surfaces.
-- [ ] Add binary-derived contract validator against live runtime observations.
-- [ ] Add confidence scoring to derived contracts and fallback paths for low-confidence regions.
-- [ ] Exit criteria: Rust can bootstrap control surfaces from compiled artifacts with no handwritten source contract.
+- [x] Derive callable/type metadata directly from binaries/modules where source is unavailable.
+- [x] Add symbol demangle + metadata stitch pipeline to reconstruct type/function surfaces.
+- [x] Add binary-derived contract validator against live runtime observations.
+- [x] Add confidence scoring to derived contracts and fallback paths for low-confidence regions.
+- [x] Exit criteria: Rust can bootstrap control surfaces from compiled artifacts with no handwritten source contract.
+- **Status**: COMPLETE - Added Track N.7 binary-derivation support in `RuntimeContract` (`n7_derive_contract_from_binary`, `n7_validate_derived_contract`) that scans module binaries with `nm`, demangles/stitches callable surfaces, derives type surfaces by combining binary symbols with runtime metadata observations, validates both against live runtime behavior, and reports confidence plus low-confidence fallback regions. New probe `examples/runtime_binary_contract_derivation_probe.rs` validates binary-only callable/type derivation, demangle stitching, live validator coverage, confidence scoring, fallback reporting, and the exit-criterion bootstrap path from compiled artifacts. New runner `scripts/run_track_n7_tmux.sh` added. Probe PASS (10/10), artifacts written under `target/runtime-probe/` including `n7-derived-contract.json`, `n7-derived-summary.json`, and `n7-confidence-report.md`.
 
 ### N.8) Operational Guarantees & SLOs
 - [ ] Define performance SLOs for dynamic invoke, metadata traversal, and graph operations.

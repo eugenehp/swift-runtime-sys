@@ -3033,9 +3033,7 @@ private struct _N6ExecutionPayload: Codable {
 }
 
 private func _n6LCGNext(_ state: inout UInt64) -> UInt64 {
-    state = state
-        .wrappingMul(6364136223846793005)
-        .wrappingAdd(1442695040888963407)
+    state = (state &* 6364136223846793005) &+ 1442695040888963407
     return state
 }
 
