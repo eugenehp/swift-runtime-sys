@@ -1884,7 +1884,9 @@ private func _n1KindForTypeName(_ typeName: String) -> Int32 {
     }
 
     if NSClassFromString(typeName) != nil { return 1 }
-    return -1
+    // Fallback: scan __swift5_types for types not accessible via _typeByName
+    // (e.g., privately-scoped Swift types discovered by the section scanner).
+    return _n1SectionKindForName(typeName)
 }
 
 @_cdecl("swift_contract_n1_metadata_kind_by_name")
@@ -1943,7 +1945,199 @@ public func swift_contract_n1_metadata_graph_traverse_discovered_count() -> Int3
     return Int32(max(0, count))
 }
 
-// MARK: - Universal Call Lowering & Invocation (Track N.2)
+    // MARK: - N.1 Runtime-Wide Enumeration (exit criterion: no pre-registered descriptors)
+
+    /// Collect registered ObjC class names (covers all Swift @objc-compatible classes).
+    private func _n1ExtractObjcClassNames(limit: Int = 512) -> [String] {
+        let count = objc_getClassList(nil, 0)
+        guard count > 0 else { return [] }
+        let cap = min(Int(count), limit)
+        let buffer = UnsafeMutablePointer<AnyClass>.allocate(capacity: cap)
+        defer { buffer.deallocate() }
+        objc_getClassList(AutoreleasingUnsafeMutablePointer<AnyClass>(buffer), Int32(cap))
+        return (0..<cap).compactMap { i -> String? in
+            let name = String(cString: class_getName(buffer[i]))
+            return name.isEmpty ? nil : name
+        }
+    }
+
+    /// Scan the __swift5_types Mach-O section of a loaded dyld image and extract
+    /// nominal type (class / struct / enum) names from their descriptors.
+    /// Safe: validates kind flags and reads name byte-by-byte with a 256-char cap.
+    private func _n1ScanSwift5Types(in header: UnsafePointer<mach_header>) -> [String] {
+        var size: UInt = 0
+        // On arm64 macOS, getsectiondata expects mach_header_64; cast via raw pointer.
+        let h64 = UnsafeRawPointer(header).assumingMemoryBound(to: mach_header_64.self)
+        guard let data = getsectiondata(h64, "__TEXT", "__swift5_types", &size),
+              size >= 4 else { return [] }
+        var names: [String] = []
+        let entryCount = Int(size) / 4
+        let sectionBase = UnsafeRawPointer(data)
+        for i in 0..<entryCount {
+            let fieldAddr = sectionBase.advanced(by: i * 4)
+            // Each entry is RelativeDirectPointerIntPair<TypeContextDescriptor, bool>.
+            // The low bit encodes a flag; mask it off to get the actual relative offset.
+            let rawRelOffset = fieldAddr.loadUnaligned(as: Int32.self)
+            let relOffset = Int(rawRelOffset & ~1)
+            guard relOffset != 0 else { continue }
+            let descriptorAddr = fieldAddr.advanced(by: relOffset)
+            // Check kind: ContextDescriptorKind in low 5 bits of flags.
+            // Class=16(0x10), Struct=17(0x11), Enum=18(0x12).
+            let flags = descriptorAddr.loadUnaligned(as: UInt32.self)
+            let kind = flags & 0x1F
+            guard kind == 16 || kind == 17 || kind == 18 else { continue }
+            // Name is a relative pointer at descriptor offset 8.
+            let nameFieldAddr = descriptorAddr.advanced(by: 8)
+            let nameRelOffsetRaw = nameFieldAddr.loadUnaligned(as: Int32.self)
+            let nameRelOffset = Int(nameRelOffsetRaw)
+            guard nameRelOffset != 0 else { continue }
+            let nameAddr = nameFieldAddr.advanced(by: nameRelOffset)
+            let nameBase = nameAddr.assumingMemoryBound(to: UInt8.self)
+            // Read name bytes safely (capped at 256 chars).
+            var bytes: [UInt8] = []
+            for j in 0..<256 {
+                let b = nameBase.advanced(by: j).pointee
+                if b == 0 { break }
+                bytes.append(b)
+            }
+            guard !bytes.isEmpty else { continue }
+            // Accept only ASCII-printable Swift identifier characters.
+            let valid = bytes.allSatisfy { b in
+                (b >= 65 && b <= 90) || (b >= 97 && b <= 122) ||
+                (b >= 48 && b <= 57) ||
+                b == 95 || b == 60 || b == 62 || b == 44 || b == 32 || b == 46
+            }
+            guard valid, let name = String(bytes: bytes, encoding: .utf8) else { continue }
+            names.append(name)
+        }
+        return names
+    }
+
+    /// Look up the kind (1=class, 2=struct, 3=enum) of a named type by scanning
+    /// __swift5_types sections. Used for introspecting privately-scoped discovered types.
+    private func _n1SectionKindForName(_ typeName: String) -> Int32 {
+        let imageCount = _dyld_image_count()
+        for i in 0..<imageCount {
+            guard let header = _dyld_get_image_header(i) else { continue }
+            let h64 = UnsafeRawPointer(header).assumingMemoryBound(to: mach_header_64.self)
+            var size: UInt = 0
+            guard let data = getsectiondata(h64, "__TEXT", "__swift5_types", &size),
+                  size >= 4 else { continue }
+            let entryCount = Int(size) / 4
+            let sectionBase = UnsafeRawPointer(data)
+            for j in 0..<entryCount {
+                let fieldAddr = sectionBase.advanced(by: j * 4)
+                let rawRel = fieldAddr.loadUnaligned(as: Int32.self)
+                let rel = Int(rawRel & ~1)
+                guard rel != 0 else { continue }
+                let desc = fieldAddr.advanced(by: rel)
+                let flags = desc.loadUnaligned(as: UInt32.self)
+                let k = flags & 0x1F
+                guard k == 16 || k == 17 || k == 18 else { continue }
+                let nameField = desc.advanced(by: 8)
+                let nameRel = Int(nameField.loadUnaligned(as: Int32.self))
+                guard nameRel != 0 else { continue }
+                let nameBase = nameField.advanced(by: nameRel).assumingMemoryBound(to: UInt8.self)
+                var bytes: [UInt8] = []
+                for m in 0..<256 {
+                    let b = nameBase.advanced(by: m).pointee
+                    if b == 0 { break }
+                    bytes.append(b)
+                }
+                guard let found = String(bytes: bytes, encoding: .utf8), found == typeName else { continue }
+                return k == 16 ? 1 : (k == 17 ? 2 : 3)
+            }
+        }
+        return -1
+    }
+
+    /// Enumerate ALL Swift nominal types from loaded dyld images without any pre-registered
+    /// seed list. Combines ObjC class enumeration + __swift5_types section scanning.
+    /// N.1 exit-criterion runtime-wide discovery path.
+    @_cdecl("swift_contract_n1_enumerate_all_types_json")
+    public func swift_contract_n1_enumerate_all_types_json() -> UnsafeMutablePointer<CChar>? {
+        var allNames: Set<String> = []
+        // Path 1: ObjC runtime class list (all registered Swift/ObjC classes).
+        for name in _n1ExtractObjcClassNames(limit: 512) {
+            allNames.insert(name)
+        }
+        // Path 2: __swift5_types section scan across all loaded dyld images.
+        let imageCount = _dyld_image_count()
+        for i in 0..<imageCount {
+            guard let header = _dyld_get_image_header(i) else { continue }
+            for name in _n1ScanSwift5Types(in: header) {
+                allNames.insert(name)
+            }
+        }
+        let sorted = allNames.sorted()
+        let items = sorted.map { name -> String in
+            let safe = name
+                .replacingOccurrences(of: "\\", with: "\\\\")
+                .replacingOccurrences(of: "\"", with: "\\\"")
+            return "{\"name\":\"\(safe)\"}"
+        }
+        return strdup("{\"types\":[\(items.joined(separator: ","))],\"count\":\(sorted.count)}")
+    }
+
+    /// JSON type info (kind string, kind_id, field_count) for any name discoverable at runtime.
+    @_cdecl("swift_contract_n1_type_info_json")
+    public func swift_contract_n1_type_info_json(_ typeNamePtr: UnsafePointer<CChar>?) -> UnsafeMutablePointer<CChar>? {
+        guard let typeNamePtr else { return nil }
+        let typeName = String(cString: typeNamePtr)
+        let kind = _n1KindForTypeName(typeName)
+        let kindStr: String
+        switch kind {
+        case 1: kindStr = "class"
+        case 2: kindStr = "struct"
+        case 3: kindStr = "enum"
+        case 4: kindStr = "tuple"
+        case 5: kindStr = "function"
+        case 6: kindStr = "existential"
+        case 7: kindStr = "metatype"
+        case 8: kindStr = "generic_instantiation"
+        default: kindStr = "unknown"
+        }
+        let fieldCount = swift_contract_n1_metadata_field_count_by_name(typeNamePtr)
+        let safe = typeName
+            .replacingOccurrences(of: "\\", with: "\\\\")
+            .replacingOccurrences(of: "\"", with: "\\\"")
+        return strdup("{\"name\":\"\(safe)\",\"kind\":\"\(kindStr)\",\"kind_id\":\(kind),\"field_count\":\(fieldCount)}")
+    }
+
+    /// Number of loaded dyld images available for per-image traversal.
+    @_cdecl("swift_contract_n1_image_count")
+    public func swift_contract_n1_image_count() -> Int32 {
+        return Int32(_dyld_image_count())
+    }
+
+    /// Swift nominal types exported by a specific dyld image (0-based index into dyld image list).
+    @_cdecl("swift_contract_n1_image_types_json")
+    public func swift_contract_n1_image_types_json(_ imageIndex: Int32) -> UnsafeMutablePointer<CChar>? {
+        let idx = UInt32(max(0, imageIndex))
+        guard idx < _dyld_image_count(), let header = _dyld_get_image_header(idx) else {
+            return strdup("{\"image\":\"\",\"types\":[],\"count\":0}")
+        }
+        let imageName: String
+        if let imgNamePtr = _dyld_get_image_name(idx) {
+            let full = String(cString: imgNamePtr)
+            imageName = full.components(separatedBy: "/").last ?? full
+        } else {
+            imageName = "image_\(idx)"
+        }
+        let names = _n1ScanSwift5Types(in: header)
+        let items = names.map { name -> String in
+            let safe = name
+                .replacingOccurrences(of: "\\", with: "\\\\")
+                .replacingOccurrences(of: "\"", with: "\\\"")
+            return "{\"name\":\"\(safe)\"}"
+        }
+        let safeImg = imageName
+            .replacingOccurrences(of: "\\", with: "\\\\")
+            .replacingOccurrences(of: "\"", with: "\\\"")
+        return strdup("{\"image\":\"\(safeImg)\",\"types\":[\(items.joined(separator: ","))],\"count\":\(names.count)}")
+    }
+
+    // MARK: - Universal Call Lowering & Invocation (Track N.2)
 
 private let n2CapabilityIndirectReturn: UInt32 = 1 << 0
 private let n2CapabilityInout: UInt32 = 1 << 1

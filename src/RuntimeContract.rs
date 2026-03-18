@@ -327,6 +327,11 @@ type ContractN1MetadataKindByName = unsafe extern "C" fn(*const c_char) -> i32;
 type ContractN1MetadataFieldCountByName = unsafe extern "C" fn(*const c_char) -> i32;
 type ContractN1MetadataDiscoverTypesJson = unsafe extern "C" fn() -> *mut c_char;
 type ContractN1MetadataGraphTraverseDiscoveredCount = unsafe extern "C" fn() -> i32;
+// Track N.1 – Runtime-Wide Enumeration (exit criterion path)
+type ContractN1EnumerateAllTypesJson = unsafe extern "C" fn() -> *mut c_char;
+type ContractN1TypeInfoJson = unsafe extern "C" fn(*const c_char) -> *mut c_char;
+type ContractN1ImageCount = unsafe extern "C" fn() -> i32;
+type ContractN1ImageTypesJson = unsafe extern "C" fn(i32) -> *mut c_char;
 // Track N.2 – Universal Call Lowering & Invocation
 type ContractN2CapabilityMask = unsafe extern "C" fn() -> u32;
 type ContractN2InvokeI32 =
@@ -3255,6 +3260,78 @@ impl<'a> RuntimeContract<'a> {
         }
         Ok(out)
     }
+
+        /// Enumerate ALL Swift nominal types from loaded dyld images without pre-registered seeds.
+        /// JSON: {"types":[{"name":"..."},...], "count": N}
+        pub fn n1_enumerate_all_types_json(&self) -> Result<String, RuntimeContractError> {
+            let func: ContractN1EnumerateAllTypesJson =
+                self.resolve("swift_contract_n1_enumerate_all_types_json")?;
+            let ptr = unsafe { func() };
+            if ptr.is_null() {
+                return Err(RuntimeContractError::InvalidInvoke {
+                    type_id: 70,
+                    method_id: 10,
+                });
+            }
+            let out = unsafe { CStr::from_ptr(ptr) }
+                .to_string_lossy()
+                .into_owned();
+            unsafe { libc::free(ptr as *mut c_void) };
+            Ok(out)
+        }
+
+        /// JSON type info (kind, kind_id, field_count) for any runtime-discoverable name.
+        pub fn n1_type_info_json(&self, name: &str) -> Result<String, RuntimeContractError> {
+            let func: ContractN1TypeInfoJson =
+                self.resolve("swift_contract_n1_type_info_json")?;
+            let c_name = CString::new(name).map_err(|_| RuntimeContractError::InvalidInvoke {
+                type_id: 70,
+                method_id: 11,
+            })?;
+            let ptr = unsafe { func(c_name.as_ptr()) };
+            if ptr.is_null() {
+                return Err(RuntimeContractError::InvalidInvoke {
+                    type_id: 70,
+                    method_id: 11,
+                });
+            }
+            let out = unsafe { CStr::from_ptr(ptr) }
+                .to_string_lossy()
+                .into_owned();
+            unsafe { libc::free(ptr as *mut c_void) };
+            Ok(out)
+        }
+
+        /// Number of loaded dyld images (for incremental per-image traversal).
+        pub fn n1_image_count(&self) -> Result<i32, RuntimeContractError> {
+            let func: ContractN1ImageCount = self.resolve("swift_contract_n1_image_count")?;
+            let out = unsafe { func() };
+            if out < 0 {
+                return Err(RuntimeContractError::InvalidInvoke {
+                    type_id: 70,
+                    method_id: 12,
+                });
+            }
+            Ok(out)
+        }
+
+        /// Swift nominal types in a specific dyld image by 0-based index.
+        /// JSON: {"image":"...", "types":[{"name":"..."},...], "count": N}
+        pub fn n1_image_types_json(&self, index: i32) -> Result<String, RuntimeContractError> {
+            let func: ContractN1ImageTypesJson = self.resolve("swift_contract_n1_image_types_json")?;
+            let ptr = unsafe { func(index) };
+            if ptr.is_null() {
+                return Err(RuntimeContractError::InvalidInvoke {
+                    type_id: 70,
+                    method_id: 13,
+                });
+            }
+            let out = unsafe { CStr::from_ptr(ptr) }
+                .to_string_lossy()
+                .into_owned();
+            unsafe { libc::free(ptr as *mut c_void) };
+            Ok(out)
+        }
 
     // MARK: - Universal Call Lowering & Invocation (Track N.2)
 

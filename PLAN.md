@@ -3,6 +3,10 @@
 ## Goal
 Define and complete all work needed to claim production-grade parity between Rust runtime access and Swift behavior in this repository.
 
+## Rules
+
+- commit changes after each new feature/bug/fix added
+
 ## Current Baseline
 - [x] Current matrix status: `101/101 PASS`.
 - [x] Source of truth for checks and totals: `scripts/run_parity_matrix.sh`.
@@ -493,8 +497,8 @@ These tracks target dynamic, version-adaptive runtime control beyond contract-sc
 - [x] Decode layout/field offsets including resilient and generic-dependent fields.
 - [x] Add metadata graph traversal API with cycle-safe visitation.
 - [x] Add deterministic metadata snapshot probe over mixed user-defined and stdlib types.
-- [ ] Exit criteria: Rust can discover and traverse unknown type metadata at runtime without pre-registered descriptors.
-- **Status**: IN PROGRESS - `examples/runtime_metadata_graph_probe.rs` validates 9 synthetic-node graph tests and `examples/runtime_metadata_discovery_probe.rs` validates 8 dynamic-discovery tests (name-driven kind/field queries, discovered-type JSON containing user-defined + stdlib entries, discovery traversal cardinality, unknown-type error path). All current tests PASS (17/17). Remaining work: transition discovery from bounded known-name seeds to broader runtime-wide enumeration and recursive metadata graph traversal without curated roots.
+- [x] Exit criteria: Rust can discover and traverse unknown type metadata at runtime without pre-registered descriptors.
+- **Status**: COMPLETE — Added `__swift5_types` Mach-O section scanner (`_n1ScanSwift5Types`) and ObjC class enumerator (`_n1ExtractObjcClassNames`) with four new Swift exports (`swift_contract_n1_enumerate_all_types_json`, `swift_contract_n1_type_info_json`, `swift_contract_n1_image_count`, `swift_contract_n1_image_types_json`) and matching Rust wrappers. `_n1SectionKindForName` added as fallback to `_n1KindForTypeName` for privately-scoped discovered types. New probe `examples/runtime_metadata_enumeration_probe.rs` proves exit criterion: `test_exit_criterion_discover_and_introspect` discovers `N1LayoutStruct` and `Direction` from the runtime-wide scan without any pre-seeded name list, then introspects them. All 27 N.1 tests PASS (9 graph + 8 discovery + 10 enumeration).
 
 ### N.2) Universal Call Lowering & Invocation
 - [x] Add dynamic invocation engine for arbitrary Swift symbol signatures.
