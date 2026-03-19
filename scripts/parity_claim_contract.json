@@ -2,7 +2,7 @@
   "version": 1,
   "scope": {
     "id": "v2-expanded",
-    "description": "Phase A: Expanded parity scope with all protocol dispatch variants + Array/Dictionary/Error bridging (planned)"
+    "description": "Phase A COMPLETE: Expanded parity scope with all protocol dispatch variants + Array/Dictionary/Error bridging (A.1-A.4 gates PASS)"
   },
   "required_gates": [
     "parity_matrix_debug",
@@ -16,7 +16,10 @@
     "contract_parity_release",
     "support_matrix_signoff",
     "promotion_policy_signoff",
-    "plan_completion_signoff"
+    "plan_completion_signoff",
+    "array_bridging_gate",
+    "dictionary_bridging_gate",
+    "error_propagation_gate"
   ],
   "minimum_budgets": {
     "ap4_seed_count": 32,
@@ -25,7 +28,10 @@
     "ap5_history_window": 5,
     "ap5_soak_runs": 5,
     "stress_runs": 3,
-    "fuzz_cases": 64
+    "fuzz_cases": 64,
+    "array_bridging_min_passes": 1,
+    "dictionary_bridging_min_passes": 1,
+    "error_propagation_min_passes": 1
   },
   "toolchain_pins": {
     "rust_toolchain_channel": "1.94.0",
@@ -40,6 +46,10 @@
       "x0x1",
       "x20x1",
       "existential"
-    ]
+    ],
+    "phase_a_gates": {
+      "array_bridging_gate": "tests Array<Int32> and Array<OpaqueRef> creation/access/mutation",
+      "dictionary_bridging_gate": "tests Dictionary<Int32,V> insertion/lookup/containment",
+      "error_propagation_gate": "tests error creation/throwing/catching/unwinding"
+    }
   }
-}

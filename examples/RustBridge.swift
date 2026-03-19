@@ -2,6 +2,7 @@ import Foundation
 import Dispatch
 import Darwin
 import ObjectiveC.runtime
+import ResilientFixtures
 
 public var globalCounterValue: Int32 = 123
 
