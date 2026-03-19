@@ -317,6 +317,103 @@ public func swift_contract_c4_throwing_closure_error(_ value: Int32) -> Int32 {
     }
 }
 
+// MARK: - Phase C.5: Optimizer-Sensitive Equivalence
+
+@inline(__always)
+private func c5InlineTransform(_ x: Int32) -> Int32 {
+    (x &* 3) &+ 7
+}
+
+@inline(never)
+private func c5NoInlineTransform(_ x: Int32) -> Int32 {
+    (x &* 3) &+ 7
+}
+
+@_cdecl("swift_contract_c5_inline_equiv")
+public func swift_contract_c5_inline_equiv(_ value: Int32) -> Int32 {
+    let inlined = c5InlineTransform(value)
+    let outlined = c5NoInlineTransform(value)
+    return inlined == outlined ? inlined : Int32.min
+}
+
+private protocol C5Stepper {
+    func step(_ x: Int32) -> Int32
+}
+
+private struct C5LinearStepper: C5Stepper {
+    let delta: Int32
+
+    @inline(never)
+    func step(_ x: Int32) -> Int32 {
+        x &+ delta
+    }
+}
+
+@_cdecl("swift_contract_c5_devirt_equiv")
+public func swift_contract_c5_devirt_equiv(_ value: Int32) -> Int32 {
+    let concrete = C5LinearStepper(delta: 11)
+    let direct = concrete.step(value)
+    let existential: any C5Stepper = concrete
+    let viaWitness = existential.step(value)
+    return direct == viaWitness ? direct : Int32.min
+}
+
+@inline(never)
+private func c5GenericAdd<T: FixedWidthInteger>(_ lhs: T, _ rhs: T) -> T {
+    lhs &+ rhs
+}
+
+@inline(never)
+private func c5UnspecializedIntAdd(_ lhs: Any, _ rhs: Any) -> Int32 {
+    guard let a = lhs as? Int32, let b = rhs as? Int32 else {
+        return Int32.min
+    }
+    return a &+ b
+}
+
+@_cdecl("swift_contract_c5_generic_equiv")
+public func swift_contract_c5_generic_equiv(_ a: Int32, _ b: Int32) -> Int32 {
+    let specialized: Int32 = c5GenericAdd(a, b)
+    let unspecialized = c5UnspecializedIntAdd(a, b)
+    return specialized == unspecialized ? specialized : Int32.min
+}
+
+private final class C5ArcToken {
+    let value: Int32
+
+    init(_ value: Int32) {
+        self.value = value
+    }
+
+    deinit {
+        _c5ArcDeinitCount &+= 1
+    }
+}
+
+private var _c5ArcDeinitCount: Int32 = 0
+
+@_cdecl("swift_contract_c5_arc_reset")
+public func swift_contract_c5_arc_reset() -> Int32 {
+    _c5ArcDeinitCount = 0
+    return 1
+}
+
+@_cdecl("swift_contract_c5_arc_sequence")
+public func swift_contract_c5_arc_sequence(_ base: Int32) -> Int32 {
+    var sum: Int32 = 0
+    do {
+        let token = C5ArcToken(base)
+        let alias = token
+        sum = token.value &+ alias.value
+    }
+    return sum
+}
+
+@_cdecl("swift_contract_c5_arc_deinit_count")
+public func swift_contract_c5_arc_deinit_count() -> Int32 {
+    _c5ArcDeinitCount
+}
+
 // MARK: - Error Handling & Introspection (Track E.1)
 
 /// A simple custom error type with error code.
@@ -2799,6 +2896,12 @@ private let _n2ShapeRegistry: [String: String] = [
     "swift_contract_c4_async_closure_invoke":      "i32_to_i32",
     "swift_contract_c4_throwing_closure_safe":     "i32_to_i32",
     "swift_contract_c4_throwing_closure_error":    "i32_to_i32",
+    "swift_contract_c5_inline_equiv":              "i32_to_i32",
+    "swift_contract_c5_devirt_equiv":              "i32_to_i32",
+    "swift_contract_c5_generic_equiv":             "i32_i32_to_i32",
+    "swift_contract_c5_arc_reset":                 "void_to_i32",
+    "swift_contract_c5_arc_sequence":              "i32_to_i32",
+    "swift_contract_c5_arc_deinit_count":          "void_to_i32",
 ]
 
 /// Dynamic invoke by runtime symbol name + lowered shape descriptor.

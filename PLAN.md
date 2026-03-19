@@ -842,17 +842,19 @@ Goal: Expand runtime-control coverage on the current host cell beyond existing r
   - Gate script `scripts/run_c3_enum_gate.sh` confirms debug/release equivalence. No parity regressions (101/101 PASS).
 
 ### C.4) Closure and Async-Capture Semantics
-- [ ] Add escaping closure capture lifetime probes across FFI ownership boundaries.
-- [ ] Add async closure capture probes across task boundaries and actor hops.
-- [ ] Add throwing + async closure invocation matrix (success/error/cancel paths).
-- [ ] Exit criteria: Captures are lifetime-safe and semantically stable under repeated async and actor-isolated execution.
+- [x] Add escaping closure capture lifetime probes across FFI ownership boundaries.
+- [x] Add async closure capture probes across task boundaries and actor hops.
+- [x] Add throwing + async closure invocation matrix (success/error/cancel paths).
+- [x] Exit criteria: Captures are lifetime-safe and semantically stable under repeated async and actor-isolated execution.
+- **Status**: COMPLETE — Added Swift C.4 exports for escaping closure store/invoke/clear, async closure invoke, and throwing closure safe/error paths, plus probe `examples/runtime_c4_closure_probe.rs` (7/7 PASS debug and release). Gate `scripts/run_c4_closure_gate.sh` compiles `RustBridge.swift` + resilient fixture module and enforces debug/release equivalence.
 
 ### C.5) Optimizer-Sensitive Equivalence (Debug vs Release)
-- [ ] Expand required gates to enforce semantic equivalence in debug and release for all high-risk probes.
-- [ ] Add inlining/devirtualization-sensitive dispatch parity probes.
-- [ ] Add generic specialization vs unspecialized fallback equivalence checks.
-- [ ] Add ARC-optimization-sensitive parity checks (retain-elision/dead-store side effects).
-- [ ] Exit criteria: No semantic divergence between debug and release for required host-cell control flows.
+- [x] Expand required gates to enforce semantic equivalence in debug and release for all high-risk probes.
+- [x] Add inlining/devirtualization-sensitive dispatch parity probes.
+- [x] Add generic specialization vs unspecialized fallback equivalence checks.
+- [x] Add ARC-optimization-sensitive parity checks (retain-elision/dead-store side effects).
+- [x] Exit criteria: No semantic divergence between debug and release for required host-cell control flows.
+- **Status**: COMPLETE — Added C.5 Swift exports (`swift_contract_c5_inline_equiv`, `swift_contract_c5_devirt_equiv`, `swift_contract_c5_generic_equiv`, `swift_contract_c5_arc_*`) and probe `examples/runtime_c5_optimizer_probe.rs` (8 tests) covering inline vs noinline parity, direct vs witness dispatch equivalence, specialized vs unspecialized generic arithmetic equivalence, and ARC deinit side-effect preservation. Gate `scripts/run_c5_optimizer_gate.sh` enforces debug/release semantic equivalence with JSON/MD artifacts.
 
 ### C.6) Dynamic Call-Lowering Coverage Expansion
 - [ ] Add additional lowering classes for mixed signatures (indirect return + inout + throws + async combinations).
