@@ -685,4 +685,132 @@ This section defines the work required to approach a defensible "absolute parity
 
 ### 2026-03-19 (Wave 13, end-to-end closure command)
 - [x] Added one-command closure verifier `scripts/run_absolute_parity_verification.sh` to run AP.6 claim verification, AP.7 tracked-ref conformance checks, and upstream promotion-policy signoff in one flow.
+
+### 2026-03-19 (Wave 14, protocol dispatch variant fix)
+- [x] Fixed protocol dispatch helper variants (x20, x0, x20x0, x0x1, x20x1) to use indirect-self ABI shape (x20 = &obj_slot) matching Swift witness thunk expectations.
+- [x] Updated [examples/runtime_thunk_utils.c](examples/runtime_thunk_utils.c) to normalize all variants to indirect addressing; eliminated crashes (exit 139) and semantic mismatches (8 vs 99).
+- [x] Re-ran `./scripts/run_protocol_dispatch_matrix.sh`: all six variants (x20, x0, x20x0, x0x1, x20x1, existential) now exit 0 with semantic PASS.
+- [x] Committed fix: `b4e56cc` — Fix protocol dispatch helper variants to use indirect self ABI.
+
+---
+
+## Phase A: Safe Incremental Expansion (v1-frozen → v2-expanded)
+
+Goal: Expand parity scope incrementally while keeping version pins and contract enforcement. Promote experimental variants to required; add new type-bridging support.
+
+### Phase A.1) Promote All Protocol Dispatch Variants to Required
+- [ ] Update `scripts/parity_claim_contract.json` to require all six variants (x20, x0, x20x0, x0x1, x20x1, existential), not just existential.
+- [ ] Update protocol dispatch matrix gate to fail if any variant is non-PASS.
+- [ ] Regenerate support-matrix signoff with all-variant coverage on macos-14, macos-15.
+- [ ] Update PLAN.md scope lock to mark all dispatch variants `required`.
+- [ ] Update README.md parity-claim section to list all six variants as supported.
+- **Exit criteria**: Full protocol dispatch matrix is in-scope and green across CI matrix cells.
+
+### Phase A.2) Add Array<T> Bridging Support
+- [ ] Add Swift bridge exports for Array constructors: `swift_contract_array_int32_make`, `swift_contract_array_opaque_ref_make`.
+- [ ] Add Array methods: `len`, `get_element`, `set_element`, `append`, `data_ptr` (for direct memory access).
+- [ ] Add Rust-side wrappers in [src/RuntimeContract.rs](src/RuntimeContract.rs) with ownership-safe element boxers.
+- [ ] Add deterministic probe `examples/runtime_array_bridging_probe.rs` with 20+ test cases (empty, single, multi-element arrays, bounds, capacity).
+- [ ] Add array parity check to required gates in [scripts/run_parity_matrix.sh](scripts/run_parity_matrix.sh).
+- **Exit criteria**: Array round-trip (Rust → Swift → Rust) preserves element values and ordering; bounds-safe access validated.
+
+### Phase A.3) Add Dictionary<K,V> Bridging Support
+- [ ] Add Swift bridge exports for Dictionary constructors: `swift_contract_dict_i32_i32_make`, `swift_contract_dict_i32_opaque_ref_make`, `swift_contract_dict_opaque_ref_i32_make`.
+- [ ] Add Dictionary methods: `len`, `get`, `set`, `remove`, `contains`, `keys`, `values`.
+- [ ] Add Rust-side wrappers in [src/RuntimeContract.rs](src/RuntimeContract.rs) with entry/key/value lifetime management.
+- [ ] Add deterministic probe `examples/runtime_dict_bridging_probe.rs` with 25+ test cases (empty, insert, remove, collision, upsert, iteration).
+- [ ] Add dictionary parity check to required gates.
+- **Exit criteria**: Dictionary key-value operations preserve insertion semantics (except order); hash collision handling is safe.
+
+### Phase A.4) Add Error/Throws Propagation Support
+- [ ] Add Swift bridge exports for creating/throwing errors: `swift_contract_error_create`, `swift_contract_error_throw_context`.
+- [ ] Add error unwinding support: `swift_contract_catch_and_describe`, `swift_contract_error_code`.
+- [ ] Add Rust error boxer with ownership-safe release semantics.
+- [ ] Add deterministic probe `examples/runtime_error_propagation_probe.rs` with 15+ test cases (create, throw, catch, description, code extraction).
+- [ ] Add error parity check to required gates.
+- **Exit criteria**: Errors thrown from Swift can be caught, described, and released without leaks or crashes.
+
+### Phase A.5) Promote Phase A Tracks to v2 Scope
+- [ ] Update `scripts/parity_claim_contract.json` scope from `v1-frozen-plus-ap` to `v2-expanded`.
+- [ ] Update minimum budget for phase A gates (array, dict, error) to require >= 1 pass each.
+- [ ] Re-run `./scripts/run_absolute_parity_verification.sh` with full Phase A coverage.
+- [ ] Commit with message: "Phase A complete: 6/6 protocol variants + Array + Dictionary + Error/Throws"
+- [ ] Update README.md to document new bridging support and scope expansion.
+- **Exit criteria**: Full parity claim (AP.6 + AP.7) validates against expanded v2 scope with all Phase A gates PASS.
+
+---
+
+## Phase B: Dynamic Metadata Parsing & Multi-Version Adaptation (v2-expanded → v3-dynamic)
+
+Goal: Remove hard version pinning; build runtime ABI adapter that works across Swift version ranges (6.0–6.5) by dynamic metadata introspection.
+
+### Phase B.1) Metadata Layout Introspector
+- [ ] Add runtime metadata-header parser that discovers struct/class field offsets without hardcoding.
+- [ ] Probe target Swift binary for type metadata and extract: kind bits, descriptor pointer, generic parameter count, witness table slots.
+- [ ] Add Rust helper in [src/RuntimeContract.rs](src/RuntimeContract.rs): `scan_metadata_header(ptr: MetadataRef) -> MetadataLayout` that returns {size, field_offsets, witness_count, generic_param_count}.
+- [ ] Add deterministic probe `examples/runtime_metadata_introspector_probe.rs` with 20+ test cases validating layout discovery against known types (Person, Counter, String, Array, Dictionary) across manual seeding + discovery paths.
+- **Exit criteria**: Metadata layout is correctly inferred from binaries without hardcoding version-specific offsets.
+
+### Phase B.2) Witness Table Dynamic Resolver
+- [ ] Build witness table resolver that locates protocol conformances at runtime instead of requiring pre-registered lookups.
+- [ ] Add symbol pattern matcher: scan Swift binary for `__swift_conformances` mach-o section; extract conformance descriptors.
+- [ ] Add Rust helper: `resolve_witness_table_dynamic(type_name: &str, protocol_name: &str) -> WitnessTableRef` that queries conformances by name and returns the witness table slot.
+- [ ] Add deterministic probe `examples/runtime_witness_resolution_probe.rs` with 15+ test cases (value/reference conformances, optional protocols, generic conformances).
+- **Exit criteria**: Witness table resolution works without pre-seeding type/protocol registries; discovery is automatic from binary metadata.
+
+### Phase B.3) Cross-Version ABI Compatibility Shim
+- [ ] Detect Swift version at runtimefrom binary version symbols (e.g., `__swift6_2_0` vs `__swift6_1_0` markers).
+- [ ] Build per-version adapter table with field offsets, witness slot patterns, metadata header variations.
+- [ ] Add Rust selector in [src/RuntimeContract.rs](src/RuntimeContract.rs): `load_abi_adapter_for_current_swift() -> AbiAdapter` that auto-selects based on detected version.
+- [ ] Add deterministic probe `examples/runtime_multiversion_compat_probe.rs` with 10+ test cases (detect version, select adapter, verify offsets match detected runtime).
+- **Exit criteria**: Same Rust control flow invokes correct metadata/witness patterns for Swift 6.1, 6.2, 6.3+ (detected at load time).
+
+### Phase B.4) Fallback & Graceful Degradation
+- [ ] For unsupported version ranges or unknown conformances, add fallback paths: panic safely, log diagnostic, disable unsupported operations.
+- [ ] Add capability negotiation: `is_feature_supported(feature_name: &str) -> bool` for dynamic versioning.
+- [ ] Add debug-mode dump of detected version + adapter profile for troubleshooting.
+- [ ] Update [README.md](README.md) to document supported version ranges and graceful-degradation policy.
+- **Exit criteria**: Unsupported scenarios are caught before memory corruption; users see clear diagnostics.
+
+### Phase B.5) Multi-Version Parity Matrix
+- [ ] Extend GitHub Actions matrix in [.github/workflows/parity.yml](.github/workflows/parity.yml) to test against Swift 6.1, 6.2, 6.3 (when available) on macOS 13, 14, 15.
+- [ ] Loosen version pins in [parity_claim_contract.json](scripts/parity_claim_contract.json): `swift_version_prefix: ">=6.1"`.
+- [ ] Run full parity gate stack on each Swift version + macOS combo; fail if divergence is unexplained.
+- [ ] Commit artifacts `multiversion-parity-matrix-*.json` for each run.
+- [ ] Track regressions per-version in CI artifacts.
+- **Exit criteria**: Parity gates PASS across Swift 6.1–6.3 range; regressions are detected and triaged by version.
+
+### Phase B.6) Promote Phase B to v3 Scope
+- [ ] Update [PLAN.md](PLAN.md) scope lock to mark v3-dynamic as current.
+- [ ] Update [README.md](README.md) to advertise multi-version support (6.1–6.3 tested).
+- [ ] Re-run `./scripts/run_absolute_parity_verification.sh` with v3 scope.
+- [ ] Generate final signoff: `absolute-parity-signoff-v3.md` with multi-version evidence.
+- [ ] Commit with message: "Phase B complete: Dynamic metadata + multi-version adaptation (Swift 6.1–6.3 supported)"
+- **Exit criteria**: Single Rust binary works across multiple Swift versions without recompilation; parity claim is version-range scoped, not version-pinned.
+
+---
+
+## Future Directions (Post-Phase B)
+
+### Extended Scope Tracks
+- **Phase C**: Async/Task runtime bridging (task spawning, local storage, cancellation).
+- **Phase D**: Generics specialization & witness instantiation for arbitrary type parameters.
+- **Phase E**: String/Substring UTF-8 iteration and mutation safety.
+
+### Research Tracks
+- **Vendored Swift**: Downstream Swift fork with extended runtime exports (10,000+ line commitment).
+- **In-Language Runtime**: Rust re-implementation of Swift ABI/metadata (experimental, long-horizon).
+
+---
+
+## Success Criteria Summary
+
+| Milestone | v1-frozen | v2-expanded | v3-dynamic |
+|-----------|-----------|-------------|-----------|
+| Protocol dispatch variants | 1 (existential) | 6 (all) | 6 (all) |
+| Bridging types | Person, Counter | + Array, Dict, Error | + (dynamic discovery) |
+| Version pinning | Swift 6.2.4 exactly | Swift 6.2.4 exactly | Swift 6.1–6.3 range |
+| Parity checks | 101 + 7 protocol | + 20 array + 25 dict + 15 error | (same, cross-version) |
+| CI matrix | macos-14,15 × {debug, release} | (same) | + Swift 6.1, 6.3 |
+| Scope marker | `v1-frozen-plus-ap` | `v2-expanded` | `v3-dynamic` |
 - [x] Added final signoff artifact `target/runtime-probe/absolute-parity-signoff.md` with consolidated PASS/FAIL status.
