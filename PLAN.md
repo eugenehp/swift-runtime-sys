@@ -682,3 +682,7 @@ This section defines the work required to approach a defensible "absolute parity
 - [x] Added `scripts/run_upstream_conformance.sh` to resolve upstream ref SHA, run/verify AP.6 claim gate, and emit per-ref conformance artifacts with history.
 - [x] Added automated regression issue creation on upstream conformance failure using `actions/github-script` with workflow run links.
 - [x] Added `scripts/validate_upstream_promotion_policy.sh` and workflow job `upstream_promotion_policy` to require full tracked-ref convergence before release promotion signoff.
+
+### 2026-03-19 (Wave 13, end-to-end closure command)
+- [x] Added one-command closure verifier `scripts/run_absolute_parity_verification.sh` to run AP.6 claim verification, AP.7 tracked-ref conformance checks, and upstream promotion-policy signoff in one flow.
+- [x] Added final signoff artifact `target/runtime-probe/absolute-parity-signoff.md` with consolidated PASS/FAIL status.
