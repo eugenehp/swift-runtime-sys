@@ -345,6 +345,12 @@ jobs:
       - name: Validate plan completion
         run: ./scripts/validate_plan_completion.sh
 
+      - name: Capture reproducibility inputs
+        run: ./scripts/capture_repro_inputs.sh
+
+      - name: Validate parity claim contract
+        run: ./scripts/validate_parity_claim_contract.sh
+
       - name: Upload support matrix signoff artifact
         if: always()
         uses: actions/upload-artifact@v4
@@ -360,3 +366,5 @@ jobs:
             target/runtime-probe/ap5-soak/ap5-soak-summary.md
             target/runtime-probe/ap5-soak/ap5-soak-summary.json
             target/runtime-probe/ap5-soak/ap5-stability-trend.md
+            target/runtime-probe/repro-inputs.json
+            target/runtime-probe/parity-claim-signoff.md

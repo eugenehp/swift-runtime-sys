@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "scope": {
+    "id": "v1-frozen-plus-ap",
+    "description": "Frozen parity scope with AP.1-AP.5 required gate stack"
+  },
+  "required_gates": [
+    "parity_matrix_debug",
+    "parity_matrix_release",
+    "stress_gate",
+    "protocol_dispatch_matrix",
+    "abi_shape_closure",
+    "ap4_differential_oracle",
+    "ap5_reliability_soak",
+    "contract_parity_debug",
+    "contract_parity_release",
+    "support_matrix_signoff",
+    "promotion_policy_signoff",
+    "plan_completion_signoff"
+  ],
+  "minimum_budgets": {
+    "ap4_seed_count": 32,
+    "ap4_fragment_count": 10,
+    "ap5_flake_budget": 0,
+    "ap5_history_window": 5,
+    "ap5_soak_runs": 5,
+    "stress_runs": 3,
+    "fuzz_cases": 64
+  },
+  "toolchain_pins": {
+    "rust_toolchain_channel": "1.94.0",
+    "swift_version_prefix": "Apple Swift version 6.2.4",
+    "cargo_lock_required": true
+  },
+  "allowed_deviations": {
+    "protocol_dispatch_nonrequired_variants": [
+      "x20",
+      "x0",
+      "x20x0",
+      "x0x1",
+      "x20x1"
+    ],
+    "required_protocol_variants": [
+      "existential"
+    ]
+  }
+}

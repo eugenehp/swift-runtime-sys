@@ -586,9 +586,9 @@ This section defines the work required to approach a defensible "absolute parity
 - [x] Track gate stability trend artifacts across CI history.
 
 ### AP.6) Claim Contract & Reproducibility
-- [ ] Add machine-checkable parity-claim contract (scope, required gates, minimum budgets, allowed deviations).
-- [ ] Pin toolchain/dependency inputs for reproducible claim builds.
-- [ ] Add one-command verifier that emits signed claim evidence bundle.
+- [x] Add machine-checkable parity-claim contract (scope, required gates, minimum budgets, allowed deviations).
+- [x] Pin toolchain/dependency inputs for reproducible claim builds.
+- [x] Add one-command verifier that emits signed claim evidence bundle.
 
 ### AP.7) Continuous Upstream Conformance
 - [ ] Add scheduled upstream-conformance jobs against tracked Swift releases/branches.
@@ -668,3 +668,10 @@ This section defines the work required to approach a defensible "absolute parity
 - [x] Deterministic retry policy now classifies `failed-then-passed-on-retry` as `FLAKY` and still fails the gate instead of pass-on-retry.
 - [x] Added AP.5 artifacts `target/runtime-probe/ap5-soak/ap5-soak-summary.json`, `target/runtime-probe/ap5-soak/ap5-soak-summary.md`, and `target/runtime-probe/ap5-soak/ap5-stability-trend.md`.
 - [x] Promoted AP.5 soak gate to required local full verification and CI (`.github/workflows/parity.yml` job `reliability_soak`, wired into `support_matrix_signoff.needs`).
+
+### 2026-03-18 (Wave 11, AP.6 claim contract and reproducibility)
+- [x] Added machine-checkable claim contract `scripts/parity_claim_contract.json` with required gates, minimum budgets, allowed deviations, and toolchain pin expectations.
+- [x] Pinned Rust toolchain inputs via `rust-toolchain.toml` (`1.94.0`) and added reproducibility capture `scripts/capture_repro_inputs.sh` (toolchain versions + lock/hash inputs).
+- [x] Added claim validator `scripts/validate_parity_claim_contract.sh` and integrated it into both local full verification and CI support-matrix signoff.
+- [x] Added one-command AP.6 verifier `scripts/run_ap6_claim_verifier.sh` that runs the full verifier and emits signed claim evidence bundle via `scripts/build_claim_evidence_bundle.sh`.
+- [x] Claim evidence bundle now includes hashed manifest + signature (`manifest.sha256`) and archive digest (`claim-evidence-bundle-*.tar.gz.sha256`).

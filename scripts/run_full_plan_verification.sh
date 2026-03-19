@@ -70,5 +70,7 @@ done
 PROMOTION_HISTORY_WINDOW="$PROMOTION_HISTORY_WINDOW" ./scripts/validate_promotion_policy.sh "$ARTIFACT_ROOT"
 USE_MATRIX_CONTRACT=0 REQUIRED_CELLS="macos-14 macos-15" REQUIRED_PROFILES="debug release" ./scripts/validate_support_matrix_artifacts.sh "$ARTIFACT_ROOT"
 ./scripts/validate_plan_completion.sh "$ROOT/PLAN.md"
+./scripts/capture_repro_inputs.sh
+./scripts/validate_parity_claim_contract.sh
 
 echo "Full plan verification PASS"
