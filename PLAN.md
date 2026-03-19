@@ -818,11 +818,17 @@ Goal: Expand runtime-control coverage on the current host cell beyond existing r
   - Gate script `scripts/run_c1_ownership_gate.sh` confirms all 13 debug+release equiv. No parity regressions (101/101 PASS).
 
 ### C.2) Advanced Existentials and Generic Constraints
-- [ ] Add protocol-composition existential probes (`P & Q`) across value/reference payloads.
-- [ ] Add associated-type constrained existential dispatch probes.
-- [ ] Add nested associated-type requirement solver checks (`where` + associated type chains).
-- [ ] Add deep conditional-conformance dispatch probes on composed generic containers.
-- [ ] Exit criteria: Existential/generic dispatch remains deterministic with machine-readable failure reasons for unsatisfied constraints.
+- [x] Add protocol-composition existential probes (`P & Q`) across value/reference payloads.
+- [x] Add associated-type constrained existential dispatch probes.
+- [x] Add nested associated-type requirement solver checks (`where` + associated type chains).
+- [x] Add deep conditional-conformance dispatch probes on composed generic containers.
+- [x] Exit criteria: Existential/generic dispatch remains deterministic with machine-readable failure reasons for unsatisfied constraints.
+- **Status**: COMPLETE — Created probe `examples/runtime_c2_existentials_probe.rs` (6/6 PASS debug and release) testing:
+  - C2.1: Protocol composition sum (Summable & Validatable protocols).
+  - C2.2: Protocol validation dispatch (positive/negative checks).
+  - C2.3: Conditional Array conformance (all-positive vs. mixed-sign arrays).
+  - C2.4: Multi-constraint generics (Comparable & Hashable).
+  - Gate script `scripts/run_c2_existentials_gate.sh` confirms debug/release equivalence. No parity regressions (101/101 PASS).
 
 ### C.3) Enum and Layout Edge Cases
 - [ ] Add multi-payload enum ABI probes (payload-tag interactions, payload switching).

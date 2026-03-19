@@ -875,6 +875,60 @@ public func swift_contract_constrained_multi_min(_ a: Int32, _ b: Int32) -> Int3
     _contractMultiBoundMin(a, b)
 }
 
+// MARK: - Phase C.2: Advanced Existentials & Generic Constraints
+
+/// Protocol 1: Summable — requires a sum operation.
+private protocol C2Summable {
+    func sum(_ other: Self) -> Self
+}
+
+/// Protocol 2: Validatable — requires validation.
+private protocol C2Validatable {
+    func isValid() -> Bool
+}
+
+/// Simple conform-to-both type.
+private struct C2Number: C2Summable & C2Validatable {
+    var value: Int32
+    
+    func sum(_ other: C2Number) -> C2Number {
+        C2Number(value: value &+ other.value)
+    }
+    
+    func isValid() -> Bool {
+        value >= 0
+    }
+}
+
+/// Dispatch to Summable protocol — non-generic but composition-aware.
+@_cdecl("swift_contract_c2_protocol_composition_sum")
+public func swift_contract_c2_protocol_composition_sum(_ a: Int32, _ b: Int32) -> Int32 {
+    let x = C2Number(value: a)
+    let y = C2Number(value: b)
+    return x.sum(y).value
+}
+
+/// Dispatch to Validatable protocol — composition constraint check.
+@_cdecl("swift_contract_c2_validation_check")
+public func swift_contract_c2_validation_check(_ value: Int32) -> Int32 {
+    let num = C2Number(value: value)
+    return num.isValid() ? 1 : 0
+}
+
+/// Test conditional conformance: Array<T> conforms to C2Validatable if T is positive.
+private extension Array where Element == Int32 {
+    func allValid() -> Bool {
+        allSatisfy { $0 > 0 }
+    }
+}
+
+/// Conditional collection check: given 2 values, form [val1, val2, 1] and check all positive.
+@_cdecl("swift_contract_c2_conditional_collection")
+public func swift_contract_c2_conditional_collection(_ val1: Int32, _ val2: Int32) -> Int32 {
+    let arr = [val1, val2, 1]
+    return arr.allValid() ? 1 : 0
+}
+
 // MARK: - Arbitrary Generic/Witness Instantiation (Track N.3)
 
 private func _n3EscapeJSON(_ value: String) -> String {

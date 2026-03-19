@@ -154,7 +154,8 @@ fn test_c1_noncopyable_consume(c: &RuntimeContract) -> Result<bool, RuntimeContr
 fn test_c1_aliasing_guard(c: &RuntimeContract) -> Result<bool, RuntimeContractError> {
     // Test deterministic aliasing rejection: Int32.min delta triggers guard rejection.
     // The function returns Int32.min when overlap is detected (delta == Int32.min sentinel).
-    let (_inout, out) = c.n2_dynamic_symbol_inout("swift_contract_c1_aliasing_guarded_inout", 100, i32::MIN)?;
+    let (_inout, out) =
+        c.n2_dynamic_symbol_inout("swift_contract_c1_aliasing_guarded_inout", 100, i32::MIN)?;
     Ok(out == i32::MIN)
 }
 
@@ -164,12 +165,12 @@ fn test_c1_interior_pointer_valid(c: &RuntimeContract) -> Result<bool, RuntimeCo
     c.array_append(array.object, 10)?;
     c.array_append(array.object, 20)?;
     c.array_append(array.object, 30)?;
-    
+
     let ptr = c.array_data(array.object)?;
     if ptr.is_null() {
         return Ok(false);
     }
-    
+
     // Validate data through pointer without intermediate array operations.
     let slice = unsafe { std::slice::from_raw_parts(ptr, 3) };
     let valid = slice[0] == 10 && slice[1] == 20 && slice[2] == 30;
