@@ -233,6 +233,90 @@ public func swift_contract_c3_resilient_match(_ tag: Int32) -> Int32 {
     }
 }
 
+// MARK: - Phase C.4: Closure & Async-Capture Semantics
+
+/// Mutable state for escaping closure testing.
+private var _c4EscapingClosureStorage: ((Int32) -> Int32)? = nil
+
+@_cdecl("swift_contract_c4_escaping_closure_store")
+public func swift_contract_c4_escaping_closure_store(_ multiplier: Int32) -> Int32 {
+    // Store an escaping closure that captures the provided multiplier.
+    _c4EscapingClosureStorage = { x in
+        return x &* multiplier
+    }
+    return 1
+}
+
+@_cdecl("swift_contract_c4_escaping_closure_invoke")
+public func swift_contract_c4_escaping_closure_invoke(_ value: Int32) -> Int32 {
+    // Invoke the stored escaping closure.
+    guard let closure = _c4EscapingClosureStorage else {
+        return Int32.min
+    }
+    return closure(value)
+}
+
+@_cdecl("swift_contract_c4_escaping_closure_clear")
+public func swift_contract_c4_escaping_closure_clear() -> Int32 {
+    _c4EscapingClosureStorage = nil
+    return 1
+}
+
+/// Async closure invocation test: returns result of async closure execution.
+@_cdecl("swift_contract_c4_async_closure_invoke")
+public func swift_contract_c4_async_closure_invoke(_ value: Int32) -> Int32 {
+    // Synchronous wrapper around async closure => fire task and wait result.
+    var result: Int32 = Int32.min
+    nonisolated(unsafe) var done = false
+    
+    Task {
+        let asyncClosure: (Int32) async -> Int32 = { x in
+            // Simulate async work: yield and return doubled value
+            await Task.yield()
+            return x &* 2
+        }
+        result = await asyncClosure(value)
+        done = true
+    }
+    
+    // Spin-wait for async completion (simplistic for test isolation).
+    var iterations = 0
+    while !done && iterations < 1000 {
+        usleep(100)
+        iterations += 1
+    }
+    return result
+}
+
+/// Throwing closure test: captures error handling behavior.
+@_cdecl("swift_contract_c4_throwing_closure_safe")
+public func swift_contract_c4_throwing_closure_safe(_ value: Int32) -> Int32 {
+    let throwingClosure: (Int32) throws -> Int32 = { x in
+        guard x >= 0 else { throw ValidationError.invalidInput(code: -1) }
+        return x &+ 10
+    }
+    
+    do {
+        return try throwingClosure(value)
+    } catch {
+        return Int32.min
+    }
+}
+
+@_cdecl("swift_contract_c4_throwing_closure_error")
+public func swift_contract_c4_throwing_closure_error(_ value: Int32) -> Int32 {
+    let throwingClosure: (Int32) throws -> Int32 = { x in
+        guard x >= 0 else { throw ValidationError.invalidInput(code: -1) }
+        return x &+ 10
+    }
+    
+    do {
+        return try throwingClosure(value)
+    } catch {
+        return Int32.min
+    }
+}
+
 // MARK: - Error Handling & Introspection (Track E.1)
 
 /// A simple custom error type with error code.
@@ -2709,6 +2793,12 @@ private let _n2ShapeRegistry: [String: String] = [
     "swift_contract_c3_recursive_leaf":            "i32_to_i32",
     "swift_contract_c3_recursive_tree":            "i32_i32_to_i32",
     "swift_contract_c3_resilient_match":           "i32_to_i32",
+    "swift_contract_c4_escaping_closure_store":    "i32_to_i32",
+    "swift_contract_c4_escaping_closure_invoke":   "i32_to_i32",
+    "swift_contract_c4_escaping_closure_clear":    "void_to_i32",
+    "swift_contract_c4_async_closure_invoke":      "i32_to_i32",
+    "swift_contract_c4_throwing_closure_safe":     "i32_to_i32",
+    "swift_contract_c4_throwing_closure_error":    "i32_to_i32",
 ]
 
 /// Dynamic invoke by runtime symbol name + lowered shape descriptor.

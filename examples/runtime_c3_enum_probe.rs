@@ -18,35 +18,20 @@ fn main() {
 
     println!("\n=== Phase C.3 Enum Layout & Evolution ===");
 
-    let tests: [(&str, fn(&RuntimeContract) -> Result<bool, RuntimeContractError>); 8] = [
-        (
-            "Multi-payload enum: no-value case",
-            test_c3_multi_novalue,
-        ),
-        (
-            "Multi-payload enum: one-value case",
-            test_c3_multi_onevalue,
-        ),
+    let tests: [(
+        &str,
+        fn(&RuntimeContract) -> Result<bool, RuntimeContractError>,
+    ); 8] = [
+        ("Multi-payload enum: no-value case", test_c3_multi_novalue),
+        ("Multi-payload enum: one-value case", test_c3_multi_onevalue),
         (
             "Multi-payload enum: two-value case sum",
             test_c3_multi_twovalue,
         ),
-        (
-            "Recursive enum: leaf node",
-            test_c3_recursive_leaf,
-        ),
-        (
-            "Recursive enum: tree with branches",
-            test_c3_recursive_tree,
-        ),
-        (
-            "Resilient enum: stable case V1",
-            test_c3_resilient_v1,
-        ),
-        (
-            "Resilient enum: stable case V2",
-            test_c3_resilient_v2,
-        ),
+        ("Recursive enum: leaf node", test_c3_recursive_leaf),
+        ("Recursive enum: tree with branches", test_c3_recursive_tree),
+        ("Resilient enum: stable case V1", test_c3_resilient_v1),
+        ("Resilient enum: stable case V2", test_c3_resilient_v2),
         (
             "Resilient enum: unknown case rejection",
             test_c3_resilient_unknown,
@@ -94,11 +79,7 @@ fn test_c3_multi_onevalue(c: &RuntimeContract) -> Result<bool, RuntimeContractEr
 
 fn test_c3_multi_twovalue(c: &RuntimeContract) -> Result<bool, RuntimeContractError> {
     // Multi-payload: two-value case sum.
-    let result = c.n2_dynamic_symbol_i32(
-        "swift_contract_c3_multi_payload_sumtwo",
-        30,
-        12,
-    )?;
+    let result = c.n2_dynamic_symbol_i32("swift_contract_c3_multi_payload_sumtwo", 30, 12)?;
     Ok(result == 42)
 }
 
@@ -111,11 +92,7 @@ fn test_c3_recursive_leaf(c: &RuntimeContract) -> Result<bool, RuntimeContractEr
 fn test_c3_recursive_tree(c: &RuntimeContract) -> Result<bool, RuntimeContractError> {
     // Recursive enum: tree with root and two leaf children.
     // tree = branch(100, leaf(20), leaf(20)) => sum = 100 + 20 + 20 = 140
-    let result = c.n2_dynamic_symbol_i32(
-        "swift_contract_c3_recursive_tree",
-        100,
-        20,
-    )?;
+    let result = c.n2_dynamic_symbol_i32("swift_contract_c3_recursive_tree", 100, 20)?;
     Ok(result == 140)
 }
 
