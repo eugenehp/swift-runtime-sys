@@ -871,10 +871,11 @@ Goal: Expand runtime-control coverage on the current host cell beyond existing r
 - **Status**: COMPLETE — Added C.7 guardrail exports (`swift_contract_c7_preflight_capability`, `swift_contract_c7_guarded_invoke`) plus structured crash-capsule exports (`swift_contract_c7_crash_capsule_pair`, `swift_contract_c7_crash_capsule_context`) and replay-harness exports (`swift_contract_c7_replay_record`, `swift_contract_c7_replay_execute`) with N.2 shape-registry coverage. Added probe `examples/runtime_c7_safety_probe.rs` (8 tests) and gate `scripts/run_c7_safety_gate.sh` to enforce debug/release equivalence with JSON/MD artifacts.
 
 ### C.8) Long-Run Reliability and Drift Detection (Host Cell)
-- [ ] Increase soak duration and enforce zero-flake budget on new C.* required gates.
-- [ ] Expand differential corpus with advanced generic/existential/enum/async fragments.
-- [ ] Add host-cell trend artifact for latency/memory regressions on dynamic invoke and metadata traversal.
-- [ ] Exit criteria: Extended host-cell campaigns show no unexplained divergence and no reliability regressions.
+- [x] Increase soak duration and enforce zero-flake budget on new C.* required gates.
+- [x] Expand differential corpus with advanced generic/existential/enum/async fragments.
+- [x] Add host-cell trend artifact for latency/memory regressions on dynamic invoke and metadata traversal.
+- [x] Exit criteria: Extended host-cell campaigns show no unexplained divergence and no reliability regressions.
+- **Status**: COMPLETE — Added host-cell reliability gate `scripts/run_c8_host_reliability_gate.sh` with multi-iteration soak over C.4–C.7 gates and zero-flake enforcement (`C8_FLAKE_BUDGET=0`), expanded differential corpus execution through deterministic seed-check campaigns (`runtime_differential_fuzz_probe --seed-check`, default seeds `1 2 3 4 6 7 8 10 11`, `C8_DIFF_FRAGMENTS=12`) and artifacts (`c8-differential-expanded.{json,md}`), and host trend artifacts for dynamic invoke + metadata traversal lat/memory (`target/runtime-probe/c8-host-reliability/c8-host-trend.{json,md}` plus history snapshots). Gate emits consolidated summary artifacts (`c8-host-reliability-summary.{json,md}`) and fails on unexplained divergence or regression-budget breach.
 
 ### C.9) Promotion Policy for New Host-Cell Coverage
 - [ ] Classify each C.* feature as `required`, `optional`, or `experimental` before claim updates.
