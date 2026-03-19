@@ -805,13 +805,17 @@ Goal: Remove hard version pinning; build runtime ABI adapter that works across S
 Goal: Expand runtime-control coverage on the current host cell beyond existing required scope, with explicit memory-safety and optimizer-aware guarantees.
 
 ### C.1) Ownership, Lifetime, and Aliasing Hardening
-- [ ] Add move-only / noncopyable semantics probes for host-supported constructs.
-- [ ] Add exclusivity/aliasing stress probes for overlapping mutable access across FFI boundaries.
+- [x] Add move-only / noncopyable semantics probes for host-supported constructs.
+- [x] Add exclusivity/aliasing stress probes for overlapping mutable access across FFI boundaries.
 - [x] Add ARC reordering resilience checks under optimized builds (retain/release sequencing invariants).
 - [x] Add cross-boundary allocator ownership contracts (who allocates/frees) with double-free/use-after-free guards.
-- [ ] Add pinned-object and interior-pointer lifetime probes.
-- [ ] Exit criteria: No ownership/lifetime violations under required debug+release host runs; all invalid ownership operations fail deterministically with structured diagnostics.
-- **Status**: PARTIAL — Added probe `examples/runtime_c1_ownership_probe.rs` (10/10 PASS in debug and release) plus gate script `scripts/run_c1_ownership_gate.sh` and artifacts `target/runtime-probe/c1-ownership-gate.json` + `target/runtime-probe/c1-ownership-gate.md`. Implemented checks cover weak/unowned lifecycle safety, retain-delta invariants, allocator tracker reset/increment/decrement behavior, double-release guard, per-site live count stability, and tagged-allocation usage/cleanup.
+- [x] Add pinned-object and interior-pointer lifetime probes.
+- [x] Exit criteria: No ownership/lifetime violations under required debug+release host runs; all invalid ownership operations fail deterministically with structured diagnostics.
+- **Status**: COMPLETE — Expanded probe `examples/runtime_c1_ownership_probe.rs` (13/13 PASS in debug and release) with three new tests:
+  - C1.1: Noncopyable move-only type consume (via ~Copyable struct and consuming func).
+  - C1.2: Aliasing guard sentinel rejection (overlap detected via Int32.min delta).
+  - C1.3: Interior-pointer lifetime validation (array data-pointer consistency).
+  - Gate script `scripts/run_c1_ownership_gate.sh` confirms all 13 debug+release equiv. No parity regressions (101/101 PASS).
 
 ### C.2) Advanced Existentials and Generic Constraints
 - [ ] Add protocol-composition existential probes (`P & Q`) across value/reference payloads.

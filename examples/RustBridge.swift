@@ -2531,6 +2531,34 @@ public func swift_contract_n2_unknown_negate(_ a: Int32) -> Int32 { 0 &- a }
 @_cdecl("swift_contract_n2_unknown_const42")
 public func swift_contract_n2_unknown_const42() -> Int32 { 42 }
 
+// MARK: - Phase C.1: Ownership & Aliasing Hardening
+
+private struct C1MoveOnlyTicket: ~Copyable {
+    var value: Int32
+}
+
+private func c1ConsumeTicket(_ ticket: consuming C1MoveOnlyTicket) -> Int32 {
+    ticket.value
+}
+
+@_cdecl("swift_contract_c1_noncopyable_consume_once")
+public func swift_contract_c1_noncopyable_consume_once(_ seed: Int32) -> Int32 {
+    let ticket = C1MoveOnlyTicket(value: seed &+ 1)
+    return c1ConsumeTicket(ticket)
+}
+
+@_cdecl("swift_contract_c1_aliasing_guarded_inout")
+public func swift_contract_c1_aliasing_guarded_inout(_ valuePtr: UnsafeMutablePointer<Int32>?, _ delta: Int32) -> Int32 {
+    guard let valuePtr else { return Int32.min }
+    // Sentinel: delta == Int32.min signals detected overlap → reject and return sentinel
+    if delta == Int32.min {
+        return Int32.min
+    }
+    // Normal path: apply delta and return modified value
+    valuePtr.pointee &+= delta
+    return valuePtr.pointee
+}
+
 // Shape discovery registry: maps C-exported symbol name → lowered ABI shape descriptor.
 // Enables auto-dispatch without caller-provided shape knowledge (N.2 exit criterion).
 private let _n2ShapeRegistry: [String: String] = [
@@ -2539,6 +2567,8 @@ private let _n2ShapeRegistry: [String: String] = [
     "swift_contract_n2_unknown_pair_sum_diff":     "i32_i32_to_pair",
     "swift_contract_n2_unknown_negate":            "i32_to_i32",
     "swift_contract_n2_unknown_const42":           "void_to_i32",
+    "swift_contract_c1_noncopyable_consume_once":  "i32_to_i32",
+    "swift_contract_c1_aliasing_guarded_inout":    "i32ptr_i32_to_i32",
 ]
 
 /// Dynamic invoke by runtime symbol name + lowered shape descriptor.
