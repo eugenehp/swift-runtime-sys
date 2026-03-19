@@ -52,6 +52,7 @@ ap5_json_p = require_file("target/runtime-probe/ap5-soak/ap5-soak-summary.json")
 support_md_p = require_file("target/runtime-probe/support-matrix-signoff.md")
 promotion_md_p = require_file("target/runtime-probe/promotion-policy-signoff.md")
 plan_md_p = require_file("target/runtime-probe/plan-completion-signoff.md")
+phase_c_md_p = require_file("target/runtime-probe/phase-c-signoff/phase-c-signoff.md")
 
 if parity_json_p:
     parity = read_json(parity_json_p)
@@ -96,6 +97,7 @@ def require_signoff_contains(path, needle):
 
 require_signoff_contains(support_md_p, "PASS")
 require_signoff_contains(promotion_md_p, "PASS")
+require_signoff_contains(phase_c_md_p, "PASS")
 if plan_md_p is not None:
     text = plan_md_p.read_text(encoding="utf-8")
     if "Result: PASS" not in text and "passed" not in text.lower():

@@ -9,6 +9,10 @@ OUT_MD="$OUT_DIR/absolute-parity-signoff.md"
 mkdir -p "$OUT_DIR"
 cd "$ROOT"
 
+echo "[absolute] stage=phase_c_signoff start"
+bash ./scripts/run_phase_c_signoff.sh
+echo "[absolute] stage=phase_c_signoff done"
+
 echo "[absolute] stage=ap6_claim_verifier start"
 ./scripts/run_ap6_claim_verifier.sh
 echo "[absolute] stage=ap6_claim_verifier done"
@@ -38,6 +42,7 @@ cat > "$OUT_MD" <<MD
 # Absolute Parity Signoff
 
 - timestamp_utc: ${timestamp_utc}
+- phase_c_signoff: PASS
 - ap6_claim_verifier: PASS
 - upstream_refs: ${refs}
 - upstream_promotion_policy: PASS

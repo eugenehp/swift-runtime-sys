@@ -25,7 +25,8 @@
     "b3_version_adapter_gate",
     "b4_capability_negotiation_gate",
     "c8_host_reliability_gate",
-    "c9_host_promotion_gate"
+    "c9_host_promotion_gate",
+    "phase_c_signoff"
   ],
   "minimum_budgets": {
     "ap4_seed_count": 32,
@@ -71,3 +72,4 @@
       "multiversion_compat_release": "B.5 multi-version matrix in release mode"
     }
   }
+}

@@ -888,6 +888,7 @@ Goal: Expand runtime-control coverage on the current host cell beyond existing r
 - [x] Consolidated Phase C host-cell signoff runner added: `scripts/run_phase_c_signoff.sh`.
 - [x] Signoff artifacts emitted: `target/runtime-probe/phase-c-signoff/phase-c-signoff.{json,md}`.
 - [x] Signoff requires C.1–C.9 gates + final parity matrix PASS.
+- [x] Signoff integrated into top-level verifiers: `scripts/run_full_plan_verification.sh` and `scripts/run_absolute_parity_verification.sh`.
 
 ### Extended Scope Tracks
 - **Phase C**: Async/Task runtime bridging (task spawning, local storage, cancellation).
