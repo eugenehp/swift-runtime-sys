@@ -278,7 +278,7 @@ Required:
 - `scripts/run_parity_stress.sh` gate passes at configured CI budget.
 - `scripts/run_protocol_dispatch_matrix.sh` completes and publishes matrix output.
 - CI uploads parity/stress/protocol artifacts for each run.
-- Required protocol dispatch variant (`existential`) passes with semantic parity.
+- All protocol dispatch variants (x20, x0, x20x0, x0x1, x20x1, existential) pass with semantic parity (Phase A.1).
 - CI support-matrix signoff job validates parity artifacts from all required cells.
 
 Optional:
@@ -289,14 +289,13 @@ Optional:
 
 Experimental (excluded from 100% claim):
 
-- Witness `x1` variants that may crash depending on ABI shape.
 - Raw runtime-only integration paths documented as research mode.
 
 Protocol dispatch matrix notes:
 
-- Required variants default to `existential` and are enforced by `run_protocol_dispatch_matrix.sh`.
-- You can override required variants locally with `RUNTIME_PROTOCOL_REQUIRED_VARIANTS`.
-- Non-required variants remain visible in the matrix as ABI research signals.
+- All six variants (x20, x0, x20x0, x0x1, x20x1, existential) are now required and enforced by `run_protocol_dispatch_matrix.sh`.
+- Fixed in Wave 14: All variants now use indirect-self ABI (x20 = &obj_slot) for stable Swift witness thunk compatibility.
+- You can override required variants locally with `RUNTIME_PROTOCOL_REQUIRED_VARIANTS` (e.g., for testing earlier phases).
 
 Claim policy:
 

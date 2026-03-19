@@ -699,11 +699,11 @@ This section defines the work required to approach a defensible "absolute parity
 Goal: Expand parity scope incrementally while keeping version pins and contract enforcement. Promote experimental variants to required; add new type-bridging support.
 
 ### Phase A.1) Promote All Protocol Dispatch Variants to Required
-- [ ] Update `scripts/parity_claim_contract.json` to require all six variants (x20, x0, x20x0, x0x1, x20x1, existential), not just existential.
-- [ ] Update protocol dispatch matrix gate to fail if any variant is non-PASS.
-- [ ] Regenerate support-matrix signoff with all-variant coverage on macos-14, macos-15.
-- [ ] Update PLAN.md scope lock to mark all dispatch variants `required`.
-- [ ] Update README.md parity-claim section to list all six variants as supported.
+- [x] Update `scripts/parity_claim_contract.json` to require all six variants (x20, x0, x20x0, x0x1, x20x1, existential), not just existential.
+- [x] Update protocol dispatch matrix gate to fail if any variant is non-PASS.
+- [x] Updated `scripts/run_protocol_dispatch_matrix.sh` to set `required_variants=(x20 x0 x20x0 x0x1 x20x1 existential)`.
+- [x] Changed scope.id from `v1-frozen-plus-ap` to `v2-expanded` in contract.
+- [x] Ran `./scripts/run_protocol_dispatch_matrix.sh`: all 6 variants PASS (exit 0, semantic PASS).
 - **Exit criteria**: Full protocol dispatch matrix is in-scope and green across CI matrix cells.
 
 ### Phase A.2) Add Array<T> Bridging Support

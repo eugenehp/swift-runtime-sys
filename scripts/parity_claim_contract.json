@@ -1,8 +1,8 @@
 {
   "version": 1,
   "scope": {
-    "id": "v1-frozen-plus-ap",
-    "description": "Frozen parity scope with AP.1-AP.5 required gate stack"
+    "id": "v2-expanded",
+    "description": "Phase A: Expanded parity scope with all protocol dispatch variants + Array/Dictionary/Error bridging (planned)"
   },
   "required_gates": [
     "parity_matrix_debug",
@@ -33,14 +33,12 @@
     "cargo_lock_required": true
   },
   "allowed_deviations": {
-    "protocol_dispatch_nonrequired_variants": [
+    "protocol_dispatch_required_variants": [
       "x20",
       "x0",
       "x20x0",
       "x0x1",
-      "x20x1"
-    ],
-    "required_protocol_variants": [
+      "x20x1",
       "existential"
     ]
   }

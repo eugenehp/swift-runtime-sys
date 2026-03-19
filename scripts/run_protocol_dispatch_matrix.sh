@@ -16,7 +16,7 @@ swiftc -emit-library -g -I "$FIXTURE_DIR" -L "$FIXTURE_DIR" -lResilientFixtures 
 cargo build --example runtime_protocol_probe > /dev/null
 
 variants=(x20 x0 x20x0 x0x1 x20x1 existential)
-required_variants=(${RUNTIME_PROTOCOL_REQUIRED_VARIANTS:-existential})
+required_variants=(${RUNTIME_PROTOCOL_REQUIRED_VARIANTS:-x20 x0 x20x0 x0x1 x20x1 existential})
 required_failures=0
 
 is_required_variant() {
