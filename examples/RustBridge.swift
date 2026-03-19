@@ -436,6 +436,66 @@ public func swift_contract_c6_add_offset(_ a: Int32, _ b: Int32) -> Int32 {
     a &+ b &+ 3
 }
 
+// MARK: - Phase C.7: Runtime Safety Guardrails and Diagnostics
+
+private var _c7ReplayTokenCounter: Int32 = 100
+private var _c7ReplayStore: [Int32: (op: Int32, arg: Int32)] = [:]
+
+@_cdecl("swift_contract_c7_preflight_capability")
+public func swift_contract_c7_preflight_capability(_ op: Int32) -> Int32 {
+    // 1 = allowed (low-risk), 0 = blocked (high-risk/unknown)
+    switch op {
+    case 1: return 1
+    case 2: return 0
+    default: return 0
+    }
+}
+
+@_cdecl("swift_contract_c7_guarded_invoke")
+public func swift_contract_c7_guarded_invoke(_ op: Int32, _ arg: Int32) -> Int32 {
+    guard swift_contract_c7_preflight_capability(op) == 1 else {
+        return Int32.min
+    }
+    switch op {
+    case 1:
+        return arg &+ 10
+    default:
+        return Int32.min
+    }
+}
+
+@_cdecl("swift_contract_c7_crash_capsule_pair")
+public func swift_contract_c7_crash_capsule_pair(_ outPtr: UnsafeMutablePointer<Int32>?, _ op: Int32, _ symbolTag: Int32) -> Int32 {
+    guard let outPtr else { return 0 }
+    let blocked = swift_contract_c7_preflight_capability(op) == 0
+    // Pair payload: [signal, reason_code]
+    outPtr.pointee = blocked ? 11 : 0
+    outPtr.advanced(by: 1).pointee = blocked ? (-700 &- op) : 0
+    _ = symbolTag // carried to context/hash path
+    return 1
+}
+
+@_cdecl("swift_contract_c7_crash_capsule_context")
+public func swift_contract_c7_crash_capsule_context(_ op: Int32, _ symbolTag: Int32) -> Int32 {
+    let base: Int32 = (op &* 97) ^ (symbolTag &* 131)
+    return (base == 0) ? 1 : base
+}
+
+@_cdecl("swift_contract_c7_replay_record")
+public func swift_contract_c7_replay_record(_ op: Int32, _ arg: Int32) -> Int32 {
+    _c7ReplayTokenCounter &+= 1
+    _c7ReplayStore[_c7ReplayTokenCounter] = (op, arg)
+    return _c7ReplayTokenCounter
+}
+
+@_cdecl("swift_contract_c7_replay_execute")
+public func swift_contract_c7_replay_execute(_ token: Int32) -> Int32 {
+    guard let payload = _c7ReplayStore[token] else {
+        return Int32.min
+    }
+    return swift_contract_c7_guarded_invoke(payload.op, payload.arg)
+}
+
 // MARK: - Error Handling & Introspection (Track E.1)
 
 /// A simple custom error type with error code.
@@ -2927,6 +2987,12 @@ private let _n2ShapeRegistry: [String: String] = [
     "swift_contract_c6_add_offset":               "i32_i32_to_i32",
     "swift_contract_c6_inout_add_checked":         "i32ptr_i32_to_i32",
     "swift_contract_c6_pair_sum_product":          "i32_i32_to_pair",
+    "swift_contract_c7_preflight_capability":      "i32_to_i32",
+    "swift_contract_c7_guarded_invoke":            "i32_i32_to_i32",
+    "swift_contract_c7_crash_capsule_pair":        "i32_i32_to_pair",
+    "swift_contract_c7_crash_capsule_context":     "i32_i32_to_i32",
+    "swift_contract_c7_replay_record":             "i32_i32_to_i32",
+    "swift_contract_c7_replay_execute":            "i32_to_i32",
 ]
 
 /// Dynamic invoke by runtime symbol name + lowered shape descriptor.

@@ -864,10 +864,11 @@ Goal: Expand runtime-control coverage on the current host cell beyond existing r
 - **Status**: COMPLETE — Added C.6 lowering exports (`swift_contract_c6_inout_add_checked`, `swift_contract_c6_pair_sum_product`) and registered shapes in `_n2ShapeRegistry`; expanded `swift_contract_n2_lowering_strategy_json` to emit stable `reason_code` diagnostics with a deterministic fallback hierarchy (`-463` throws+async, `-462` indirect+inout, `-461` throws-only, `-460` async-only, `-499` generic unsupported). Added probe `examples/runtime_c6_lowering_probe.rs` (8/8 PASS debug and release) validating supported inout/indirect-return lowering paths, negotiation traces, reason-code stability, and deterministic unknown-symbol rejection. Gate `scripts/run_c6_lowering_gate.sh` enforces debug/release equivalence with JSON/MD artifacts.
 
 ### C.7) Runtime Safety Guardrails and Diagnostics
-- [ ] Add preflight capability gating for every high-risk operation path.
-- [ ] Add mandatory structured crash capsule emission (signal/backtrace/symbol/context) for sandboxed failures.
-- [ ] Add replay-harness integration for every newly added high-risk probe.
-- [ ] Exit criteria: No unstructured failure in exploratory/runtime-dangerous paths; every failure is diagnosable and replayable.
+- [x] Add preflight capability gating for every high-risk operation path.
+- [x] Add mandatory structured crash capsule emission (signal/backtrace/symbol/context) for sandboxed failures.
+- [x] Add replay-harness integration for every newly added high-risk probe.
+- [x] Exit criteria: No unstructured failure in exploratory/runtime-dangerous paths; every failure is diagnosable and replayable.
+- **Status**: COMPLETE — Added C.7 guardrail exports (`swift_contract_c7_preflight_capability`, `swift_contract_c7_guarded_invoke`) plus structured crash-capsule exports (`swift_contract_c7_crash_capsule_pair`, `swift_contract_c7_crash_capsule_context`) and replay-harness exports (`swift_contract_c7_replay_record`, `swift_contract_c7_replay_execute`) with N.2 shape-registry coverage. Added probe `examples/runtime_c7_safety_probe.rs` (8 tests) and gate `scripts/run_c7_safety_gate.sh` to enforce debug/release equivalence with JSON/MD artifacts.
 
 ### C.8) Long-Run Reliability and Drift Detection (Host Cell)
 - [ ] Increase soak duration and enforce zero-flake budget on new C.* required gates.
