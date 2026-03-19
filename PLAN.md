@@ -800,6 +800,68 @@ Goal: Remove hard version pinning; build runtime ABI adapter that works across S
 
 ## Future Directions (Post-Phase B)
 
+## Phase C: Host-Cell Deepening (Swift 6.2.4 + macOS arm64)
+
+Goal: Expand runtime-control coverage on the current host cell beyond existing required scope, with explicit memory-safety and optimizer-aware guarantees.
+
+### C.1) Ownership, Lifetime, and Aliasing Hardening
+- [ ] Add move-only / noncopyable semantics probes for host-supported constructs.
+- [ ] Add exclusivity/aliasing stress probes for overlapping mutable access across FFI boundaries.
+- [ ] Add ARC reordering resilience checks under optimized builds (retain/release sequencing invariants).
+- [ ] Add cross-boundary allocator ownership contracts (who allocates/frees) with double-free/use-after-free guards.
+- [ ] Add pinned-object and interior-pointer lifetime probes.
+- [ ] Exit criteria: No ownership/lifetime violations under required debug+release host runs; all invalid ownership operations fail deterministically with structured diagnostics.
+
+### C.2) Advanced Existentials and Generic Constraints
+- [ ] Add protocol-composition existential probes (`P & Q`) across value/reference payloads.
+- [ ] Add associated-type constrained existential dispatch probes.
+- [ ] Add nested associated-type requirement solver checks (`where` + associated type chains).
+- [ ] Add deep conditional-conformance dispatch probes on composed generic containers.
+- [ ] Exit criteria: Existential/generic dispatch remains deterministic with machine-readable failure reasons for unsatisfied constraints.
+
+### C.3) Enum and Layout Edge Cases
+- [ ] Add multi-payload enum ABI probes (payload-tag interactions, payload switching).
+- [ ] Add resilient enum evolution compatibility probes (case expansion and compatibility behavior).
+- [ ] Add indirect/recursive enum allocation and teardown checks.
+- [ ] Exit criteria: Enum case identity/payload integrity is preserved across Rust↔Swift operations for all in-scope variants.
+
+### C.4) Closure and Async-Capture Semantics
+- [ ] Add escaping closure capture lifetime probes across FFI ownership boundaries.
+- [ ] Add async closure capture probes across task boundaries and actor hops.
+- [ ] Add throwing + async closure invocation matrix (success/error/cancel paths).
+- [ ] Exit criteria: Captures are lifetime-safe and semantically stable under repeated async and actor-isolated execution.
+
+### C.5) Optimizer-Sensitive Equivalence (Debug vs Release)
+- [ ] Expand required gates to enforce semantic equivalence in debug and release for all high-risk probes.
+- [ ] Add inlining/devirtualization-sensitive dispatch parity probes.
+- [ ] Add generic specialization vs unspecialized fallback equivalence checks.
+- [ ] Add ARC-optimization-sensitive parity checks (retain-elision/dead-store side effects).
+- [ ] Exit criteria: No semantic divergence between debug and release for required host-cell control flows.
+
+### C.6) Dynamic Call-Lowering Coverage Expansion
+- [ ] Add additional lowering classes for mixed signatures (indirect return + inout + throws + async combinations).
+- [ ] Add resilient argument-lowering probes with explicit shape negotiation traces.
+- [ ] Add deterministic fallback hierarchy for unsupported shapes with stable reason codes.
+- [ ] Exit criteria: Unknown callable surfaces are either invoked correctly via negotiated lowering or rejected safely with structured diagnostics.
+
+### C.7) Runtime Safety Guardrails and Diagnostics
+- [ ] Add preflight capability gating for every high-risk operation path.
+- [ ] Add mandatory structured crash capsule emission (signal/backtrace/symbol/context) for sandboxed failures.
+- [ ] Add replay-harness integration for every newly added high-risk probe.
+- [ ] Exit criteria: No unstructured failure in exploratory/runtime-dangerous paths; every failure is diagnosable and replayable.
+
+### C.8) Long-Run Reliability and Drift Detection (Host Cell)
+- [ ] Increase soak duration and enforce zero-flake budget on new C.* required gates.
+- [ ] Expand differential corpus with advanced generic/existential/enum/async fragments.
+- [ ] Add host-cell trend artifact for latency/memory regressions on dynamic invoke and metadata traversal.
+- [ ] Exit criteria: Extended host-cell campaigns show no unexplained divergence and no reliability regressions.
+
+### C.9) Promotion Policy for New Host-Cell Coverage
+- [ ] Classify each C.* feature as `required`, `optional`, or `experimental` before claim updates.
+- [ ] Promote C.* features to required only after green history window and zero undocumented deviations.
+- [ ] Update claim contract and README scope statement when promotions occur.
+- [ ] Exit criteria: Claim remains precise, auditable, and aligned with executed evidence.
+
 ### Extended Scope Tracks
 - **Phase C**: Async/Task runtime bridging (task spawning, local storage, cancellation).
 - **Phase D**: Generics specialization & witness instantiation for arbitrary type parameters.
