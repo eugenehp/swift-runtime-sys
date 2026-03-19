@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "repo": {
+    "owner": "swiftlang",
+    "name": "swift"
+  },
+  "tracked_refs": [
+    "swift-6.2.4-RELEASE",
+    "main"
+  ],
+  "promotion_policy": {
+    "require_all_refs_green": true,
+    "required_gates": [
+      "ap6_claim_verifier"
+    ]
+  }
+}

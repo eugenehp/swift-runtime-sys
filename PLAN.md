@@ -591,9 +591,9 @@ This section defines the work required to approach a defensible "absolute parity
 - [x] Add one-command verifier that emits signed claim evidence bundle.
 
 ### AP.7) Continuous Upstream Conformance
-- [ ] Add scheduled upstream-conformance jobs against tracked Swift releases/branches.
-- [ ] Auto-open regression records with failing gate + artifact links when drift occurs.
-- [ ] Add promotion policy for new Swift release adoption only after full gate convergence.
+- [x] Add scheduled upstream-conformance jobs against tracked Swift releases/branches.
+- [x] Auto-open regression records with failing gate + artifact links when drift occurs.
+- [x] Add promotion policy for new Swift release adoption only after full gate convergence.
 
 ## AP Execution Log
 
@@ -675,3 +675,10 @@ This section defines the work required to approach a defensible "absolute parity
 - [x] Added claim validator `scripts/validate_parity_claim_contract.sh` and integrated it into both local full verification and CI support-matrix signoff.
 - [x] Added one-command AP.6 verifier `scripts/run_ap6_claim_verifier.sh` that runs the full verifier and emits signed claim evidence bundle via `scripts/build_claim_evidence_bundle.sh`.
 - [x] Claim evidence bundle now includes hashed manifest + signature (`manifest.sha256`) and archive digest (`claim-evidence-bundle-*.tar.gz.sha256`).
+
+### 2026-03-19 (Wave 12, AP.7 continuous upstream conformance)
+- [x] Added tracked upstream target config `scripts/upstream_conformance_targets.json` for `swiftlang/swift` refs (`swift-6.2.4-RELEASE`, `main`).
+- [x] Added scheduled upstream conformance workflow jobs in `.github/workflows/parity.yml` (`on.schedule` + `workflow_dispatch`) with matrix execution per tracked ref.
+- [x] Added `scripts/run_upstream_conformance.sh` to resolve upstream ref SHA, run/verify AP.6 claim gate, and emit per-ref conformance artifacts with history.
+- [x] Added automated regression issue creation on upstream conformance failure using `actions/github-script` with workflow run links.
+- [x] Added `scripts/validate_upstream_promotion_policy.sh` and workflow job `upstream_promotion_policy` to require full tracked-ref convergence before release promotion signoff.
