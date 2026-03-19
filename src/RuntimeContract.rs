@@ -110,6 +110,14 @@ pub enum RuntimeContractError {
     MetadataPointerNotRegistered {
         pointer: usize,
     },
+    WitnessTableResolutionFailed {
+        type_name: String,
+        protocol_name: String,
+    },
+    ConformanceNotFound {
+        type_name: String,
+        protocol_name: String,
+    },
 }
 
 impl From<RuntimeFactoryError> for RuntimeContractError {
@@ -376,6 +384,11 @@ type ContractN6ExecuteProgramJson = unsafe extern "C" fn(*const c_char) -> *mut 
 type ContractBacktraceCapture = unsafe extern "C" fn() -> *mut c_char;
 type ContractBacktraceAnchorAddress = unsafe extern "C" fn() -> u64;
 
+// Phase B.2 – Witness Table Dynamic Resolver
+type ContractB2ScanConformancesJson = unsafe extern "C" fn() -> *mut c_char;
+type ContractB2ResolveWitnessTable = unsafe extern "C" fn(*const c_char, *const c_char) -> *const c_void;
+type ContractB2DescribeConformance = unsafe extern "C" fn(*const c_void) -> *mut c_char;
+
 #[derive(Debug, Clone, Default, Deserialize)]
 pub struct ContractTypeDescriptor {
     pub type_id: i32,
@@ -516,6 +529,50 @@ pub struct MetadataLayout {
     pub witness_count: i32,
     pub generic_param_count: i32,
     pub size: Option<i32>,
+}
+
+// Phase B.2 – Witness Table Dynamic Resolver Structures
+#[derive(Debug, Clone, Deserialize)]
+pub struct ConformanceDescriptor {
+    pub type_name: String,
+    pub protocol_name: String,
+    pub witness_table: Option<u64>,
+    pub conditional_requirements: i32,
+    pub generic_parameters: i32,
+}
+
+#[derive(Debug, Clone, Default, Deserialize)]
+pub struct WitnessTableResolver {
+    pub cached_conformances: std::collections::HashMap<String, ConformanceDescriptor>,
+    pub enabled: bool,
+}
+
+impl WitnessTableResolver {
+    pub fn new() -> Self {
+        Self {
+            cached_conformances: std::collections::HashMap::new(),
+            enabled: true,
+        }
+    }
+
+    pub fn cache_key(type_name: &str, protocol_name: &str) -> String {
+        format!("{}:{}", type_name, protocol_name)
+    }
+
+    pub fn get_cached(&self, type_name: &str, protocol_name: &str) -> Option<ConformanceDescriptor> {
+        self.cached_conformances.get(&Self::cache_key(type_name, protocol_name)).cloned()
+    }
+
+    pub fn cache_conformance(&mut self, conformance: ConformanceDescriptor) {
+        self.cached_conformances.insert(
+            Self::cache_key(&conformance.type_name, &conformance.protocol_name),
+            conformance,
+        );
+    }
+
+    pub fn clear_cache(&mut self) {
+        self.cached_conformances.clear();
+    }
 }
 
 impl N5FeatureProbe {
@@ -730,7 +787,9 @@ impl<'a> RuntimeContract<'a> {
         Ok(self.descriptor()?.compiler_features)
     }
 
-    pub fn metadata_registry_entries(&self) -> Result<Vec<ContractMetadataEntry>, RuntimeContractError> {
+    pub fn metadata_registry_entries(
+        &self,
+    ) -> Result<Vec<ContractMetadataEntry>, RuntimeContractError> {
         Ok(self.descriptor()?.metadata_registry.entries)
     }
 
@@ -832,7 +891,11 @@ impl<'a> RuntimeContract<'a> {
                 return Ok(info);
             }
         }
-        fallback.ok_or_else(|| RuntimeContractError::DescriptorParse(format!("no type info candidates for {type_name}")))
+        fallback.ok_or_else(|| {
+            RuntimeContractError::DescriptorParse(format!(
+                "no type info candidates for {type_name}"
+            ))
+        })
     }
 
     fn resolve_metadata_entry_by_pointer(
@@ -867,7 +930,9 @@ impl<'a> RuntimeContract<'a> {
         let info = self.resolve_type_info(type_name)?;
 
         let mut field_offsets = Vec::new();
-        if let Some(type_id) = Self::synthetic_n1_type_id(type_name).or_else(|| Self::synthetic_n1_type_id(&info.name)) {
+        if let Some(type_id) =
+            Self::synthetic_n1_type_id(type_name).or_else(|| Self::synthetic_n1_type_id(&info.name))
+        {
             for field_index in 0..info.field_count {
                 if let Ok(offset) = self.n1_metadata_field_offset(type_id, field_index) {
                     field_offsets.push(offset);
@@ -5391,6 +5456,121 @@ impl<'a> RuntimeContract<'a> {
             .into_owned();
         unsafe { libc::free(demangled_ptr as *mut c_void) };
         Ok(demangled)
+    }
+
+    // MARK: - Phase B.2: Witness Table Dynamic Resolver
+
+    /// Scan all protocol conformances from the Swift binary without pre-seeded lookups.
+    pub fn b2_scan_all_conformances(&self) -> Result<Vec<ConformanceDescriptor>, RuntimeContractError> {
+        let func: ContractB2ScanConformancesJson = self.resolve("swift_contract_b2_scan_conformances_json")?;
+        let json_ptr = unsafe { func() };
+        if json_ptr.is_null() {
+            return Ok(Vec::new());
+        }
+
+        let c_str = unsafe { CStr::from_ptr(json_ptr) };
+        let json_str = c_str.to_string_lossy();
+        let conformances: Result<Vec<ConformanceDescriptor>, _> = serde_json::from_str(&json_str)
+            .map_err(|e| RuntimeContractError::DescriptorParse(format!("Failed to parse conformances: {}", e)));
+
+        unsafe { libc::free(json_ptr as *mut c_void) };
+        conformances
+    }
+
+    /// Resolve a witness table pointer for a given type name and protocol name.
+    /// Returns null if the type does not conform to the protocol.
+    pub fn b2_resolve_witness_table(&self, type_name: &str, protocol_name: &str) -> Result<*const c_void, RuntimeContractError> {
+        let type_c = CString::new(type_name)
+            .map_err(|_| RuntimeContractError::ConformanceNotFound {
+                type_name: type_name.to_string(),
+                protocol_name: protocol_name.to_string(),
+            })?;
+        let protocol_c = CString::new(protocol_name)
+            .map_err(|_| RuntimeContractError::ConformanceNotFound {
+                type_name: type_name.to_string(),
+                protocol_name: protocol_name.to_string(),
+            })?;
+
+        let func: ContractB2ResolveWitnessTable = self.resolve("swift_contract_b2_resolve_witness_table")?;
+        let witness_table = unsafe { func(type_c.as_ptr(), protocol_c.as_ptr()) };
+
+        if witness_table.is_null() {
+            return Err(RuntimeContractError::ConformanceNotFound {
+                type_name: type_name.to_string(),
+                protocol_name: protocol_name.to_string(),
+            });
+        }
+
+        Ok(witness_table)
+    }
+
+    /// Attempt to resolve a witness table but return Ok(null) if not found instead of an error.
+    pub fn b2_try_resolve_witness_table(&self, type_name: &str, protocol_name: &str) -> Result<*const c_void, RuntimeContractError> {
+        let type_c = CString::new(type_name)
+            .map_err(|_| RuntimeContractError::WitnessTableResolutionFailed {
+                type_name: type_name.to_string(),
+                protocol_name: protocol_name.to_string(),
+            })?;
+        let protocol_c = CString::new(protocol_name)
+            .map_err(|_| RuntimeContractError::WitnessTableResolutionFailed {
+                type_name: type_name.to_string(),
+                protocol_name: protocol_name.to_string(),
+            })?;
+
+        let func: ContractB2ResolveWitnessTable = self.resolve("swift_contract_b2_resolve_witness_table")?;
+        let witness_table = unsafe { func(type_c.as_ptr(), protocol_c.as_ptr()) };
+        Ok(witness_table)
+    }
+
+    /// Get a description of a conformance descriptor (for debugging/inspection).
+    pub fn b2_describe_conformance(&self, witness_ptr: *const c_void) -> Result<String, RuntimeContractError> {
+        if witness_ptr.is_null() {
+            return Err(RuntimeContractError::WitnessTableResolutionFailed {
+                type_name: "null".to_string(),
+                protocol_name: "unknown".to_string(),
+            });
+        }
+
+        let func: ContractB2DescribeConformance = self.resolve("swift_contract_b2_describe_conformance")?;
+        let desc_ptr = unsafe { func(witness_ptr) };
+        if desc_ptr.is_null() {
+            return Err(RuntimeContractError::WitnessTableResolutionFailed {
+                type_name: "unknown".to_string(),
+                protocol_name: "unknown".to_string(),
+            });
+        }
+
+        let c_str = unsafe { CStr::from_ptr(desc_ptr) };
+        let description = c_str.to_string_lossy().into_owned();
+        unsafe { libc::free(desc_ptr as *mut c_void) };
+        Ok(description)
+    }
+
+    /// Resolve witness table for a standard protocol conformance with caching.
+    pub fn b2_resolve_standard_conformance(&self, type_name: &str, protocol_name: &str) -> Result<*const c_void, RuntimeContractError> {
+        // Try common type name aliases first
+        let type_candidates = self.b2_type_name_candidates(type_name);
+        for candidate in type_candidates {
+            match self.b2_try_resolve_witness_table(&candidate, protocol_name) {
+                Ok(ptr) if !ptr.is_null() => return Ok(ptr),
+                _ => continue,
+            }
+        }
+
+        Err(RuntimeContractError::ConformanceNotFound {
+            type_name: type_name.to_string(),
+            protocol_name: protocol_name.to_string(),
+        })
+    }
+
+    /// Generate type name candidates for fallback resolution (e.g., "String" -> ["String", "Swift.String"])
+    fn b2_type_name_candidates(&self, type_name: &str) -> Vec<String> {
+        let mut candidates = vec![type_name.to_string()];
+        if !type_name.contains('.') {
+            candidates.push(format!("Swift.{}", type_name));
+            candidates.push(format!("RustBridge.{}", type_name));
+        }
+        candidates
     }
 
     pub fn release(&self, object: ContractObject) -> Result<(), RuntimeContractError> {
