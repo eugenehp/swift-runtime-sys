@@ -9,7 +9,9 @@ OUT_MD="$OUT_DIR/absolute-parity-signoff.md"
 mkdir -p "$OUT_DIR"
 cd "$ROOT"
 
+echo "[absolute] stage=ap6_claim_verifier start"
 ./scripts/run_ap6_claim_verifier.sh
+echo "[absolute] stage=ap6_claim_verifier done"
 
 refs="$(python3 - "$TARGETS_JSON" <<'PY'
 import json
@@ -21,10 +23,14 @@ PY
 )"
 
 for ref in $refs; do
+  echo "[absolute] stage=upstream_conformance ref=${ref} start"
   ./scripts/run_upstream_conformance.sh "$ref"
+  echo "[absolute] stage=upstream_conformance ref=${ref} done"
 done
 
+echo "[absolute] stage=upstream_promotion_policy start"
 ./scripts/validate_upstream_promotion_policy.sh
+echo "[absolute] stage=upstream_promotion_policy done"
 
 timestamp_utc="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 

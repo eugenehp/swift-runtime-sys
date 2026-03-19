@@ -317,6 +317,16 @@ Promotion policy for compiler-feature-dependent paths:
 
 ### Full parity verification (local and CI-equivalent)
 
+Fast path (full closure stack):
+
+```shell
+./scripts/run_absolute_parity_verification.sh
+```
+
+Primary final signoff artifact:
+
+- `target/runtime-probe/absolute-parity-signoff.md`
+
 Local required gate sequence:
 
 ```shell
@@ -331,6 +341,19 @@ One-command host verification (includes contract and signoff validators):
 ./scripts/run_full_plan_verification.sh
 ```
 
+One-command closure verification (AP.6 + AP.7):
+
+```shell
+./scripts/run_absolute_parity_verification.sh
+```
+
+This command runs:
+
+- full required parity gate stack and claim validator (AP.6)
+- signed claim evidence bundle generation (`manifest.sha256` + bundle digest)
+- tracked upstream ref conformance checks (`swift-6.2.4-RELEASE`, `main`)
+- upstream promotion convergence signoff (all tracked refs must be green)
+
 CI-equivalent budgets used in `.github/workflows/parity.yml`:
 
 - Pull requests: `FUZZ_CASES=64 ./scripts/run_parity_stress.sh 3`
@@ -342,6 +365,16 @@ generated for matrix, stress, and protocol-dispatch runs.
 CI support-matrix signoff artifact:
 
 - `target/runtime-probe/support-matrix-signoff.md`
+
+AP.6/AP.7 signoff artifacts:
+
+- `target/runtime-probe/parity-claim-signoff.md`
+- `target/runtime-probe/repro-inputs.json`
+- `target/runtime-probe/claim-bundle/claim-evidence-bundle-*.tar.gz`
+- `target/runtime-probe/claim-bundle/claim-evidence-bundle-*.tar.gz.sha256`
+- `target/runtime-probe/upstream-conformance/current/*.json`
+- `target/runtime-probe/upstream-promotion-signoff.md`
+- `target/runtime-probe/absolute-parity-signoff.md`
 
 Final claim publication criteria:
 

@@ -66,7 +66,9 @@ fail_count=0
 pass_count=0
 
 for iteration in $(seq 1 "$SOAK_RUNS"); do
+  echo "[ap5] iteration ${iteration}/${SOAK_RUNS}"
   for gate in "${gates[@]}"; do
+    echo "[ap5] gate=${gate} attempt=1"
     first_log="$SOAK_DIR/${STAMP}-${iteration}-${gate}-attempt1.log"
     retry_log="$SOAK_DIR/${STAMP}-${iteration}-${gate}-attempt2.log"
     retry_used=0
@@ -74,17 +76,21 @@ for iteration in $(seq 1 "$SOAK_RUNS"); do
     reason="stable-pass"
 
     if run_gate "$gate" >"$first_log" 2>&1; then
+      echo "[ap5] gate=${gate} result=PASS"
       :
     else
       retry_used=1
+      echo "[ap5] gate=${gate} attempt=2"
       if run_gate "$gate" >"$retry_log" 2>&1; then
         status="FLAKY"
         reason="failed-then-passed-on-retry"
         flake_count=$((flake_count + 1))
+        echo "[ap5] gate=${gate} result=FLAKY"
       else
         status="FAIL"
         reason="failed-on-both-attempts"
         fail_count=$((fail_count + 1))
+        echo "[ap5] gate=${gate} result=FAIL"
       fi
     fi
 
