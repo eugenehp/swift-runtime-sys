@@ -107,6 +107,9 @@ pub enum RuntimeContractError {
     ReleaseFailed {
         type_id: i32,
     },
+    MetadataPointerNotRegistered {
+        pointer: usize,
+    },
 }
 
 impl From<RuntimeFactoryError> for RuntimeContractError {
@@ -373,12 +376,61 @@ type ContractN6ExecuteProgramJson = unsafe extern "C" fn(*const c_char) -> *mut 
 type ContractBacktraceCapture = unsafe extern "C" fn() -> *mut c_char;
 type ContractBacktraceAnchorAddress = unsafe extern "C" fn() -> u64;
 
+#[derive(Debug, Clone, Default, Deserialize)]
+pub struct ContractTypeDescriptor {
+    pub type_id: i32,
+    pub name: String,
+    #[serde(default)]
+    pub kind: String,
+}
+
+#[derive(Debug, Clone, Default, Deserialize)]
+pub struct ContractMetadataEntry {
+    pub metadata_id: i32,
+    pub name: String,
+}
+
+#[derive(Debug, Clone, Default, Deserialize)]
+pub struct ContractMetadataRegistry {
+    #[serde(default)]
+    pub entries: Vec<ContractMetadataEntry>,
+}
+
+#[derive(Debug, Clone, Default, Deserialize)]
+pub struct ContractProtocolMethodDescriptor {
+    pub method_id: i32,
+    #[serde(default)]
+    pub name: String,
+}
+
+#[derive(Debug, Clone, Default, Deserialize)]
+pub struct ContractProtocolEntry {
+    pub protocol_id: i32,
+    #[serde(default)]
+    pub name: String,
+    pub type_id: i32,
+    #[serde(default)]
+    pub methods: Vec<ContractProtocolMethodDescriptor>,
+}
+
+#[derive(Debug, Clone, Default, Deserialize)]
+pub struct ContractProtocolRegistry {
+    #[serde(default)]
+    pub entries: Vec<ContractProtocolEntry>,
+}
+
 #[derive(Debug, Clone, Deserialize)]
 pub struct ContractDescriptorJson {
     pub contract_version: i32,
     pub bridge: String,
     pub cooperation_boundary: CooperationBoundary,
     pub compiler_features: CompilerFeatureCapabilities,
+    #[serde(default)]
+    pub types: Vec<ContractTypeDescriptor>,
+    #[serde(default)]
+    pub metadata_registry: ContractMetadataRegistry,
+    #[serde(default)]
+    pub protocol_registry: ContractProtocolRegistry,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -443,6 +495,27 @@ pub struct N5FeatureProbe {
     pub os_patch: i32,
     pub optimization_mode: String,
     pub features: N5FeatureFlags,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct N1TypeInfoJson {
+    pub name: String,
+    pub kind: String,
+    pub kind_id: i32,
+    pub field_count: i32,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct MetadataLayout {
+    pub type_name: String,
+    pub metadata_id: Option<i32>,
+    pub kind: String,
+    pub kind_id: i32,
+    pub field_count: i32,
+    pub field_offsets: Vec<i32>,
+    pub witness_count: i32,
+    pub generic_param_count: i32,
+    pub size: Option<i32>,
 }
 
 impl N5FeatureProbe {
@@ -657,6 +730,10 @@ impl<'a> RuntimeContract<'a> {
         Ok(self.descriptor()?.compiler_features)
     }
 
+    pub fn metadata_registry_entries(&self) -> Result<Vec<ContractMetadataEntry>, RuntimeContractError> {
+        Ok(self.descriptor()?.metadata_registry.entries)
+    }
+
     fn ensure_feature(
         &self,
         feature: &'static str,
@@ -685,6 +762,151 @@ impl<'a> RuntimeContract<'a> {
             return Err(RuntimeContractError::MetadataLookupFailed { metadata_id });
         }
         Ok(metadata)
+    }
+
+    fn n1_type_info(&self, name: &str) -> Result<N1TypeInfoJson, RuntimeContractError> {
+        let json = self.n1_type_info_json(name)?;
+        serde_json::from_str(&json)
+            .map_err(|error| RuntimeContractError::DescriptorParse(error.to_string()))
+    }
+
+    fn generic_argument_count(type_name: &str) -> i32 {
+        let Some(start) = type_name.find('<') else {
+            return 0;
+        };
+        let Some(end) = type_name.rfind('>') else {
+            return 0;
+        };
+        if end <= start + 1 {
+            return 0;
+        }
+
+        let mut count = 1;
+        let mut depth = 0;
+        for ch in type_name[start + 1..end].chars() {
+            match ch {
+                '<' => depth += 1,
+                '>' => depth -= 1,
+                ',' if depth == 0 => count += 1,
+                _ => {}
+            }
+        }
+        count
+    }
+
+    fn synthetic_n1_type_id(type_name: &str) -> Option<i32> {
+        match type_name {
+            "N1LayoutClass" => Some(1),
+            "N1LayoutStruct" => Some(2),
+            "Direction" | "RustBridge.Direction" => Some(3),
+            "Array<Int32>" | "Swift.Array<Swift.Int32>" => Some(8),
+            _ => None,
+        }
+    }
+
+    fn type_name_candidates(type_name: &str) -> Vec<String> {
+        let mut names = vec![type_name.to_string()];
+        match type_name {
+            "String" => names.push("Swift.String".to_string()),
+            "Array<Int32>" => names.push("Swift.Array<Swift.Int32>".to_string()),
+            "Dictionary<Int32, Int32>" => {
+                names.push("Swift.Dictionary<Swift.Int32, Swift.Int32>".to_string())
+            }
+            _ => {
+                if !type_name.contains('.') && !type_name.starts_with("Swift.") {
+                    names.push(format!("RustBridge.{type_name}"));
+                }
+            }
+        }
+        names
+    }
+
+    fn resolve_type_info(&self, type_name: &str) -> Result<N1TypeInfoJson, RuntimeContractError> {
+        let mut fallback = None;
+        for candidate in Self::type_name_candidates(type_name) {
+            let info = self.n1_type_info(&candidate)?;
+            if fallback.is_none() {
+                fallback = Some(info.clone());
+            }
+            if info.kind != "unknown" && info.kind_id >= 0 {
+                return Ok(info);
+            }
+        }
+        fallback.ok_or_else(|| RuntimeContractError::DescriptorParse(format!("no type info candidates for {type_name}")))
+    }
+
+    fn resolve_metadata_entry_by_pointer(
+        &self,
+        metadata: *const c_void,
+    ) -> Result<ContractMetadataEntry, RuntimeContractError> {
+        for entry in self.metadata_registry_entries()? {
+            let candidate = match self.lookup_metadata(entry.metadata_id) {
+                Ok(ptr) => ptr,
+                Err(_) => continue,
+            };
+            if candidate == metadata {
+                return Ok(entry);
+            }
+        }
+        Err(RuntimeContractError::MetadataPointerNotRegistered {
+            pointer: metadata as usize,
+        })
+    }
+
+    pub fn scan_metadata_header_by_name(
+        &self,
+        type_name: &str,
+    ) -> Result<MetadataLayout, RuntimeContractError> {
+        let descriptor = self.descriptor()?;
+        let metadata_id = descriptor
+            .metadata_registry
+            .entries
+            .iter()
+            .find(|entry| entry.name == type_name)
+            .map(|entry| entry.metadata_id);
+        let info = self.resolve_type_info(type_name)?;
+
+        let mut field_offsets = Vec::new();
+        if let Some(type_id) = Self::synthetic_n1_type_id(type_name).or_else(|| Self::synthetic_n1_type_id(&info.name)) {
+            for field_index in 0..info.field_count {
+                if let Ok(offset) = self.n1_metadata_field_offset(type_id, field_index) {
+                    field_offsets.push(offset);
+                }
+            }
+        }
+
+        let witness_count = metadata_id
+            .map(|id| {
+                descriptor
+                    .protocol_registry
+                    .entries
+                    .iter()
+                    .filter(|entry| entry.type_id == id)
+                    .count() as i32
+            })
+            .unwrap_or(0);
+
+        Ok(MetadataLayout {
+            type_name: type_name.to_string(),
+            metadata_id,
+            kind: info.kind,
+            kind_id: info.kind_id,
+            field_count: info.field_count,
+            field_offsets,
+            witness_count,
+            generic_param_count: Self::generic_argument_count(type_name),
+            size: None,
+        })
+    }
+
+    pub fn scan_metadata_header(
+        &self,
+        metadata: *const c_void,
+    ) -> Result<MetadataLayout, RuntimeContractError> {
+        let entry = self.resolve_metadata_entry_by_pointer(metadata)?;
+        let mut layout = self.scan_metadata_header_by_name(&entry.name)?;
+        layout.metadata_id = Some(entry.metadata_id);
+        Ok(layout)
     }
 
     pub fn protocol_has_conformance(

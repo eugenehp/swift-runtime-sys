@@ -38,8 +38,18 @@ public func swift_contract_lookup_metadata(_ metadataID: Int32) -> UnsafeRawPoin
         return unsafeBitCast(String.self, to: UnsafeRawPointer.self)
     case 4:
         return unsafeBitCast(Array<Int32>.self, to: UnsafeRawPointer.self)
+    case 5:
+        return unsafeBitCast(Array<UnsafeMutableRawPointer>.self, to: UnsafeRawPointer.self)
     case 6:
         return unsafeBitCast(Dictionary<Int32, Int32>.self, to: UnsafeRawPointer.self)
+    case 7:
+        return unsafeBitCast(Dictionary<Int32, UnsafeMutableRawPointer>.self, to: UnsafeRawPointer.self)
+    case 8:
+        return unsafeBitCast(ContractAnyBox.self, to: UnsafeRawPointer.self)
+    case 9:
+        return unsafeBitCast(Direction.self, to: UnsafeRawPointer.self)
+    case 10:
+        return unsafeBitCast(Shape.self, to: UnsafeRawPointer.self)
     case 1001:
         return unsafeBitCast(ContractGenericBox<Int32>.self, to: UnsafeRawPointer.self)
     case 1002:
