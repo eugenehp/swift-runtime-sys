@@ -29,11 +29,9 @@ fn main() {
     };
 
     let ok = match shape.as_str() {
-        "direct.value.i32_i32_to_i32" => run(
-            "direct.value.i32_i32_to_i32",
-            shape_direct_value,
-            &contract,
-        ),
+        "direct.value.i32_i32_to_i32" => {
+            run("direct.value.i32_i32_to_i32", shape_direct_value, &contract)
+        }
         "inout.mutating.i32ptr_i32_to_i32" => run(
             "inout.mutating.i32ptr_i32_to_i32",
             shape_inout_mutating,
@@ -49,11 +47,9 @@ fn main() {
             shape_throwing_success,
             &contract,
         ),
-        "throwing.error.i32_to_i32" => run(
-            "throwing.error.i32_to_i32",
-            shape_throwing_error,
-            &contract,
-        ),
+        "throwing.error.i32_to_i32" => {
+            run("throwing.error.i32_to_i32", shape_throwing_error, &contract)
+        }
         "async.value.i32_to_i32" => run("async.value.i32_to_i32", shape_async_value, &contract),
         "resilient.counter_addpair.i32_i32_to_i32" => run(
             "resilient.counter_addpair.i32_i32_to_i32",
@@ -62,11 +58,7 @@ fn main() {
         ),
         "all" => {
             let all = [
-                run(
-                    "direct.value.i32_i32_to_i32",
-                    shape_direct_value,
-                    &contract,
-                ),
+                run("direct.value.i32_i32_to_i32", shape_direct_value, &contract),
                 run(
                     "inout.mutating.i32ptr_i32_to_i32",
                     shape_inout_mutating,
@@ -82,11 +74,7 @@ fn main() {
                     shape_throwing_success,
                     &contract,
                 ),
-                run(
-                    "throwing.error.i32_to_i32",
-                    shape_throwing_error,
-                    &contract,
-                ),
+                run("throwing.error.i32_to_i32", shape_throwing_error, &contract),
                 run("async.value.i32_to_i32", shape_async_value, &contract),
                 run(
                     "resilient.counter_addpair.i32_i32_to_i32",

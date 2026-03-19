@@ -17,9 +17,10 @@ struct MatrixRow {
 }
 
 fn main() {
-    let factory = RuntimeFactory::with_thunk_library("./libRustBridge.dylib", "./libRuntimeThunks.dylib")
-        .or_else(|_| RuntimeFactory::new("./libRustBridge.dylib"))
-        .unwrap_or_else(|e| panic!("failed to init RuntimeFactory: {e:?}"));
+    let factory =
+        RuntimeFactory::with_thunk_library("./libRustBridge.dylib", "./libRuntimeThunks.dylib")
+            .or_else(|_| RuntimeFactory::new("./libRustBridge.dylib"))
+            .unwrap_or_else(|e| panic!("failed to init RuntimeFactory: {e:?}"));
 
     factory
         .validate_runtime_contract(1)
@@ -32,17 +33,50 @@ fn main() {
 
     println!("\n=== Cross-Version ABI Adaptation Layer (Track N.5) ===");
 
-    let tests: [(&str, fn(&RuntimeContract) -> Result<bool, RuntimeContractError>); 10] = [
-        ("Adapter table exposes multiple profiles", test_table_has_multiple_profiles),
-        ("Adapter table includes Swift 6.1 profile", test_table_has_swift_6_1),
-        ("Adapter table includes Swift 6.2 profile", test_table_has_swift_6_2),
-        ("Feature probe reports host macOS arm64 facts", test_probe_reports_host_facts),
-        ("Feature probe reports all required features enabled", test_probe_required_features_green),
-        ("Auto-selected profile is compatible", test_auto_selected_profile_is_compatible),
-        ("Auto-selected profile matches host compiler family", test_auto_selected_matches_family),
-        ("Compatibility matrix selects supported profiles", test_matrix_selects_supported_profiles),
-        ("Regression checker allows matching snapshot", test_regression_checker_allows_match),
-        ("Regression checker flags release drift", test_regression_checker_flags_release_drift),
+    let tests: [(
+        &str,
+        fn(&RuntimeContract) -> Result<bool, RuntimeContractError>,
+    ); 10] = [
+        (
+            "Adapter table exposes multiple profiles",
+            test_table_has_multiple_profiles,
+        ),
+        (
+            "Adapter table includes Swift 6.1 profile",
+            test_table_has_swift_6_1,
+        ),
+        (
+            "Adapter table includes Swift 6.2 profile",
+            test_table_has_swift_6_2,
+        ),
+        (
+            "Feature probe reports host macOS arm64 facts",
+            test_probe_reports_host_facts,
+        ),
+        (
+            "Feature probe reports all required features enabled",
+            test_probe_required_features_green,
+        ),
+        (
+            "Auto-selected profile is compatible",
+            test_auto_selected_profile_is_compatible,
+        ),
+        (
+            "Auto-selected profile matches host compiler family",
+            test_auto_selected_matches_family,
+        ),
+        (
+            "Compatibility matrix selects supported profiles",
+            test_matrix_selects_supported_profiles,
+        ),
+        (
+            "Regression checker allows matching snapshot",
+            test_regression_checker_allows_match,
+        ),
+        (
+            "Regression checker flags release drift",
+            test_regression_checker_flags_release_drift,
+        ),
     ];
 
     for (name, test_fn) in tests {
@@ -113,7 +147,9 @@ fn write_matrix_artifact(rows: &[MatrixRow]) -> bool {
     fs::write(out_path, serde_json::to_string_pretty(rows).unwrap()).is_ok()
 }
 
-fn test_table_has_multiple_profiles(contract: &RuntimeContract) -> Result<bool, RuntimeContractError> {
+fn test_table_has_multiple_profiles(
+    contract: &RuntimeContract,
+) -> Result<bool, RuntimeContractError> {
     Ok(contract.n5_adapter_table()?.profiles.len() >= 2)
 }
 
@@ -138,22 +174,31 @@ fn test_probe_reports_host_facts(contract: &RuntimeContract) -> Result<bool, Run
     Ok(probe.platform == "macos" && probe.architecture == "arm64" && probe.os_major >= 14)
 }
 
-fn test_probe_required_features_green(contract: &RuntimeContract) -> Result<bool, RuntimeContractError> {
+fn test_probe_required_features_green(
+    contract: &RuntimeContract,
+) -> Result<bool, RuntimeContractError> {
     let probe = contract.n5_feature_probe()?;
     Ok(required_features(&probe).into_iter().all(|enabled| enabled))
 }
 
-fn test_auto_selected_profile_is_compatible(contract: &RuntimeContract) -> Result<bool, RuntimeContractError> {
+fn test_auto_selected_profile_is_compatible(
+    contract: &RuntimeContract,
+) -> Result<bool, RuntimeContractError> {
     Ok(contract.n5_select_adapter()?.compatible)
 }
 
-fn test_auto_selected_matches_family(contract: &RuntimeContract) -> Result<bool, RuntimeContractError> {
+fn test_auto_selected_matches_family(
+    contract: &RuntimeContract,
+) -> Result<bool, RuntimeContractError> {
     let probe = contract.n5_feature_probe()?;
     let selected = contract.n5_select_adapter()?;
-    Ok(selected.profile_id.contains(&probe.compiler_family) && selected.compiler_family == probe.compiler_family)
+    Ok(selected.profile_id.contains(&probe.compiler_family)
+        && selected.compiler_family == probe.compiler_family)
 }
 
-fn test_matrix_selects_supported_profiles(contract: &RuntimeContract) -> Result<bool, RuntimeContractError> {
+fn test_matrix_selects_supported_profiles(
+    contract: &RuntimeContract,
+) -> Result<bool, RuntimeContractError> {
     let table: N5AdapterTable = contract.n5_adapter_table()?;
     let mut rows = Vec::new();
 
@@ -172,7 +217,10 @@ fn test_matrix_selects_supported_profiles(contract: &RuntimeContract) -> Result<
                 .as_ref()
                 .map(|profile| profile.profile_id.clone())
                 .unwrap_or_else(|| "missing".to_string()),
-            compatible: selected.as_ref().map(|profile| profile.compatible).unwrap_or(false),
+            compatible: selected
+                .as_ref()
+                .map(|profile| profile.compatible)
+                .unwrap_or(false),
         });
     }
 
@@ -180,27 +228,36 @@ fn test_matrix_selects_supported_profiles(contract: &RuntimeContract) -> Result<
     Ok(selected_all && write_matrix_artifact(&rows))
 }
 
-fn test_regression_checker_allows_match(contract: &RuntimeContract) -> Result<bool, RuntimeContractError> {
+fn test_regression_checker_allows_match(
+    contract: &RuntimeContract,
+) -> Result<bool, RuntimeContractError> {
     let selected = contract.n5_select_adapter()?;
-    let report = RuntimeContract::n5_regression_report(
-        &selected,
-        &selected,
-        &selected.optimization_mode,
-    );
+    let report =
+        RuntimeContract::n5_regression_report(&selected, &selected, &selected.optimization_mode);
     Ok(!report.drift_detected && report.issues.is_empty())
 }
 
-fn test_regression_checker_flags_release_drift(contract: &RuntimeContract) -> Result<bool, RuntimeContractError> {
+fn test_regression_checker_flags_release_drift(
+    contract: &RuntimeContract,
+) -> Result<bool, RuntimeContractError> {
     let expected = contract.n5_select_adapter()?;
     let mut observed: N5SelectedAdapter = expected.clone();
     observed.optimization_mode = "release".to_string();
-    observed
-        .selected_symbols
-        .insert("dynamic_invoke".to_string(), "swift_contract_n2_invoke_auto_release_alias".to_string());
+    observed.selected_symbols.insert(
+        "dynamic_invoke".to_string(),
+        "swift_contract_n2_invoke_auto_release_alias".to_string(),
+    );
     observed.missing_features = vec!["objc_class_scan".to_string()];
 
-    let report: N5DriftReport = RuntimeContract::n5_regression_report(&expected, &observed, "release");
+    let report: N5DriftReport =
+        RuntimeContract::n5_regression_report(&expected, &observed, "release");
     Ok(report.drift_detected
-        && report.issues.iter().any(|issue| issue.contains("symbol drift for dynamic_invoke"))
-        && report.issues.iter().any(|issue| issue.contains("missing required features")))
+        && report
+            .issues
+            .iter()
+            .any(|issue| issue.contains("symbol drift for dynamic_invoke"))
+        && report
+            .issues
+            .iter()
+            .any(|issue| issue.contains("missing required features")))
 }

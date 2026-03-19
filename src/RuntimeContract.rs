@@ -3468,7 +3468,9 @@ impl<'a> RuntimeContract<'a> {
     ) -> Vec<N8BudgetGate> {
         let mut gates = Vec::new();
         for budget in budgets {
-            let sample = samples.iter().find(|sample| sample.operation == budget.operation);
+            let sample = samples
+                .iter()
+                .find(|sample| sample.operation == budget.operation);
             let mut reasons = Vec::new();
 
             match sample {
@@ -3521,11 +3523,7 @@ impl<'a> RuntimeContract<'a> {
             } else {
                 gate.reasons.join("; ")
             };
-            alerts.push(format!(
-                "ALERT[N8][{}]: {}",
-                gate.operation,
-                detail,
-            ));
+            alerts.push(format!("ALERT[N8][{}]: {}", gate.operation, detail,));
         }
         alerts
     }
@@ -3536,7 +3534,8 @@ impl<'a> RuntimeContract<'a> {
         let mut lines = vec![
             "# N.8 Degraded Mode Runbook".to_string(),
             "".to_string(),
-            "When capability probes fail, switch to conservative paths to preserve correctness.".to_string(),
+            "When capability probes fail, switch to conservative paths to preserve correctness."
+                .to_string(),
             "".to_string(),
             "## Capability Snapshot".to_string(),
             format!("- compiler_family: {}", probe.compiler_family),
@@ -3583,7 +3582,10 @@ impl<'a> RuntimeContract<'a> {
 
         lines.push("".to_string());
         lines.push("## Incident Response".to_string());
-        lines.push("- Re-run capability probe and refresh adapter/profile selection (Track N.5).".to_string());
+        lines.push(
+            "- Re-run capability probe and refresh adapter/profile selection (Track N.5)."
+                .to_string(),
+        );
         lines.push("- Enable additional telemetry for N.6 differential fuzzing and N.7 validation coverage.".to_string());
         lines.push("- If two consecutive CI runs fail budget gates, freeze rollout and investigate runtime drift.".to_string());
 
@@ -3597,7 +3599,8 @@ impl<'a> RuntimeContract<'a> {
         graph_iterations: i32,
     ) -> Result<N8OperationalReport, RuntimeContractError> {
         let budgets = self.n8_default_slos();
-        let samples = self.n8_run_benchmarks(dynamic_iterations, metadata_iterations, graph_iterations)?;
+        let samples =
+            self.n8_run_benchmarks(dynamic_iterations, metadata_iterations, graph_iterations)?;
         let gates = self.n8_evaluate_budget_gates(&samples, &budgets);
         let alerts = self.n8_ci_budget_alerts(&gates);
         let degraded_mode_runbook = self.n8_degraded_mode_runbook()?;

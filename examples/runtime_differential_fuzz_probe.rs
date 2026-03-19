@@ -50,10 +50,7 @@ fn main() {
     let args: Vec<String> = env::args().collect();
 
     if args.get(1).map(String::as_str) == Some("--seed-check") {
-        let seed = args
-            .get(2)
-            .and_then(|v| v.parse::<i64>().ok())
-            .unwrap_or(1);
+        let seed = args.get(2).and_then(|v| v.parse::<i64>().ok()).unwrap_or(1);
         let fragment_count = args
             .get(3)
             .and_then(|v| v.parse::<i32>().ok())
@@ -64,8 +61,14 @@ fn main() {
             .unwrap_or_else(|| "target/runtime-probe/n6-corpus".to_string());
         let factory = build_factory();
         let contract = RuntimeContract::new(&factory);
-        let outcome = run_seed_check(&factory, &contract, seed, fragment_count, Path::new(&out_dir))
-            .unwrap_or_else(|e| panic!("seed check failed: {e:?}"));
+        let outcome = run_seed_check(
+            &factory,
+            &contract,
+            seed,
+            fragment_count,
+            Path::new(&out_dir),
+        )
+        .unwrap_or_else(|e| panic!("seed check failed: {e:?}"));
         if !outcome.pass {
             panic!(
                 "seed check failed for seed {} (artifacts_complete={})",
@@ -559,7 +562,10 @@ fn run_seed_check(
         let minimized = minimize_program(program.clone(), |candidate| {
             let native_candidate = contract.n6_execute_program(candidate)?;
             let native_repeat_candidate = contract.n6_execute_program(candidate)?;
-            Ok(compare_executions(&native_candidate, &native_repeat_candidate))
+            Ok(compare_executions(
+                &native_candidate,
+                &native_repeat_candidate,
+            ))
         });
         let minimized_path = out_dir.join(format!("seed-{}-minimized.json", program.seed));
         let corpus_ok = write_json(&corpus_path, &program);

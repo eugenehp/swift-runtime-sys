@@ -17,9 +17,10 @@ struct N8GateArtifact {
 }
 
 fn main() {
-    let factory = RuntimeFactory::with_thunk_library("./libRustBridge.dylib", "./libRuntimeThunks.dylib")
-        .or_else(|_| RuntimeFactory::new("./libRustBridge.dylib"))
-        .unwrap_or_else(|e| panic!("failed to init RuntimeFactory: {e:?}"));
+    let factory =
+        RuntimeFactory::with_thunk_library("./libRustBridge.dylib", "./libRuntimeThunks.dylib")
+            .or_else(|_| RuntimeFactory::new("./libRustBridge.dylib"))
+            .unwrap_or_else(|e| panic!("failed to init RuntimeFactory: {e:?}"));
 
     factory
         .validate_runtime_contract(1)
@@ -31,17 +32,50 @@ fn main() {
 
     println!("\n=== Operational Guarantees & SLOs (Track N.8) ===");
 
-    let tests: [(&str, fn(&RuntimeContract) -> Result<bool, RuntimeContractError>); 10] = [
-        ("Default SLO table includes required operation budgets", test_default_slos_cover_required_ops),
-        ("Dynamic invoke benchmark returns measurable throughput", test_dynamic_invoke_benchmark),
-        ("Metadata traversal benchmark returns measurable throughput", test_metadata_traversal_benchmark),
-        ("Graph benchmark returns measurable latency and memory", test_graph_benchmark),
-        ("Budget gate passes for healthy benchmark report", test_budget_gate_passes),
-        ("Budget gate emits failures for synthetic regressions", test_budget_gate_regression_alert),
-        ("CI budget artifact and alert report are written", test_ci_budget_artifacts_written),
-        ("Degraded mode runbook is generated", test_degraded_mode_runbook_generated),
-        ("Degraded mode runbook includes fallback actions", test_degraded_mode_contains_actions),
-        ("Exit criterion confirms operational report readiness", test_exit_criterion_operational_readiness),
+    let tests: [(
+        &str,
+        fn(&RuntimeContract) -> Result<bool, RuntimeContractError>,
+    ); 10] = [
+        (
+            "Default SLO table includes required operation budgets",
+            test_default_slos_cover_required_ops,
+        ),
+        (
+            "Dynamic invoke benchmark returns measurable throughput",
+            test_dynamic_invoke_benchmark,
+        ),
+        (
+            "Metadata traversal benchmark returns measurable throughput",
+            test_metadata_traversal_benchmark,
+        ),
+        (
+            "Graph benchmark returns measurable latency and memory",
+            test_graph_benchmark,
+        ),
+        (
+            "Budget gate passes for healthy benchmark report",
+            test_budget_gate_passes,
+        ),
+        (
+            "Budget gate emits failures for synthetic regressions",
+            test_budget_gate_regression_alert,
+        ),
+        (
+            "CI budget artifact and alert report are written",
+            test_ci_budget_artifacts_written,
+        ),
+        (
+            "Degraded mode runbook is generated",
+            test_degraded_mode_runbook_generated,
+        ),
+        (
+            "Degraded mode runbook includes fallback actions",
+            test_degraded_mode_contains_actions,
+        ),
+        (
+            "Exit criterion confirms operational report readiness",
+            test_exit_criterion_operational_readiness,
+        ),
     ];
 
     for (name, test_fn) in tests {
@@ -90,8 +124,12 @@ fn test_default_slos_cover_required_ops(
 ) -> Result<bool, RuntimeContractError> {
     let slos = contract.n8_default_slos();
     Ok(slos.iter().any(|entry| entry.operation == "dynamic_invoke")
-        && slos.iter().any(|entry| entry.operation == "metadata_traversal")
-        && slos.iter().any(|entry| entry.operation == "graph_operations"))
+        && slos
+            .iter()
+            .any(|entry| entry.operation == "metadata_traversal")
+        && slos
+            .iter()
+            .any(|entry| entry.operation == "graph_operations"))
 }
 
 fn test_dynamic_invoke_benchmark(contract: &RuntimeContract) -> Result<bool, RuntimeContractError> {
@@ -132,7 +170,9 @@ fn test_budget_gate_regression_alert(
     Ok(gates.iter().any(|gate| !gate.passed) && !alerts.is_empty())
 }
 
-fn test_ci_budget_artifacts_written(contract: &RuntimeContract) -> Result<bool, RuntimeContractError> {
+fn test_ci_budget_artifacts_written(
+    contract: &RuntimeContract,
+) -> Result<bool, RuntimeContractError> {
     let op = report(contract)?;
     let out = Path::new("target/runtime-probe/n8-budget-gates.json");
     let alerts_path = Path::new("target/runtime-probe/n8-alerts.txt");
@@ -157,7 +197,10 @@ fn test_degraded_mode_runbook_generated(
     let out = Path::new("target/runtime-probe/n8-degraded-mode-runbook.md");
     let _ = fs::create_dir_all("target/runtime-probe");
     let _ = fs::write(out, &op.degraded_mode_runbook);
-    Ok(op.degraded_mode_runbook.contains("N.8 Degraded Mode Runbook") && out.exists())
+    Ok(op
+        .degraded_mode_runbook
+        .contains("N.8 Degraded Mode Runbook")
+        && out.exists())
 }
 
 fn test_degraded_mode_contains_actions(
