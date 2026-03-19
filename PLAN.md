@@ -857,10 +857,11 @@ Goal: Expand runtime-control coverage on the current host cell beyond existing r
 - **Status**: COMPLETE — Added C.5 Swift exports (`swift_contract_c5_inline_equiv`, `swift_contract_c5_devirt_equiv`, `swift_contract_c5_generic_equiv`, `swift_contract_c5_arc_*`) and probe `examples/runtime_c5_optimizer_probe.rs` (8 tests) covering inline vs noinline parity, direct vs witness dispatch equivalence, specialized vs unspecialized generic arithmetic equivalence, and ARC deinit side-effect preservation. Gate `scripts/run_c5_optimizer_gate.sh` enforces debug/release semantic equivalence with JSON/MD artifacts.
 
 ### C.6) Dynamic Call-Lowering Coverage Expansion
-- [ ] Add additional lowering classes for mixed signatures (indirect return + inout + throws + async combinations).
-- [ ] Add resilient argument-lowering probes with explicit shape negotiation traces.
-- [ ] Add deterministic fallback hierarchy for unsupported shapes with stable reason codes.
-- [ ] Exit criteria: Unknown callable surfaces are either invoked correctly via negotiated lowering or rejected safely with structured diagnostics.
+- [x] Add additional lowering classes for mixed signatures (indirect return + inout + throws + async combinations).
+- [x] Add resilient argument-lowering probes with explicit shape negotiation traces.
+- [x] Add deterministic fallback hierarchy for unsupported shapes with stable reason codes.
+- [x] Exit criteria: Unknown callable surfaces are either invoked correctly via negotiated lowering or rejected safely with structured diagnostics.
+- **Status**: COMPLETE — Added C.6 lowering exports (`swift_contract_c6_inout_add_checked`, `swift_contract_c6_pair_sum_product`) and registered shapes in `_n2ShapeRegistry`; expanded `swift_contract_n2_lowering_strategy_json` to emit stable `reason_code` diagnostics with a deterministic fallback hierarchy (`-463` throws+async, `-462` indirect+inout, `-461` throws-only, `-460` async-only, `-499` generic unsupported). Added probe `examples/runtime_c6_lowering_probe.rs` (8/8 PASS debug and release) validating supported inout/indirect-return lowering paths, negotiation traces, reason-code stability, and deterministic unknown-symbol rejection. Gate `scripts/run_c6_lowering_gate.sh` enforces debug/release equivalence with JSON/MD artifacts.
 
 ### C.7) Runtime Safety Guardrails and Diagnostics
 - [ ] Add preflight capability gating for every high-risk operation path.

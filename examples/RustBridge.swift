@@ -414,6 +414,28 @@ public func swift_contract_c5_arc_deinit_count() -> Int32 {
     _c5ArcDeinitCount
 }
 
+// MARK: - Phase C.6: Dynamic Call-Lowering Coverage Expansion
+
+@_cdecl("swift_contract_c6_inout_add_checked")
+public func swift_contract_c6_inout_add_checked(_ valuePtr: UnsafeMutablePointer<Int32>?, _ delta: Int32) -> Int32 {
+    guard let valuePtr else { return Int32.min }
+    valuePtr.pointee &+= delta
+    return valuePtr.pointee &* 2
+}
+
+@_cdecl("swift_contract_c6_pair_sum_product")
+public func swift_contract_c6_pair_sum_product(_ outPtr: UnsafeMutablePointer<Int32>?, _ a: Int32, _ b: Int32) -> Int32 {
+    guard let outPtr else { return 0 }
+    outPtr.pointee = a &+ b
+    outPtr.advanced(by: 1).pointee = a &* b
+    return 1
+}
+
+@_cdecl("swift_contract_c6_add_offset")
+public func swift_contract_c6_add_offset(_ a: Int32, _ b: Int32) -> Int32 {
+    a &+ b &+ 3
+}
+
 // MARK: - Error Handling & Introspection (Track E.1)
 
 /// A simple custom error type with error code.
@@ -2902,6 +2924,9 @@ private let _n2ShapeRegistry: [String: String] = [
     "swift_contract_c5_arc_reset":                 "void_to_i32",
     "swift_contract_c5_arc_sequence":              "i32_to_i32",
     "swift_contract_c5_arc_deinit_count":          "void_to_i32",
+    "swift_contract_c6_add_offset":               "i32_i32_to_i32",
+    "swift_contract_c6_inout_add_checked":         "i32ptr_i32_to_i32",
+    "swift_contract_c6_pair_sum_product":          "i32_i32_to_pair",
 ]
 
 /// Dynamic invoke by runtime symbol name + lowered shape descriptor.
@@ -3019,6 +3044,7 @@ public func swift_contract_n2_lowering_strategy_json(_ signaturePtr: UnsafePoint
 
     let strategy: String
     let supported: Bool
+    let reasonCode: Int32
     if signature == "direct.add.i32_i32_to_i32"
         || signature == "inout.add_assign.i32ptr_i32_to_i32"
         || signature == "throwing.require_non_negative.i32_to_i32"
@@ -3029,15 +3055,29 @@ public func swift_contract_n2_lowering_strategy_json(_ signaturePtr: UnsafePoint
         || signature == "dynamic.symbol.i32ptr_i32_to_i32"
         || signature == "dynamic.symbol.i32_i32_to_pair"
         || signature == "dynamic.symbol.i32_to_i32"
-        || signature == "dynamic.symbol.void_to_i32" {
+        || signature == "dynamic.symbol.void_to_i32"
+        || signature == "c6.inout.checked.i32ptr_i32_to_i32"
+        || signature == "c6.indirect_ret.pair_sum_product.i32_i32_to_pair" {
         strategy = "native"
         supported = true
+        reasonCode = 0
     } else {
         strategy = "fallback"
         supported = false
+        if signature.contains("throws") && signature.contains("async") {
+            reasonCode = -463
+        } else if signature.contains("indirect_ret") && signature.contains("inout") {
+            reasonCode = -462
+        } else if signature.contains("throws") {
+            reasonCode = -461
+        } else if signature.contains("async") {
+            reasonCode = -460
+        } else {
+            reasonCode = -499
+        }
     }
 
-    let json = "{\"signature\":\"\(signature.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\""))\",\"strategy\":\"\(strategy)\",\"supported\":\(supported ? "true" : "false"),\"capability_mask\":\(swift_contract_n2_capability_mask())}"
+    let json = "{\"signature\":\"\(signature.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\""))\",\"strategy\":\"\(strategy)\",\"supported\":\(supported ? "true" : "false"),\"reason_code\":\(reasonCode),\"capability_mask\":\(swift_contract_n2_capability_mask())}"
     return strdup(json)
 }
 
