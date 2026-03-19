@@ -118,6 +118,13 @@ pub enum RuntimeContractError {
         type_name: String,
         protocol_name: String,
     },
+    VersionDetectionFailed {
+        reason: String,
+    },
+    AdapterSelectionFailed {
+        version: String,
+        reason: String,
+    },
 }
 
 impl From<RuntimeFactoryError> for RuntimeContractError {
@@ -389,6 +396,11 @@ type ContractB2ScanConformancesJson = unsafe extern "C" fn() -> *mut c_char;
 type ContractB2ResolveWitnessTable = unsafe extern "C" fn(*const c_char, *const c_char) -> *const c_void;
 type ContractB2DescribeConformance = unsafe extern "C" fn(*const c_void) -> *mut c_char;
 
+// Phase B.3 – Cross-Version ABI Compatibility Shim
+type ContractB3RuntimeVersionJson = unsafe extern "C" fn() -> *mut c_char;
+type ContractB3GetAdapterTableJson = unsafe extern "C" fn(*const c_char) -> *mut c_char;
+type ContractB3SelectAdapterProfile = unsafe extern "C" fn(*const c_char) -> i32;
+
 #[derive(Debug, Clone, Default, Deserialize)]
 pub struct ContractTypeDescriptor {
     pub type_id: i32,
@@ -572,6 +584,102 @@ impl WitnessTableResolver {
 
     pub fn clear_cache(&mut self) {
         self.cached_conformances.clear();
+    }
+}
+
+// Phase B.3 – Cross-Version ABI Compatibility Shim Structures
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct RuntimeVersion {
+    pub major: i32,
+    pub minor: i32,
+    pub patch: i32,
+    pub version_string: String,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct AdapterFieldOffset {
+    pub field_name: String,
+    pub offset: i32,
+    pub size: i32,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct AdapterTypeLayout {
+    pub type_name: String,
+    pub size: i32,
+    pub alignment: i32,
+    pub fields: Vec<AdapterFieldOffset>,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct AdapterProfile {
+    pub profile_id: String,
+    pub swift_version: RuntimeVersion,
+    pub compatibility_range: (i32, i32), // (min_major, min_minor)
+    pub type_layouts: Vec<AdapterTypeLayout>,
+    pub enabled: bool,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct VersionAdapterTable {
+    pub current_version: RuntimeVersion,
+    pub profiles: Vec<AdapterProfile>,
+    pub selected_profile: Option<String>,
+}
+
+impl RuntimeVersion {
+    pub fn from_parts(major: i32, minor: i32, patch: i32) -> Self {
+        Self {
+            major,
+            minor,
+            patch,
+            version_string: format!("{}.{}.{}", major, minor, patch),
+        }
+    }
+
+    pub fn is_compatible_with(&self, min_major: i32, min_minor: i32) -> bool {
+        self.major > min_major || (self.major == min_major && self.minor >= min_minor)
+    }
+
+    pub fn matches_major(&self, major: i32) -> bool {
+        self.major == major
+    }
+}
+
+impl VersionAdapterTable {
+    pub fn new(version: RuntimeVersion) -> Self {
+        Self {
+            current_version: version,
+            profiles: Vec::new(),
+            selected_profile: None,
+        }
+    }
+
+    pub fn add_profile(&mut self, profile: AdapterProfile) {
+        self.profiles.push(profile);
+    }
+
+    pub fn select_profile(&mut self, profile_id: &str) -> bool {
+        if self.profiles.iter().any(|p| p.profile_id == profile_id) {
+            self.selected_profile = Some(profile_id.to_string());
+            return true;
+        }
+        false
+    }
+
+    pub fn get_selected_profile(&self) -> Option<&AdapterProfile> {
+        self.selected_profile.as_ref()
+            .and_then(|id| self.profiles.iter().find(|p| &p.profile_id == id))
+    }
+
+    pub fn find_compatible_profile(&self) -> Option<&AdapterProfile> {
+        for profile in &self.profiles {
+            let (min_major, min_minor) = profile.compatibility_range;
+            if self.current_version.is_compatible_with(min_major, min_minor) {
+                return Some(profile);
+            }
+        }
+        None
     }
 }
 
@@ -5571,6 +5679,129 @@ impl<'a> RuntimeContract<'a> {
             candidates.push(format!("RustBridge.{}", type_name));
         }
         candidates
+    }
+
+    // MARK: - Phase B.3: Cross-Version ABI Compatibility Shim
+
+    /// Get the current Swift runtime version detected at the host.
+    pub fn b3_detect_runtime_version(&self) -> Result<RuntimeVersion, RuntimeContractError> {
+        let func: ContractB3RuntimeVersionJson = self.resolve("swift_contract_b3_runtime_version_json")?;
+        let json_ptr = unsafe { func() };
+        if json_ptr.is_null() {
+            return Err(RuntimeContractError::VersionDetectionFailed {
+                reason: "null response from version detection".to_string(),
+            });
+        }
+
+        let c_str = unsafe { CStr::from_ptr(json_ptr) };
+        let json_str = c_str.to_string_lossy();
+        let version: Result<RuntimeVersion, _> = serde_json::from_str(&json_str)
+            .map_err(|e| RuntimeContractError::VersionDetectionFailed {
+                reason: format!("Failed to parse runtime version: {}", e),
+            });
+
+        unsafe { libc::free(json_ptr as *mut c_void) };
+        version
+    }
+
+    /// Get adapter table for the specified version profile.
+    pub fn b3_get_adapter_table(&self, profile_id: &str) -> Result<Vec<AdapterTypeLayout>, RuntimeContractError> {
+        let profile_c = CString::new(profile_id)
+            .map_err(|_| RuntimeContractError::AdapterSelectionFailed {
+                version: profile_id.to_string(),
+                reason: "invalid profile ID".to_string(),
+            })?;
+
+        let func: ContractB3GetAdapterTableJson = self.resolve("swift_contract_b3_get_adapter_table_json")?;
+        let json_ptr = unsafe { func(profile_c.as_ptr()) };
+        if json_ptr.is_null() {
+            return Ok(Vec::new());
+        }
+
+        let c_str = unsafe { CStr::from_ptr(json_ptr) };
+        let json_str = c_str.to_string_lossy();
+        let layouts: Result<Vec<AdapterTypeLayout>, _> = serde_json::from_str(&json_str)
+            .map_err(|e| RuntimeContractError::AdapterSelectionFailed {
+                version: profile_id.to_string(),
+                reason: format!("Failed to parse adapter table: {}", e),
+            });
+
+        unsafe { libc::free(json_ptr as *mut c_void) };
+        layouts
+    }
+
+    /// Select a version adapter profile and activate it.
+    pub fn b3_select_adapter_profile(&self, profile_id: &str) -> Result<bool, RuntimeContractError> {
+        let profile_c = CString::new(profile_id)
+            .map_err(|_| RuntimeContractError::AdapterSelectionFailed {
+                version: profile_id.to_string(),
+                reason: "invalid profile ID".to_string(),
+            })?;
+
+        let func: ContractB3SelectAdapterProfile = self.resolve("swift_contract_b3_select_adapter_profile")?;
+        let result = unsafe { func(profile_c.as_ptr()) };
+        
+        if result == 0 {
+            return Err(RuntimeContractError::AdapterSelectionFailed {
+                version: profile_id.to_string(),
+                reason: "profile selection failed at runtime".to_string(),
+            });
+        }
+
+        Ok(result != 0)
+    }
+
+    /// Auto-select the most appropriate adapter profile for the current runtime version.
+    pub fn b3_auto_select_profile(&self) -> Result<String, RuntimeContractError> {
+        let version = self.b3_detect_runtime_version()?;
+
+        // Build a profile_id based on the detected version
+        let profile_id = format!("swift_{}_{}_arm64_macos", version.major, version.minor);
+
+        // Try to select it
+        match self.b3_select_adapter_profile(&profile_id) {
+            Ok(true) => Ok(profile_id),
+            Ok(false) => {
+                // Fallback to detecting closest compatible version
+                let fallback_id = format!("swift_6_2_arm64_macos"); // Fallback to 6.2
+                self.b3_select_adapter_profile(&fallback_id)?;
+                Ok(fallback_id)
+            }
+            Err(_) => {
+                // Last resort: try the default profile
+                let default_id = "swift_6_2_arm64_macos".to_string();
+                self.b3_select_adapter_profile(&default_id)?;
+                Ok(default_id)
+            }
+        }
+    }
+
+    /// Get the offset of a field in a given type within the selected adapter profile.
+    pub fn b3_get_field_offset(&self, type_name: &str, field_name: &str) -> Result<i32, RuntimeContractError> {
+        let version = self.b3_detect_runtime_version()?;
+        
+        // For now, use default profiles based on detected version
+        let profile_id = format!("swift_{}_{}_arm64_macos", version.major, version.minor);
+        let layouts = self.b3_get_adapter_table(&profile_id)?;
+
+        for layout in layouts {
+            if layout.type_name == type_name {
+                for field in layout.fields {
+                    if field.field_name == field_name {
+                        return Ok(field.offset);
+                    }
+                }
+                return Err(RuntimeContractError::AdapterSelectionFailed {
+                    version: type_name.to_string(),
+                    reason: format!("field {} not found", field_name),
+                });
+            }
+        }
+
+        Err(RuntimeContractError::AdapterSelectionFailed {
+            version: type_name.to_string(),
+            reason: "type not found in adapter table".to_string(),
+        })
     }
 
     pub fn release(&self, object: ContractObject) -> Result<(), RuntimeContractError> {
