@@ -18,7 +18,10 @@ fn main() {
 
     println!("\n=== Phase C.7 Runtime Safety Guardrails ===");
 
-    let tests: [(&str, fn(&RuntimeContract) -> Result<bool, RuntimeContractError>); 8] = [
+    let tests: [(
+        &str,
+        fn(&RuntimeContract) -> Result<bool, RuntimeContractError>,
+    ); 8] = [
         (
             "Preflight allows low-risk operation path",
             test_c7_preflight_allow,
@@ -101,7 +104,8 @@ fn test_c7_guarded_allow(c: &RuntimeContract) -> Result<bool, RuntimeContractErr
 }
 
 fn test_c7_capsule_pair(c: &RuntimeContract) -> Result<bool, RuntimeContractError> {
-    let (signal, reason) = c.n2_dynamic_symbol_pair("swift_contract_c7_crash_capsule_pair", 2, 77)?;
+    let (signal, reason) =
+        c.n2_dynamic_symbol_pair("swift_contract_c7_crash_capsule_pair", 2, 77)?;
     Ok(signal == 11 && reason == -702)
 }
 

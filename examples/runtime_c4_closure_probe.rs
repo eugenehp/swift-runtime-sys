@@ -18,7 +18,10 @@ fn main() {
 
     println!("\n=== Phase C.4 Closure & Async-Capture Semantics ===");
 
-    let tests: [(&str, fn(&RuntimeContract) -> Result<bool, RuntimeContractError>); 7] = [
+    let tests: [(
+        &str,
+        fn(&RuntimeContract) -> Result<bool, RuntimeContractError>,
+    ); 7] = [
         (
             "Escaping closure stores and captures multiplier",
             test_c4_escaping_store,

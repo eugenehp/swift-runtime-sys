@@ -18,7 +18,10 @@ fn main() {
 
     println!("\n=== Phase C.5 Optimizer-Sensitive Equivalence ===");
 
-    let tests: [(&str, fn(&RuntimeContract) -> Result<bool, RuntimeContractError>); 8] = [
+    let tests: [(
+        &str,
+        fn(&RuntimeContract) -> Result<bool, RuntimeContractError>,
+    ); 8] = [
         ("Inline equivalence positive path", test_c5_inline_positive),
         ("Inline equivalence negative path", test_c5_inline_negative),
         ("Devirtualized dispatch equivalence", test_c5_devirt_equiv),
