@@ -393,7 +393,8 @@ type ContractBacktraceAnchorAddress = unsafe extern "C" fn() -> u64;
 
 // Phase B.2 – Witness Table Dynamic Resolver
 type ContractB2ScanConformancesJson = unsafe extern "C" fn() -> *mut c_char;
-type ContractB2ResolveWitnessTable = unsafe extern "C" fn(*const c_char, *const c_char) -> *const c_void;
+type ContractB2ResolveWitnessTable =
+    unsafe extern "C" fn(*const c_char, *const c_char) -> *const c_void;
 type ContractB2DescribeConformance = unsafe extern "C" fn(*const c_void) -> *mut c_char;
 
 // Phase B.3 – Cross-Version ABI Compatibility Shim
@@ -575,8 +576,14 @@ impl WitnessTableResolver {
         format!("{}:{}", type_name, protocol_name)
     }
 
-    pub fn get_cached(&self, type_name: &str, protocol_name: &str) -> Option<ConformanceDescriptor> {
-        self.cached_conformances.get(&Self::cache_key(type_name, protocol_name)).cloned()
+    pub fn get_cached(
+        &self,
+        type_name: &str,
+        protocol_name: &str,
+    ) -> Option<ConformanceDescriptor> {
+        self.cached_conformances
+            .get(&Self::cache_key(type_name, protocol_name))
+            .cloned()
     }
 
     pub fn cache_conformance(&mut self, conformance: ConformanceDescriptor) {
@@ -672,14 +679,18 @@ impl VersionAdapterTable {
     }
 
     pub fn get_selected_profile(&self) -> Option<&AdapterProfile> {
-        self.selected_profile.as_ref()
+        self.selected_profile
+            .as_ref()
             .and_then(|id| self.profiles.iter().find(|p| &p.profile_id == id))
     }
 
     pub fn find_compatible_profile(&self) -> Option<&AdapterProfile> {
         for profile in &self.profiles {
             let (min_major, min_minor) = profile.compatibility_range;
-            if self.current_version.is_compatible_with(min_major, min_minor) {
+            if self
+                .current_version
+                .is_compatible_with(min_major, min_minor)
+            {
                 return Some(profile);
             }
         }
@@ -5573,8 +5584,11 @@ impl<'a> RuntimeContract<'a> {
     // MARK: - Phase B.2: Witness Table Dynamic Resolver
 
     /// Scan all protocol conformances from the Swift binary without pre-seeded lookups.
-    pub fn b2_scan_all_conformances(&self) -> Result<Vec<ConformanceDescriptor>, RuntimeContractError> {
-        let func: ContractB2ScanConformancesJson = self.resolve("swift_contract_b2_scan_conformances_json")?;
+    pub fn b2_scan_all_conformances(
+        &self,
+    ) -> Result<Vec<ConformanceDescriptor>, RuntimeContractError> {
+        let func: ContractB2ScanConformancesJson =
+            self.resolve("swift_contract_b2_scan_conformances_json")?;
         let json_ptr = unsafe { func() };
         if json_ptr.is_null() {
             return Ok(Vec::new());
@@ -5583,7 +5597,12 @@ impl<'a> RuntimeContract<'a> {
         let c_str = unsafe { CStr::from_ptr(json_ptr) };
         let json_str = c_str.to_string_lossy();
         let conformances: Result<Vec<ConformanceDescriptor>, _> = serde_json::from_str(&json_str)
-            .map_err(|e| RuntimeContractError::DescriptorParse(format!("Failed to parse conformances: {}", e)));
+            .map_err(|e| {
+                RuntimeContractError::DescriptorParse(format!(
+                    "Failed to parse conformances: {}",
+                    e
+                ))
+            });
 
         unsafe { libc::free(json_ptr as *mut c_void) };
         conformances
@@ -5591,19 +5610,24 @@ impl<'a> RuntimeContract<'a> {
 
     /// Resolve a witness table pointer for a given type name and protocol name.
     /// Returns null if the type does not conform to the protocol.
-    pub fn b2_resolve_witness_table(&self, type_name: &str, protocol_name: &str) -> Result<*const c_void, RuntimeContractError> {
-        let type_c = CString::new(type_name)
-            .map_err(|_| RuntimeContractError::ConformanceNotFound {
+    pub fn b2_resolve_witness_table(
+        &self,
+        type_name: &str,
+        protocol_name: &str,
+    ) -> Result<*const c_void, RuntimeContractError> {
+        let type_c =
+            CString::new(type_name).map_err(|_| RuntimeContractError::ConformanceNotFound {
                 type_name: type_name.to_string(),
                 protocol_name: protocol_name.to_string(),
             })?;
-        let protocol_c = CString::new(protocol_name)
-            .map_err(|_| RuntimeContractError::ConformanceNotFound {
+        let protocol_c =
+            CString::new(protocol_name).map_err(|_| RuntimeContractError::ConformanceNotFound {
                 type_name: type_name.to_string(),
                 protocol_name: protocol_name.to_string(),
             })?;
 
-        let func: ContractB2ResolveWitnessTable = self.resolve("swift_contract_b2_resolve_witness_table")?;
+        let func: ContractB2ResolveWitnessTable =
+            self.resolve("swift_contract_b2_resolve_witness_table")?;
         let witness_table = unsafe { func(type_c.as_ptr(), protocol_c.as_ptr()) };
 
         if witness_table.is_null() {
@@ -5617,25 +5641,35 @@ impl<'a> RuntimeContract<'a> {
     }
 
     /// Attempt to resolve a witness table but return Ok(null) if not found instead of an error.
-    pub fn b2_try_resolve_witness_table(&self, type_name: &str, protocol_name: &str) -> Result<*const c_void, RuntimeContractError> {
-        let type_c = CString::new(type_name)
-            .map_err(|_| RuntimeContractError::WitnessTableResolutionFailed {
+    pub fn b2_try_resolve_witness_table(
+        &self,
+        type_name: &str,
+        protocol_name: &str,
+    ) -> Result<*const c_void, RuntimeContractError> {
+        let type_c = CString::new(type_name).map_err(|_| {
+            RuntimeContractError::WitnessTableResolutionFailed {
                 type_name: type_name.to_string(),
                 protocol_name: protocol_name.to_string(),
-            })?;
-        let protocol_c = CString::new(protocol_name)
-            .map_err(|_| RuntimeContractError::WitnessTableResolutionFailed {
+            }
+        })?;
+        let protocol_c = CString::new(protocol_name).map_err(|_| {
+            RuntimeContractError::WitnessTableResolutionFailed {
                 type_name: type_name.to_string(),
                 protocol_name: protocol_name.to_string(),
-            })?;
+            }
+        })?;
 
-        let func: ContractB2ResolveWitnessTable = self.resolve("swift_contract_b2_resolve_witness_table")?;
+        let func: ContractB2ResolveWitnessTable =
+            self.resolve("swift_contract_b2_resolve_witness_table")?;
         let witness_table = unsafe { func(type_c.as_ptr(), protocol_c.as_ptr()) };
         Ok(witness_table)
     }
 
     /// Get a description of a conformance descriptor (for debugging/inspection).
-    pub fn b2_describe_conformance(&self, witness_ptr: *const c_void) -> Result<String, RuntimeContractError> {
+    pub fn b2_describe_conformance(
+        &self,
+        witness_ptr: *const c_void,
+    ) -> Result<String, RuntimeContractError> {
         if witness_ptr.is_null() {
             return Err(RuntimeContractError::WitnessTableResolutionFailed {
                 type_name: "null".to_string(),
@@ -5643,7 +5677,8 @@ impl<'a> RuntimeContract<'a> {
             });
         }
 
-        let func: ContractB2DescribeConformance = self.resolve("swift_contract_b2_describe_conformance")?;
+        let func: ContractB2DescribeConformance =
+            self.resolve("swift_contract_b2_describe_conformance")?;
         let desc_ptr = unsafe { func(witness_ptr) };
         if desc_ptr.is_null() {
             return Err(RuntimeContractError::WitnessTableResolutionFailed {
@@ -5659,7 +5694,11 @@ impl<'a> RuntimeContract<'a> {
     }
 
     /// Resolve witness table for a standard protocol conformance with caching.
-    pub fn b2_resolve_standard_conformance(&self, type_name: &str, protocol_name: &str) -> Result<*const c_void, RuntimeContractError> {
+    pub fn b2_resolve_standard_conformance(
+        &self,
+        type_name: &str,
+        protocol_name: &str,
+    ) -> Result<*const c_void, RuntimeContractError> {
         // Try common type name aliases first
         let type_candidates = self.b2_type_name_candidates(type_name);
         for candidate in type_candidates {
@@ -5689,7 +5728,8 @@ impl<'a> RuntimeContract<'a> {
 
     /// Get the current Swift runtime version detected at the host.
     pub fn b3_detect_runtime_version(&self) -> Result<RuntimeVersion, RuntimeContractError> {
-        let func: ContractB3RuntimeVersionJson = self.resolve("swift_contract_b3_runtime_version_json")?;
+        let func: ContractB3RuntimeVersionJson =
+            self.resolve("swift_contract_b3_runtime_version_json")?;
         let json_ptr = unsafe { func() };
         if json_ptr.is_null() {
             return Err(RuntimeContractError::VersionDetectionFailed {
@@ -5699,24 +5739,29 @@ impl<'a> RuntimeContract<'a> {
 
         let c_str = unsafe { CStr::from_ptr(json_ptr) };
         let json_str = c_str.to_string_lossy();
-        let version: Result<RuntimeVersion, _> = serde_json::from_str(&json_str)
-            .map_err(|e| RuntimeContractError::VersionDetectionFailed {
+        let version: Result<RuntimeVersion, _> = serde_json::from_str(&json_str).map_err(|e| {
+            RuntimeContractError::VersionDetectionFailed {
                 reason: format!("Failed to parse runtime version: {}", e),
-            });
+            }
+        });
 
         unsafe { libc::free(json_ptr as *mut c_void) };
         version
     }
 
     /// Get adapter table for the specified version profile.
-    pub fn b3_get_adapter_table(&self, profile_id: &str) -> Result<Vec<AdapterTypeLayout>, RuntimeContractError> {
-        let profile_c = CString::new(profile_id)
-            .map_err(|_| RuntimeContractError::AdapterSelectionFailed {
+    pub fn b3_get_adapter_table(
+        &self,
+        profile_id: &str,
+    ) -> Result<Vec<AdapterTypeLayout>, RuntimeContractError> {
+        let profile_c =
+            CString::new(profile_id).map_err(|_| RuntimeContractError::AdapterSelectionFailed {
                 version: profile_id.to_string(),
                 reason: "invalid profile ID".to_string(),
             })?;
 
-        let func: ContractB3GetAdapterTableJson = self.resolve("swift_contract_b3_get_adapter_table_json")?;
+        let func: ContractB3GetAdapterTableJson =
+            self.resolve("swift_contract_b3_get_adapter_table_json")?;
         let json_ptr = unsafe { func(profile_c.as_ptr()) };
         if json_ptr.is_null() {
             return Ok(Vec::new());
@@ -5724,10 +5769,12 @@ impl<'a> RuntimeContract<'a> {
 
         let c_str = unsafe { CStr::from_ptr(json_ptr) };
         let json_str = c_str.to_string_lossy();
-        let layouts: Result<Vec<AdapterTypeLayout>, _> = serde_json::from_str(&json_str)
-            .map_err(|e| RuntimeContractError::AdapterSelectionFailed {
-                version: profile_id.to_string(),
-                reason: format!("Failed to parse adapter table: {}", e),
+        let layouts: Result<Vec<AdapterTypeLayout>, _> =
+            serde_json::from_str(&json_str).map_err(|e| {
+                RuntimeContractError::AdapterSelectionFailed {
+                    version: profile_id.to_string(),
+                    reason: format!("Failed to parse adapter table: {}", e),
+                }
             });
 
         unsafe { libc::free(json_ptr as *mut c_void) };
@@ -5735,16 +5782,20 @@ impl<'a> RuntimeContract<'a> {
     }
 
     /// Select a version adapter profile and activate it.
-    pub fn b3_select_adapter_profile(&self, profile_id: &str) -> Result<bool, RuntimeContractError> {
-        let profile_c = CString::new(profile_id)
-            .map_err(|_| RuntimeContractError::AdapterSelectionFailed {
+    pub fn b3_select_adapter_profile(
+        &self,
+        profile_id: &str,
+    ) -> Result<bool, RuntimeContractError> {
+        let profile_c =
+            CString::new(profile_id).map_err(|_| RuntimeContractError::AdapterSelectionFailed {
                 version: profile_id.to_string(),
                 reason: "invalid profile ID".to_string(),
             })?;
 
-        let func: ContractB3SelectAdapterProfile = self.resolve("swift_contract_b3_select_adapter_profile")?;
+        let func: ContractB3SelectAdapterProfile =
+            self.resolve("swift_contract_b3_select_adapter_profile")?;
         let result = unsafe { func(profile_c.as_ptr()) };
-        
+
         if result == 0 {
             return Err(RuntimeContractError::AdapterSelectionFailed {
                 version: profile_id.to_string(),
@@ -5781,9 +5832,13 @@ impl<'a> RuntimeContract<'a> {
     }
 
     /// Get the offset of a field in a given type within the selected adapter profile.
-    pub fn b3_get_field_offset(&self, type_name: &str, field_name: &str) -> Result<i32, RuntimeContractError> {
+    pub fn b3_get_field_offset(
+        &self,
+        type_name: &str,
+        field_name: &str,
+    ) -> Result<i32, RuntimeContractError> {
         let version = self.b3_detect_runtime_version()?;
-        
+
         // For now, use default profiles based on detected version
         let profile_id = format!("swift_{}_{}_arm64_macos", version.major, version.minor);
         let layouts = self.b3_get_adapter_table(&profile_id)?;
@@ -5847,7 +5902,8 @@ impl<'a> RuntimeContract<'a> {
 
         unsafe { libc::free(json_ptr as *mut c_void) };
 
-        parsed.as_array()
+        parsed
+            .as_array()
             .unwrap_or(&Vec::new())
             .iter()
             .filter_map(|v| v.as_str().map(|s| s.to_string()))
@@ -5856,7 +5912,8 @@ impl<'a> RuntimeContract<'a> {
 
     /// Get a diagnostic dump of the detected version + adapter profile (for debug-mode troubleshooting).
     pub fn b4_debug_dump(&self) -> String {
-        let version = self.b3_detect_runtime_version()
+        let version = self
+            .b3_detect_runtime_version()
             .map(|v| format!("{}.{}.{}", v.major, v.minor, v.patch))
             .unwrap_or_else(|e| format!("version_unknown({:?})", e));
 
@@ -5880,7 +5937,8 @@ impl<'a> RuntimeContract<'a> {
         operation_name: &str,
         reason: &str,
     ) -> Result<T, RuntimeContractError> {
-        let version = self.b3_detect_runtime_version()
+        let version = self
+            .b3_detect_runtime_version()
             .map(|v| format!("{}.{}.{}", v.major, v.minor, v.patch))
             .unwrap_or_else(|_| "unknown".to_string());
 

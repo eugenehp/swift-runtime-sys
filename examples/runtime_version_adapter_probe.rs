@@ -5,9 +5,10 @@ use swift_runtime_sys::RuntimeContract::RuntimeContract;
 use swift_runtime_sys::RuntimeFactory::RuntimeFactory;
 
 fn main() {
-    let factory = RuntimeFactory::with_thunk_library("./libRustBridge.dylib", "./libRuntimeThunks.dylib")
-        .or_else(|_| RuntimeFactory::new("./libRustBridge.dylib"))
-        .unwrap_or_else(|e| panic!("failed to init RuntimeFactory: {e:?}"));
+    let factory =
+        RuntimeFactory::with_thunk_library("./libRustBridge.dylib", "./libRuntimeThunks.dylib")
+            .or_else(|_| RuntimeFactory::new("./libRustBridge.dylib"))
+            .unwrap_or_else(|e| panic!("failed to init RuntimeFactory: {e:?}"));
 
     factory
         .validate_runtime_contract(1)
@@ -23,7 +24,10 @@ fn main() {
     total += 1;
     match contract.b3_detect_runtime_version() {
         Ok(v) if !v.version_string.is_empty() => {
-            println!("PASS 1 version {}.{}.{} ({})", v.major, v.minor, v.patch, v.version_string);
+            println!(
+                "PASS 1 version {}.{}.{} ({})",
+                v.major, v.minor, v.patch, v.version_string
+            );
             pass += 1;
         }
         Ok(v) => println!("FAIL 1 empty version_string: {:?}", v),
@@ -60,7 +64,10 @@ fn main() {
     }
 
     total += 1;
-    if contract.b3_select_adapter_profile("invalid_profile").is_err() {
+    if contract
+        .b3_select_adapter_profile("invalid_profile")
+        .is_err()
+    {
         println!("PASS 5 invalid profile rejected");
         pass += 1;
     } else {

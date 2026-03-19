@@ -238,18 +238,16 @@ fn main() {
     // Test 13: Describe a valid witness table
     println!("\nTest 13: Describe witness table for String : Equatable");
     match contract.b2_resolve_witness_table("String", "Equatable") {
-        Ok(ptr) if ptr as usize != 0 => {
-            match contract.b2_describe_conformance(ptr) {
-                Ok(desc) => {
-                    println!("  ✓ Conformance description: {}", desc);
-                    passed += 1;
-                }
-                Err(e) => {
-                    println!("  ✗ Failed to describe: {:?}", e);
-                    failed += 1;
-                }
+        Ok(ptr) if ptr as usize != 0 => match contract.b2_describe_conformance(ptr) {
+            Ok(desc) => {
+                println!("  ✓ Conformance description: {}", desc);
+                passed += 1;
             }
-        }
+            Err(e) => {
+                println!("  ✗ Failed to describe: {:?}", e);
+                failed += 1;
+            }
+        },
         _ => {
             println!("  ⊘ Skipped (witness table resolution failed)");
         }
