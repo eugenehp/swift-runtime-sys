@@ -59,13 +59,16 @@ I32Pair runtime_thunk_call_i32_i32_to_i32_pair(void *fn_addr, int32_t a, int32_t
 
 int32_t runtime_thunk_call_self_to_i32_x20_by_address(void *fn_addr, void *obj) {
 #if defined(__aarch64__)
+    // Class witness thunks expect x20 to point at a slot containing `self`.
+    // Normalizing to indirect-self avoids unstable direct-pointer calling shapes.
+    void *obj_slot = obj;
     int32_t result;
     __asm__ volatile(
-        "mov x20, %[self]\n"
+        "mov x20, %[slot]\n"
         "blr %[fn]\n"
         "mov %w[out], w0\n"
         : [out] "=r"(result)
-        : [self] "r"(obj), [fn] "r"(fn_addr)
+        : [slot] "r"(&obj_slot), [fn] "r"(fn_addr)
         : "x0", "x20", "x30", "memory");
     return result;
 #else
@@ -77,14 +80,17 @@ int32_t runtime_thunk_call_self_to_i32_x20_by_address(void *fn_addr, void *obj) 
 
 int32_t runtime_thunk_call_self_to_i32_x0_by_address(void *fn_addr, void *obj) {
 #if defined(__aarch64__)
+    // Keep x0 populated for compatibility, but satisfy witness ABI via x20=&slot.
+    void *obj_slot = obj;
     int32_t result;
     __asm__ volatile(
         "mov x0, %[self]\n"
+        "mov x20, %[slot]\n"
         "blr %[fn]\n"
         "mov %w[out], w0\n"
         : [out] "=r"(result)
-        : [self] "r"(obj), [fn] "r"(fn_addr)
-        : "x0", "x30", "memory");
+        : [self] "r"(obj), [slot] "r"(&obj_slot), [fn] "r"(fn_addr)
+        : "x0", "x20", "x30", "memory");
     return result;
 #else
     (void)fn_addr;
@@ -95,14 +101,15 @@ int32_t runtime_thunk_call_self_to_i32_x0_by_address(void *fn_addr, void *obj) {
 
 int32_t runtime_thunk_call_self_to_i32_x20_x0_by_address(void *fn_addr, void *obj) {
 #if defined(__aarch64__)
+    void *obj_slot = obj;
     int32_t result;
     __asm__ volatile(
-        "mov x20, %[self]\n"
+        "mov x20, %[slot]\n"
         "mov x0, %[self]\n"
         "blr %[fn]\n"
         "mov %w[out], w0\n"
         : [out] "=r"(result)
-        : [self] "r"(obj), [fn] "r"(fn_addr)
+        : [self] "r"(obj), [slot] "r"(&obj_slot), [fn] "r"(fn_addr)
         : "x0", "x20", "x30", "memory");
     return result;
 #else
@@ -114,15 +121,17 @@ int32_t runtime_thunk_call_self_to_i32_x20_x0_by_address(void *fn_addr, void *ob
 
 int32_t runtime_thunk_call_witness_self_x0_x1_by_address(void *fn_addr, void *obj, void *witness) {
 #if defined(__aarch64__)
+    void *obj_slot = obj;
     int32_t result;
     __asm__ volatile(
         "mov x0, %[self]\n"
         "mov x1, %[wit]\n"
+        "mov x20, %[slot]\n"
         "blr %[fn]\n"
         "mov %w[out], w0\n"
         : [out] "=r"(result)
-        : [self] "r"(obj), [wit] "r"(witness), [fn] "r"(fn_addr)
-        : "x0", "x1", "x30", "memory");
+        : [self] "r"(obj), [wit] "r"(witness), [slot] "r"(&obj_slot), [fn] "r"(fn_addr)
+        : "x0", "x1", "x20", "x30", "memory");
     return result;
 #else
     (void)fn_addr;
@@ -134,14 +143,15 @@ int32_t runtime_thunk_call_witness_self_x0_x1_by_address(void *fn_addr, void *ob
 
 int32_t runtime_thunk_call_witness_self_x20_x1_by_address(void *fn_addr, void *obj, void *witness) {
 #if defined(__aarch64__)
+    void *obj_slot = obj;
     int32_t result;
     __asm__ volatile(
-        "mov x20, %[self]\n"
+        "mov x20, %[slot]\n"
         "mov x1, %[wit]\n"
         "blr %[fn]\n"
         "mov %w[out], w0\n"
         : [out] "=r"(result)
-        : [self] "r"(obj), [wit] "r"(witness), [fn] "r"(fn_addr)
+        : [self] "r"(obj), [wit] "r"(witness), [slot] "r"(&obj_slot), [fn] "r"(fn_addr)
         : "x0", "x1", "x20", "x30", "memory");
     return result;
 #else
