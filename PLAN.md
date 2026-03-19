@@ -807,10 +807,11 @@ Goal: Expand runtime-control coverage on the current host cell beyond existing r
 ### C.1) Ownership, Lifetime, and Aliasing Hardening
 - [ ] Add move-only / noncopyable semantics probes for host-supported constructs.
 - [ ] Add exclusivity/aliasing stress probes for overlapping mutable access across FFI boundaries.
-- [ ] Add ARC reordering resilience checks under optimized builds (retain/release sequencing invariants).
-- [ ] Add cross-boundary allocator ownership contracts (who allocates/frees) with double-free/use-after-free guards.
+- [x] Add ARC reordering resilience checks under optimized builds (retain/release sequencing invariants).
+- [x] Add cross-boundary allocator ownership contracts (who allocates/frees) with double-free/use-after-free guards.
 - [ ] Add pinned-object and interior-pointer lifetime probes.
 - [ ] Exit criteria: No ownership/lifetime violations under required debug+release host runs; all invalid ownership operations fail deterministically with structured diagnostics.
+- **Status**: PARTIAL — Added probe `examples/runtime_c1_ownership_probe.rs` (10/10 PASS in debug and release) plus gate script `scripts/run_c1_ownership_gate.sh` and artifacts `target/runtime-probe/c1-ownership-gate.json` + `target/runtime-probe/c1-ownership-gate.md`. Implemented checks cover weak/unowned lifecycle safety, retain-delta invariants, allocator tracker reset/increment/decrement behavior, double-release guard, per-site live count stability, and tagged-allocation usage/cleanup.
 
 ### C.2) Advanced Existentials and Generic Constraints
 - [ ] Add protocol-composition existential probes (`P & Q`) across value/reference payloads.
