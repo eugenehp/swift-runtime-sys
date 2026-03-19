@@ -401,6 +401,10 @@ type ContractB3RuntimeVersionJson = unsafe extern "C" fn() -> *mut c_char;
 type ContractB3GetAdapterTableJson = unsafe extern "C" fn(*const c_char) -> *mut c_char;
 type ContractB3SelectAdapterProfile = unsafe extern "C" fn(*const c_char) -> i32;
 
+// Phase B.4 – Fallback & Graceful Degradation
+type ContractB4IsFeatureSupported = unsafe extern "C" fn(*const c_char) -> i32;
+type ContractB4SupportedFeaturesJson = unsafe extern "C" fn() -> *mut c_char;
+
 #[derive(Debug, Clone, Default, Deserialize)]
 pub struct ContractTypeDescriptor {
     pub type_id: i32,
@@ -5802,6 +5806,99 @@ impl<'a> RuntimeContract<'a> {
             version: type_name.to_string(),
             reason: "type not found in adapter table".to_string(),
         })
+    }
+
+    // MARK: - Phase B.4: Fallback & Graceful Degradation
+
+    /// Check if a named feature is supported in the current connected Swift runtime.
+    pub fn b4_is_feature_supported(&self, feature_name: &str) -> bool {
+        let func: Result<ContractB4IsFeatureSupported, _> =
+            self.resolve("swift_contract_b4_is_feature_supported");
+        let Ok(func) = func else { return false };
+
+        let feature_c = match CString::new(feature_name) {
+            Ok(c) => c,
+            Err(_) => return false,
+        };
+
+        unsafe { func(feature_c.as_ptr()) != 0 }
+    }
+
+    /// Return a sorted list of all feature names supported by the current runtime.
+    pub fn b4_supported_features(&self) -> Vec<String> {
+        let func: Result<ContractB4SupportedFeaturesJson, _> =
+            self.resolve("swift_contract_b4_supported_features_json");
+        let Ok(func) = func else { return Vec::new() };
+
+        let json_ptr = unsafe { func() };
+        if json_ptr.is_null() {
+            return Vec::new();
+        }
+
+        let c_str = unsafe { CStr::from_ptr(json_ptr) };
+        let json_str = c_str.to_string_lossy();
+        let parsed: serde_json::Value = match serde_json::from_str(&json_str) {
+            Ok(v) => v,
+            Err(_) => {
+                unsafe { libc::free(json_ptr as *mut c_void) };
+                return Vec::new();
+            }
+        };
+
+        unsafe { libc::free(json_ptr as *mut c_void) };
+
+        parsed.as_array()
+            .unwrap_or(&Vec::new())
+            .iter()
+            .filter_map(|v| v.as_str().map(|s| s.to_string()))
+            .collect()
+    }
+
+    /// Get a diagnostic dump of the detected version + adapter profile (for debug-mode troubleshooting).
+    pub fn b4_debug_dump(&self) -> String {
+        let version = self.b3_detect_runtime_version()
+            .map(|v| format!("{}.{}.{}", v.major, v.minor, v.patch))
+            .unwrap_or_else(|e| format!("version_unknown({:?})", e));
+
+        let features = self.b4_supported_features();
+        let features_list = if features.is_empty() {
+            "none".to_string()
+        } else {
+            features.join(", ")
+        };
+
+        format!(
+            "[B.4 Debug Dump]\nruntime_version={}\nsupported_features=[{}]",
+            version, features_list
+        )
+    }
+
+    /// Disable an unsupported operation by returning a structured error with diagnostics.
+    /// Call this instead of attempting an unsafe runtime operation on unsupported builds.
+    pub fn b4_unsupported_operation<T>(
+        &self,
+        operation_name: &str,
+        reason: &str,
+    ) -> Result<T, RuntimeContractError> {
+        let version = self.b3_detect_runtime_version()
+            .map(|v| format!("{}.{}.{}", v.major, v.minor, v.patch))
+            .unwrap_or_else(|_| "unknown".to_string());
+
+        Err(RuntimeContractError::VersionDetectionFailed {
+            reason: format!(
+                "Operation '{}' not supported (version={}, reason={})",
+                operation_name, version, reason
+            ),
+        })
+    }
+
+    /// Check multiple features at once — returns the list of unsupported features.
+    pub fn b4_check_required_features(&self, required: &[&str]) -> Vec<String> {
+        required
+            .iter()
+            .filter(|&&feat| !self.b4_is_feature_supported(feat))
+            .map(|&feat| feat.to_string())
+            .collect()
     }
 
     pub fn release(&self, object: ContractObject) -> Result<(), RuntimeContractError> {

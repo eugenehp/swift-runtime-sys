@@ -1,17 +1,17 @@
 {
   "version": 1,
-  "description": "Declared AP.1 required support matrix for claim enforcement",
+  "description": "Declared v3-dynamic required support matrix — Phase B multi-version adaptation (Swift 6.1+)",
   "required_cells": [
     {
       "cell": "macos-14",
       "arch": "arm64",
-      "swift_version_prefix": "Apple Swift version 6.2.",
+      "swift_version_prefix": "Apple Swift version 6.",
       "profiles": ["debug", "release"]
     },
     {
       "cell": "macos-15",
       "arch": "arm64",
-      "swift_version_prefix": "Apple Swift version 6.2.",
+      "swift_version_prefix": "Apple Swift version 6.",
       "profiles": ["debug", "release"]
     }
   ]

@@ -315,7 +315,7 @@ jobs:
   support_matrix_signoff:
     name: Support matrix signoff
     runs-on: macos-15
-    needs: [parity, stress, protocol_dispatch, abi_shape_closure, differential_oracle, reliability_soak, contract_parity]
+    needs: [parity, stress, protocol_dispatch, abi_shape_closure, differential_oracle, reliability_soak, contract_parity, multiversion_compat]
 
     steps:
       - uses: actions/checkout@v4
@@ -384,6 +384,53 @@ jobs:
       fail-fast: false
       matrix:
         upstream_ref: [swift-6.2.4-RELEASE, main]
+
+  multiversion_compat:
+    name: Multi-version compatibility (${{ matrix.runner }}, ${{ matrix.profile }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-14, macos-15]
+        profile: [debug, release]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-${{ matrix.runner }}-cargo-multiversion-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-${{ matrix.runner }}-cargo-
+
+      - name: Install tmux
+        run: brew install tmux
+
+      - name: Build runtime thunks
+        run: ./scripts/build_runtime_thunks.sh
+
+      - name: Verify Swift version
+        run: swift --version
+
+      - name: Run B.5 multi-version compatibility gate
+        run: PROFILE=${{ matrix.profile }} ./scripts/run_multiversion_compat.sh
+
+      - name: Upload multi-version artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: multiversion-compat-${{ matrix.runner }}-${{ matrix.profile }}-${{ github.sha }}
+          path: |
+            target/runtime-probe/multiversion-compat-matrix.json
+            target/runtime-probe/multiversion-compat-matrix.md
+
 
     steps:
       - uses: actions/checkout@v4

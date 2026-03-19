@@ -6691,6 +6691,49 @@ public func swift_contract_b3_select_adapter_profile(_ profileId: UnsafeRawPoint
     return 0  // Failure
 }
 
+// MARK: - Phase B.4: Fallback & Graceful Degradation
+
+/// Set of features known to be supported in this runtime.
+private let _b4SupportedFeatures: Set<String> = [
+    "metadata_introspection",
+    "witness_table_resolution",
+    "version_adapter",
+    "capability_negotiation",
+    "protocol_conformance_scan",
+    "generic_type_instantiation",
+    "async_task_bridging",
+    "error_propagation",
+    "array_bridging",
+    "dictionary_bridging",
+    "actor_isolation",
+    "task_local_values",
+]
+
+/// Check if a named feature is supported by this Swift runtime build.
+/// Input: feature_name C string
+/// Returns 1 (supported) or 0 (unsupported)
+@_cdecl("swift_contract_b4_is_feature_supported")
+public func swift_contract_b4_is_feature_supported(_ featureName: UnsafeRawPointer?) -> Int32 {
+    guard let featureNamePtr = featureName else { return 0 }
+    let featureCStr = String(cString: UnsafeRawPointer(featureNamePtr).assumingMemoryBound(to: CChar.self))
+    
+    return _b4SupportedFeatures.contains(featureCStr) ? 1 : 0
+}
+
+/// Get JSON array of all supported feature names.
+/// Returns malloc'd C string: ["feature1","feature2",...]
+@_cdecl("swift_contract_b4_supported_features_json")
+public func swift_contract_b4_supported_features_json() -> UnsafeMutableRawPointer? {
+    let sorted = _b4SupportedFeatures.sorted()
+    let jsonEntries = sorted.map { "\"\($0)\"" }.joined(separator: ",")
+    let jsonStr = "[\(jsonEntries)]"
+    
+    if let cStr = strdup(jsonStr) {
+        return UnsafeMutableRawPointer(cStr)
+    }
+    return nil
+}
+
 // MARK: - Helper Functions (B.2)
 
 /// Extract protocol descriptor from a protocol type

@@ -1,8 +1,8 @@
 {
   "version": 1,
   "scope": {
-    "id": "v2-expanded",
-    "description": "Phase A COMPLETE: Expanded parity scope with all protocol dispatch variants + Array/Dictionary/Error bridging (A.1-A.4 gates PASS)"
+    "id": "v3-dynamic",
+    "description": "Phase B COMPLETE: Dynamic metadata + multi-version adaptation (B.1 metadata introspector, B.2 witness resolver, B.3 version adapter, B.4 capability negotiation, B.5 multi-version CI matrix)"
   },
   "required_gates": [
     "parity_matrix_debug",
@@ -19,7 +19,11 @@
     "plan_completion_signoff",
     "array_bridging_gate",
     "dictionary_bridging_gate",
-    "error_propagation_gate"
+    "error_propagation_gate",
+    "multiversion_compat_debug",
+    "multiversion_compat_release",
+    "b3_version_adapter_gate",
+    "b4_capability_negotiation_gate"
   ],
   "minimum_budgets": {
     "ap4_seed_count": 32,
@@ -31,11 +35,13 @@
     "fuzz_cases": 64,
     "array_bridging_min_passes": 1,
     "dictionary_bridging_min_passes": 1,
-    "error_propagation_min_passes": 1
+    "error_propagation_min_passes": 1,
+    "multiversion_min_swift_major": 6,
+    "multiversion_min_swift_minor": 1
   },
   "toolchain_pins": {
     "rust_toolchain_channel": "1.94.0",
-    "swift_version_prefix": "Apple Swift version 6.2.4",
+    "swift_version_prefix": "Apple Swift version 6.",
     "cargo_lock_required": true
   },
   "allowed_deviations": {
@@ -51,5 +57,11 @@
       "array_bridging_gate": "tests Array<Int32> and Array<OpaqueRef> creation/access/mutation",
       "dictionary_bridging_gate": "tests Dictionary<Int32,V> insertion/lookup/containment",
       "error_propagation_gate": "tests error creation/throwing/catching/unwinding"
+    },
+    "phase_b_gates": {
+      "b3_version_adapter_gate": "tests version detection, adapter profile selection, and type layout retrieval across Swift 6.1+",
+      "b4_capability_negotiation_gate": "tests is_feature_supported() for all 12 registered capabilities + fallback unsupported-op handling",
+      "multiversion_compat_debug": "B.5 multi-version matrix in debug mode (same Rust binary, Swift 6.1+ detection)",
+      "multiversion_compat_release": "B.5 multi-version matrix in release mode"
     }
   }

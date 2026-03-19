@@ -280,6 +280,34 @@ Required:
 - CI uploads parity/stress/protocol artifacts for each run.
 - All protocol dispatch variants (x20, x0, x20x0, x0x1, x20x1, existential) pass with semantic parity (Phase A.1).
 - CI support-matrix signoff job validates parity artifacts from all required cells.
+- Multi-version compatibility gate (`scripts/run_multiversion_compat.sh`) passes for Swift 6.1+ on required CI cells (Phase B.5).
+
+## Multi-Version Support (Phase B — v3-dynamic scope)
+
+The v3-dynamic scope extends parity from a single pinned Swift version to a supported version range (Swift 6.1+):
+
+- **Phase B.1** — Runtime metadata-header parser discovers struct/class field offsets dynamically without hardcoded version-specific offsets.
+- **Phase B.2** — Witness table dynamic resolver scans `__swift_conformances` section; locates protocol conformances at runtime without pre-registered lookups.
+- **Phase B.3** — Cross-version ABI compatibility shim: detects Swift version at runtime and auto-selects an adapter profile with correct field offsets and witness slot patterns for the running version.
+- **Phase B.4** — Graceful degradation: 12-feature capability registry with `b4_is_feature_supported()` for runtime negotiation; `b4_unsupported_operation()` prevents memory corruption on unknown versions; `b4_debug_dump()` prints version + features for troubleshooting.
+- **Phase B.5** — Multi-version CI matrix: `macos-14 × macos-15 × {debug, release}` cells; version pin loosened from `6.2.4` to `>=6.1`; same Rust binary works across all supported Swift versions without recompilation.
+
+### Supported Swift Versions
+
+| Swift | macOS 14 | macOS 15 | Notes |
+|-------|----------|----------|-------|
+| 6.1.x | ✅ | ✅ | Minimum supported version |
+| 6.2.x | ✅ | ✅ | Current development target |
+| 6.3+ | ⏳ | ⏳ | Will be adopted after full gate convergence (AP.7 policy) |
+
+### Graceful Degradation Policy
+
+When running against an unsupported Swift version or unknown conformance:
+1. `b4_is_feature_supported()` returns `false` — no crash.
+2. `b4_unsupported_operation()` returns a structured `RuntimeContractError::VersionDetectionFailed` with version and reason.
+3. The adapter layer falls back to the closest compatible profile rather than attempting unsound memory access.
+4. Debug dump (`b4_debug_dump()`) prints current version and feature list for diagnostics.
+
 
 Optional:
 
