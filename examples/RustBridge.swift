@@ -157,6 +157,82 @@ public func swift_shape_rect_area(_ w: Float, _ h: Float) -> Float {
     Shape.rectangle(width: w, height: h).area()
 }
 
+// MARK: - Phase C.3: Enum Layout & Evolution
+
+/// Multi-payload enum: different cases have different associated value counts.
+/// Tests enum ABI with variable payload sizes and tag encoding.
+public enum C3MultiPayload {
+    case noValue                 // 0 associated values (tag only)
+    case oneValue(Int32)         // 1 associated value
+    case twoValues(Int32, Int32) // 2 associated values
+}
+
+@_cdecl("swift_contract_c3_multi_payload_novalue")
+public func swift_contract_c3_multi_payload_novalue() -> Int32 {
+    let e = C3MultiPayload.noValue
+    if case .noValue = e { return 1 } else { return 0 }
+}
+
+@_cdecl("swift_contract_c3_multi_payload_onevalue")
+public func swift_contract_c3_multi_payload_onevalue(_ v: Int32) -> Int32 {
+    let e = C3MultiPayload.oneValue(v)
+    if case .oneValue(let x) = e { return x } else { return Int32.min }
+}
+
+@_cdecl("swift_contract_c3_multi_payload_sumtwo")
+public func swift_contract_c3_multi_payload_sumtwo(_ a: Int32, _ b: Int32) -> Int32 {
+    let e = C3MultiPayload.twoValues(a, b)
+    if case .twoValues(let x, let y) = e { return x &+ y } else { return Int32.min }
+}
+
+/// Indirect recursive enum: allows self-referential structure via boxing.
+/// Tests allocation, deallocation, and recursive traversal safety.
+public indirect enum C3RecursiveNode {
+    case leaf(Int32)
+    case branch(Int32, C3RecursiveNode, C3RecursiveNode)
+}
+
+private func c3RecursiveSum(_ node: C3RecursiveNode) -> Int32 {
+    switch node {
+    case .leaf(let value):
+        return value
+    case .branch(let value, let left, let right):
+        return value &+ c3RecursiveSum(left) &+ c3RecursiveSum(right)
+    }
+}
+
+@_cdecl("swift_contract_c3_recursive_leaf")
+public func swift_contract_c3_recursive_leaf(_ value: Int32) -> Int32 {
+    c3RecursiveSum(.leaf(value))
+}
+
+@_cdecl("swift_contract_c3_recursive_tree")
+public func swift_contract_c3_recursive_tree(_ root: Int32, _ child: Int32) -> Int32 {
+    // Build a simple tree: root with two identical leaf children
+    let tree = C3RecursiveNode.branch(root, .leaf(child), .leaf(child))
+    return c3RecursiveSum(tree)
+}
+
+/// Resilient enum: mimics versioned enum case handling (future case support).
+/// Newer Swift runtime might add unknown cases; older code must handle gracefully.
+public enum C3Resilient: Int32 {
+    case stableV1 = 0
+    case stableV2 = 1
+    case stableV3 = 2
+}
+
+@_cdecl("swift_contract_c3_resilient_match")
+public func swift_contract_c3_resilient_match(_ tag: Int32) -> Int32 {
+    guard let e = C3Resilient(rawValue: tag) else {
+        return Int32.min  // Signals unknown case
+    }
+    switch e {
+    case .stableV1: return 10
+    case .stableV2: return 20
+    case .stableV3: return 30
+    }
+}
+
 // MARK: - Error Handling & Introspection (Track E.1)
 
 /// A simple custom error type with error code.
@@ -2623,6 +2699,16 @@ private let _n2ShapeRegistry: [String: String] = [
     "swift_contract_n2_unknown_const42":           "void_to_i32",
     "swift_contract_c1_noncopyable_consume_once":  "i32_to_i32",
     "swift_contract_c1_aliasing_guarded_inout":    "i32ptr_i32_to_i32",
+    "swift_contract_c2_protocol_composition_sum":  "i32_i32_to_i32",
+    "swift_contract_c2_validation_check":          "i32_to_i32",
+    "swift_contract_c2_conditional_collection":    "i32_i32_to_i32",
+    "swift_contract_constrained_multi_min":        "i32_i32_to_i32",
+    "swift_contract_c3_multi_payload_novalue":     "void_to_i32",
+    "swift_contract_c3_multi_payload_onevalue":    "i32_to_i32",
+    "swift_contract_c3_multi_payload_sumtwo":      "i32_i32_to_i32",
+    "swift_contract_c3_recursive_leaf":            "i32_to_i32",
+    "swift_contract_c3_recursive_tree":            "i32_i32_to_i32",
+    "swift_contract_c3_resilient_match":           "i32_to_i32",
 ]
 
 /// Dynamic invoke by runtime symbol name + lowered shape descriptor.

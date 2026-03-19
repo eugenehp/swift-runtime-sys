@@ -18,7 +18,10 @@ fn main() {
 
     println!("\n=== Phase C.2 Advanced Existentials & Generic Constraints ===");
 
-    let tests: [(&str, fn(&RuntimeContract) -> Result<bool, RuntimeContractError>); 6] = [
+    let tests: [(
+        &str,
+        fn(&RuntimeContract) -> Result<bool, RuntimeContractError>,
+    ); 6] = [
         (
             "Protocol composition sum dispatches correctly",
             test_c2_composition_sum,
@@ -74,11 +77,7 @@ fn main() {
 
 fn test_c2_composition_sum(c: &RuntimeContract) -> Result<bool, RuntimeContractError> {
     // Protocol composition: sum via composed Summable & Validatable protocol.
-    let result = c.n2_dynamic_symbol_i32(
-        "swift_contract_c2_protocol_composition_sum",
-        10,
-        20,
-    )?;
+    let result = c.n2_dynamic_symbol_i32("swift_contract_c2_protocol_composition_sum", 10, 20)?;
     Ok(result == 30)
 }
 
@@ -96,30 +95,18 @@ fn test_c2_validation_negative(c: &RuntimeContract) -> Result<bool, RuntimeContr
 
 fn test_c2_conditional_all_positive(c: &RuntimeContract) -> Result<bool, RuntimeContractError> {
     // Conditional Array conformance: [val1, val2, 1] all positive elements pass.
-    let result = c.n2_dynamic_symbol_i32(
-        "swift_contract_c2_conditional_collection",
-        5,
-        10,
-    )?;
+    let result = c.n2_dynamic_symbol_i32("swift_contract_c2_conditional_collection", 5, 10)?;
     Ok(result == 1)
 }
 
 fn test_c2_conditional_with_negative(c: &RuntimeContract) -> Result<bool, RuntimeContractError> {
     // Conditional Array conformance: [val1, val2, 1] fails if val2 is negative.
-    let result = c.n2_dynamic_symbol_i32(
-        "swift_contract_c2_conditional_collection",
-        5,
-        -3,
-    )?;
+    let result = c.n2_dynamic_symbol_i32("swift_contract_c2_conditional_collection", 5, -3)?;
     Ok(result == 0)
 }
 
 fn test_c2_multi_bound(c: &RuntimeContract) -> Result<bool, RuntimeContractError> {
     // Multi-constraint: Comparable & Hashable.
-    let result = c.n2_dynamic_symbol_i32(
-        "swift_contract_constrained_multi_min",
-        50,
-        30,
-    )?;
+    let result = c.n2_dynamic_symbol_i32("swift_contract_constrained_multi_min", 50, 30)?;
     Ok(result == 30)
 }

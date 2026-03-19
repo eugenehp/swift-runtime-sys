@@ -831,10 +831,15 @@ Goal: Expand runtime-control coverage on the current host cell beyond existing r
   - Gate script `scripts/run_c2_existentials_gate.sh` confirms debug/release equivalence. No parity regressions (101/101 PASS).
 
 ### C.3) Enum and Layout Edge Cases
-- [ ] Add multi-payload enum ABI probes (payload-tag interactions, payload switching).
-- [ ] Add resilient enum evolution compatibility probes (case expansion and compatibility behavior).
-- [ ] Add indirect/recursive enum allocation and teardown checks.
-- [ ] Exit criteria: Enum case identity/payload integrity is preserved across Rust↔Swift operations for all in-scope variants.
+- [x] Add multi-payload enum ABI probes (payload-tag interactions, payload switching).
+- [x] Add resilient enum evolution compatibility probes (case expansion and compatibility behavior).
+- [x] Add indirect/recursive enum allocation and teardown checks.
+- [x] Exit criteria: Enum case identity/payload integrity is preserved across Rust↔Swift operations for all in-scope variants.
+- **Status**: COMPLETE — Created probe `examples/runtime_c3_enum_probe.rs` (8/8 PASS debug and release) testing:
+  - C3.1: Multi-payload enum with varying associated value counts (no-value, one-value, two-value).
+  - C3.2: Recursive enum with `indirect` boxing for tree traversal.
+  - C3.3: Resilient enum evolution with stable cases and unknown case handling (returns Int32.min).
+  - Gate script `scripts/run_c3_enum_gate.sh` confirms debug/release equivalence. No parity regressions (101/101 PASS).
 
 ### C.4) Closure and Async-Capture Semantics
 - [ ] Add escaping closure capture lifetime probes across FFI ownership boundaries.
