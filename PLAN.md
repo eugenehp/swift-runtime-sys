@@ -884,6 +884,11 @@ Goal: Expand runtime-control coverage on the current host cell beyond existing r
 - [x] Exit criteria: Claim remains precise, auditable, and aligned with executed evidence.
 - **Status**: COMPLETE — Added explicit host-cell classification table in `README.md` (C.1–C.9 marked `required` with promotion evidence gates), updated `scripts/parity_claim_contract.json` required gates/budgets to include C.8/C.9 policy enforcement, and added `scripts/run_c9_host_promotion_gate.sh` which validates C.* classification, C.8 green history window, and README/PLAN claim alignment while writing `target/runtime-probe/c9-host-promotion-signoff.{json,md}`.
 
+### Phase C Completion Evidence (2026-03-19)
+- [x] Consolidated Phase C host-cell signoff runner added: `scripts/run_phase_c_signoff.sh`.
+- [x] Signoff artifacts emitted: `target/runtime-probe/phase-c-signoff/phase-c-signoff.{json,md}`.
+- [x] Signoff requires C.1–C.9 gates + final parity matrix PASS.
+
 ### Extended Scope Tracks
 - **Phase C**: Async/Task runtime bridging (task spawning, local storage, cancellation).
 - **Phase D**: Generics specialization & witness instantiation for arbitrary type parameters.
