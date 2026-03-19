@@ -148,6 +148,24 @@ Compiler-feature cooperation boundary for promoted parity flows:
 	`Person`, `Counter`, and `ContractGenericBox<Int32>`, plus protocol-conformance
 	lookup and wrapper-based `CounterLike.current` dispatch.
 
+## Host-Cell Coverage Classification (Phase C)
+
+Promotion policy for host-cell deepening features uses three buckets:
+`required`, `optional`, and `experimental`. A feature is promoted to
+`required` only after a green history window with zero undocumented deviations.
+
+| Phase | Classification | Promotion Evidence |
+|---|---|---|
+| C.1 | required | `scripts/run_c1_ownership_gate.sh` |
+| C.2 | required | `scripts/run_c2_existentials_gate.sh` |
+| C.3 | required | `scripts/run_c3_enum_gate.sh` |
+| C.4 | required | `scripts/run_c4_closure_gate.sh` |
+| C.5 | required | `scripts/run_c5_optimizer_gate.sh` |
+| C.6 | required | `scripts/run_c6_lowering_gate.sh` |
+| C.7 | required | `scripts/run_c7_safety_gate.sh` |
+| C.8 | required | `scripts/run_c8_host_reliability_gate.sh` |
+| C.9 | required | `scripts/run_c9_host_promotion_gate.sh` |
+
 This is the practical way to scale direct Rust control over Swift memory objects.
 For protocols and fully generic existential construction, public stable runtime ABI
 coverage is still incomplete and remains an active research area.

@@ -23,7 +23,9 @@
     "multiversion_compat_debug",
     "multiversion_compat_release",
     "b3_version_adapter_gate",
-    "b4_capability_negotiation_gate"
+    "b4_capability_negotiation_gate",
+    "c8_host_reliability_gate",
+    "c9_host_promotion_gate"
   ],
   "minimum_budgets": {
     "ap4_seed_count": 32,
@@ -37,7 +39,11 @@
     "dictionary_bridging_min_passes": 1,
     "error_propagation_min_passes": 1,
     "multiversion_min_swift_major": 6,
-    "multiversion_min_swift_minor": 1
+    "multiversion_min_swift_minor": 1,
+    "c8_soak_runs": 3,
+    "c8_flake_budget": 0,
+    "c8_regression_budget_pct": 30,
+    "c9_history_window": 1
   },
   "toolchain_pins": {
     "rust_toolchain_channel": "1.94.0",

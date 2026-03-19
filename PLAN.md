@@ -878,10 +878,11 @@ Goal: Expand runtime-control coverage on the current host cell beyond existing r
 - **Status**: COMPLETE — Added host-cell reliability gate `scripts/run_c8_host_reliability_gate.sh` with multi-iteration soak over C.4–C.7 gates and zero-flake enforcement (`C8_FLAKE_BUDGET=0`), expanded differential corpus execution through deterministic seed-check campaigns (`runtime_differential_fuzz_probe --seed-check`, default seeds `1 2 3 4 6 7 8 10 11`, `C8_DIFF_FRAGMENTS=12`) and artifacts (`c8-differential-expanded.{json,md}`), and host trend artifacts for dynamic invoke + metadata traversal lat/memory (`target/runtime-probe/c8-host-reliability/c8-host-trend.{json,md}` plus history snapshots). Gate emits consolidated summary artifacts (`c8-host-reliability-summary.{json,md}`) and fails on unexplained divergence or regression-budget breach.
 
 ### C.9) Promotion Policy for New Host-Cell Coverage
-- [ ] Classify each C.* feature as `required`, `optional`, or `experimental` before claim updates.
-- [ ] Promote C.* features to required only after green history window and zero undocumented deviations.
-- [ ] Update claim contract and README scope statement when promotions occur.
-- [ ] Exit criteria: Claim remains precise, auditable, and aligned with executed evidence.
+- [x] Classify each C.* feature as `required`, `optional`, or `experimental` before claim updates.
+- [x] Promote C.* features to required only after green history window and zero undocumented deviations.
+- [x] Update claim contract and README scope statement when promotions occur.
+- [x] Exit criteria: Claim remains precise, auditable, and aligned with executed evidence.
+- **Status**: COMPLETE — Added explicit host-cell classification table in `README.md` (C.1–C.9 marked `required` with promotion evidence gates), updated `scripts/parity_claim_contract.json` required gates/budgets to include C.8/C.9 policy enforcement, and added `scripts/run_c9_host_promotion_gate.sh` which validates C.* classification, C.8 green history window, and README/PLAN claim alignment while writing `target/runtime-probe/c9-host-promotion-signoff.{json,md}`.
 
 ### Extended Scope Tracks
 - **Phase C**: Async/Task runtime bridging (task spawning, local storage, cancellation).
