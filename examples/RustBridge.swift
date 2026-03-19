@@ -2,7 +2,6 @@ import Foundation
 import Dispatch
 import Darwin
 import ObjectiveC.runtime
-import ResilientFixtures
 
 public var globalCounterValue: Int32 = 123
 
@@ -6338,4 +6337,144 @@ public func swift_contract_closure_get_offset(_ ptr: UnsafeMutableRawPointer?) -
     guard let ptr else { return -999 }
     let boxed = Unmanaged<Box<ClosureMultiArg>>.fromOpaque(ptr).takeUnretainedValue()
     return boxed.value.offset
+}
+// MARK: - Array<Int32> Bridging (Phase A.2)
+
+/// Container for boxed Array<Int32> with lifetime management.
+public class ArrayInt32Box {
+    var array: [Int32]
+    
+    init(capacity: Int32) {
+        self.array = Array(repeating: 0, count: Int(capacity))
+    }
+    
+    init(from array: [Int32]) {
+        self.array = array
+    }
+}
+
+/// Create an Array<Int32> with initial capacity. Returns opaque pointer or nil.
+@_cdecl("swift_contract_array_int32_make")
+public func swift_contract_array_int32_make(_ capacity: Int32) -> UnsafeMutableRawPointer? {
+    guard capacity >= 0 else { return nil }
+    let box = ArrayInt32Box(capacity: capacity)
+    return Unmanaged.passRetained(box).toOpaque()
+}
+
+/// Get length of Array<Int32>. Returns -1 on invalid ptr.
+@_cdecl("swift_contract_array_int32_len")
+public func swift_contract_array_int32_len(_ ptr: UnsafeMutableRawPointer?) -> Int32 {
+    guard let ptr else { return -1 }
+    let box = Unmanaged<ArrayInt32Box>.fromOpaque(ptr).takeUnretainedValue()
+    return Int32(box.array.count)
+}
+
+/// Get element at index. Returns default 0 on bounds error.
+@_cdecl("swift_contract_array_int32_get")
+public func swift_contract_array_int32_get(_ ptr: UnsafeMutableRawPointer?, _ index: Int32) -> Int32 {
+    guard let ptr, index >= 0 else { return 0 }
+    let box = Unmanaged<ArrayInt32Box>.fromOpaque(ptr).takeUnretainedValue()
+    guard index < box.array.count else { return 0 }
+    return box.array[Int(index)]
+}
+
+/// Set element at index. Returns 0 on success, -1 on bounds error.
+@_cdecl("swift_contract_array_int32_set")
+public func swift_contract_array_int32_set(_ ptr: UnsafeMutableRawPointer?, _ index: Int32, _ value: Int32) -> Int32 {
+    guard let ptr, index >= 0 else { return -1 }
+    let box = Unmanaged<ArrayInt32Box>.fromOpaque(ptr).takeUnretainedValue()
+    guard index < box.array.count else { return -1 }
+    box.array[Int(index)] = value
+    return 0
+}
+
+/// Append value to Array<Int32>. Returns new length or -1 on failure.
+@_cdecl("swift_contract_array_int32_append")
+public func swift_contract_array_int32_append(_ ptr: UnsafeMutableRawPointer?, _ value: Int32) -> Int32 {
+    guard let ptr else { return -1 }
+    let box = Unmanaged<ArrayInt32Box>.fromOpaque(ptr).takeUnretainedValue()
+    box.array.append(value)
+    return Int32(box.array.count)
+}
+
+/// Get raw data pointer (for direct memory access). Returns nil on failure.
+@_cdecl("swift_contract_array_int32_data")
+public func swift_contract_array_int32_data(_ ptr: UnsafeMutableRawPointer?) -> UnsafeRawPointer? {
+    guard let ptr else { return nil }
+    let box = Unmanaged<ArrayInt32Box>.fromOpaque(ptr).takeUnretainedValue()
+    guard !box.array.isEmpty else { return nil }
+    return box.array.withUnsafeBytes { $0.baseAddress }
+}
+
+/// Release Array<Int32>.
+@_cdecl("swift_contract_array_int32_release")
+public func swift_contract_array_int32_release(_ ptr: UnsafeMutableRawPointer?) {
+    guard let ptr else { return }
+    let _ = Unmanaged<ArrayInt32Box>.fromOpaque(ptr).takeRetainedValue()
+}
+
+// MARK: - Array<OpaqueRef> Bridging (Phase A.2)
+
+/// Container for boxed Array<OpaqueRef> with lifetime management.
+public class ArrayOpaqueRefBox {
+    var array: [UnsafeMutableRawPointer?]
+    
+    init(capacity: Int32) {
+        self.array = Array(repeating: nil, count: Int(capacity))
+    }
+    
+    init(from array: [UnsafeMutableRawPointer?]) {
+        self.array = array
+    }
+}
+
+/// Create an Array<OpaqueRef> with initial capacity. Returns opaque pointer or nil.
+@_cdecl("swift_contract_array_opaque_ref_make")
+public func swift_contract_array_opaque_ref_make(_ capacity: Int32) -> UnsafeMutableRawPointer? {
+    guard capacity >= 0 else { return nil }
+    let box = ArrayOpaqueRefBox(capacity: capacity)
+    return Unmanaged.passRetained(box).toOpaque()
+}
+
+/// Get length of Array<OpaqueRef>. Returns -1 on invalid ptr.
+@_cdecl("swift_contract_array_opaque_ref_len")
+public func swift_contract_array_opaque_ref_len(_ ptr: UnsafeMutableRawPointer?) -> Int32 {
+    guard let ptr else { return -1 }
+    let box = Unmanaged<ArrayOpaqueRefBox>.fromOpaque(ptr).takeUnretainedValue()
+    return Int32(box.array.count)
+}
+
+/// Get element at index. Returns nil on bounds error.
+@_cdecl("swift_contract_array_opaque_ref_get")
+public func swift_contract_array_opaque_ref_get(_ ptr: UnsafeMutableRawPointer?, _ index: Int32) -> UnsafeMutableRawPointer? {
+    guard let ptr, index >= 0 else { return nil }
+    let box = Unmanaged<ArrayOpaqueRefBox>.fromOpaque(ptr).takeUnretainedValue()
+    guard index < box.array.count else { return nil }
+    return box.array[Int(index)]
+}
+
+/// Set element at index. Returns 0 on success, -1 on bounds error.
+@_cdecl("swift_contract_array_opaque_ref_set")
+public func swift_contract_array_opaque_ref_set(_ ptr: UnsafeMutableRawPointer?, _ index: Int32, _ value: UnsafeMutableRawPointer?) -> Int32 {
+    guard let ptr, index >= 0 else { return -1 }
+    let box = Unmanaged<ArrayOpaqueRefBox>.fromOpaque(ptr).takeUnretainedValue()
+    guard index < box.array.count else { return -1 }
+    box.array[Int(index)] = value
+    return 0
+}
+
+/// Append value to Array<OpaqueRef>. Returns new length or -1 on failure.
+@_cdecl("swift_contract_array_opaque_ref_append")
+public func swift_contract_array_opaque_ref_append(_ ptr: UnsafeMutableRawPointer?, _ value: UnsafeMutableRawPointer?) -> Int32 {
+    guard let ptr else { return -1 }
+    let box = Unmanaged<ArrayOpaqueRefBox>.fromOpaque(ptr).takeUnretainedValue()
+    box.array.append(value)
+    return Int32(box.array.count)
+}
+
+/// Release Array<OpaqueRef>.
+@_cdecl("swift_contract_array_opaque_ref_release")
+public func swift_contract_array_opaque_ref_release(_ ptr: UnsafeMutableRawPointer?) {
+    guard let ptr else { return }
+    let _ = Unmanaged<ArrayOpaqueRefBox>.fromOpaque(ptr).takeRetainedValue()
 }
