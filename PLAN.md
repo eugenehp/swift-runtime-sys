@@ -1325,7 +1325,13 @@ After completing Phase O (O1-O10 gates required, O8 promoted, O9 deferred), the 
 - **Goal**: Temporal arithmetic with DST, timezone, calendar rules
 - **Scope**: Calendar systems (Gregorian, Julian), timezone database consistency, date arithmetic invariants
 - **Prerequisites**: Foundation infrastructure available
-- **Timeline**: After P.3 (depends on serialization for cross-cell validation)
+- **Implementation Sequence** (Completed):
+  - [x] Step 1: Create `examples/runtime_p5_temporal_probe.rs` for deterministic temporal checks.
+  - [x] Step 2: Create `scripts/run_p5_temporal_gate.sh` with debug + release equivalence validation.
+  - [x] Step 3: Validate epoch formatting/parsing, UTC year/month extraction, J2000 year, UTC offset, and format-parse round-trip stability.
+  - [x] Step 4: Generate P.5 artifacts `target/runtime-probe/p5-temporal/p5-temporal-summary.{json,md}`.
+  - [x] Step 5: Re-run parity matrix and confirm no regressions (`141/141 PASS`).
+- **Status**: P.5 gate PASS (8/8 debug + release).
 
 ### P.6: Number Formatting (Decimal, Percent, Scientific Notation)
 - **Goal**: Locale-aware formatting determinism
@@ -1350,8 +1356,8 @@ After completing Phase O (O1-O10 gates required, O8 promoted, O9 deferred), the 
 - Run full parity matrix after each P gate to ensure no regressions
 - Update claim-contract incrementally: v7-phase-p-foundation only after all P.1-P.6 gates PASS
 
-### Next Action: Begin P.5 Temporal Bridging
-Execute P.5 implementation (Date / Calendar / TimeZone normalization and arithmetic) after P.4 completion.
+### Next Action: Begin P.6 Number Formatting Bridging
+Execute P.6 implementation (Decimal/Percent/Scientific notation formatting determinism) after P.5 completion.
 ---
 
 ## Execution Log
@@ -1391,3 +1397,10 @@ Execute P.5 implementation (Date / Calendar / TimeZone normalization and arithme
 - [x] P.4 gate PASS: 8/8 in debug and 8/8 in release; artifacts emitted under `target/runtime-probe/p4-collections/`.
 - [x] Re-ran parity matrix after P.4 changes: `141/141 PASS` (no regressions).
 - [x] Updated Phase P plan status: P.4 complete, next action moved to P.5 temporal bridging.
+
+### 2026-03-20 (Phase P — P.5 Temporal Bridging Completion)
+- [x] Added `examples/runtime_p5_temporal_probe.rs` covering deterministic Date/Calendar/TimeZone checks.
+- [x] Added `scripts/run_p5_temporal_gate.sh` with debug/release equivalence validation and P.5 artifact output.
+- [x] P.5 gate PASS: 8/8 in debug and 8/8 in release; artifacts emitted under `target/runtime-probe/p5-temporal/`.
+- [x] Re-ran parity matrix after P.5 changes: `141/141 PASS` (no regressions).
+- [x] Updated Phase P plan status: P.5 complete, next action moved to P.6 number formatting bridging.
