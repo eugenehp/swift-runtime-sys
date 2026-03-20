@@ -1179,3 +1179,90 @@ Goal: Close the remaining control-surface gaps that block an "absolute parity of
 - **Blocker**: Distributed typecheck available in Swift 6.2.4 toolchain, but libswiftDistributed.dylib not found in standard paths
 - **Action**: Continue monitoring Swift toolchain releases for completed Distributed runtime library
 - **Promotion timing**: Defer to future phase (O13+) when host library support matures
+
+---
+
+## Wave O13 (Next): O.9 Distributed Readiness Monitoring Infrastructure
+
+### O.9 Promotion Strategy
+- **Goal**: Prepare for O.9 promotion when libswiftDistributed.dylib becomes available in Swift toolchain
+- **Scope**: Set up automated watch infrastructure and probe design (no implementation until watch_status=SUPPORTED)
+- **Timeline**: Execute Wave O13 as preparation phase; defer actual O9 probe/gate implementation to Wave O14 (post-library-availability)
+
+### Wave O13 Implementation Order (Preparation Phase)
+- [ ] Step 1: Create `scripts/watch_o9_distributed_promotion_eligibility.sh` to monitor Swift toolchain releases for libswiftDistributed.dylib availability.
+- [ ] Step 2: Document O.9 probe specification (distributed actor metadata inspection, actor method invocation, message-send semantics) without implementing.
+- [ ] Step 3: Design O.9 gate script skeleton (`scripts/run_o9_distributed_actor_gate.sh`) with conditional logic: execute probes if watch_status=SUPPORTED, otherwise skip.
+- [ ] Step 4: Add O.9 to optional-track signoff logic with dynamic classification: "experimental/not-promoted-waiting" when library missing, transitional state when library available but gate not yet passing.
+- [ ] Step 5: Document promotion workflow for O.9 (library detection → probe implementation → gate validation → policy update → scope promotion).
+- [ ] Step 6: Record O13 completion in PLAN.md and prepare O14 task skeleton for implementation phase.
+
+### O.9 Probe Design (Specification Only - Implementation Deferred)
+**Expected probes** (to be implemented in Wave O14 if library becomes available):
+- **O9.1**: Distributed actor metadata descriptor introspection (conformance check, method table lookup)
+- **O9.2**: Actor method invocation across distributed boundary (remote actor reference, message send, serialization)
+- **O9.3**: Distributed method result handling (encoding/decoding, type safety, error propagation)
+- **O9.4**: Actor isolation semantics preservation (non-concurrent method calls, task-local context preservation)
+
+**Exit criteria** (if/when library available):
+- All O9 probes PASS 6/6 debug and release
+- Distributed method calls preserve type safety and task context
+- No regressions in parity matrix (141/141 still PASS)
+- O9 promotion to required scope (v7-phase-o-o8-o9-required) only after full-plan PASS with O9 gate required
+
+### O.9 Deferral Logic (Adaptive Watch)
+- **PARTIAL → SUPPORTED trigger**: Automated watch detects libswiftDistributed.dylib in toolchain
+- **Response**: Unblock Wave O14 implementation work; transition O9 from "not-promoted-waiting" to "ready-for-implementation"
+- **Plan update**: Automatically update PLAN.md with O14 task details when library detected
+- **Condition override**: If Swift version advances beyond 6.2.4 without Distributed library, review scope compatibility
+
+---
+
+## Phase P (Post-O): Next Major Expansion (Planning Stage)
+
+### Strategic Options for Phase P
+
+After completing Phase O (O1-O10 gates required, O8 promoted, O9 deferred), the project can choose from three major directions:
+
+#### Option P.1: Cross-Platform Expansion (arm64 + x86_64 + Linux + Windows)
+- **Scope**: Extend required parity scope to multi-platform host cells
+- **Implementation**: 
+  - Support Matrix v2: macOS arm64, macOS x86_64, Ubuntu Linux (x86_64), Windows (MSVC/Clang)
+  - Each platform gets Phase C + Phase O gate verification
+  - Platform-specific ABI shims for register conventions and calling-sequence differences
+  - CI jobs per platform cell
+- **Timeline**: 3-4 months (requires Swift cross-platform availability and runner infrastructure)
+
+#### Option P.2: Foundation Bridging Depth (data types + serialization + networking)
+- **Scope**: Expand bridging coverage to Foundation APIs and collection/serialization frameworks
+- **Implementation**:
+  - P.1: String/ByteString encoding, normalization, case-folding
+  - P.2: URL/URLComponents/URLRequest construction and parsing
+  - P.3: JSON/PropertyList/Codable round-trip parity
+  - P.4: Foundation collections: NSArray, NSSet, NSOrderedSet bridging
+  - P.5: Date/Calendar/TimeZone normalization and arithmetic
+  - P.6: Number formatting (Decimal, percent, scientific notation)
+- **Timeline**: 2-3 months (Foundation APIs are stable, no toolchain blockers)
+
+#### Option P.3: Advanced Runtime Features (reflection + dynamic dispatch + type introspection)
+- **Scope**: Add reflected type introspection and runtime inspection APIs
+- **Implementation**:
+  - P.1: Reflect on type metadata (fields, methods, conformances)
+  - P.2: Dynamic type construction from name and arguments
+  - P.3: Protocol conformance discovery at runtime
+  - P.4: Witness table patching for method replacement
+  - P.5: Type-erased function composition (function pointers + witness tables)
+- **Timeline**: 2-3 months (significant Research mode, requires careful ABI stability analysis)
+
+### Recommendation
+**Option P.2 (Foundation Bridging Depth)** is recommended as the next phase:
+- Builds directly on Phase C/O infrastructure (no new ABI surface)
+- Opens up practical application domains (networking, data parsing, serialization)
+- No external library blockers (Foundation is stable and included)
+- Natural bridge from abstract ABI verification to production-ready bridging
+
+### Next Action Required
+Choose between O13 (O9 monitoring), Phase P (major expansion), or both:
+1. **O13 only**: Continue current velocity on Phase O optional-track monitoring (low commitment)
+2. **P.2 only**: Launch Phase P Foundation Bridging Depth immediately (medium to high commitment)
+3. **O13 + P.2 in parallel**: Set up O9 watch + begin P.1 String scope work (requires splitting focus)
