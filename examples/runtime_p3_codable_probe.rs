@@ -2,9 +2,10 @@ use swift_runtime_sys::RuntimeContract::{RuntimeContract, RuntimeContractError};
 use swift_runtime_sys::RuntimeFactory::RuntimeFactory;
 
 fn main() {
-    let factory = RuntimeFactory::with_thunk_library("./libRustBridge.dylib", "./libRuntimeThunks.dylib")
-        .or_else(|_| RuntimeFactory::new("./libRustBridge.dylib"))
-        .unwrap_or_else(|e| panic!("failed to init RuntimeFactory: {e:?}"));
+    let factory =
+        RuntimeFactory::with_thunk_library("./libRustBridge.dylib", "./libRuntimeThunks.dylib")
+            .or_else(|_| RuntimeFactory::new("./libRustBridge.dylib"))
+            .unwrap_or_else(|e| panic!("failed to init RuntimeFactory: {e:?}"));
 
     let _descriptor = factory
         .validate_runtime_contract(1)
@@ -17,15 +18,27 @@ fn main() {
 
     println!("\n=== P.3 Codable / Serialization Probe ===");
 
-    let tests: [(&str, fn(&RuntimeContract) -> Result<bool, RuntimeContractError>); 8] = [
+    let tests: [(
+        &str,
+        fn(&RuntimeContract) -> Result<bool, RuntimeContractError>,
+    ); 8] = [
         ("Codable Int32 round-trip 42", test_codable_42),
         ("Codable Int32 round-trip -1001", test_codable_neg),
         ("Codable Int32 round-trip 0", test_codable_zero),
         ("NSCoding integer round-trip 123", test_nscoding_int),
         ("NSCoding integer round-trip -999", test_nscoding_int_neg),
-        ("NSCoding string round-trip 'hello' length", test_nscoding_string_hello),
-        ("NSCoding string round-trip 'swift-runtime' length", test_nscoding_string_swift_runtime),
-        ("NSCopying array mutation independence", test_nscopying_independence),
+        (
+            "NSCoding string round-trip 'hello' length",
+            test_nscoding_string_hello,
+        ),
+        (
+            "NSCoding string round-trip 'swift-runtime' length",
+            test_nscoding_string_swift_runtime,
+        ),
+        (
+            "NSCopying array mutation independence",
+            test_nscopying_independence,
+        ),
     ];
 
     for (name, test_fn) in tests {

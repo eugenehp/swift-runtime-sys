@@ -2,9 +2,10 @@ use swift_runtime_sys::RuntimeContract::{RuntimeContract, RuntimeContractError};
 use swift_runtime_sys::RuntimeFactory::RuntimeFactory;
 
 fn main() {
-    let factory = RuntimeFactory::with_thunk_library("./libRustBridge.dylib", "./libRuntimeThunks.dylib")
-        .or_else(|_| RuntimeFactory::new("./libRustBridge.dylib"))
-        .unwrap_or_else(|e| panic!("failed to init RuntimeFactory: {e:?}"));
+    let factory =
+        RuntimeFactory::with_thunk_library("./libRustBridge.dylib", "./libRuntimeThunks.dylib")
+            .or_else(|_| RuntimeFactory::new("./libRustBridge.dylib"))
+            .unwrap_or_else(|e| panic!("failed to init RuntimeFactory: {e:?}"));
 
     let _descriptor = factory
         .validate_runtime_contract(1)
@@ -17,7 +18,10 @@ fn main() {
 
     println!("\n=== P.2 URL / URLComponents / URLRequest Probe ===");
 
-    let tests: [(&str, fn(&RuntimeContract) -> Result<bool, RuntimeContractError>); 8] = [
+    let tests: [(
+        &str,
+        fn(&RuntimeContract) -> Result<bool, RuntimeContractError>,
+    ); 8] = [
         ("HTTPS URL is valid", test_valid_https),
         ("Empty URL is invalid", test_invalid_empty),
         ("Scheme extraction is deterministic", test_scheme),
@@ -25,7 +29,10 @@ fn main() {
         ("Path extraction is deterministic", test_path),
         ("Build URL from components", test_build_url),
         ("Built URL validates", test_build_valid),
-        ("Percent-encoded path remains parse-valid", test_percent_encoded_valid),
+        (
+            "Percent-encoded path remains parse-valid",
+            test_percent_encoded_valid,
+        ),
     ];
 
     for (name, test_fn) in tests {

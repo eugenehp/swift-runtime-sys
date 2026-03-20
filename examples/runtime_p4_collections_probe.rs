@@ -2,9 +2,10 @@ use swift_runtime_sys::RuntimeContract::{RuntimeContract, RuntimeContractError};
 use swift_runtime_sys::RuntimeFactory::RuntimeFactory;
 
 fn main() {
-    let factory = RuntimeFactory::with_thunk_library("./libRustBridge.dylib", "./libRuntimeThunks.dylib")
-        .or_else(|_| RuntimeFactory::new("./libRustBridge.dylib"))
-        .unwrap_or_else(|e| panic!("failed to init RuntimeFactory: {e:?}"));
+    let factory =
+        RuntimeFactory::with_thunk_library("./libRustBridge.dylib", "./libRuntimeThunks.dylib")
+            .or_else(|_| RuntimeFactory::new("./libRustBridge.dylib"))
+            .unwrap_or_else(|e| panic!("failed to init RuntimeFactory: {e:?}"));
 
     let _descriptor = factory
         .validate_runtime_contract(1)
@@ -17,13 +18,34 @@ fn main() {
 
     println!("\n=== P.4 Foundation Collections Probe ===");
 
-    let tests: [(&str, fn(&RuntimeContract) -> Result<bool, RuntimeContractError>); 8] = [
-        ("NSArray bridge count preserves requested size", test_nsarray_count),
-        ("NSCopying array mutation independence", test_nscopying_independence),
-        ("Set-like distinct count for duplicate tuple", test_set_distinct_mixed),
-        ("Set-like distinct count for identical tuple", test_set_distinct_all_same),
-        ("Array append preserves insertion order", test_array_append_order),
-        ("Array pointer iteration matches inserted order", test_array_pointer_iteration),
+    let tests: [(
+        &str,
+        fn(&RuntimeContract) -> Result<bool, RuntimeContractError>,
+    ); 8] = [
+        (
+            "NSArray bridge count preserves requested size",
+            test_nsarray_count,
+        ),
+        (
+            "NSCopying array mutation independence",
+            test_nscopying_independence,
+        ),
+        (
+            "Set-like distinct count for duplicate tuple",
+            test_set_distinct_mixed,
+        ),
+        (
+            "Set-like distinct count for identical tuple",
+            test_set_distinct_all_same,
+        ),
+        (
+            "Array append preserves insertion order",
+            test_array_append_order,
+        ),
+        (
+            "Array pointer iteration matches inserted order",
+            test_array_pointer_iteration,
+        ),
         ("Array set/get mutation parity", test_array_set_get),
         ("Array length after append sequence", test_array_length),
     ];

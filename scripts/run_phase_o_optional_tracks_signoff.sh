@@ -51,6 +51,7 @@ o9_gate_json="$ROOT/target/runtime-probe/o9-distributed-actor/o9-distributed-act
 o9_watch_present=0
 o9_watch_status="unknown"
 o9_watch_reason=""
+o9_watch_blocker="unknown"
 o9_implementation_ready=0
 o9_gate_present=0
 o9_gate_status="missing"
@@ -67,10 +68,12 @@ with open(sys.argv[1], 'r', encoding='utf-8') as handle:
 # Output as key=value pairs for safe sourcing
 watch_status = data.get('watch_status', 'unknown')
 watch_reason = data.get('watch_reason', 'not provided').replace('"', '\\"')
+watch_blocker = data.get('host_support_blocker', 'unknown')
 impl_ready = "1" if data.get('o9_implementation_ready', False) else "0"
 
 print(f'o9_watch_status="{watch_status}"')
 print(f'o9_watch_reason="{watch_reason}"')
+print(f'o9_watch_blocker="{watch_blocker}"')
 print(f'o9_implementation_ready={impl_ready}')
 PY
   source "$TMP_DIR/o9_watch_parsed"
@@ -178,6 +181,7 @@ cat > "$SUMMARY_JSON" <<EOF
         "watch_artifact_present": ${o9_watch_present},
         "watch_status": "${o9_watch_status}",
         "watch_reason": "${o9_watch_reason}",
+        "watch_blocker": "${o9_watch_blocker}",
         "implementation_ready": ${o9_implementation_ready},
         "gate_artifact_present": ${o9_gate_present},
         "gate_status": "${o9_gate_status}",
@@ -199,7 +203,7 @@ cat > "$SUMMARY_MD" <<EOF
 | Track | Classification | Promotion | Evidence | Rationale |
 |---|---|---|---|---|
 | O.8 Rust-owned executor | ${o8_classification} | ${o8_promotion} | repo_marker_hits=${o8_hits}, gate_artifact_present=${o8_gate_present}, gate_status=${o8_gate_status}, debug_pass=${o8_gate_debug_pass}, release_pass=${o8_gate_release_pass} | ${o8_reason} |
-| O.9 Distributed actor surface | ${o9_classification} | ${o9_promotion} | watch_present=${o9_watch_present}, watch_status=${o9_watch_status}, implementation_ready=${o9_implementation_ready}, gate_present=${o9_gate_present}, gate_status=${o9_gate_status}, module_typecheck=${o9_module_supported}, repo_marker_hits=${o9_hits} | ${o9_reason} |
+| O.9 Distributed actor surface | ${o9_classification} | ${o9_promotion} | watch_present=${o9_watch_present}, watch_status=${o9_watch_status}, watch_blocker=${o9_watch_blocker}, implementation_ready=${o9_implementation_ready}, gate_present=${o9_gate_present}, gate_status=${o9_gate_status}, module_typecheck=${o9_module_supported}, repo_marker_hits=${o9_hits} | ${o9_reason} |
 
 O.10 Observation runtime surface is promoted to required on this host cell and is validated by the Phase O required signoff plus the run_o10_observation_gate.sh artifact.
 Promotion rule: optional/experimental tracks do not block required parity until explicitly promoted and gated.

@@ -1215,6 +1215,7 @@ Goal: Close the remaining control-surface gaps that block an "absolute parity of
 - **Response**: Unblock Wave O14 implementation work; transition O9 from "not-promoted-waiting" to "ready-for-implementation"
 - **Plan update**: Automatically update PLAN.md with O14 task details when library detected
 - **Condition override**: If Swift version advances beyond 6.2.4 without Distributed library, review scope compatibility
+- **Current preflight signal**: The watch now captures `swiftc --version`, searched runtime paths, generated `swiftDistributed` binding-export inventory, and a machine-readable blocker (`missing_runtime_library` on this host).
 
 ### O.9 Promotion Workflow (O13 Documented)
 1. Library/watch detection: `watch_o9_distributed_promotion_eligibility.sh` reports `watch_status=SUPPORTED`.
@@ -1224,6 +1225,14 @@ Goal: Close the remaining control-surface gaps that block an "absolute parity of
 5. Scope/policy promotion: claim contract + README + PLAN coordinated update when O9 is promoted to required.
 
 ### Wave O14 (Prepared Skeleton): O.9 Implementation Activation
+- **Wave O14a (host-supported preflight, implementable while blocked)**
+- [x] Extend the O9 watch artifact to record toolchain identity, searched runtime-library paths, generated `swiftDistributed` binding-export inventory, and blocker classification.
+- [x] Extend promotion-eligibility artifacts to emit `promotion_stage` and `recommended_next_action` so O9 remains actionable while blocked.
+- [x] Extend the O9 skeleton gate artifact to surface blocker/readiness metadata instead of a bare skip.
+- [x] Keep O9 in `experimental/not-promoted-waiting` until the blocker changes from `missing_runtime_library` to `none`.
+- **Current host result**: O14a preflight complete, blocker=`missing_runtime_library`, readiness phase=`o14a-preflight-only`.
+
+- **Wave O14b (requires watch_status=SUPPORTED)**
 - [ ] Step 1: Implement O9.1 probe (distributed actor metadata descriptor introspection).
 - [ ] Step 2: Implement O9.2 probe (actor method invocation across distributed boundary).
 - [ ] Step 3: Implement O9.3 probe (distributed result encoding/decoding and error propagation).

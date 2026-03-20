@@ -12,9 +12,12 @@ mkdir -p "$OUT_DIR"
 
 watch_status="UNKNOWN"
 watch_reason="watch artifact missing"
+host_support_blocker="watch_artifact_missing"
+readiness_phase="watch-missing"
+binding_export_constant_count=0
 
 if [[ -f "$WATCH_JSON" ]]; then
-  read -r watch_status watch_reason <<EOF
+  read -r watch_status host_support_blocker readiness_phase binding_export_constant_count watch_reason <<EOF
 $(python3 - "$WATCH_JSON" <<'PY'
 import json
 import sys
@@ -23,8 +26,11 @@ with open(sys.argv[1], 'r', encoding='utf-8') as fh:
     data = json.load(fh)
 
 status = data.get('watch_status', 'UNKNOWN')
+blocker = data.get('host_support_blocker', 'unknown')
+phase = data.get('readiness_phase', 'watch-missing')
+binding_count = data.get('binding_export_constant_count', 0)
 reason = data.get('watch_reason', 'not provided').replace('"', '\\"')
-print(status, reason)
+print(status, blocker, phase, binding_count, reason)
 PY
 )
 EOF
@@ -36,7 +42,7 @@ fi
 if [[ "$watch_status" != "SUPPORTED" ]]; then
   gate_status="SKIPPED_UNSUPPORTED"
   result="PASS"
-  detail="Distributed runtime not fully supported on host; O9 gate intentionally skipped"
+  detail="Distributed runtime not fully supported on host; O9 gate intentionally skipped (blocker=$host_support_blocker, readiness_phase=$readiness_phase, binding_export_constant_count=$binding_export_constant_count)"
 elif [[ "${O9_ENABLE_IMPLEMENTATION:-0}" != "1" ]]; then
   gate_status="PENDING_IMPLEMENTATION"
   result="PASS"
@@ -55,6 +61,9 @@ cat > "$SUMMARY_JSON" <<EOF
   "gate_status": "$gate_status",
   "watch_status": "$watch_status",
   "watch_reason": "$watch_reason",
+  "host_support_blocker": "$host_support_blocker",
+  "readiness_phase": "$readiness_phase",
+  "binding_export_constant_count": $binding_export_constant_count,
   "detail": "$detail",
   "implementation_ready": false,
   "o14_probe_suite_present": false
@@ -69,6 +78,9 @@ cat > "$SUMMARY_MD" <<EOF
 - gate_status: $gate_status
 - watch_status: $watch_status
 - watch_reason: $watch_reason
+- host_support_blocker: $host_support_blocker
+- readiness_phase: $readiness_phase
+- binding_export_constant_count: $binding_export_constant_count
 - detail: $detail
 
 This is a Wave O13 skeleton gate. It records host capability and transitional status,

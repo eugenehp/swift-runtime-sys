@@ -2,9 +2,10 @@ use swift_runtime_sys::RuntimeContract::{RuntimeContract, RuntimeContractError};
 use swift_runtime_sys::RuntimeFactory::RuntimeFactory;
 
 fn main() {
-    let factory = RuntimeFactory::with_thunk_library("./libRustBridge.dylib", "./libRuntimeThunks.dylib")
-        .or_else(|_| RuntimeFactory::new("./libRustBridge.dylib"))
-        .unwrap_or_else(|e| panic!("failed to init RuntimeFactory: {e:?}"));
+    let factory =
+        RuntimeFactory::with_thunk_library("./libRustBridge.dylib", "./libRuntimeThunks.dylib")
+            .or_else(|_| RuntimeFactory::new("./libRustBridge.dylib"))
+            .unwrap_or_else(|e| panic!("failed to init RuntimeFactory: {e:?}"));
 
     let _descriptor = factory
         .validate_runtime_contract(1)
@@ -17,15 +18,24 @@ fn main() {
 
     println!("\n=== P.5 Temporal (Date / Calendar / TimeZone) Probe ===");
 
-    let tests: [(&str, fn(&RuntimeContract) -> Result<bool, RuntimeContractError>); 8] = [
+    let tests: [(
+        &str,
+        fn(&RuntimeContract) -> Result<bool, RuntimeContractError>,
+    ); 8] = [
         ("Format epoch contains 1970", test_format_epoch_year),
-        ("Format epoch contains ISO T separator", test_format_epoch_contains_t),
+        (
+            "Format epoch contains ISO T separator",
+            test_format_epoch_contains_t,
+        ),
         ("Parse epoch ISO8601 approximately zero", test_parse_epoch),
         ("Year at epoch UTC is 1970", test_year_at_epoch),
         ("Month at epoch UTC is 1", test_month_at_epoch),
         ("Year at J2000 is 2000", test_year_at_j2000),
         ("UTC offset seconds is zero", test_utc_offset),
-        ("Round-trip format then parse is stable", test_roundtrip_stability),
+        (
+            "Round-trip format then parse is stable",
+            test_roundtrip_stability,
+        ),
     ];
 
     for (name, test_fn) in tests {
@@ -63,9 +73,7 @@ fn test_format_epoch_year(contract: &RuntimeContract) -> Result<bool, RuntimeCon
     Ok(s.contains("1970"))
 }
 
-fn test_format_epoch_contains_t(
-    contract: &RuntimeContract,
-) -> Result<bool, RuntimeContractError> {
+fn test_format_epoch_contains_t(contract: &RuntimeContract) -> Result<bool, RuntimeContractError> {
     let s = contract.datetime_format_unix(0.0)?;
     Ok(s.contains('T'))
 }
