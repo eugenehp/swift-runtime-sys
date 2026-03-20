@@ -1233,6 +1233,9 @@ Goal: Close the remaining control-surface gaps that block an "absolute parity of
 - **Current host result**: O14a preflight complete, blocker=`missing_runtime_library`, readiness phase=`o14a-preflight-only`.
 
 - **Wave O14b (requires watch_status=SUPPORTED)**
+- [x] Step 0: Add dormant Swift O9 scaffold exports for manifest/version/individual probe entrypoints that describe O9.1-O9.4 without executing distributed runtime behavior.
+- [x] Step 0.1: Add `examples/runtime_o9_distributed_probe.rs` to validate the dormant O9 scaffold surface through `RuntimeFactory` in debug and release.
+- [x] Step 0.2: Upgrade `scripts/run_o9_distributed_actor_gate.sh` so blocked hosts still run scaffold validation and publish scaffold parity evidence.
 - [ ] Step 1: Implement O9.1 probe (distributed actor metadata descriptor introspection).
 - [ ] Step 2: Implement O9.2 probe (actor method invocation across distributed boundary).
 - [ ] Step 3: Implement O9.3 probe (distributed result encoding/decoding and error propagation).
@@ -1240,6 +1243,8 @@ Goal: Close the remaining control-surface gaps that block an "absolute parity of
 - [ ] Step 5: Upgrade `run_o9_distributed_actor_gate.sh` from skeleton to required probe gate (debug/release equivalence).
 - [ ] Step 6: Re-run optional-track signoff and verify O.9 transitions from waiting/transitional to optional-ready.
 - [ ] Step 7: Evaluate promotion readiness for required-scope adoption.
+
+- **Current O14b delta**: dormant entrypoints and scaffold probe are implemented and validated on blocked hosts (`6/6` debug, `6/6` release); real distributed-runtime execution remains deferred until `watch_status=SUPPORTED`.
 
 ---
 

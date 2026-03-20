@@ -3,6 +3,9 @@ import Dispatch
 import Darwin
 import ObjectiveC.runtime
 import ResilientFixtures
+#if canImport(Distributed)
+import Distributed
+#endif
 #if canImport(Observation)
 import Observation
 #endif
@@ -7786,6 +7789,65 @@ public func swift_contract_o3_lowering_strategy_json(_ signaturePtr: UnsafePoint
     }
     let esc = signature.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
     return strdup("{\"signature\":\"\(esc)\",\"strategy\":\"\(strategy)\",\"supported\":\(supported ? "true" : "false"),\"reason_code\":\(reasonCode)}")
+}
+
+// MARK: - Distributed Actor Surface Scaffold (O.9 / O14b dormant entrypoints)
+
+private let o9ScaffoldManifestVersion: Int32 = 1
+private let o9ScaffoldProbeFlags: Int32 = 0b1111
+private let o9CanImportDistributedModule: Bool = {
+#if canImport(Distributed)
+    true
+#else
+    false
+#endif
+}()
+
+private let o9ProbeManifestJSONString: String = {
+    let distributedFlag = o9CanImportDistributedModule ? "true" : "false"
+    return """
+    {"track":"o9_distributed_actor_surface","scaffold_version":1,"host_can_import_distributed":\(distributedFlag),"activation_requires_runtime":true,"planned_probes":[{"id":"O9.1","symbol":"swift_contract_o9_metadata_descriptor_status","shape":"zero_to_i32","goal":"distributed actor metadata descriptor introspection"},{"id":"O9.2","symbol":"swift_contract_o9_distributed_invocation_status","shape":"zero_to_i32","goal":"distributed actor invocation boundary planning"},{"id":"O9.3","symbol":"swift_contract_o9_result_handling_status","shape":"zero_to_i32","goal":"distributed result handling and error propagation planning"},{"id":"O9.4","symbol":"swift_contract_o9_isolation_semantics_status","shape":"zero_to_i32","goal":"distributed isolation semantics planning"}],"activation_requirements":["watch_status=SUPPORTED","libswiftDistributed.dylib available","O9_ENABLE_IMPLEMENTATION=1"]}
+    """
+}()
+
+@_cdecl("swift_contract_o9_probe_manifest_version")
+public func swift_contract_o9_probe_manifest_version() -> Int32 {
+    o9ScaffoldManifestVersion
+}
+
+@_cdecl("swift_contract_o9_probe_manifest_json")
+public func swift_contract_o9_probe_manifest_json() -> UnsafeMutablePointer<CChar>? {
+    strdup(o9ProbeManifestJSONString)
+}
+
+@_cdecl("swift_contract_o9_scaffold_probe_flags")
+public func swift_contract_o9_scaffold_probe_flags() -> Int32 {
+    o9ScaffoldProbeFlags
+}
+
+@_cdecl("swift_contract_o9_host_can_import_distributed")
+public func swift_contract_o9_host_can_import_distributed() -> Int32 {
+    o9CanImportDistributedModule ? 1 : 0
+}
+
+@_cdecl("swift_contract_o9_metadata_descriptor_status")
+public func swift_contract_o9_metadata_descriptor_status() -> Int32 {
+    1
+}
+
+@_cdecl("swift_contract_o9_distributed_invocation_status")
+public func swift_contract_o9_distributed_invocation_status() -> Int32 {
+    1
+}
+
+@_cdecl("swift_contract_o9_result_handling_status")
+public func swift_contract_o9_result_handling_status() -> Int32 {
+    1
+}
+
+@_cdecl("swift_contract_o9_isolation_semantics_status")
+public func swift_contract_o9_isolation_semantics_status() -> Int32 {
+    1
 }
 
 // MARK: - Observation Runtime Surface Coverage (O.10)
