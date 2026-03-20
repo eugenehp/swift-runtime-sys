@@ -1139,14 +1139,14 @@ Goal: Close the remaining control-surface gaps that block an "absolute parity of
 
 ## Success Criteria Summary
 
-| Milestone | v1-frozen | v2-expanded | v3-dynamic | v4-phase-o | v5-phase-o-o10 | v6-phase-o-o8-required |
-|-----------|-----------|-------------|------------|------------|----------------|-----------------------|
-| Protocol dispatch variants | 1 (existential) | 6 (all) | 6 (all) | 6 (all) | 6 (all) | 6 (all) |
-| Bridging types | Person, Counter | + Array, Dict, Error | + dynamic discovery | + runtime ABI waves O1-O7 | + O10 observation gate required | + O8 executor gate required |
-| Version pinning | Swift 6.2.4 exactly | Swift 6.2.4 exactly | Swift 6.1+ policy range | Swift 6.2.4 host-cell validated | Swift 6.2.4 host-cell validated | Swift 6.2.4 host-cell validated |
-| Parity checks | 101 + protocol set | expanded bridging parity | cross-version parity policy | 141/141 runtime parity | 141/141 runtime parity + O10 required | 141/141 runtime parity + O10 + O8 required |
-| CI/gate emphasis | baseline parity | expanded probes | multi-version adaptation | Phase O signoff (O1-O5 + parity) | Phase O signoff (O1-O5 + O10 + parity) | Phase O signoff (O1-O5 + O8 + O10 + parity) |
-| Scope marker | `v1-frozen-plus-ap` | `v2-expanded` | `v3-dynamic` | `v4-phase-o` | `v5-phase-o-o10` | `v6-phase-o-o8-required` |
+| Milestone | v1-frozen | v2-expanded | v3-dynamic | v4-phase-o | v5-phase-o-o10 | v6-phase-o-o8-required | v7-phase-p-foundation |
+|-----------|-----------|-------------|------------|------------|----------------|-----------------------|----------------------|
+| Protocol dispatch variants | 1 (existential) | 6 (all) | 6 (all) | 6 (all) | 6 (all) | 6 (all) | 6 (all) |
+| Bridging types | Person, Counter | + Array, Dict, Error | + dynamic discovery | + runtime ABI waves O1-O7 | + O10 observation gate required | + O8 executor gate required | + String + URL + JSON + Collections + Date + Formatting |
+| Version pinning | Swift 6.2.4 exactly | Swift 6.2.4 exactly | Swift 6.1+ policy range | Swift 6.2.4 host-cell validated | Swift 6.2.4 host-cell validated | Swift 6.2.4 host-cell validated | Swift 6.2.4 host-cell validated |
+| Parity checks | 101 + protocol set | expanded bridging parity | cross-version parity policy | 141/141 runtime parity | 141/141 runtime parity + O10 required | 141/141 + O8 required | 141/141 + P1-P6 Foundation gates |
+| CI/gate emphasis | baseline parity | expanded probes | multi-version adaptation | Phase O signoff (O1-O5 + parity) | Phase O signoff (O1-O5 + O10 + parity) | Phase O signoff (O1-O5 + O8 + O10 + parity) | Phase P signoff (P.1-P.6 Foundation + Phase O) |
+| Scope marker | `v1-frozen-plus-ap` | `v2-expanded` | `v3-dynamic` | `v4-phase-o` | `v5-phase-o-o10` | `v6-phase-o-o8-required` | `v7-phase-p-foundation` |
 - [x] Added final signoff artifact `target/runtime-probe/absolute-parity-signoff.md` with consolidated PASS/FAIL status.
 - [x] Current scope lock: `v6-phase-o-o8-required` (required Phase O gates include O1/O2/O3/O4/O5/O8/O10 + parity + phase signoff).
 
@@ -1254,15 +1254,82 @@ After completing Phase O (O1-O10 gates required, O8 promoted, O9 deferred), the 
   - P.5: Type-erased function composition (function pointers + witness tables)
 - **Timeline**: 2-3 months (significant Research mode, requires careful ABI stability analysis)
 
-### Recommendation
-**Option P.2 (Foundation Bridging Depth)** is recommended as the next phase:
+### Phase P Decision: APPROVED (Foundation Bridging Depth)
+**Selected direction**: Option P.2 — Foundation Bridging Depth
 - Builds directly on Phase C/O infrastructure (no new ABI surface)
 - Opens up practical application domains (networking, data parsing, serialization)
 - No external library blockers (Foundation is stable and included)
 - Natural bridge from abstract ABI verification to production-ready bridging
+- Timeline: 2-3 months (8 weeks estimated for P.1-P.6 full implementation)
 
-### Next Action Required
-Choose between O13 (O9 monitoring), Phase P (major expansion), or both:
-1. **O13 only**: Continue current velocity on Phase O optional-track monitoring (low commitment)
-2. **P.2 only**: Launch Phase P Foundation Bridging Depth immediately (medium to high commitment)
-3. **O13 + P.2 in parallel**: Set up O9 watch + begin P.1 String scope work (requires splitting focus)
+### Phase P Scope Evolution (New Scope: v7-phase-p-foundation)
+- **Base**: All Phase C + Phase O gates (141/141 parity + O1-O5 + O8 + O10)
+- **New**: P.1-P.6 Foundation gates (String, URL, JSON/Codable, Collections, Date, Formatting)
+- **Result**: v7-phase-p-foundation (broad-spectrum production bridging)
+
+---
+
+## Phase P (Active): Foundation Bridging Depth
+
+### P.1: String / ByteString Encoding and Manipulation
+- **Goal**: Deterministic String construction, encoding validation, Unicode handling
+- **Scope**: UTF-8 encoding, ASCII validation, null-termination, normalization, case-folding
+- **Implementation Sequence** (Completed):
+  - [x] Step 1: Create `examples/runtime_p1_string_probe.rs` with test cases (ASCII, multi-byte UTF-8, null-term, normalization)
+  - [x] Step 2: Create `scripts/run_p1_string_gate.sh` with debug + release validation
+  - [x] Step 3: Add deterministic probes (8 test cases with expected outputs all PASS)
+  - [x] Step 4: Validate parity on macOS arm64 (P.1 gate PASS 8/8 debug + release)
+  - [ ] Step 5: Update claim-contract and phase-p signoff with P.1 evidence
+  - [ ] Step 6: Verify no parity regressions (141/141 still PASS)
+  - [ ] Step 7: Update Phase P spec in README
+- **Status**: P.1 gate PASS (8/8 debug + release; ASCII, UTF-8, null-term, normalization, case-folding, empty string all verified)
+
+### P.2: URL / URLComponents / URLRequest Construction and Parsing
+- **Goal**: Web URL handling with encoding safety
+- **Scope**: URL construction, path/query parsing, percent encoding, host/port/scheme components
+- **Prerequisites**: P.1 String must be PASS (strings are building blocks)
+- **Timeline**: After P.1 completion
+
+### P.3: JSON / PropertyList / Codable Round-Trip Parity
+- **Goal**: Serialization/deserialization determinism
+- **Scope**: JSON encoding, Codable bridging, PropertyList format, custom encoder chains
+- **Prerequisites**: P.1, P.2 (networking requires JSON)
+- **Timeline**: After P.2 completion
+
+### P.4: Foundation Collections Bridging (NSArray, NSSet, NSOrderedSet)
+- **Goal**: Objective-C collection bridging with type safety
+- **Scope**: NSArray ↔ Array<T> conversion, NSSet identity semantics, count/membership operations
+- **Prerequisites**: Any of P.1-P.3 (independent scope)
+- **Timeline**: Parallel to P.2/P.3 or after P.1
+
+### P.5: Date / Calendar / TimeZone Normalization and Arithmetic
+- **Goal**: Temporal arithmetic with DST, timezone, calendar rules
+- **Scope**: Calendar systems (Gregorian, Julian), timezone database consistency, date arithmetic invariants
+- **Prerequisites**: Foundation infrastructure available
+- **Timeline**: After P.3 (depends on serialization for cross-cell validation)
+
+### P.6: Number Formatting (Decimal, Percent, Scientific Notation)
+- **Goal**: Locale-aware formatting determinism
+- **Scope**: Decimal → String formatting, percent encoding (0.45 → "45%"), scientific notation, rounding rules
+- **Prerequisites**: P.1 String, P.3 Codable (formatting is often serialization-adjacent)
+- **Timeline**: Final phase of P
+
+### Phase P Signoff Artifact Contract
+- [ ] Add directory: `target/runtime-probe/phase-p-signoff/`
+- [ ] P.1-P.6 gate artifacts:
+  - [ ] `p1-string-*.{json,md}` (UTF-8 encoding, normalization, case-folding)
+  - [ ] `p2-url-*.{json,md}` (URL parsing, percent encoding, components)
+  - [ ] `p3-codable-*.{json,md}` (JSON, PropertyList, custom encoders)
+  - [ ] `p4-collections-*.{json,md}` (NSArray, NSSet, count, membership)
+  - [ ] `p5-temporal-*.{json,md}` (Calendar, TimeZone, DST, arithmetic)
+  - [ ] `p6-formatting-*.{json,md}` (Decimal, Percent, Scientific)
+- [ ] Final signoff: `target/runtime-probe/phase-p-signoff/phase-p-signoff.json`
+
+### Phase P Commit Discipline
+- One P.* workstream per commit series (probe, gate, docs)
+- Require gate PASS (debug + release) before marking each P.* complete
+- Run full parity matrix after each P gate to ensure no regressions
+- Update claim-contract incrementally: v7-phase-p-foundation only after all P.1-P.6 gates PASS
+
+### Next Action: Begin P.1 String Bridging
+Execute P.1 implementation starting with probe design and gate skeleton.
