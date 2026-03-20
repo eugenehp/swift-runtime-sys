@@ -1149,3 +1149,41 @@ Goal: Close the remaining control-surface gaps that block an "absolute parity of
 | Scope marker | `v1-frozen-plus-ap` | `v2-expanded` | `v3-dynamic` | `v4-phase-o` | `v5-phase-o-o10` |
 - [x] Added final signoff artifact `target/runtime-probe/absolute-parity-signoff.md` with consolidated PASS/FAIL status.
 - [x] Current scope lock: `v5-phase-o-o10` (required Phase O gates include O1/O2/O3/O4/O5/O10 + parity + phase signoff).
+
+---
+
+## Next Strategic Decision (Post-Wave O11)
+
+With Wave O11 closed and a 3-cycle stabilization history established, the runtime parity project now faces a promotion / expansion decision:
+
+### O.8 (Rust-Owned Executor) Promotion Eligibility
+- **Current state**: experimental/not-promoted with gate PASS (6/6 debug + release)
+- **Evidence**: O8 gate artifact consistently passes both debug and release modes across all three O11 cycles
+- **Promotion decision**: Promote O.8 to required status (opens Wave O12) OR maintain experimental status pending additional multi-phase evidence window
+
+### O.9 (Distributed Actor Surface) Readiness Watch
+- **Current state**: experimental/not-promoted, blocked on watch_status=PARTIAL
+- **Blocker**: Distributed typecheck available in Swift 6.2.4 toolchain, but libswiftDistributed.dylib not found in standard paths
+- **Action required**: Monitor Swift toolchain releases for completed Distributed runtime library availability
+- **Promotion decision**: Defer O.9 to future post-O11 phase until host library support matures
+
+### Recommended Next Step: Wave O12 Planning (O.8 Promotion Investigation)
+#### Option A: Promote O.8 to Required
+- Opens new scope version: `v6-phase-o-o8-required`
+- Requires: gate validation, claim-contract update, README evidence update, promotion workflow
+- Impact: 141/141 + O8 gate becomes required; optional scope reduces to O9 only
+- Timeline: Immediate Wave O12 implementation
+
+#### Option B: Defer O.8 Promotion Pending Multi-Phase History
+- Maintain O.8 at experimental/not-promoted through intentional extended observation
+- Plan Wave O12/O13/... as evidence-gathering-only cycles (no implementation)
+- Goal: Observe O8 gate behavior across multiple full OS/Swift update cycles before final promotion call
+- Impact: Required scope remains v5-phase-o-o10
+- Timeline: Defer promotion to future point when additional evidence accumulates
+
+### Next Action Required
+User should choose between:
+1. **Wave O12 (Promotion)**: Execute O.8 promotion workflow; update v6-phase-o-o8-required scope
+2. **Wave O12 (Deferred)**: Schedule extended evidence gathering with no scope change
+3. **Phase P**: Define post-Phase O future track (new feature domain or cross-platform expansion)
+4. **README Update**: Document v5-phase-o-o10 parity claim with artifact evidence before further expansion
