@@ -1300,7 +1300,13 @@ After completing Phase O (O1-O10 gates required, O8 promoted, O9 deferred), the 
 - **Goal**: Serialization/deserialization determinism
 - **Scope**: JSON encoding, Codable bridging, PropertyList format, custom encoder chains
 - **Prerequisites**: P.1, P.2 (networking requires JSON)
-- **Timeline**: After P.2 completion
+- **Implementation Sequence** (Completed):
+  - [x] Step 1: Create `examples/runtime_p3_codable_probe.rs` for deterministic serialization checks.
+  - [x] Step 2: Create `scripts/run_p3_codable_gate.sh` with debug + release equivalence validation.
+  - [x] Step 3: Validate Codable Int32 round-trips and NSCoding/NSCopying serialization behavior.
+  - [x] Step 4: Generate P.3 artifacts `target/runtime-probe/p3-codable/p3-codable-summary.{json,md}`.
+  - [x] Step 5: Re-run parity matrix and confirm no regressions (`141/141 PASS`).
+- **Status**: P.3 gate PASS (8/8 debug + release).
 
 ### P.4: Foundation Collections Bridging (NSArray, NSSet, NSOrderedSet)
 - **Goal**: Objective-C collection bridging with type safety
@@ -1337,8 +1343,8 @@ After completing Phase O (O1-O10 gates required, O8 promoted, O9 deferred), the 
 - Run full parity matrix after each P gate to ensure no regressions
 - Update claim-contract incrementally: v7-phase-p-foundation only after all P.1-P.6 gates PASS
 
-### Next Action: Begin P.3 Codable/Serialization Bridging
-Execute P.3 implementation (JSON / PropertyList / Codable round-trip parity) after P.1 and P.2 completion.
+### Next Action: Begin P.4 Foundation Collections Bridging
+Execute P.4 implementation (`NSArray`, `NSSet`, `NSOrderedSet` bridging) after P.1/P.2/P.3 completion.
 ---
 
 ## Execution Log
@@ -1364,3 +1370,10 @@ Execute P.3 implementation (JSON / PropertyList / Codable round-trip parity) aft
 - [x] P.2 gate PASS: 8/8 in debug and 8/8 in release; artifacts emitted under `target/runtime-probe/p2-url/`.
 - [x] Re-ran parity matrix after P.2 changes: `141/141 PASS` (no regressions).
 - [x] Updated Phase P plan status: P.2 complete, next action moved to P.3 Codable/Serialization.
+
+### 2026-03-20 (Phase P — P.3 Codable/Serialization Completion)
+- [x] Added `examples/runtime_p3_codable_probe.rs` covering deterministic serialization checks for Codable and NSCoding/NSCopying behavior.
+- [x] Added `scripts/run_p3_codable_gate.sh` with debug/release equivalence validation and P.3 artifact output.
+- [x] P.3 gate PASS: 8/8 in debug and 8/8 in release; artifacts emitted under `target/runtime-probe/p3-codable/`.
+- [x] Re-ran parity matrix after P.3 changes: `141/141 PASS` (no regressions).
+- [x] Updated Phase P plan status: P.3 complete, next action moved to P.4 Foundation Collections.
