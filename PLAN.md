@@ -612,6 +612,14 @@ This section defines the work required to approach a defensible "absolute parity
 ### 2026-03-18 (Wave 2, tmux execution)
 - [x] Captured tmux + LLDB failure signature: `EXC_BAD_ACCESS (code=257, address=0x1d)` after `counter teardown fresh_deinit_ok=1` in `runtime_raw_probe`.
 - [x] Stabilized probe teardown path in `examples/runtime_raw_probe.rs` to avoid crash-prone end-of-run release/deinit probing on the long-lived counter object while preserving lifecycle control checks via `fresh_deinit_ok`.
+
+### 2026-03-20 (Wave 3, Post-v5 optional-track integration)
+- [x] Wave O9: Implemented O.8 Rust-owned executor optional-track kickoff with default-off policy, deterministic probe, gate script, and optional-track signoff consumption.
+- [x] Wave O10: Implemented O.9 distributed readiness-watch capability check script that emits `o9-distributed-watch-summary.{json,md}` artifacts.
+  - [x] Watch status on this host: PARTIAL (Distributed typecheck available, runtime library missing).
+  - [x] O.9 classification remains experimental/not-promoted until host support improves to SUPPORTED.
+  - [x] Extended optional-track signoff to consume O.9 watch artifact and update evidence table dynamically.
+  - [x] Full verification PASS; required scope remains `v5-phase-o-o10` with 141/141 parity confirmed.
 - [x] Restored missing contract exports in `examples/RustBridge.swift` used by contract parity (`swift_contract_invoke_i32`, `swift_contract_invoke_void`, `swift_contract_protocol_has_conformance`, `swift_contract_protocol_invoke_i32`).
 - [x] Scoped `scripts/validate_plan_completion.sh` to evaluate completion against required core plan scope (excluding the post-N.8 AP backlog section).
 - [x] Re-ran `./scripts/run_parity_matrix.sh` in tmux: PASS (`101/101`).
@@ -891,9 +899,237 @@ Goal: Expand runtime-control coverage on the current host cell beyond existing r
 - [x] Signoff integrated into top-level verifiers: `scripts/run_full_plan_verification.sh` and `scripts/run_absolute_parity_verification.sh`.
 
 ### Extended Scope Tracks
-- **Phase C**: Async/Task runtime bridging (task spawning, local storage, cancellation).
-- **Phase D**: Generics specialization & witness instantiation for arbitrary type parameters.
-- **Phase E**: String/Substring UTF-8 iteration and mutation safety.
+
+## Phase O: Absolute-Control Closure (Host Cell: Swift 6.2.4 + macOS arm64)
+
+Goal: Close the remaining control-surface gaps that block an "absolute parity of control" claim for this exact host/toolchain cell.
+
+### O.1) RemoteMirror C API Coverage
+- [x] Add Rust FFI bindings for the stable `swift_reflection_*` C API in `libswiftRemoteMirror.dylib`.
+- [x] Add wrappers for type/instance info, child traversal, conformance-cache iteration, and demangle helpers.
+- [x] Add wrappers for concurrency reflection paths (`asyncTaskInfo`, `nextJob`, actor/task slab metadata).
+- [x] Add deterministic probes validating parity between current metadata graph discovery and RemoteMirror-derived facts.
+- [x] Exit criteria: RemoteMirror coverage is part of required gates and no required metadata/conformance facts depend only on private heuristics.
+- **Status**: COMPLETE — Expanded callable coverage added (`src/RemoteMirror.rs`) with deterministic probe `examples/runtime_o1_remotemirror_probe.rs` (19/19 PASS; gate PASS debug/release) and gate `scripts/run_o1_remotemirror_gate.sh`; artifacts written to `target/runtime-probe/o1-remotemirror/o1-remotemirror-summary.{json,md}`. Current callable set includes metadata-version query, local context create/destroy, addImage/ownsAddress capability checks, metadata+instance type info, child traversal, typeref extraction/name lookup, conformance-cache iteration, and null-safe async/actor/next-job reflection status checks.
+
+### O.2) Raw Swift Concurrency ABI Control
+- [x] Add dynamic symbol wrappers for `swift_task_*`, `swift_continuation_*`, `swift_asyncLet_*`, and `swift_job_*` primitives.
+- [x] Add Rust-side control path that can inspect and exercise required task semantics on this host cell via the validated hybrid raw-thunk plus bridge-contract strategy.
+- [x] Add deterministic probes for create/run/cancel, continuation resume-once, async-let lifecycle, and job execution ordering.
+- [x] Add failure diagnostics and policy gating for unavailable runtime symbols by version/profile.
+- [x] Exit criteria: Required Swift concurrency primitives are orchestrated with deterministic semantics on this host cell under the validated hybrid control path.
+- **Status**: COMPLETE — Added reusable O.2 capability/control layer `src/ConcurrencyAbi.rs`, direct raw SwiftCC thunk slice (`examples/runtime_concurrency_swiftcall_thunks.c`), expanded probe `examples/runtime_o2_concurrency_abi_probe.rs`, and gate `scripts/run_o2_concurrency_abi_gate.sh`. Required raw symbol coverage remains green (`12/12` required, `4/5` optional currently resolved). Control policy now distinguishes bridge-contract fallback from a `RawThunkBridgeHybrid` path: safe direct raw task inspection primitives are callable via thunks (`swift_task_getCurrent`, current/main executor, guarded alloc/dealloc probe), and raw task alloc/dealloc plus executor/current-task/cancel ordering visibility are validated from inside real Swift task contexts via bridge-hosted task-context probes (host currently reports main-executor visibility with optional current-executor pointer, stable non-null current-task visibility across a yield boundary, deterministic self-cancel visibility after yield, deterministic raw child-cancel propagation/completion ordering, deterministic async-let lifecycle, and child-job completion ordering semantics). The direct-thunk layer now also exports an expanded orchestration preflight policy bitfield (task-create/job-run/async-let/cancel readiness plus nullary-continuation yield-path symbol readiness and explicit guard bits), adds a direct raw main-executor identity invocation check (`swift_task_getMainExecutor` + `swift_task_isMainExecutor`), and closes with the direct SwiftCC ordering probe. Current probe PASS (`23/23`) and gate PASS in debug/release with artifacts `target/runtime-probe/o2-concurrency-abi/o2-concurrency-abi-summary.{json,md}`.
+
+### O.3) Typed Throws ABI Coverage (Swift 6.x)
+- [x] Add bridge exports that exercise `throws(ConcreteError)` typed-throws lowering, not only existential `any Error` paths.
+- [x] Expand N.2 lowering strategy and reason-code taxonomy for typed-throws signatures.
+- [x] Add probe matrix for typed-throws success/failure interop with deterministic error-type identity checks.
+- [x] Exit criteria: Typed-throws call surfaces are invoked/rejected deterministically with explicit diagnostics.
+- **Status**: COMPLETE — Typed-throws bridge surface, lowering-strategy JSON, Rust wrappers, probe `examples/runtime_o3_typed_throws_probe.rs`, and gate `scripts/run_o3_typed_throws_gate.sh` are all implemented. O.3 gate PASS (10/10); parity advanced to 111/111.
+
+### O.4) Parameter Packs and Variadic Generics
+- [x] Add host-cell probe targets using `repeat each T` and pack expansion in callable surfaces.
+- [x] Add lowering/shape classification for pack-bearing signatures and fallback reason codes when unsupported.
+- [x] Add deterministic parity probes for pack arity 0/1/N and mixed scalar/reference payloads.
+- [x] Exit criteria: Pack-bearing signatures are either supported with correct semantics or rejected via stable policy reason codes.
+- **Status**: COMPLETE — Fixed-arity `_cdecl` wrappers over pack-generic helpers are implemented, with lowering-strategy classification, probe `examples/runtime_o4_packs_span_probe.rs`, and gate `scripts/run_o4_packs_span_gate.sh`. O.4/O.5 gate PASS (10/10); parity advanced to 121/121.
+
+### O.5) Span and Non-Escapable Semantics
+- [x] Add probes for `Span<T>` and the in-scope non-escapable view semantics exercised on this host cell across Rust<->Swift boundaries.
+- [x] Add ownership checks for the implemented borrow-only Span view operations covered by the host-cell bridge surface.
+- [x] Add debug/release equivalence gates for span/lifetime behavior.
+- [x] Exit criteria: The in-scope Span/non-escapable flows exercised by the host-cell bridge are memory-safe and deterministic under required gates.
+- **Status**: COMPLETE FOR HOST CELL — `Span<T>` coverage is implemented through deterministic read-only pointer/count bridges with index-based iteration, debug/release gating, and parity integration. The current host-cell closure covers the in-scope Span view semantics exercised by `swift_contract_o5_span_*`; parity advanced to 121/121 as part of Wave O4.
+
+### O.6) Borrowing/Consuming Convention Closure
+- [x] Extend call-shape coverage to include explicit `borrowing` and `consuming` convention combinations.
+- [x] Add ABI-shape probes comparing ownership effects and semantic equivalence across optimization profiles.
+- [x] Exit criteria: Ownership-convention-specific call lowering is covered by required shape gates.
+- **Status**: COMPLETE — Borrowing/consuming convention coverage is implemented with pointer-based borrowing and value-consuming bridges, Rust wrappers, probe `examples/runtime_o5_ownership_arc_probe.rs`, and gate `scripts/run_o5_ownership_arc_gate.sh`. O.5-wave gate PASS (10/10); parity advanced to 131/131.
+
+### O.7) ObjC Bridge ARC Paths
+- [x] Add host-cell bridge ARC coverage for representative Foundation ownership transitions across NSString, NSArray, and NSNumber paths.
+- [x] Add deterministic Foundation-heavy probes that force bridged object ownership transitions.
+- [x] Add retain/balance checks that distinguish bridged ARC paths from pure Swift value-only behavior in the implemented host-cell bridge surface.
+- [x] Exit criteria: ARC parity claims include the bridged-object ownership invariants exercised by the required host-cell gate, not only pure Swift object invariants.
+- **Status**: COMPLETE FOR HOST CELL — Foundation bridge ARC invariants are covered through deterministic NSString/NSArray/NSNumber bridge probes, UTF-8 match checks, and ARC-balance assertions in `examples/runtime_o5_ownership_arc_probe.rs` with gate `scripts/run_o5_ownership_arc_gate.sh`. O.5-wave gate PASS (10/10); parity advanced to 131/131.
+
+### O.8) Rust-Owned Executor Integration
+- [x] Add optional Rust-executor integration path (Tokio-compatible) for Swift task scheduling interop.
+- [x] Add deterministic probe for queue fairness, cancellation propagation, and no-deadlock shutdown semantics.
+- [x] Add policy gating to keep this path optional until green-history promotion.
+- [x] Exit criteria: Rust can host Swift task execution with documented constraints and deterministic behavior.
+- **Status**: EXPERIMENTAL / NOT PROMOTED — Initial O.8 kickoff is implemented through `src/RustExecutorInterop.rs`, probe `examples/runtime_o8_rust_executor_probe.rs`, gate `scripts/run_o8_rust_executor_gate.sh`, and optional-track artifact consumption in `scripts/run_phase_o_optional_tracks_signoff.sh`. The current host-cell scope is intentionally default-off and limited to a Rust-owned worker thread that schedules existing Swift task bridge work, validating FIFO fairness, queued-job cancellation, Swift cancellation visibility, and bounded shutdown while leaving required parity unchanged at 141/141.
+
+### O.9) Distributed Actor Surface (Classification Track, Blocked on Host Support)
+- [ ] Add exploratory bridge/probes for distributed actor metadata and invocation boundaries once host `Distributed` support is available.
+- [x] Add diagnostics policy and fallback classification when transport/runtime support is incomplete on host cell.
+- [x] Exit criteria: Feature is explicitly classified with evidence (required/optional/experimental) and enforced in claim contract (Wave O7 evidence: O.9 currently `experimental/not-promoted` on this host due `Distributed` unavailability).
+- **Status**: EXPERIMENTAL / NOT PROMOTED / BLOCKED — Host toolchain classification remains `experimental/not-promoted` because `Distributed` typecheck support is unavailable on this cell; promotion work is deferred until host support changes.
+
+### O.10) Observation Runtime Surface (Required on Host Cell)
+- [x] Add probes for observation graph semantics (`@Observable`/tracking) relevant to host runtime behavior.
+- [x] Add deterministic change-propagation invariants and teardown-safety checks.
+- [x] Exit criteria: Observation coverage is promoted to required on this host cell after a green history window and is enforced via `run_o10_observation_gate.sh`, Phase O required signoff, and the claim-contract validator.
+- **Status**: REQUIRED / COMPLETE — Observation bridges, probe `examples/runtime_o10_observation_probe.rs`, gate `scripts/run_o10_observation_gate.sh`, parity integration, required Phase O signoff integration, and claim validation are all green on this host cell.
+
+### Phase O Acceptance Criteria
+- [x] Add `scripts/run_phase_o_signoff.sh` requiring O.1-O.7 plus O.10 gates and parity matrix pass.
+- [x] Add optional signoff artifacts for O.8-O.9 with explicit classification and promotion status.
+- [x] Promote O.10 to a required gate once history-window-backed evidence is green on the host cell.
+- [x] Update `scripts/parity_claim_contract.json` scope and required gates once O.1-O.7 are green.
+- [x] Update README claim section to reference Phase O evidence before asserting "absolute parity of control" on this host cell.
+
+### Phase O Execution Order (Historical + Current)
+- [x] Wave O1: O.1 RemoteMirror C API baseline bindings + minimal probe.
+- [x] Wave O2: O.2 raw concurrency ABI wrappers + deterministic control probe.
+  - [x] Baseline symbol-coverage probe and gate.
+  - [x] Callable control readiness wrappers with explicit SwiftCC diagnostics + bridge fallback execution path.
+  - [x] Deterministic semantic probe suite for bridge control path (task/continuation + actor/stream/task-local domains).
+  - [x] Initial direct raw SwiftCC thunk slice for safe task inspection primitives.
+  - [x] Real task-context raw alloc/dealloc validation via bridge-hosted task probe.
+  - [x] Real task-context executor visibility validation via bridge-hosted task probe.
+  - [x] Real task-context current-task visibility + stability across yield via bridge-hosted task probe.
+  - [x] Real task-context raw self-cancel ordering validation across yield via bridge-hosted task probe.
+  - [x] Real task-context raw child-cancel propagation/completion ordering validation via bridge-hosted task probe.
+  - [x] Real task-context async-let lifecycle ordering validation via bridge-hosted task probe.
+  - [x] Real task-context child-job completion ordering validation via bridge-hosted task probe.
+  - [x] Direct-thunk orchestration preflight policy bitfield (create/run/async-let/cancel readiness + guard-active) wired into deterministic probe.
+  - [x] Direct-thunk nullary-continuation yield-path preflight (createNullaryContinuationJob + enqueueGlobal + current-executor readiness + guard-active) wired into deterministic probe.
+  - [x] Direct raw main-executor identity invocation check (`getMainExecutor` -> `isMainExecutor`) wired into deterministic probe.
+  - [x] Deterministic direct SwiftCC thunk ordering probe: `runtime_thunk_swift_task_direct_ordering_probe` (task-visible + alloc×3 + dealloc×3 via `__attribute__((swiftcall))` typed fn pointers, invoked from bridge-hosted task context). O.2: 23/23 PASS.
+- [x] Wave O3: O.3 typed-throws ABI coverage — 5 `@_cdecl` bridge exports (`swift_contract_o3_typed_throws_{success,concrete_error,error_identity,combined_failure,async}`), 1 lowering-strategy endpoint (`swift_contract_o3_lowering_strategy_json`), 6 `RuntimeContract` Rust methods, 10-test probe driver (`runtime_o3_typed_throws_probe.rs`), gate script (`run_o3_typed_throws_gate.sh`). Error encoding: `O3Error` case tag in bits[31:16], payload in bits[15:0]. O.3 gate: 10/10 PASS. Parity: 111/111.
+- [x] Wave O4: O.4 parameter packs + O.5 Span ABI coverage — pack-generic `_o4PackSum`/`_o4PackProduct` internal helpers (Swift 6 `repeat each T`), 5 `@_cdecl` pack bridge exports (arity-0/1/3 sum, arity-3 product, lowering-strategy JSON), 5 `@_cdecl` Span bridge exports (`swift_contract_o5_span_{sum,length,first,contains,bounds_ok}`); 7 Rust FFI types (`ContractO4PackArity0`, `ContractO4PackSumArity1`, `ContractO4PackSumArity3`, `ContractO4LoweringStrategyJson`, `ContractO5SpanI32`, `ContractO5SpanContains`, `ContractO5SpanBoundsOk`), 10 `RuntimeContract` Rust methods, 10-test probe driver (`runtime_o4_packs_span_probe.rs`), gate script (`run_o4_packs_span_gate.sh`). Span iteration via index (not `for-in` — `Span<T>` is not `Sequence`). O.4/O.5 gate: 10/10 PASS. Parity: 121/121.
+- [x] Wave O5: O.6 ownership-convention closure + O.7 ObjC bridge ARC parity checks — 5 O.6 bridge exports (`swift_contract_o6_{borrow_identity,consume_double,borrow_sum,consume_negate,lowering_strategy_json}`; borrowing validated via borrowed pointer convention), 5 O.7 bridge exports (`swift_contract_o7_{nsstring_bridge_roundtrip,nsarray_bridge_count,bridge_arc_balance,nsnumber_bridge_roundtrip,nsstring_utf8_match}`), 10 `RuntimeContract` Rust methods, 10-test probe driver (`runtime_o5_ownership_arc_probe.rs`), gate script (`run_o5_ownership_arc_gate.sh`). O.5-wave gate: 10/10 PASS. Parity: 131/131.
+- [x] Wave O6: O.1-O.7 promotion to required gates + `run_phase_o_signoff.sh` + claim-contract update — added `scripts/run_phase_o_signoff.sh` (runs O1/O2/O3/O4/O5 gates + parity matrix, emits `target/runtime-probe/phase-o-signoff/{phase-o-signoff.json,phase-o-signoff.md}`), wired `run_full_plan_verification.sh` to invoke phase O signoff, and promoted `scripts/parity_claim_contract.json` scope to `v4-phase-o` with required gates `{o1_remotemirror_gate,o2_concurrency_abi_gate,o3_typed_throws_gate,o4_packs_span_gate,o5_ownership_arc_gate,phase_o_signoff}`. Phase O signoff: PASS.
+- [x] Wave O7: O.8-O.10 optional tracks classification and promotion evidence — added `scripts/run_phase_o_optional_tracks_signoff.sh` emitting `target/runtime-probe/phase-o-optional/{phase-o-optional-signoff.json,phase-o-optional-signoff.md}` with explicit classifications: O.8=`experimental/not-promoted`, O.9=`experimental/not-promoted`, O.10=`optional/candidate`; wired `run_full_plan_verification.sh` to execute optional signoff; extended `parity_claim_contract.json` with `optional_tracks` policy + required gate `phase_o_optional_tracks_signoff`; extended claim validator to enforce optional-track classification consistency against artifact report; added deterministic O.10 probe/gate (`runtime_o10_observation_probe.rs`, `run_o10_observation_gate.sh`) plus candidate hardening via O10 green-history window (`o10_candidate_history_window=2`). Historical pre-promotion state only.
+- [x] Wave O8: O.10 promotion to required — elevated `run_o10_observation_gate.sh` from optional/candidate evidence to a required Phase O gate, updated `run_phase_o_signoff.sh` to require O10 alongside O1/O2/O3/O4/O5, promoted claim-contract scope to `v5-phase-o-o10`, kept optional-track signoff focused on O.8/O.9 only, required the O10 gate artifact to be PASS in `validate_parity_claim_contract.sh`, and preserved parity at 141/141 PASS.
+- [x] Wave O9: O.8 Rust-owned executor optional-track kickoff — added `src/RustExecutorInterop.rs` with a default-off opt-in policy flag (`SWIFT_RUNTIME_O8_ENABLE`), single-threaded Rust worker queue, queued-job cancellation, and bounded shutdown; added deterministic probe `examples/runtime_o8_rust_executor_probe.rs`; added gate `scripts/run_o8_rust_executor_gate.sh` emitting `target/runtime-probe/o8-rust-executor/o8-rust-executor-summary.{json,md}`; extended `scripts/run_phase_o_optional_tracks_signoff.sh` to consume O.8 gate artifact evidence while preserving `experimental/not-promoted` classification; re-ran parity (141/141 PASS), optional-track signoff PASS, claim signoff PASS, and full plan verification PASS.
+
+### Wave O9 Implementation Order (Completed)
+- [x] Step 1: Add opt-in runtime/config plumbing for the Rust-owned executor path, default-off in required verification flows.
+- [x] Step 2: Land the first O.8 probe with deterministic fairness/cancellation/shutdown checks and explicit unsupported-path diagnostics.
+- [x] Step 3: Add the O.8 gate script and write `o8-rust-executor-summary.{json,md}` artifacts under `target/runtime-probe/o8-rust-executor/`.
+- [x] Step 4: Teach optional-track signoff and claim validation surfaces to consume O.8 gate evidence while preserving `experimental/not-promoted` classification.
+- [x] Step 5: Re-run parity, optional-track signoff, and full-plan verification to confirm required scope remains `v5-phase-o-o10`.
+
+### Wave O9 Verification Sequence (Completed)
+- [x] Run the first O.8 probe directly during development to stabilize fairness/cancellation/shutdown assertions before gate wiring.
+- [x] Run `bash ./scripts/run_o8_rust_executor_gate.sh` to enforce debug/release equivalence and emit O.8 artifacts.
+- [x] Run `bash ./scripts/run_phase_o_optional_tracks_signoff.sh` to record O.8 evidence while preserving optional classification.
+- [x] Run `bash ./scripts/run_parity_matrix.sh` to confirm required parity remains unchanged with O.8 default-off.
+- [x] Run `bash ./scripts/run_full_plan_verification.sh` to verify end-to-end policy and artifact consistency.
+
+### O.1 Kickoff Record (Historical)
+- [x] Add new Rust module `src/RemoteMirror.rs` with FFI declarations for core `swift_reflection_*` entry points used by O.1.
+- [x] Add safe wrappers in `RuntimeContract` for:
+  - [x] reflection context lifecycle (create/destroy).
+  - [x] metadata version query (`swift_reflection_getSupportedMetadataVersion`).
+  - [x] image registration / ownership checks (`swift_reflection_addImage`, `swift_reflection_ownsAddress`).
+  - [x] type/instance info lookup.
+  - [x] child traversal and demangled-name retrieval.
+  - [x] conformance-cache and async-task reflection iterators.
+- [x] Add probe `examples/runtime_o1_remotemirror_probe.rs` with deterministic checks:
+  - [x] required symbol presence across core reflection and async/actor APIs.
+  - [x] reflection export inventory is discoverable and covers required symbols.
+  - [x] context creation/destruction.
+  - [x] metadata version query non-zero.
+  - [x] addImage + ownsAddress callable stability and capability semantics.
+  - [x] metadata info non-null for known host-cell types.
+  - [x] child enumeration count consistency for fixed fixtures.
+  - [x] demangled-name non-empty and stable prefix checks.
+  - [x] async/actor reflection API availability probe with explicit capability status.
+- [x] Add gate `scripts/run_o1_remotemirror_gate.sh` enforcing debug/release equivalence and writing:
+  - [x] `target/runtime-probe/o1-remotemirror/o1-remotemirror-summary.json`
+  - [x] `target/runtime-probe/o1-remotemirror/o1-remotemirror-summary.md`
+- [x] Integrate O.1 gate into `scripts/run_phase_o_signoff.sh` once O.2-O.7 stubs exist.
+
+### Remaining Active Work After v5 Scope Lock
+- [x] Wave O10 (completed): Add O.9 distributed readiness watch with artifact-backed host capability classification.
+- [ ] Wave O11 (next): Decide on post-O10 direction:
+  - Option A: Extend O.8 beyond initial default-off kickoff based on integration readiness.
+  - Option B: Defer further optional-track work and shift focus to stabilizing required scope via longer history windows.
+  - Option C: Begin O.9 implementation work if host `Distributed` support becomes available (watch artifact will signal readiness).
+- [ ] Keep required scope locked at `v5-phase-o-o10` unless a future promotion decision explicitly coordinates scope update + signoff + README + PLAN together.
+
+### Wave O10 (Completed): O.9 Distributed Readiness Watch (Blocked Track)
+- [x] Add a lightweight host-capability check script that captures `Distributed` typecheck status and emits a deterministic readiness artifact.
+- [x] Add O.9 watch artifact outputs under `target/runtime-probe/o9-distributed-watch/`:
+  - [x] `o9-distributed-watch-summary.json`
+  - [x] `o9-distributed-watch-summary.md`
+- [x] Extend optional-track signoff evidence for O.9 to consume the watch artifact when present (while preserving `experimental/not-promoted` on unsupported hosts).
+- [x] Add a promotion trigger rule: O.9 implementation work only starts after host capability check is green and tracked for at least one full verification cycle.
+- [x] Exit criteria: O.9 remains explicitly blocked or becomes implementation-ready with artifact-backed evidence; required parity scope remains unchanged until explicit promotion.
+
+### Wave O10 Implementation Order (Completed)
+- [x] Step 1: Create `scripts/run_o9_distributed_watch.sh` script to check host-cell Distributed support (typecheck availability, runtime library presence, actor metadata support).
+- [x] Step 2: Capture three probe results: `distributed_typecheck_available`, `distributed_runtime_available`, `distributed_actor_metadata_available`.
+- [x] Step 3: Emit watch artifact outputs `target/runtime-probe/o9-distributed-watch/{o9-distributed-watch-summary.json,o9-distributed-watch-summary.md}` with watch_status (SUPPORTED/PARTIAL/UNSUPPORTED).
+- [x] Step 4: Update `scripts/run_phase_o_optional_tracks_signoff.sh` to parse and consume O.9 watch artifact, update O.9 classification logic based on watch_status.
+- [x] Step 5: Re-run phase-o-optional signoff to refresh O.9 evidence table with watch artifact data (watch_present, watch_status, implementation_ready, watch_reason).
+- [x] Step 6: Run full-plan verification to confirm required scope remains `v5-phase-o-o10` and all signoffs pass.
+
+### Wave O10 Verification Sequence (Completed)
+- [x] Run `bash ./scripts/run_o9_distributed_watch.sh` to capture host Distributed support status and write watch artifacts.
+- [x] Inspect `target/runtime-probe/o9-distributed-watch/o9-distributed-watch-summary.json` to verify watch_status (PARTIAL on this host due to missing libswiftDistributed.dylib).
+- [x] Run `bash ./scripts/run_phase_o_optional_tracks_signoff.sh` to refresh O.9 evidence and consume watch artifact data.
+- [x] Verify O.9 classification in `target/runtime-probe/phase-o-optional/phase-o-optional-signoff.json` reports watch_present=1, watch_status=PARTIAL, implementation_ready=0.
+- [x] Run `bash ./scripts/validate_parity_claim_contract.sh` to confirm optional-track classification contract remains consistent with required scope.
+- [x] Run `bash ./scripts/run_full_plan_verification.sh` to verify end-to-end: all gates PASS, parity 141/141, phase signoffs PASS, plan completion signoff PASS.
+- [x] Confirm required parity scope remains `v5-phase-o-o10` unchanged.
+
+### Wave O11 (Completed): Optional-Track Stabilization History Window
+- [x] Chosen direction: Option A (stabilization-first) for the immediate O11 cycle.
+- [x] Keep O.8 default-off and gather a longer optional-track history window across consecutive full-plan verification runs (target: 3 consecutive O11 refresh cycles with unchanged optional classification and green required parity).
+- [x] Keep O.9 blocked unless watch artifact reports `watch_status=SUPPORTED`.
+- [x] If O.9 becomes SUPPORTED, open a follow-on implementation wave with probe/gate design before any claim-contract change.
+- [x] Run `bash ./scripts/run_phase_o_optional_tracks_signoff.sh` after optional-track refresh changes.
+- [x] Run `bash ./scripts/validate_parity_claim_contract.sh` and `bash ./scripts/validate_plan_completion.sh ./PLAN.md` for all O11 cycle closure checks.
+
+### Wave O11 Implementation Order (Cycles 1-3 Completed, Wave Closed)
+- [x] Step 1: Record a minimum optional-track history window target for O.8/O.9 evidence refreshes (no promotion action in this wave).
+- [x] Step 2: Re-run `bash ./scripts/run_o9_distributed_watch.sh` for O11 cycle-1 and persist updated watch status.
+- [x] Step 3: Refresh optional-track signoff and confirm O.8 remains `experimental/not-promoted` and O.9 remains blocked unless watch status changes.
+- [x] Step 4: Re-run claim-contract validation to ensure optional-track classifications stay policy-consistent.
+- [x] Step 5: Close O11 cycle-1 with plan-completion validation while preserving required scope `v5-phase-o-o10` unchanged.
+- [x] Step 6: Repeat cycles 2/3 for history-window completion before considering any optional-track promotion discussion.
+
+### Wave O11 Verification Sequence (Cycles 1-3 All PASS, Wave Closure Verified)
+- [x] Run `bash ./scripts/run_o9_distributed_watch.sh` and verify watch artifacts are updated.
+- [x] Run `bash ./scripts/run_phase_o_optional_tracks_signoff.sh` and inspect O.8/O.9 classification output.
+- [x] Run `bash ./scripts/validate_parity_claim_contract.sh` to confirm optional-track policy consistency.
+- [x] Run `bash ./scripts/run_full_plan_verification.sh` to confirm required parity remains green.
+- [x] Run `bash ./scripts/validate_plan_completion.sh ./PLAN.md` before recording O11 cycle-1/2/3 completion.
+- [x] Repeat the same sequence for cycles 2/3 to satisfy the O11 history-window target: all three cycles completed with unchanged optional-track classifications (O.8 experimental/not-promoted, O.9 experimental/not-promoted blocked on PARTIAL watch status) and full-plan verification PASS across all cycles.
+
+### Phase O Artifact Contract (Implemented + Optional Track Extensions)
+- [x] Add directory: `target/runtime-probe/phase-o-signoff/`.
+- [x] Required per-wave artifact naming:
+  - [x] `o1-remotemirror-*.{json,md}`
+  - [x] `o2-concurrency-abi-*.{json,md}`
+  - [x] `o3-typed-throws-*.{json,md}`
+  - [x] `o4-packs-span-*.{json,md}`
+  - [x] `o5-ownership-objc-arc-*.{json,md}`
+  - [x] `o10-observation-*.{json,md}`
+- [x] Final signoff outputs:
+  - [x] `target/runtime-probe/phase-o-signoff/phase-o-signoff.json`
+  - [x] `target/runtime-probe/phase-o-signoff/phase-o-signoff.md`
+  - [x] `target/runtime-probe/o10-observation/o10-observation-summary.json`
+  - [x] `target/runtime-probe/o10-observation/o10-observation-summary.md`
+- [x] Optional-track artifact naming for Wave O9 kickoff:
+  - [x] `target/runtime-probe/o8-rust-executor/o8-rust-executor-summary.json`
+  - [x] `target/runtime-probe/o8-rust-executor/o8-rust-executor-summary.md`
+  - [x] O.8 evidence is consumed by `target/runtime-probe/phase-o-optional/{phase-o-optional-signoff.json,phase-o-optional-signoff.md}` without changing required gate scope.
+- [x] Optional-track artifact naming for Wave O10 readiness watch:
+  - [x] `target/runtime-probe/o9-distributed-watch/o9-distributed-watch-summary.json`
+  - [x] `target/runtime-probe/o9-distributed-watch/o9-distributed-watch-summary.md`
+  - [x] O.9 watch evidence is consumed by `target/runtime-probe/phase-o-optional/{phase-o-optional-signoff.json,phase-o-optional-signoff.md}` without changing required gate scope.
+
+### Phase O Commit Discipline (Standing Rules)
+- Keep one wave per commit series (bindings, probe, gate, docs).
+- Require gate PASS (debug + release) before marking each O.* item complete.
+- Preserve deterministic seeds and explicit fallback reason-code taxonomy for every unsupported path.
+- Run `bash ./scripts/run_parity_matrix.sh` after each wave to guard against regressions.
 
 ### Research Tracks
 - **Vendored Swift**: Downstream Swift fork with extended runtime exports (10,000+ line commitment).
@@ -903,12 +1139,13 @@ Goal: Expand runtime-control coverage on the current host cell beyond existing r
 
 ## Success Criteria Summary
 
-| Milestone | v1-frozen | v2-expanded | v3-dynamic |
-|-----------|-----------|-------------|-----------|
-| Protocol dispatch variants | 1 (existential) | 6 (all) | 6 (all) |
-| Bridging types | Person, Counter | + Array, Dict, Error | + (dynamic discovery) |
-| Version pinning | Swift 6.2.4 exactly | Swift 6.2.4 exactly | Swift 6.1–6.3 range |
-| Parity checks | 101 + 7 protocol | + 20 array + 25 dict + 15 error | (same, cross-version) |
-| CI matrix | macos-14,15 × {debug, release} | (same) | + Swift 6.1, 6.3 |
-| Scope marker | `v1-frozen-plus-ap` | `v2-expanded` | `v3-dynamic` |
+| Milestone | v1-frozen | v2-expanded | v3-dynamic | v4-phase-o | v5-phase-o-o10 |
+|-----------|-----------|-------------|------------|------------|----------------|
+| Protocol dispatch variants | 1 (existential) | 6 (all) | 6 (all) | 6 (all) | 6 (all) |
+| Bridging types | Person, Counter | + Array, Dict, Error | + dynamic discovery | + runtime ABI waves O1-O7 | + O10 observation gate required |
+| Version pinning | Swift 6.2.4 exactly | Swift 6.2.4 exactly | Swift 6.1+ policy range | Swift 6.2.4 host-cell validated | Swift 6.2.4 host-cell validated |
+| Parity checks | 101 + protocol set | expanded bridging parity | cross-version parity policy | 141/141 runtime parity | 141/141 runtime parity + O10 required |
+| CI/gate emphasis | baseline parity | expanded probes | multi-version adaptation | Phase O signoff (O1-O5 + parity) | Phase O signoff (O1-O5 + O10 + parity) |
+| Scope marker | `v1-frozen-plus-ap` | `v2-expanded` | `v3-dynamic` | `v4-phase-o` | `v5-phase-o-o10` |
 - [x] Added final signoff artifact `target/runtime-probe/absolute-parity-signoff.md` with consolidated PASS/FAIL status.
+- [x] Current scope lock: `v5-phase-o-o10` (required Phase O gates include O1/O2/O3/O4/O5/O10 + parity + phase signoff).
