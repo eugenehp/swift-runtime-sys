@@ -1190,12 +1190,12 @@ Goal: Close the remaining control-surface gaps that block an "absolute parity of
 - **Timeline**: Execute Wave O13 as preparation phase; defer actual O9 probe/gate implementation to Wave O14 (post-library-availability)
 
 ### Wave O13 Implementation Order (Preparation Phase)
-- [ ] Step 1: Create `scripts/watch_o9_distributed_promotion_eligibility.sh` to monitor Swift toolchain releases for libswiftDistributed.dylib availability.
-- [ ] Step 2: Document O.9 probe specification (distributed actor metadata inspection, actor method invocation, message-send semantics) without implementing.
-- [ ] Step 3: Design O.9 gate script skeleton (`scripts/run_o9_distributed_actor_gate.sh`) with conditional logic: execute probes if watch_status=SUPPORTED, otherwise skip.
-- [ ] Step 4: Add O.9 to optional-track signoff logic with dynamic classification: "experimental/not-promoted-waiting" when library missing, transitional state when library available but gate not yet passing.
-- [ ] Step 5: Document promotion workflow for O.9 (library detection → probe implementation → gate validation → policy update → scope promotion).
-- [ ] Step 6: Record O13 completion in PLAN.md and prepare O14 task skeleton for implementation phase.
+- [x] Step 1: Create `scripts/watch_o9_distributed_promotion_eligibility.sh` to monitor Swift toolchain releases for libswiftDistributed.dylib availability.
+- [x] Step 2: Document O.9 probe specification (distributed actor metadata inspection, actor method invocation, message-send semantics) without implementing.
+- [x] Step 3: Design O.9 gate script skeleton (`scripts/run_o9_distributed_actor_gate.sh`) with conditional logic: execute probes if watch_status=SUPPORTED, otherwise skip.
+- [x] Step 4: Add O.9 to optional-track signoff logic with dynamic classification: "experimental/not-promoted-waiting" when library missing, transitional state when library available but gate not yet passing.
+- [x] Step 5: Document promotion workflow for O.9 (library detection → probe implementation → gate validation → policy update → scope promotion).
+- [x] Step 6: Record O13 completion in PLAN.md and prepare O14 task skeleton for implementation phase.
 
 ### O.9 Probe Design (Specification Only - Implementation Deferred)
 **Expected probes** (to be implemented in Wave O14 if library becomes available):
@@ -1215,6 +1215,22 @@ Goal: Close the remaining control-surface gaps that block an "absolute parity of
 - **Response**: Unblock Wave O14 implementation work; transition O9 from "not-promoted-waiting" to "ready-for-implementation"
 - **Plan update**: Automatically update PLAN.md with O14 task details when library detected
 - **Condition override**: If Swift version advances beyond 6.2.4 without Distributed library, review scope compatibility
+
+### O.9 Promotion Workflow (O13 Documented)
+1. Library/watch detection: `watch_o9_distributed_promotion_eligibility.sh` reports `watch_status=SUPPORTED`.
+2. Transitional gate stage: `run_o9_distributed_actor_gate.sh` transitions from `PENDING_IMPLEMENTATION` to real probe execution in O14.
+3. Probe validation stage: O9.1-O9.4 debug+release probe suite reaches PASS.
+4. Optional policy update: `run_phase_o_optional_tracks_signoff.sh` emits O.9 `optional/not-promoted` (or promotion candidate) with gate evidence.
+5. Scope/policy promotion: claim contract + README + PLAN coordinated update when O9 is promoted to required.
+
+### Wave O14 (Prepared Skeleton): O.9 Implementation Activation
+- [ ] Step 1: Implement O9.1 probe (distributed actor metadata descriptor introspection).
+- [ ] Step 2: Implement O9.2 probe (actor method invocation across distributed boundary).
+- [ ] Step 3: Implement O9.3 probe (distributed result encoding/decoding and error propagation).
+- [ ] Step 4: Implement O9.4 probe (actor isolation semantics under distributed calls).
+- [ ] Step 5: Upgrade `run_o9_distributed_actor_gate.sh` from skeleton to required probe gate (debug/release equivalence).
+- [ ] Step 6: Re-run optional-track signoff and verify O.9 transitions from waiting/transitional to optional-ready.
+- [ ] Step 7: Evaluate promotion readiness for required-scope adoption.
 
 ---
 

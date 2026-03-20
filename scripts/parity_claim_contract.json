@@ -41,7 +41,7 @@
   "optional_tracks": {
     "o9_distributed_actor_surface": {
       "classification": "experimental",
-      "promotion_status": "not-promoted"
+      "promotion_status": "not-promoted-waiting"
     }
   },
   "minimum_budgets": {
