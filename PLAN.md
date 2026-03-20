@@ -1288,7 +1288,13 @@ After completing Phase O (O1-O10 gates required, O8 promoted, O9 deferred), the 
 - **Goal**: Web URL handling with encoding safety
 - **Scope**: URL construction, path/query parsing, percent encoding, host/port/scheme components
 - **Prerequisites**: P.1 String must be PASS (strings are building blocks)
-- **Timeline**: After P.1 completion
+- **Implementation Sequence** (Completed):
+  - [x] Step 1: Create `examples/runtime_p2_url_probe.rs` with deterministic URL parse/build tests.
+  - [x] Step 2: Create `scripts/run_p2_url_gate.sh` with debug + release equivalence validation.
+  - [x] Step 3: Validate URL parse validity, scheme/host/path extraction, component-based build, and percent-encoded parse behavior.
+  - [x] Step 4: Generate P.2 artifacts `target/runtime-probe/p2-url/p2-url-summary.{json,md}`.
+  - [x] Step 5: Re-run parity matrix and confirm no regressions (`141/141 PASS`).
+- **Status**: P.2 gate PASS (8/8 debug + release).
 
 ### P.3: JSON / PropertyList / Codable Round-Trip Parity
 - **Goal**: Serialization/deserialization determinism
@@ -1331,8 +1337,8 @@ After completing Phase O (O1-O10 gates required, O8 promoted, O9 deferred), the 
 - Run full parity matrix after each P gate to ensure no regressions
 - Update claim-contract incrementally: v7-phase-p-foundation only after all P.1-P.6 gates PASS
 
-### Next Action: Begin P.1 String Bridging
-Execute P.1 implementation starting with probe design and gate skeleton.
+### Next Action: Begin P.3 Codable/Serialization Bridging
+Execute P.3 implementation (JSON / PropertyList / Codable round-trip parity) after P.1 and P.2 completion.
 ---
 
 ## Execution Log
@@ -1351,3 +1357,10 @@ Execute P.1 implementation starting with probe design and gate skeleton.
 - [x] Updated PLAN.md with Phase P foundation section (P.1-P.6 workstream definitions).
 - [x] Updated success criteria table with v7-phase-p-foundation column.
 - [x] Next: P.2 URL/URLComponents after P.1 evidence stabilization.
+
+### 2026-03-20 (Phase P — P.2 URL Bridging Completion)
+- [x] Added `examples/runtime_p2_url_probe.rs` with deterministic URL checks (parse validity, scheme/host/path extraction, component build, percent-encoded path parse).
+- [x] Added `scripts/run_p2_url_gate.sh` with debug/release equivalence validation and artifact output.
+- [x] P.2 gate PASS: 8/8 in debug and 8/8 in release; artifacts emitted under `target/runtime-probe/p2-url/`.
+- [x] Re-ran parity matrix after P.2 changes: `141/141 PASS` (no regressions).
+- [x] Updated Phase P plan status: P.2 complete, next action moved to P.3 Codable/Serialization.
