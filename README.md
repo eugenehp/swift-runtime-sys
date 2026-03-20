@@ -262,25 +262,28 @@ Artifact:
 The parity pipeline now runs the crate example binary `runtime_raw_probe`
 through Cargo, so probe/parity/debug paths all exercise `RuntimeFactory`.
 
-## Parity Scope (v6-phase-o-o8-required)
+## Parity Scope (v7-phase-p-foundation)
 
 This repository's parity claim is scoped and versioned. "100% parity" means
 all items marked as required in this scope pass on supported environments.
 
-**Current scope: v6-phase-o-o8-required** (Phase O promotion: O.8 Rust-owned executor promoted to required)
+**Current scope: v7-phase-p-foundation** (Phase O required gates plus Phase P Foundation bridging gates P.1-P.6)
 
 ### Scope Definition
 - **Phase C gates** (C.1-C.9): All required (ownership hardening, existentials, enums, closures, optimizer, lowering, safety, reliability, promotion)
 - **Phase O gates** (O.1, O.2, O.3, O.4, O.5): All required (RemoteMirror, concurrency ABI, typed throws, parameter packs, ownership/ARC)
 - **Phase O.8**: Now required (Rust-owned executor bridge with deterministic FIFO work-stealing scheduling)
 - **Phase O.10**: Required (Observation runtime surface)
+- **Phase P gates** (P.1-P.6): Required (String, URL, Codable/serialization, collections, temporal, number formatting)
+- **Phase P signoff**: Required (`scripts/run_phase_p_signoff.sh`)
 - **Parity matrix**: 141/141 checks required to pass
 - **Phase O.9**: Experimental/not-promoted (Distributed actor surface blocked on runtime library availability)
 
 ### Promotion Status
 - **v5-phase-o-o10**: Completed with 3-cycle O11 history window (O.8 experimental/not-promoted, O.9 experimental/not-promoted)
-- **v6-phase-o-o8-required**: Current (Wave O12 promotion: O.8 elevated from experimental to required, O.9 remains experimental)
-- **O.8 Promotion Evidence**: Gate PASS 6/6 debug+release across all three O11 verification cycles; no parity regressions
+- **v6-phase-o-o8-required**: Completed (Wave O12 promotion: O.8 elevated from experimental to required)
+- **v7-phase-p-foundation**: Current (P.1-P.6 all implemented and phase-p signoff enforced in full-plan verification)
+- **Foundation Promotion Evidence**: P.1-P.6 gates PASS in debug+release with consolidated `phase-p-signoff` PASS and no parity regressions
 
 Supported parity matrix cells:
 
@@ -291,9 +294,9 @@ Version-conditional tracking:
 
 - Parity artifacts are uploaded per CI cell and named with runner identity.
 - Any cell-specific deviations must be documented before parity claims are updated.
-- A parity claim for v6 scope requires all supported cells to pass required gates: Phase C signoff + Phase O signoff (with O.8 required).
+- A parity claim for v7 scope requires all supported cells to pass required gates: Phase C signoff + Phase O signoff + Phase P signoff.
 
-Support-matrix deviation ledger (v6-phase-o-o8-required scope):
+Support-matrix deviation ledger (v7-phase-p-foundation scope):
 
 - `macos-14`: no known required-scope deviations.
 - `macos-15`: no known required-scope deviations.
@@ -305,12 +308,14 @@ If a deviation appears, this section must be updated with:
 - expected/accepted behavior and rationale
 - mitigation or promotion plan
 
-Required (v6-phase-o-o8-required):
+Required (v7-phase-p-foundation):
 
 - `scripts/run_parity_matrix.sh` reports full pass count (`N/N PASS`).
 - `scripts/run_parity_stress.sh` gate passes at configured CI budget.
 - `scripts/run_protocol_dispatch_matrix.sh` completes and publishes matrix output.
 - `scripts/run_o8_rust_executor_gate.sh` passes in both debug and release modes (6/6 tests).
+- `scripts/run_p1_string_gate.sh` through `scripts/run_p6_formatting_gate.sh` all pass in both debug and release modes.
+- `scripts/run_phase_p_signoff.sh` passes and emits `target/runtime-probe/phase-p-signoff/phase-p-signoff.{json,md}`.
 - CI uploads parity/stress/protocol/o8-executor artifacts for each run.
 - All protocol dispatch variants (x20, x0, x20x0, x0x1, x20x1, existential) pass with semantic parity (Phase A.1).
 - CI support-matrix signoff job validates parity artifacts from all required cells.
