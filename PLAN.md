@@ -1312,7 +1312,14 @@ After completing Phase O (O1-O10 gates required, O8 promoted, O9 deferred), the 
 - **Goal**: Objective-C collection bridging with type safety
 - **Scope**: NSArray ↔ Array<T> conversion, NSSet identity semantics, count/membership operations
 - **Prerequisites**: Any of P.1-P.3 (independent scope)
-- **Timeline**: Parallel to P.2/P.3 or after P.1
+- **Implementation Sequence** (Completed):
+  - [x] Step 1: Create `examples/runtime_p4_collections_probe.rs` for deterministic collection semantics checks.
+  - [x] Step 2: Create `scripts/run_p4_collections_gate.sh` with debug + release equivalence validation.
+  - [x] Step 3: Validate NSArray bridge count semantics and NSCopying array mutation independence.
+  - [x] Step 4: Validate set-like uniqueness semantics via hashable distinct-count checks and ordered collection semantics via array append/get/pointer iteration.
+  - [x] Step 5: Generate P.4 artifacts `target/runtime-probe/p4-collections/p4-collections-summary.{json,md}`.
+  - [x] Step 6: Re-run parity matrix and confirm no regressions (`141/141 PASS`).
+- **Status**: P.4 gate PASS (8/8 debug + release).
 
 ### P.5: Date / Calendar / TimeZone Normalization and Arithmetic
 - **Goal**: Temporal arithmetic with DST, timezone, calendar rules
@@ -1343,8 +1350,8 @@ After completing Phase O (O1-O10 gates required, O8 promoted, O9 deferred), the 
 - Run full parity matrix after each P gate to ensure no regressions
 - Update claim-contract incrementally: v7-phase-p-foundation only after all P.1-P.6 gates PASS
 
-### Next Action: Begin P.4 Foundation Collections Bridging
-Execute P.4 implementation (`NSArray`, `NSSet`, `NSOrderedSet` bridging) after P.1/P.2/P.3 completion.
+### Next Action: Begin P.5 Temporal Bridging
+Execute P.5 implementation (Date / Calendar / TimeZone normalization and arithmetic) after P.4 completion.
 ---
 
 ## Execution Log
@@ -1377,3 +1384,10 @@ Execute P.4 implementation (`NSArray`, `NSSet`, `NSOrderedSet` bridging) after P
 - [x] P.3 gate PASS: 8/8 in debug and 8/8 in release; artifacts emitted under `target/runtime-probe/p3-codable/`.
 - [x] Re-ran parity matrix after P.3 changes: `141/141 PASS` (no regressions).
 - [x] Updated Phase P plan status: P.3 complete, next action moved to P.4 Foundation Collections.
+
+### 2026-03-20 (Phase P — P.4 Collections Bridging Completion)
+- [x] Added `examples/runtime_p4_collections_probe.rs` covering deterministic collection behavior checks.
+- [x] Added `scripts/run_p4_collections_gate.sh` with debug/release equivalence validation and P.4 artifact output.
+- [x] P.4 gate PASS: 8/8 in debug and 8/8 in release; artifacts emitted under `target/runtime-probe/p4-collections/`.
+- [x] Re-ran parity matrix after P.4 changes: `141/141 PASS` (no regressions).
+- [x] Updated Phase P plan status: P.4 complete, next action moved to P.5 temporal bridging.
