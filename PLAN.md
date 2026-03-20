@@ -1348,15 +1348,15 @@ After completing Phase O (O1-O10 gates required, O8 promoted, O9 deferred), the 
 - **Status**: P.6 gate PASS (8/8 debug + release).
 
 ### Phase P Signoff Artifact Contract
-- [ ] Add directory: `target/runtime-probe/phase-p-signoff/`
-- [ ] P.1-P.6 gate artifacts:
-  - [ ] `p1-string-*.{json,md}` (UTF-8 encoding, normalization, case-folding)
-  - [ ] `p2-url-*.{json,md}` (URL parsing, percent encoding, components)
-  - [ ] `p3-codable-*.{json,md}` (JSON, PropertyList, custom encoders)
-  - [ ] `p4-collections-*.{json,md}` (NSArray, NSSet, count, membership)
-  - [ ] `p5-temporal-*.{json,md}` (Calendar, TimeZone, DST, arithmetic)
-  - [ ] `p6-formatting-*.{json,md}` (Decimal, Percent, Scientific)
-- [ ] Final signoff: `target/runtime-probe/phase-p-signoff/phase-p-signoff.json`
+- [x] Add directory: `target/runtime-probe/phase-p-signoff/`
+- [x] P.1-P.6 gate artifacts:
+  - [x] `p1-string-*.{json,md}` (UTF-8 encoding, normalization, case-folding)
+  - [x] `p2-url-*.{json,md}` (URL parsing, percent encoding, components)
+  - [x] `p3-codable-*.{json,md}` (JSON, PropertyList, custom encoders)
+  - [x] `p4-collections-*.{json,md}` (NSArray, NSSet, count, membership)
+  - [x] `p5-temporal-*.{json,md}` (Calendar, TimeZone, DST, arithmetic)
+  - [x] `p6-formatting-*.{json,md}` (Decimal, Percent, Scientific)
+- [x] Final signoff: `target/runtime-probe/phase-p-signoff/phase-p-signoff.json`
 
 ### Phase P Commit Discipline
 - One P.* workstream per commit series (probe, gate, docs)
@@ -1364,8 +1364,8 @@ After completing Phase O (O1-O10 gates required, O8 promoted, O9 deferred), the 
 - Run full parity matrix after each P gate to ensure no regressions
 - Update claim-contract incrementally: v7-phase-p-foundation only after all P.1-P.6 gates PASS
 
-### Next Action: Begin Phase P Signoff Integration
-Execute Phase P signoff integration: aggregate P.1-P.6 artifacts into `target/runtime-probe/phase-p-signoff/phase-p-signoff.json` and wire a `run_phase_p_signoff.sh` gate.
+### Next Action: Integrate Phase P into Full-Plan Verifier
+Wire `scripts/run_phase_p_signoff.sh` into top-level verification and claim-policy validation flows.
 ---
 
 ## Execution Log
@@ -1420,3 +1420,11 @@ Execute Phase P signoff integration: aggregate P.1-P.6 artifacts into `target/ru
 - [x] P.6 gate PASS: 8/8 in debug and 8/8 in release; artifacts emitted under `target/runtime-probe/p6-formatting/`.
 - [x] Re-ran parity matrix after P.6 changes: `141/141 PASS` (no regressions).
 - [x] Updated Phase P plan status: P.6 complete; next action moved to Phase P signoff integration.
+
+### 2026-03-20 (Phase P — Signoff Integration Completion)
+- [x] Added consolidated signoff runner `scripts/run_phase_p_signoff.sh` to execute P.1-P.6 gates in order and emit phase-level summary artifacts.
+- [x] Phase P signoff PASS with required gates `p1..p6` and parity baseline PASS.
+- [x] Signoff artifacts emitted under `target/runtime-probe/phase-p-signoff/`:
+  - `phase-p-signoff.json`
+  - `phase-p-signoff.md`
+- [x] Updated Phase P artifact-contract checklist to complete.
