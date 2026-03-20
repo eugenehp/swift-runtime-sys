@@ -1,8 +1,8 @@
 {
   "version": 1,
   "scope": {
-    "id": "v6-phase-o-o8-required",
-    "description": "Phase O expanded: O.1-O.7 plus O.8 and O.10 required coverage (RemoteMirror baseline, concurrency ABI, typed throws, parameter packs, Span, ownership conventions, ObjC bridge ARC, Rust-owned executor, Observation runtime surface) with phase-level signoff evidence"
+    "id": "v7-phase-p-foundation",
+    "description": "Phase P expanded: Phase O required coverage plus Foundation bridging gates P.1-P.6 (String, URL, Codable/serialization, collections, temporal, number formatting) with phase-level signoff evidence"
   },
   "required_gates": [
     "parity_matrix_debug",
@@ -35,7 +35,8 @@
     "o8_rust_owned_executor_gate",
     "o10_observation_gate",
     "phase_o_signoff",
-    "phase_o_optional_tracks_signoff"
+    "phase_o_optional_tracks_signoff",
+    "phase_p_signoff"
   ],
   "optional_tracks": {
     "o9_distributed_actor_surface": {

@@ -73,6 +73,7 @@ USE_MATRIX_CONTRACT=0 REQUIRED_CELLS="macos-14 macos-15" REQUIRED_PROFILES="debu
 bash ./scripts/run_phase_c_signoff.sh
 bash ./scripts/run_phase_o_signoff.sh
 bash ./scripts/run_phase_o_optional_tracks_signoff.sh
+bash ./scripts/run_phase_p_signoff.sh
 ./scripts/capture_repro_inputs.sh
 ./scripts/validate_parity_claim_contract.sh
 

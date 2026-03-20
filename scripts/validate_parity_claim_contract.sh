@@ -55,6 +55,7 @@ plan_md_p = require_file("target/runtime-probe/plan-completion-signoff.md")
 phase_c_md_p = require_file("target/runtime-probe/phase-c-signoff/phase-c-signoff.md")
 phase_o_md_p = require_file("target/runtime-probe/phase-o-signoff/phase-o-signoff.md")
 phase_o_optional_json_p = require_file("target/runtime-probe/phase-o-optional/phase-o-optional-signoff.json")
+phase_p_md_p = require_file("target/runtime-probe/phase-p-signoff/phase-p-signoff.md")
 o10_gate_md_p = require_file("target/runtime-probe/o10-observation/o10-observation-summary.md")
 
 if parity_json_p:
@@ -102,6 +103,7 @@ require_signoff_contains(support_md_p, "PASS")
 require_signoff_contains(promotion_md_p, "PASS")
 require_signoff_contains(phase_c_md_p, "PASS")
 require_signoff_contains(phase_o_md_p, "PASS")
+require_signoff_contains(phase_p_md_p, "PASS")
 require_signoff_contains(o10_gate_md_p, "PASS")
 if plan_md_p is not None:
     text = plan_md_p.read_text(encoding="utf-8")

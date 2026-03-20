@@ -1148,7 +1148,7 @@ Goal: Close the remaining control-surface gaps that block an "absolute parity of
 | CI/gate emphasis | baseline parity | expanded probes | multi-version adaptation | Phase O signoff (O1-O5 + parity) | Phase O signoff (O1-O5 + O10 + parity) | Phase O signoff (O1-O5 + O8 + O10 + parity) | Phase P signoff (P.1-P.6 Foundation + Phase O) |
 | Scope marker | `v1-frozen-plus-ap` | `v2-expanded` | `v3-dynamic` | `v4-phase-o` | `v5-phase-o-o10` | `v6-phase-o-o8-required` | `v7-phase-p-foundation` |
 - [x] Added final signoff artifact `target/runtime-probe/absolute-parity-signoff.md` with consolidated PASS/FAIL status.
-- [x] Current scope lock: `v6-phase-o-o8-required` (required Phase O gates include O1/O2/O3/O4/O5/O8/O10 + parity + phase signoff).
+- [x] Current scope lock: `v7-phase-p-foundation` (required Phase O gates O1/O2/O3/O4/O5/O8/O10 + Phase P gates P1/P2/P3/P4/P5/P6 + parity + phase signoffs).
 
 ---
 
@@ -1364,8 +1364,8 @@ After completing Phase O (O1-O10 gates required, O8 promoted, O9 deferred), the 
 - Run full parity matrix after each P gate to ensure no regressions
 - Update claim-contract incrementally: v7-phase-p-foundation only after all P.1-P.6 gates PASS
 
-### Next Action: Integrate Phase P into Full-Plan Verifier
-Wire `scripts/run_phase_p_signoff.sh` into top-level verification and claim-policy validation flows.
+### Next Action: Update README Scope + Continue O.9 Watch
+Align README parity-claim section with `v7-phase-p-foundation`, then continue Wave O13 O.9 readiness monitoring cadence.
 ---
 
 ## Execution Log
@@ -1428,3 +1428,7 @@ Wire `scripts/run_phase_p_signoff.sh` into top-level verification and claim-poli
   - `phase-p-signoff.json`
   - `phase-p-signoff.md`
 - [x] Updated Phase P artifact-contract checklist to complete.
+- [x] Integrated `scripts/run_phase_p_signoff.sh` into `scripts/run_full_plan_verification.sh`.
+- [x] Updated claim contract scope to `v7-phase-p-foundation` and required gate list to include `phase_p_signoff`.
+- [x] Updated claim validator to require Phase P signoff PASS evidence.
+- [x] Full plan verification PASS after integration.
