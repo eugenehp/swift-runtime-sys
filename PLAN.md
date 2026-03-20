@@ -1333,3 +1333,21 @@ After completing Phase O (O1-O10 gates required, O8 promoted, O9 deferred), the 
 
 ### Next Action: Begin P.1 String Bridging
 Execute P.1 implementation starting with probe design and gate skeleton.
+---
+
+## Execution Log
+
+### 2026-03-20 (Phase P Launch — P.1 String Bridging Completion)
+- [x] Launched Phase P: Foundation Bridging Depth (recommended option post-Wave O12).
+- [x] P.1 String / ByteString probe implementation (8 deterministic test cases):
+  - ASCII string construction and encoding
+  - UTF-8 multi-byte sequence handling (emoji, accented chars)
+  - Null-termination boundary semantics
+  - String normalization (NFC form)
+  - Case-folding (upper/lower)
+  - Empty/non-empty capacity validation
+- [x] P.1 gate script `scripts/run_p1_string_gate.sh` with debug+release equivalence validation.
+- [x] P.1 probe PASS: 8/8 both debug and release (parity 141/141 maintained, no regressions).
+- [x] Updated PLAN.md with Phase P foundation section (P.1-P.6 workstream definitions).
+- [x] Updated success criteria table with v7-phase-p-foundation column.
+- [x] Next: P.2 URL/URLComponents after P.1 evidence stabilization.
