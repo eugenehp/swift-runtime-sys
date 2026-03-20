@@ -4,6 +4,10 @@ use std::ffi::{CStr, CString};
 use std::process::Command;
 use std::time::Instant;
 
+use crate::RemoteMirror::{
+    RemoteMirrorApi, RemoteMirrorContext, SwiftActorInfo, SwiftAsyncTaskInfo,
+    SwiftAsyncTaskSlabInfo, SwiftChildInfo, SwiftTypeInfo,
+};
 use crate::RuntimeFactory::{OpaqueSwiftRef, RuntimeFactory, RuntimeFactoryError};
 use crate::SymbolDemangler::SymbolDemangler;
 
@@ -80,6 +84,7 @@ pub enum ContractResultValue<'a> {
 pub enum RuntimeContractError {
     Factory(RuntimeFactoryError),
     DescriptorParse(String),
+    RemoteMirror(String),
     UnsupportedFeature {
         feature: &'static str,
         status: CompilerFeatureStatus,
@@ -390,6 +395,40 @@ type ContractN6GenerateProgramJson = unsafe extern "C" fn(i64, i32) -> *mut c_ch
 type ContractN6ExecuteProgramJson = unsafe extern "C" fn(*const c_char) -> *mut c_char;
 type ContractBacktraceCapture = unsafe extern "C" fn() -> *mut c_char;
 type ContractBacktraceAnchorAddress = unsafe extern "C" fn() -> u64;
+
+// Phase O.3 – Typed-Throws ABI Coverage
+type ContractO3TypedThrowsI32 = unsafe extern "C" fn(i32, *mut i32) -> i32;
+type ContractO3TypedThrowsI32I32 = unsafe extern "C" fn(i32, i32, *mut i32) -> i32;
+type ContractO3LoweringStrategyJson = unsafe extern "C" fn(*const c_char) -> *mut c_char;
+
+// Phase O.6 – Ownership Convention (borrowing/consuming)
+type ContractO6I32 = unsafe extern "C" fn(i32) -> i32;
+type ContractO6BorrowPtr = unsafe extern "C" fn(*const i32) -> i32;
+type ContractO6BorrowPtrPtr = unsafe extern "C" fn(*const i32, *const i32) -> i32;
+type ContractO6LoweringStrategyJson = unsafe extern "C" fn(*const c_char) -> *mut c_char;
+
+// Phase O.10 – Observation Runtime Surface
+type ContractO10I32 = unsafe extern "C" fn(i32) -> i32;
+type ContractO10I32I32 = unsafe extern "C" fn(i32, i32) -> i32;
+type ContractO10I32I32I32 = unsafe extern "C" fn(i32, i32, i32) -> i32;
+type ContractO10LoweringStrategyJson = unsafe extern "C" fn(*const c_char) -> *mut c_char;
+
+// Phase O.7 – ObjC Bridge ARC
+type ContractO7BridgeRoundtrip = unsafe extern "C" fn(*const c_char) -> i32;
+type ContractO7I32 = unsafe extern "C" fn(i32) -> i32;
+type ContractO7Unit = unsafe extern "C" fn() -> i32;
+type ContractO7Utf8Match = unsafe extern "C" fn(*const c_char) -> i32;
+
+// Phase O.4 – Parameter Pack ABI
+type ContractO4PackArity0 = unsafe extern "C" fn() -> i32;
+type ContractO4PackSumArity1 = unsafe extern "C" fn(i32) -> i32;
+type ContractO4PackSumArity3 = unsafe extern "C" fn(i32, i32, i32) -> i32;
+type ContractO4LoweringStrategyJson = unsafe extern "C" fn(*const c_char) -> *mut c_char;
+
+// Phase O.5 – Span ABI
+type ContractO5SpanI32 = unsafe extern "C" fn(*const i32, i32) -> i32;
+type ContractO5SpanContains = unsafe extern "C" fn(*const i32, i32, i32) -> i32;
+type ContractO5SpanBoundsOk = unsafe extern "C" fn(*const i32, i32, i32) -> i32;
 
 // Phase B.2 – Witness Table Dynamic Resolver
 type ContractB2ScanConformancesJson = unsafe extern "C" fn() -> *mut c_char;
@@ -914,6 +953,141 @@ impl<'a> RuntimeContract<'a> {
         &self,
     ) -> Result<Vec<ContractMetadataEntry>, RuntimeContractError> {
         Ok(self.descriptor()?.metadata_registry.entries)
+    }
+
+    fn rm_err<E: std::fmt::Debug>(error: E) -> RuntimeContractError {
+        RuntimeContractError::RemoteMirror(format!("{error:?}"))
+    }
+
+    pub fn rm_api(&self) -> Result<RemoteMirrorApi, RuntimeContractError> {
+        RemoteMirrorApi::new().map_err(Self::rm_err)
+    }
+
+    pub fn rm_supported_metadata_version(&self) -> Result<u16, RuntimeContractError> {
+        let api = self.rm_api()?;
+        api.supported_metadata_version().map_err(Self::rm_err)
+    }
+
+    pub fn rm_create_local_context<'b>(
+        &self,
+        api: &'b RemoteMirrorApi,
+    ) -> Result<RemoteMirrorContext<'b>, RuntimeContractError> {
+        api.create_local_context().map_err(Self::rm_err)
+    }
+
+    pub fn rm_info_for_metadata(
+        &self,
+        api: &RemoteMirrorApi,
+        context: &RemoteMirrorContext<'_>,
+        metadata: usize,
+    ) -> Result<SwiftTypeInfo, RuntimeContractError> {
+        api.info_for_metadata(context, metadata)
+            .map_err(Self::rm_err)
+    }
+
+    pub fn rm_info_for_instance(
+        &self,
+        api: &RemoteMirrorApi,
+        context: &RemoteMirrorContext<'_>,
+        object: usize,
+    ) -> Result<SwiftTypeInfo, RuntimeContractError> {
+        api.info_for_instance(context, object).map_err(Self::rm_err)
+    }
+
+    pub fn rm_child_of_metadata(
+        &self,
+        api: &RemoteMirrorApi,
+        context: &RemoteMirrorContext<'_>,
+        metadata: usize,
+        index: u32,
+    ) -> Result<SwiftChildInfo, RuntimeContractError> {
+        api.child_of_metadata(context, metadata, index)
+            .map_err(Self::rm_err)
+    }
+
+    pub fn rm_child_of_instance(
+        &self,
+        api: &RemoteMirrorApi,
+        context: &RemoteMirrorContext<'_>,
+        object: usize,
+        index: u32,
+    ) -> Result<SwiftChildInfo, RuntimeContractError> {
+        api.child_of_instance(context, object, index)
+            .map_err(Self::rm_err)
+    }
+
+    pub fn rm_typeref_name_for_metadata(
+        &self,
+        api: &RemoteMirrorApi,
+        context: &RemoteMirrorContext<'_>,
+        metadata: usize,
+        mangled: bool,
+    ) -> Result<String, RuntimeContractError> {
+        let typeref = api
+            .type_ref_for_metadata(context, metadata)
+            .map_err(Self::rm_err)?;
+        api.copy_name_for_type_ref(context, typeref, mangled)
+            .map_err(Self::rm_err)
+    }
+
+    pub fn rm_typeref_name_for_instance(
+        &self,
+        api: &RemoteMirrorApi,
+        context: &RemoteMirrorContext<'_>,
+        object: usize,
+        mangled: bool,
+    ) -> Result<String, RuntimeContractError> {
+        let typeref = api
+            .type_ref_for_instance(context, object)
+            .map_err(Self::rm_err)?;
+        api.copy_name_for_type_ref(context, typeref, mangled)
+            .map_err(Self::rm_err)
+    }
+
+    pub fn rm_iterate_conformance_cache(
+        &self,
+        api: &RemoteMirrorApi,
+        context: &RemoteMirrorContext<'_>,
+    ) -> Result<Vec<(u64, u64)>, RuntimeContractError> {
+        api.iterate_conformance_cache(context).map_err(Self::rm_err)
+    }
+
+    pub fn rm_async_task_slab_pointer(
+        &self,
+        api: &RemoteMirrorApi,
+        context: &RemoteMirrorContext<'_>,
+        async_task_ptr: usize,
+    ) -> Result<SwiftAsyncTaskSlabInfo, RuntimeContractError> {
+        api.async_task_slab_pointer(context, async_task_ptr)
+            .map_err(Self::rm_err)
+    }
+
+    pub fn rm_async_task_info(
+        &self,
+        api: &RemoteMirrorApi,
+        context: &RemoteMirrorContext<'_>,
+        async_task_ptr: usize,
+    ) -> Result<SwiftAsyncTaskInfo, RuntimeContractError> {
+        api.async_task_info(context, async_task_ptr)
+            .map_err(Self::rm_err)
+    }
+
+    pub fn rm_actor_info(
+        &self,
+        api: &RemoteMirrorApi,
+        context: &RemoteMirrorContext<'_>,
+        actor_ptr: usize,
+    ) -> Result<SwiftActorInfo, RuntimeContractError> {
+        api.actor_info(context, actor_ptr).map_err(Self::rm_err)
+    }
+
+    pub fn rm_next_job(
+        &self,
+        api: &RemoteMirrorApi,
+        context: &RemoteMirrorContext<'_>,
+        job_ptr: usize,
+    ) -> Result<u64, RuntimeContractError> {
+        api.next_job(context, job_ptr).map_err(Self::rm_err)
     }
 
     fn ensure_feature(
@@ -5518,9 +5692,336 @@ impl<'a> RuntimeContract<'a> {
         Ok(out)
     }
 
-    // MARK: - Backtrace & Crash Symbolication (Track E.2)
+    // MARK: - Typed-Throws ABI Coverage (Phase O.3)
 
-    /// Capture a Swift backtrace as newline-delimited text.
+    /// Invoke `swift_contract_o3_typed_throws_success`.
+    /// Returns `Ok(ret, error_out)` — on success error_out is 0 and ret is 2*value;
+    /// on throw (value < 0) ret is 0 and error_out encodes O3Error::negativeInput.
+    pub fn o3_typed_throws_success(&self, value: i32) -> Result<(i32, i32), RuntimeContractError> {
+        let func: ContractO3TypedThrowsI32 =
+            self.resolve("swift_contract_o3_typed_throws_success")?;
+        let mut error_out = 0i32;
+        let ret = unsafe { func(value, &mut error_out as *mut i32) };
+        Ok((ret, error_out))
+    }
+
+    /// Invoke `swift_contract_o3_typed_throws_concrete_error`.
+    pub fn o3_typed_throws_concrete_error(
+        &self,
+        value: i32,
+    ) -> Result<(i32, i32), RuntimeContractError> {
+        let func: ContractO3TypedThrowsI32 =
+            self.resolve("swift_contract_o3_typed_throws_concrete_error")?;
+        let mut error_out = 0i32;
+        let ret = unsafe { func(value, &mut error_out as *mut i32) };
+        Ok((ret, error_out))
+    }
+
+    /// Invoke `swift_contract_o3_typed_throws_error_identity`.
+    pub fn o3_typed_throws_error_identity(
+        &self,
+        value: i32,
+    ) -> Result<(i32, i32), RuntimeContractError> {
+        let func: ContractO3TypedThrowsI32 =
+            self.resolve("swift_contract_o3_typed_throws_error_identity")?;
+        let mut error_out = 0i32;
+        let ret = unsafe { func(value, &mut error_out as *mut i32) };
+        Ok((ret, error_out))
+    }
+
+    /// Invoke `swift_contract_o3_typed_throws_combined_failure`.
+    /// Returns `Ok(sum, error_out)` — overflow yields non-zero error_out.
+    pub fn o3_typed_throws_combined_failure(
+        &self,
+        a: i32,
+        b: i32,
+    ) -> Result<(i32, i32), RuntimeContractError> {
+        let func: ContractO3TypedThrowsI32I32 =
+            self.resolve("swift_contract_o3_typed_throws_combined_failure")?;
+        let mut error_out = 0i32;
+        let ret = unsafe { func(a, b, &mut error_out as *mut i32) };
+        Ok((ret, error_out))
+    }
+
+    /// Invoke `swift_contract_o3_typed_throws_async` — typed-throws inside async context.
+    pub fn o3_typed_throws_async(&self, value: i32) -> Result<(i32, i32), RuntimeContractError> {
+        let func: ContractO3TypedThrowsI32 =
+            self.resolve("swift_contract_o3_typed_throws_async")?;
+        let mut error_out = 0i32;
+        let ret = unsafe { func(value, &mut error_out as *mut i32) };
+        Ok((ret, error_out))
+    }
+
+    /// Query the O.3 lowering strategy descriptor for a typed-throws signature.
+    pub fn o3_lowering_strategy_json(
+        &self,
+        signature: &str,
+    ) -> Result<String, RuntimeContractError> {
+        let func: ContractO3LoweringStrategyJson =
+            self.resolve("swift_contract_o3_lowering_strategy_json")?;
+        let c_sig = CString::new(signature).map_err(|_| RuntimeContractError::InvalidInvoke {
+            type_id: 73,
+            method_id: 6,
+        })?;
+        let ptr = unsafe { func(c_sig.as_ptr()) };
+        if ptr.is_null() {
+            return Err(RuntimeContractError::InvalidInvoke {
+                type_id: 73,
+                method_id: 6,
+            });
+        }
+        let out = unsafe { CStr::from_ptr(ptr) }
+            .to_string_lossy()
+            .into_owned();
+        unsafe { libc::free(ptr as *mut c_void) };
+        Ok(out)
+    }
+
+    // MARK: - Observation Runtime Surface (O.10)
+
+    /// Increment an observable count by delta and return final value.
+    pub fn o10_observable_increment(
+        &self,
+        start: i32,
+        delta: i32,
+    ) -> Result<i32, RuntimeContractError> {
+        let func: ContractO10I32I32 = self.resolve("swift_contract_o10_observable_increment")?;
+        Ok(unsafe { func(start, delta) })
+    }
+
+    /// Sum three values via observable model mutation pipeline.
+    pub fn o10_observable_sum3(&self, a: i32, b: i32, c: i32) -> Result<i32, RuntimeContractError> {
+        let func: ContractO10I32I32I32 = self.resolve("swift_contract_o10_observable_sum3")?;
+        Ok(unsafe { func(a, b, c) })
+    }
+
+    /// Snapshot observable count without mutation.
+    pub fn o10_observable_snapshot(&self, start: i32) -> Result<i32, RuntimeContractError> {
+        let func: ContractO10I32 = self.resolve("swift_contract_o10_observable_snapshot")?;
+        Ok(unsafe { func(start) })
+    }
+
+    /// Count observation tracking change hits for one tracked mutation.
+    pub fn o10_observation_tracking_hits(
+        &self,
+        start: i32,
+        delta: i32,
+    ) -> Result<i32, RuntimeContractError> {
+        let func: ContractO10I32I32 =
+            self.resolve("swift_contract_o10_observation_tracking_hits")?;
+        Ok(unsafe { func(start, delta) })
+    }
+
+    /// Query O.10 lowering strategy descriptor for observation signatures.
+    pub fn o10_lowering_strategy_json(
+        &self,
+        signature: &str,
+    ) -> Result<String, RuntimeContractError> {
+        let func: ContractO10LoweringStrategyJson =
+            self.resolve("swift_contract_o10_lowering_strategy_json")?;
+        let c_sig = CString::new(signature).map_err(|_| RuntimeContractError::InvalidInvoke {
+            type_id: 80,
+            method_id: 5,
+        })?;
+        let ptr = unsafe { func(c_sig.as_ptr()) };
+        if ptr.is_null() {
+            return Err(RuntimeContractError::InvalidInvoke {
+                type_id: 80,
+                method_id: 5,
+            });
+        }
+        let out = unsafe { CStr::from_ptr(ptr) }
+            .to_string_lossy()
+            .into_owned();
+        unsafe { libc::free(ptr as *mut c_void) };
+        Ok(out)
+    }
+
+    // MARK: - Ownership Convention ABI (O.6)
+
+    /// Return the borrowed value unchanged.
+    pub fn o6_borrow_identity(&self, x: i32) -> Result<i32, RuntimeContractError> {
+        let func: ContractO6BorrowPtr = self.resolve("swift_contract_o6_borrow_identity")?;
+        let xv = x;
+        Ok(unsafe { func(&xv as *const i32) })
+    }
+
+    /// Double a consumed value.
+    pub fn o6_consume_double(&self, x: i32) -> Result<i32, RuntimeContractError> {
+        let func: ContractO6I32 = self.resolve("swift_contract_o6_consume_double")?;
+        Ok(unsafe { func(x) })
+    }
+
+    /// Sum two borrowed values.
+    pub fn o6_borrow_sum(&self, a: i32, b: i32) -> Result<i32, RuntimeContractError> {
+        let func: ContractO6BorrowPtrPtr = self.resolve("swift_contract_o6_borrow_sum")?;
+        let av = a;
+        let bv = b;
+        Ok(unsafe { func(&av as *const i32, &bv as *const i32) })
+    }
+
+    /// Negate a consumed value.
+    pub fn o6_consume_negate(&self, x: i32) -> Result<i32, RuntimeContractError> {
+        let func: ContractO6I32 = self.resolve("swift_contract_o6_consume_negate")?;
+        Ok(unsafe { func(x) })
+    }
+
+    /// Query the O.6 lowering strategy descriptor for an ownership-convention signature.
+    pub fn o6_lowering_strategy_json(
+        &self,
+        signature: &str,
+    ) -> Result<String, RuntimeContractError> {
+        let func: ContractO6LoweringStrategyJson =
+            self.resolve("swift_contract_o6_lowering_strategy_json")?;
+        let c_sig = CString::new(signature).map_err(|_| RuntimeContractError::InvalidInvoke {
+            type_id: 76,
+            method_id: 5,
+        })?;
+        let ptr = unsafe { func(c_sig.as_ptr()) };
+        if ptr.is_null() {
+            return Err(RuntimeContractError::InvalidInvoke {
+                type_id: 76,
+                method_id: 5,
+            });
+        }
+        let out = unsafe { CStr::from_ptr(ptr) }
+            .to_string_lossy()
+            .into_owned();
+        unsafe { libc::free(ptr as *mut c_void) };
+        Ok(out)
+    }
+
+    // MARK: - ObjC Bridge ARC (O.7)
+
+    /// Bridge a C string as NSString→String→NSString, return length.
+    pub fn o7_nsstring_bridge_roundtrip(&self, s: &str) -> Result<i32, RuntimeContractError> {
+        let func: ContractO7BridgeRoundtrip =
+            self.resolve("swift_contract_o7_nsstring_bridge_roundtrip")?;
+        let c_s = CString::new(s).map_err(|_| RuntimeContractError::InvalidInvoke {
+            type_id: 77,
+            method_id: 1,
+        })?;
+        Ok(unsafe { func(c_s.as_ptr()) })
+    }
+
+    /// Build an NSMutableArray of size `count`, return its count.
+    pub fn o7_nsarray_bridge_count(&self, count: i32) -> Result<i32, RuntimeContractError> {
+        let func: ContractO7I32 = self.resolve("swift_contract_o7_nsarray_bridge_count")?;
+        Ok(unsafe { func(count) })
+    }
+
+    /// Prove NSString bridging ARC balance; returns 1 if balanced.
+    pub fn o7_bridge_arc_balance(&self) -> Result<i32, RuntimeContractError> {
+        let func: ContractO7Unit = self.resolve("swift_contract_o7_bridge_arc_balance")?;
+        Ok(unsafe { func() })
+    }
+
+    /// Bridge NSNumber Int32 round-trip; returns the same value.
+    pub fn o7_nsnumber_bridge_roundtrip(&self, v: i32) -> Result<i32, RuntimeContractError> {
+        let func: ContractO7I32 = self.resolve("swift_contract_o7_nsnumber_bridge_roundtrip")?;
+        Ok(unsafe { func(v) })
+    }
+
+    /// Bridge NSString from C string, verify UTF-8 length matches; returns 1 on match.
+    pub fn o7_nsstring_utf8_match(&self, s: &str) -> Result<i32, RuntimeContractError> {
+        let func: ContractO7Utf8Match = self.resolve("swift_contract_o7_nsstring_utf8_match")?;
+        let c_s = CString::new(s).map_err(|_| RuntimeContractError::InvalidInvoke {
+            type_id: 77,
+            method_id: 5,
+        })?;
+        Ok(unsafe { func(c_s.as_ptr()) })
+    }
+
+    // MARK: - Parameter Pack ABI (O.4)
+
+    /// Call the arity-0 pack sum (always returns 0).
+    pub fn o4_pack_sum_arity0(&self) -> Result<i32, RuntimeContractError> {
+        let func: ContractO4PackArity0 = self.resolve("swift_contract_o4_pack_sum_arity0")?;
+        Ok(unsafe { func() })
+    }
+
+    /// Call the arity-1 pack sum (identity).
+    pub fn o4_pack_sum_arity1(&self, a: i32) -> Result<i32, RuntimeContractError> {
+        let func: ContractO4PackSumArity1 = self.resolve("swift_contract_o4_pack_sum_arity1")?;
+        Ok(unsafe { func(a) })
+    }
+
+    /// Call the arity-3 pack sum.
+    pub fn o4_pack_sum_arity3(&self, a: i32, b: i32, c: i32) -> Result<i32, RuntimeContractError> {
+        let func: ContractO4PackSumArity3 = self.resolve("swift_contract_o4_pack_sum_arity3")?;
+        Ok(unsafe { func(a, b, c) })
+    }
+
+    /// Call the arity-3 pack product.
+    pub fn o4_pack_product_arity3(
+        &self,
+        a: i32,
+        b: i32,
+        c: i32,
+    ) -> Result<i32, RuntimeContractError> {
+        let func: ContractO4PackSumArity3 =
+            self.resolve("swift_contract_o4_pack_product_arity3")?;
+        Ok(unsafe { func(a, b, c) })
+    }
+
+    /// Query the O.4 lowering strategy descriptor for a pack-related signature.
+    pub fn o4_lowering_strategy_json(
+        &self,
+        signature: &str,
+    ) -> Result<String, RuntimeContractError> {
+        let func: ContractO4LoweringStrategyJson =
+            self.resolve("swift_contract_o4_lowering_strategy_json")?;
+        let c_sig = CString::new(signature).map_err(|_| RuntimeContractError::InvalidInvoke {
+            type_id: 74,
+            method_id: 5,
+        })?;
+        let ptr = unsafe { func(c_sig.as_ptr()) };
+        if ptr.is_null() {
+            return Err(RuntimeContractError::InvalidInvoke {
+                type_id: 74,
+                method_id: 5,
+            });
+        }
+        let out = unsafe { CStr::from_ptr(ptr) }
+            .to_string_lossy()
+            .into_owned();
+        unsafe { libc::free(ptr as *mut c_void) };
+        Ok(out)
+    }
+
+    // MARK: - Span ABI (O.5)
+
+    /// Sum a slice of i32 values via Swift Span.
+    pub fn o5_span_sum(&self, data: &[i32]) -> Result<i32, RuntimeContractError> {
+        let func: ContractO5SpanI32 = self.resolve("swift_contract_o5_span_sum")?;
+        Ok(unsafe { func(data.as_ptr(), data.len() as i32) })
+    }
+
+    /// Get the count of a slice as observed via Swift Span.
+    pub fn o5_span_length(&self, data: &[i32]) -> Result<i32, RuntimeContractError> {
+        let func: ContractO5SpanI32 = self.resolve("swift_contract_o5_span_length")?;
+        Ok(unsafe { func(data.as_ptr(), data.len() as i32) })
+    }
+
+    /// Get the first element of a slice via Swift Span (returns i32::MIN for empty).
+    pub fn o5_span_first(&self, data: &[i32]) -> Result<i32, RuntimeContractError> {
+        let func: ContractO5SpanI32 = self.resolve("swift_contract_o5_span_first")?;
+        Ok(unsafe { func(data.as_ptr(), data.len() as i32) })
+    }
+
+    /// Return 1 if `needle` is present in `data` via Swift Span, else 0.
+    pub fn o5_span_contains(&self, data: &[i32], needle: i32) -> Result<i32, RuntimeContractError> {
+        let func: ContractO5SpanContains = self.resolve("swift_contract_o5_span_contains")?;
+        Ok(unsafe { func(data.as_ptr(), data.len() as i32, needle) })
+    }
+
+    /// Return 1 if `index` is a valid index into a span of `data`, else 0.
+    pub fn o5_span_bounds_ok(&self, data: &[i32], index: i32) -> Result<i32, RuntimeContractError> {
+        let func: ContractO5SpanBoundsOk = self.resolve("swift_contract_o5_span_bounds_ok")?;
+        Ok(unsafe { func(data.as_ptr(), data.len() as i32, index) })
+    }
+
+    // MARK: - Backtrace & Crash Symbolication (Track E.2)
     pub fn backtrace_capture(&self) -> Result<String, RuntimeContractError> {
         let func: ContractBacktraceCapture = self.resolve("swift_contract_backtrace_capture")?;
         let c_str_ptr = unsafe { func() };

@@ -34,6 +34,9 @@ type CallExistentialClassToI32ByAddress =
 type F32ToF32 = unsafe extern "C" fn(f32) -> f32;
 type F32F32ToF32 = unsafe extern "C" fn(f32, f32) -> f32;
 type I32ToI32 = unsafe extern "C" fn(i32) -> i32;
+type UsizeToI32 = unsafe extern "C" fn(usize) -> i32;
+type ZeroToPtr = unsafe extern "C" fn() -> *mut c_void;
+type UsizeToPtr = unsafe extern "C" fn(usize) -> *mut c_void;
 type ZeroToCString = unsafe extern "C" fn() -> *const c_char;
 
 /// Return value for a Swift `throws` call: either the result or the error object.
@@ -261,6 +264,25 @@ impl RuntimeFactory {
         type ZeroToI32 = unsafe extern "C" fn() -> i32;
         let f: ZeroToI32 = resolve_symbol_any(symbol)?;
         Ok(unsafe { f() })
+    }
+
+    pub fn call_to_ptr(&self, symbol: &str) -> Result<*mut c_void, RuntimeFactoryError> {
+        let f: ZeroToPtr = resolve_symbol_any(symbol)?;
+        Ok(unsafe { f() })
+    }
+
+    pub fn call_usize_to_ptr(
+        &self,
+        symbol: &str,
+        arg0: usize,
+    ) -> Result<*mut c_void, RuntimeFactoryError> {
+        let f: UsizeToPtr = resolve_symbol_any(symbol)?;
+        Ok(unsafe { f(arg0) })
+    }
+
+    pub fn call_usize_to_i32(&self, symbol: &str, arg0: usize) -> Result<i32, RuntimeFactoryError> {
+        let f: UsizeToI32 = resolve_symbol_any(symbol)?;
+        Ok(unsafe { f(arg0) })
     }
 
     /// Calls a cdecl function `() -> const char*` and copies it into a Rust String.

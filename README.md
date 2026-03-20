@@ -262,10 +262,25 @@ Artifact:
 The parity pipeline now runs the crate example binary `runtime_raw_probe`
 through Cargo, so probe/parity/debug paths all exercise `RuntimeFactory`.
 
-## Parity Scope (v1)
+## Parity Scope (v6-phase-o-o8-required)
 
 This repository's parity claim is scoped and versioned. "100% parity" means
 all items marked as required in this scope pass on supported environments.
+
+**Current scope: v6-phase-o-o8-required** (Phase O promotion: O.8 Rust-owned executor promoted to required)
+
+### Scope Definition
+- **Phase C gates** (C.1-C.9): All required (ownership hardening, existentials, enums, closures, optimizer, lowering, safety, reliability, promotion)
+- **Phase O gates** (O.1, O.2, O.3, O.4, O.5): All required (RemoteMirror, concurrency ABI, typed throws, parameter packs, ownership/ARC)
+- **Phase O.8**: Now required (Rust-owned executor bridge with deterministic FIFO work-stealing scheduling)
+- **Phase O.10**: Required (Observation runtime surface)
+- **Parity matrix**: 141/141 checks required to pass
+- **Phase O.9**: Experimental/not-promoted (Distributed actor surface blocked on runtime library availability)
+
+### Promotion Status
+- **v5-phase-o-o10**: Completed with 3-cycle O11 history window (O.8 experimental/not-promoted, O.9 experimental/not-promoted)
+- **v6-phase-o-o8-required**: Current (Wave O12 promotion: O.8 elevated from experimental to required, O.9 remains experimental)
+- **O.8 Promotion Evidence**: Gate PASS 6/6 debug+release across all three O11 verification cycles; no parity regressions
 
 Supported parity matrix cells:
 
@@ -276,9 +291,9 @@ Version-conditional tracking:
 
 - Parity artifacts are uploaded per CI cell and named with runner identity.
 - Any cell-specific deviations must be documented before parity claims are updated.
-- A parity claim for v1 scope requires all supported cells to pass required gates.
+- A parity claim for v6 scope requires all supported cells to pass required gates: Phase C signoff + Phase O signoff (with O.8 required).
 
-Support-matrix deviation ledger (v1 required scope):
+Support-matrix deviation ledger (v6-phase-o-o8-required scope):
 
 - `macos-14`: no known required-scope deviations.
 - `macos-15`: no known required-scope deviations.
@@ -290,15 +305,17 @@ If a deviation appears, this section must be updated with:
 - expected/accepted behavior and rationale
 - mitigation or promotion plan
 
-Required:
+Required (v6-phase-o-o8-required):
 
 - `scripts/run_parity_matrix.sh` reports full pass count (`N/N PASS`).
 - `scripts/run_parity_stress.sh` gate passes at configured CI budget.
 - `scripts/run_protocol_dispatch_matrix.sh` completes and publishes matrix output.
-- CI uploads parity/stress/protocol artifacts for each run.
+- `scripts/run_o8_rust_executor_gate.sh` passes in both debug and release modes (6/6 tests).
+- CI uploads parity/stress/protocol/o8-executor artifacts for each run.
 - All protocol dispatch variants (x20, x0, x20x0, x0x1, x20x1, existential) pass with semantic parity (Phase A.1).
 - CI support-matrix signoff job validates parity artifacts from all required cells.
 - Multi-version compatibility gate (`scripts/run_multiversion_compat.sh`) passes for Swift 6.1+ on required CI cells (Phase B.5).
+- Phase O.8 gate validates Rust executor integration, FIFO scheduling fairness, work queue cancellation, and Swift task bridge transparency.
 
 ## Multi-Version Support (Phase B — v3-dynamic scope)
 
@@ -405,7 +422,8 @@ CI-equivalent budgets used in `.github/workflows/parity.yml`:
 - Pushes to `main`: `FUZZ_CASES=128 ./scripts/run_parity_stress.sh 10`
 
 A parity claim is valid only when all required gates above pass and artifacts are
-generated for matrix, stress, and protocol-dispatch runs.
+generated for matrix, stress, protocol-dispatch, and Phase O required signoff;
+optional tracks (O.8/O.9) must publish explicit classification artifacts.
 
 CI support-matrix signoff artifact:
 
@@ -420,6 +438,18 @@ AP.6/AP.7 signoff artifacts:
 - `target/runtime-probe/upstream-conformance/current/*.json`
 - `target/runtime-probe/upstream-promotion-signoff.md`
 - `target/runtime-probe/absolute-parity-signoff.md`
+
+Phase O signoff artifacts:
+
+- `target/runtime-probe/phase-o-signoff/phase-o-signoff.md`
+- `target/runtime-probe/phase-o-signoff/phase-o-signoff.json`
+- `target/runtime-probe/o10-observation/o10-observation-summary.md`
+- `target/runtime-probe/o10-observation/o10-observation-summary.json`
+
+Phase O optional-track classification artifacts (O.8/O.9):
+
+- `target/runtime-probe/phase-o-optional/phase-o-optional-signoff.md`
+- `target/runtime-probe/phase-o-optional/phase-o-optional-signoff.json`
 
 Final claim publication criteria:
 

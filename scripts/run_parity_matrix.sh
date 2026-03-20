@@ -25,11 +25,27 @@ swiftc -emit-library -emit-module -emit-module-path "$FIXTURE_DIR/ResilientFixtu
 swiftc -emit-library -g -I "$FIXTURE_DIR" -L "$FIXTURE_DIR" -lResilientFixtures -o libRustBridge.dylib examples/RustBridge.swift
 if [[ "$PROFILE" == "release" ]]; then
   cargo build --release --example runtime_raw_probe
+  cargo build --release --example runtime_o3_typed_throws_probe
+  cargo build --release --example runtime_o4_packs_span_probe
+  cargo build --release --example runtime_o5_ownership_arc_probe
+  cargo build --release --example runtime_o10_observation_probe
 else
   cargo build --example runtime_raw_probe
+  cargo build --example runtime_o3_typed_throws_probe
+  cargo build --example runtime_o4_packs_span_probe
+  cargo build --example runtime_o5_ownership_arc_probe
+  cargo build --example runtime_o10_observation_probe
 fi
 
+O3_LOG="$OUT_DIR/o3-typed-throws.log"
+O4_LOG="$OUT_DIR/o4-packs-span.log"
+O5_LOG="$OUT_DIR/o5-ownership-arc.log"
+O10_LOG="$OUT_DIR/o10-observation.log"
 DYLD_LIBRARY_PATH="$FIXTURE_DIR:." "$BIN_PREFIX/runtime_raw_probe" > "$PROBE_LOG" 2>&1
+DYLD_LIBRARY_PATH="$FIXTURE_DIR:." "$BIN_PREFIX/runtime_o3_typed_throws_probe" > "$O3_LOG" 2>&1 || true
+DYLD_LIBRARY_PATH="$FIXTURE_DIR:." "$BIN_PREFIX/runtime_o4_packs_span_probe" > "$O4_LOG" 2>&1 || true
+DYLD_LIBRARY_PATH="$FIXTURE_DIR:." "$BIN_PREFIX/runtime_o5_ownership_arc_probe" > "$O5_LOG" 2>&1 || true
+DYLD_LIBRARY_PATH="$FIXTURE_DIR:." "$BIN_PREFIX/runtime_o10_observation_probe" > "$O10_LOG" 2>&1 || true
 ./scripts/run_tmux_lldb.sh > /dev/null
 
 line_or_empty() {
@@ -166,6 +182,10 @@ cross_module_resilient_line=$(line_or_empty "cross-module resilient =>" "$PROBE_
 cross_module_existential_line=$(line_or_empty "cross-module existential =>" "$PROBE_LOG")
 arc_stress_line=$(line_or_empty "arc stress =>" "$PROBE_LOG")
 fuzz_line=$(line_or_empty "fuzz parity =>" "$PROBE_LOG")
+o3_line=$(line_or_empty "o3 typed-throws parity =>" "$O3_LOG")
+o4o5_line=$(line_or_empty "o4o5 packs-span parity =>" "$O4_LOG")
+o5wave_line=$(line_or_empty "o5wave ownership-arc parity =>" "$O5_LOG")
+o10_line=$(line_or_empty "o10 observation parity =>" "$O10_LOG")
 throws_ok_result=$(extract_number "ok_result" "$throws_ok_line")
 throws_ok_err_null=$(extract_number "err_null" "$throws_ok_line")
 throws_err_nonnull=$(extract_number "throws_nonnull" "$throws_err_line")
@@ -433,6 +453,46 @@ fuzz_add_ok=$(extract_number "add_ok" "$fuzz_line")
 fuzz_divide_ok=$(extract_number "divide_ok" "$fuzz_line")
 fuzz_throw_ok=$(extract_number "throw_ok" "$fuzz_line")
 fuzz_cases=$(extract_number "cases" "$fuzz_line")
+o3_success_path_ok=$(extract_number "success_path_ok" "$o3_line")
+o3_no_error_ok=$(extract_number "no_error_ok" "$o3_line")
+o3_concrete_error_ok=$(extract_number "concrete_error_ok" "$o3_line")
+o3_tag_negative_ok=$(extract_number "tag_negative_ok" "$o3_line")
+o3_out_of_range_ok=$(extract_number "out_of_range_ok" "$o3_line")
+o3_identity_ok=$(extract_number "identity_ok" "$o3_line")
+o3_overflow_ok=$(extract_number "overflow_ok" "$o3_line")
+o3_no_overflow_ok=$(extract_number "no_overflow_ok" "$o3_line")
+o3_async_ok=$(extract_number "async_ok" "$o3_line")
+o3_lowering_ok=$(extract_number "lowering_ok" "$o3_line")
+o4_pack_arity0_ok=$(extract_number "pack_arity0_ok" "$o4o5_line")
+o4_pack_arity1_ok=$(extract_number "pack_arity1_ok" "$o4o5_line")
+o4_pack_arity3_ok=$(extract_number "pack_arity3_ok" "$o4o5_line")
+o4_pack_product_ok=$(extract_number "pack_product_ok" "$o4o5_line")
+o4_pack_lowering_ok=$(extract_number "pack_lowering_ok" "$o4o5_line")
+o4_span_sum_ok=$(extract_number "span_sum_ok" "$o4o5_line")
+o4_span_length_ok=$(extract_number "span_length_ok" "$o4o5_line")
+o4_span_first_ok=$(extract_number "span_first_ok" "$o4o5_line")
+o4_span_contains_ok=$(extract_number "span_contains_ok" "$o4o5_line")
+o4_span_bounds_val=$(extract_number "span_bounds_ok" "$o4o5_line")
+o5_borrow_id_ok=$(extract_number "o6_borrow_id_ok" "$o5wave_line")
+o5_consume_double_ok=$(extract_number "o6_consume_double_ok" "$o5wave_line")
+o5_borrow_sum_ok=$(extract_number "o6_borrow_sum_ok" "$o5wave_line")
+o5_consume_negate_ok=$(extract_number "o6_consume_negate_ok" "$o5wave_line")
+o5_o6_lowering_ok=$(extract_number "o6_lowering_ok" "$o5wave_line")
+o5_ns_roundtrip_ok=$(extract_number "o7_ns_roundtrip_ok" "$o5wave_line")
+o5_nsarray_ok=$(extract_number "o7_nsarray_ok" "$o5wave_line")
+o5_arc_balance_ok=$(extract_number "o7_arc_balance_ok" "$o5wave_line")
+o5_nsnumber_ok=$(extract_number "o7_nsnumber_ok" "$o5wave_line")
+o5_utf8_ok=$(extract_number "o7_utf8_ok" "$o5wave_line")
+o10_inc_basic_ok=$(extract_number "inc_basic_ok" "$o10_line")
+o10_inc_neg_ok=$(extract_number "inc_neg_ok" "$o10_line")
+o10_sum3_basic_ok=$(extract_number "sum3_basic_ok" "$o10_line")
+o10_sum3_neg_ok=$(extract_number "sum3_neg_ok" "$o10_line")
+o10_snapshot_ok=$(extract_number "snapshot_ok" "$o10_line")
+o10_track_once_ok=$(extract_number "track_once_ok" "$o10_line")
+o10_track_stable_ok=$(extract_number "track_stable_ok" "$o10_line")
+o10_lower_shape_ok=$(extract_number "lower_shape_ok" "$o10_line")
+o10_lower_supported_ok=$(extract_number "lower_supported_ok" "$o10_line")
+o10_lower_unknown_ok=$(extract_number "lower_unknown_ok" "$o10_line")
 
 retain_init_line=$(line_or_empty "retain count after init=" "$PROBE_LOG")
 retain_after_release_line=$(line_or_empty "retain count after one release=" "$PROBE_LOG")
@@ -561,6 +621,46 @@ pass_arc_edge_stress=0
 pass_string_storage=0
 pass_array_storage=0
 pass_fuzz_parity=0
+pass_o3_success_path=0
+pass_o3_no_error=0
+pass_o3_concrete_error=0
+pass_o3_tag_negative=0
+pass_o3_out_of_range=0
+pass_o3_identity=0
+pass_o3_overflow=0
+pass_o3_no_overflow=0
+pass_o3_async=0
+pass_o3_lowering=0
+pass_o4_pack_arity0=0
+pass_o4_pack_arity1=0
+pass_o4_pack_arity3=0
+pass_o4_pack_product=0
+pass_o4_pack_lowering=0
+pass_o4_span_sum=0
+pass_o4_span_length=0
+pass_o4_span_first=0
+pass_o4_span_contains=0
+pass_o4_span_bounds=0
+pass_o5_borrow_id=0
+pass_o5_consume_double=0
+pass_o5_borrow_sum=0
+pass_o5_consume_negate=0
+pass_o5_o6_lowering=0
+pass_o5_ns_roundtrip=0
+pass_o5_nsarray=0
+pass_o5_arc_balance=0
+pass_o5_nsnumber=0
+pass_o5_utf8=0
+pass_o10_inc_basic=0
+pass_o10_inc_neg=0
+pass_o10_sum3_basic=0
+pass_o10_sum3_neg=0
+pass_o10_snapshot=0
+pass_o10_track_once=0
+pass_o10_track_stable=0
+pass_o10_lower_shape=0
+pass_o10_lower_supported=0
+pass_o10_lower_unknown=0
 
 if [[ "$inc1" == "15" && "$inc2" == "18" && "$current" == "18" ]]; then pass_increment=1; fi
 if [[ "$after_reset" == "4" ]]; then pass_reset=1; fi
@@ -665,6 +765,46 @@ if [[ "$cross_resilient_size" == "16" && "$cross_resilient_stride" == "16" && "$
 if [[ "$cross_existential_value" == "91" && "$cross_existential_ref" == "73" && "$cross_existential_class" == "64" ]]; then pass_cross_module_existential=1; fi
 if [[ "$arc_swift_edge" == "1" && "$arc_runtime_balance" == "1" ]]; then pass_arc_edge_stress=1; fi
 if [[ "$fuzz_add_ok" == "1" && "$fuzz_divide_ok" == "1" && "$fuzz_throw_ok" == "1" && -n "$fuzz_cases" && "$fuzz_cases" -ge 16 ]]; then pass_fuzz_parity=1; fi
+if [[ "$o3_success_path_ok" == "1" ]]; then pass_o3_success_path=1; fi
+if [[ "$o3_no_error_ok" == "1" ]]; then pass_o3_no_error=1; fi
+if [[ "$o3_concrete_error_ok" == "1" ]]; then pass_o3_concrete_error=1; fi
+if [[ "$o3_tag_negative_ok" == "1" ]]; then pass_o3_tag_negative=1; fi
+if [[ "$o3_out_of_range_ok" == "1" ]]; then pass_o3_out_of_range=1; fi
+if [[ "$o3_identity_ok" == "1" ]]; then pass_o3_identity=1; fi
+if [[ "$o3_overflow_ok" == "1" ]]; then pass_o3_overflow=1; fi
+if [[ "$o3_no_overflow_ok" == "1" ]]; then pass_o3_no_overflow=1; fi
+if [[ "$o3_async_ok" == "1" ]]; then pass_o3_async=1; fi
+if [[ "$o3_lowering_ok" == "1" ]]; then pass_o3_lowering=1; fi
+if [[ "$o4_pack_arity0_ok" == "1" ]]; then pass_o4_pack_arity0=1; fi
+if [[ "$o4_pack_arity1_ok" == "1" ]]; then pass_o4_pack_arity1=1; fi
+if [[ "$o4_pack_arity3_ok" == "1" ]]; then pass_o4_pack_arity3=1; fi
+if [[ "$o4_pack_product_ok" == "1" ]]; then pass_o4_pack_product=1; fi
+if [[ "$o4_pack_lowering_ok" == "1" ]]; then pass_o4_pack_lowering=1; fi
+if [[ "$o4_span_sum_ok" == "1" ]]; then pass_o4_span_sum=1; fi
+if [[ "$o4_span_length_ok" == "1" ]]; then pass_o4_span_length=1; fi
+if [[ "$o4_span_first_ok" == "1" ]]; then pass_o4_span_first=1; fi
+if [[ "$o4_span_contains_ok" == "1" ]]; then pass_o4_span_contains=1; fi
+if [[ "$o4_span_bounds_val" == "1" ]]; then pass_o4_span_bounds=1; fi
+if [[ "$o5_borrow_id_ok" == "1" ]]; then pass_o5_borrow_id=1; fi
+if [[ "$o5_consume_double_ok" == "1" ]]; then pass_o5_consume_double=1; fi
+if [[ "$o5_borrow_sum_ok" == "1" ]]; then pass_o5_borrow_sum=1; fi
+if [[ "$o5_consume_negate_ok" == "1" ]]; then pass_o5_consume_negate=1; fi
+if [[ "$o5_o6_lowering_ok" == "1" ]]; then pass_o5_o6_lowering=1; fi
+if [[ "$o5_ns_roundtrip_ok" == "1" ]]; then pass_o5_ns_roundtrip=1; fi
+if [[ "$o5_nsarray_ok" == "1" ]]; then pass_o5_nsarray=1; fi
+if [[ "$o5_arc_balance_ok" == "1" ]]; then pass_o5_arc_balance=1; fi
+if [[ "$o5_nsnumber_ok" == "1" ]]; then pass_o5_nsnumber=1; fi
+if [[ "$o5_utf8_ok" == "1" ]]; then pass_o5_utf8=1; fi
+if [[ "$o10_inc_basic_ok" == "1" ]]; then pass_o10_inc_basic=1; fi
+if [[ "$o10_inc_neg_ok" == "1" ]]; then pass_o10_inc_neg=1; fi
+if [[ "$o10_sum3_basic_ok" == "1" ]]; then pass_o10_sum3_basic=1; fi
+if [[ "$o10_sum3_neg_ok" == "1" ]]; then pass_o10_sum3_neg=1; fi
+if [[ "$o10_snapshot_ok" == "1" ]]; then pass_o10_snapshot=1; fi
+if [[ "$o10_track_once_ok" == "1" ]]; then pass_o10_track_once=1; fi
+if [[ "$o10_track_stable_ok" == "1" ]]; then pass_o10_track_stable=1; fi
+if [[ "$o10_lower_shape_ok" == "1" ]]; then pass_o10_lower_shape=1; fi
+if [[ "$o10_lower_supported_ok" == "1" ]]; then pass_o10_lower_supported=1; fi
+if [[ "$o10_lower_unknown_ok" == "1" ]]; then pass_o10_lower_unknown=1; fi
 
 cat > "$REPORT_JSON" <<JSON
 {
@@ -769,7 +909,51 @@ cat > "$REPORT_JSON" <<JSON
     "cross_module_resilient_layout": $pass_cross_module_resilient,
     "cross_module_existential_dispatch": $pass_cross_module_existential,
     "arc_edge_stress": $pass_arc_edge_stress,
-    "fuzz_parity": $pass_fuzz_parity
+    "fuzz_parity": $pass_fuzz_parity,
+    "o3_typed_throws_success_path": $pass_o3_success_path,
+    "o3_typed_throws_no_error": $pass_o3_no_error,
+    "o3_typed_throws_concrete_error": $pass_o3_concrete_error,
+    "o3_typed_throws_tag_negative": $pass_o3_tag_negative,
+    "o3_typed_throws_out_of_range": $pass_o3_out_of_range,
+    "o3_typed_throws_identity": $pass_o3_identity,
+    "o3_typed_throws_overflow": $pass_o3_overflow,
+    "o3_typed_throws_no_overflow": $pass_o3_no_overflow,
+    "o3_typed_throws_async": $pass_o3_async,
+    "o3_typed_throws_lowering_strategy": $pass_o3_lowering,
+    "o4_pack_sum_arity0": $pass_o4_pack_arity0,
+    "o4_pack_sum_arity1": $pass_o4_pack_arity1,
+    "o4_pack_sum_arity3": $pass_o4_pack_arity3,
+    "o4_pack_product_arity3": $pass_o4_pack_product,
+    "o4_pack_lowering_strategy": $pass_o4_pack_lowering,
+    "o5_span_sum": $pass_o4_span_sum,
+    "o5_span_length": $pass_o4_span_length,
+    "o5_span_first": $pass_o4_span_first,
+    "o5_span_contains": $pass_o4_span_contains,
+    "o5_span_bounds_ok": $pass_o4_span_bounds
+  },
+  "status_o5wave": {
+    "o6_borrow_identity": $pass_o5_borrow_id,
+    "o6_consume_double": $pass_o5_consume_double,
+    "o6_borrow_sum": $pass_o5_borrow_sum,
+    "o6_consume_negate": $pass_o5_consume_negate,
+    "o6_lowering_strategy": $pass_o5_o6_lowering,
+    "o7_nsstring_roundtrip": $pass_o5_ns_roundtrip,
+    "o7_nsarray_count": $pass_o5_nsarray,
+    "o7_arc_balance": $pass_o5_arc_balance,
+    "o7_nsnumber_roundtrip": $pass_o5_nsnumber,
+    "o7_nsstring_utf8_match": $pass_o5_utf8
+  },
+  "status_o10": {
+    "o10_increment_basic": $pass_o10_inc_basic,
+    "o10_increment_negative": $pass_o10_inc_neg,
+    "o10_sum3_basic": $pass_o10_sum3_basic,
+    "o10_sum3_negative": $pass_o10_sum3_neg,
+    "o10_snapshot": $pass_o10_snapshot,
+    "o10_tracking_once": $pass_o10_track_once,
+    "o10_tracking_stable": $pass_o10_track_stable,
+    "o10_lowering_shape": $pass_o10_lower_shape,
+    "o10_lowering_supported": $pass_o10_lower_supported,
+    "o10_lowering_unknown": $pass_o10_lower_unknown
   },
   "observed": {
     "probe_line": "${probe_line}",
@@ -836,7 +1020,11 @@ cat > "$REPORT_JSON" <<JSON
     "cross_module_resilient_line": "${cross_module_resilient_line}",
     "cross_module_existential_line": "${cross_module_existential_line}",
     "arc_stress_line": "${arc_stress_line}",
-    "fuzz_line": "${fuzz_line}"
+    "fuzz_line": "${fuzz_line}",
+    "o3_line": "${o3_line}",
+    "o4o5_line": "${o4o5_line}",
+    "o5wave_line": "${o5wave_line}",
+    "o10_line": "${o10_line}"
   },
   "artifacts": {
     "probe_log": "target/runtime-probe/probe.log",
@@ -853,9 +1041,13 @@ RUN_TS=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 GIT_HASH=$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo "unknown")
 HISTORY_FILE="$HISTORY_DIR/${RUN_TS//[: ]/_}_${GIT_HASH}.json"
 
-total_checks=101
+total_checks=141
 pass_count=$(( pass_increment + pass_reset + pass_add_pair + pass_clear + pass_retain + pass_alloc_sizes + pass_lldb + pass_direct_field + pass_protocol_witness + pass_protocol_slot + pass_protocol_dispatch + pass_protocol_dispatch_semantic + pass_global_variable + pass_raw_metadata + pass_enum_simple + pass_enum_associated + pass_enum_payload + pass_codable + pass_throws_success + pass_throws_error + pass_generic_type + pass_string + pass_struct_dispatch + pass_tuple_return + pass_optional_layout + pass_array + pass_string_storage + pass_array_storage + pass_closure + pass_reflection + pass_error_boxing + pass_error_roundtrip + pass_objc_interop + pass_weak_ref + pass_conformance + pass_async_task + pass_actor_executor + pass_generic_metadata + pass_generic_specialization + pass_synth_witness + pass_synth_witness_lldb + pass_keypath_synth + pass_property_wrapper_synth + pass_result_builder_synth + pass_opaque_return + pass_task_local + pass_dynamic_replacement + pass_sendable + pass_continuation + pass_task_group + pass_async_stream + pass_unsafe_memory + pass_proto_composition + pass_enum_raw_value + pass_option_set + pass_case_iterable + pass_set_algebra + pass_dictionary + pass_comparable + pass_result + pass_data + pass_uuid + pass_character_set + pass_url_components + pass_calendar + pass_index_set + pass_time_zone + pass_measurement + pass_date_formatter + pass_scanner + pass_locale + pass_number_formatter + pass_url + pass_decimal + pass_url_request + pass_data_base64 + pass_http_response + pass_json_encoder + pass_plist_encoder + pass_range + pass_url_query_item + pass_closed_range + pass_date_interval + pass_index_path + pass_iso8601 + pass_url_percent + pass_value_existential + pass_resilient_layout_metrics + pass_resilient_field_offset + pass_cross_module_resilient + pass_cross_module_existential + pass_arc_edge_stress + pass_fuzz_parity ))
 pass_count=$(( pass_count + pass_counter_deinit + pass_url_session_config + pass_file_manager + pass_date_components + pass_notification + pass_byte_count_formatter + pass_range_bridge + pass_attributed_string ))
+pass_count=$(( pass_count + pass_o3_success_path + pass_o3_no_error + pass_o3_concrete_error + pass_o3_tag_negative + pass_o3_out_of_range + pass_o3_identity + pass_o3_overflow + pass_o3_no_overflow + pass_o3_async + pass_o3_lowering ))
+pass_count=$(( pass_count + pass_o4_pack_arity0 + pass_o4_pack_arity1 + pass_o4_pack_arity3 + pass_o4_pack_product + pass_o4_pack_lowering + pass_o4_span_sum + pass_o4_span_length + pass_o4_span_first + pass_o4_span_contains + pass_o4_span_bounds ))
+pass_count=$(( pass_count + pass_o5_borrow_id + pass_o5_consume_double + pass_o5_borrow_sum + pass_o5_consume_negate + pass_o5_o6_lowering + pass_o5_ns_roundtrip + pass_o5_nsarray + pass_o5_arc_balance + pass_o5_nsnumber + pass_o5_utf8 ))
+pass_count=$(( pass_count + pass_o10_inc_basic + pass_o10_inc_neg + pass_o10_sum3_basic + pass_o10_sum3_neg + pass_o10_snapshot + pass_o10_track_once + pass_o10_track_stable + pass_o10_lower_shape + pass_o10_lower_supported + pass_o10_lower_unknown ))
 
 cat > "$HISTORY_FILE" <<HIST
 {
@@ -965,7 +1157,47 @@ cat > "$HISTORY_FILE" <<HIST
     "cross_module_resilient_layout": $pass_cross_module_resilient,
     "cross_module_existential_dispatch": $pass_cross_module_existential,
     "arc_edge_stress": $pass_arc_edge_stress,
-    "fuzz_parity": $pass_fuzz_parity
+    "fuzz_parity": $pass_fuzz_parity,
+    "o3_typed_throws_success_path": $pass_o3_success_path,
+    "o3_typed_throws_no_error": $pass_o3_no_error,
+    "o3_typed_throws_concrete_error": $pass_o3_concrete_error,
+    "o3_typed_throws_tag_negative": $pass_o3_tag_negative,
+    "o3_typed_throws_out_of_range": $pass_o3_out_of_range,
+    "o3_typed_throws_identity": $pass_o3_identity,
+    "o3_typed_throws_overflow": $pass_o3_overflow,
+    "o3_typed_throws_no_overflow": $pass_o3_no_overflow,
+    "o3_typed_throws_async": $pass_o3_async,
+    "o3_typed_throws_lowering_strategy": $pass_o3_lowering,
+    "o4_pack_sum_arity0": $pass_o4_pack_arity0,
+    "o4_pack_sum_arity1": $pass_o4_pack_arity1,
+    "o4_pack_sum_arity3": $pass_o4_pack_arity3,
+    "o4_pack_product_arity3": $pass_o4_pack_product,
+    "o4_pack_lowering_strategy": $pass_o4_pack_lowering,
+    "o5_span_sum": $pass_o4_span_sum,
+    "o5_span_length": $pass_o4_span_length,
+    "o5_span_first": $pass_o4_span_first,
+    "o5_span_contains": $pass_o4_span_contains,
+    "o5_span_bounds_ok": $pass_o4_span_bounds,
+    "o6_borrow_identity": $pass_o5_borrow_id,
+    "o6_consume_double": $pass_o5_consume_double,
+    "o6_borrow_sum": $pass_o5_borrow_sum,
+    "o6_consume_negate": $pass_o5_consume_negate,
+    "o6_lowering_strategy": $pass_o5_o6_lowering,
+    "o7_nsstring_roundtrip": $pass_o5_ns_roundtrip,
+    "o7_nsarray_count": $pass_o5_nsarray,
+    "o7_arc_balance": $pass_o5_arc_balance,
+    "o7_nsnumber_roundtrip": $pass_o5_nsnumber,
+    "o7_nsstring_utf8_match": $pass_o5_utf8,
+    "o10_increment_basic": $pass_o10_inc_basic,
+    "o10_increment_negative": $pass_o10_inc_neg,
+    "o10_sum3_basic": $pass_o10_sum3_basic,
+    "o10_sum3_negative": $pass_o10_sum3_neg,
+    "o10_snapshot": $pass_o10_snapshot,
+    "o10_tracking_once": $pass_o10_track_once,
+    "o10_tracking_stable": $pass_o10_track_stable,
+    "o10_lowering_shape": $pass_o10_lower_shape,
+    "o10_lowering_supported": $pass_o10_lower_supported,
+    "o10_lowering_unknown": $pass_o10_lower_unknown
   }
 }
 HIST
@@ -1082,6 +1314,46 @@ cat > "$REPORT_MD" <<MD
 | cross-module existential dispatch | $(status_symbol "$pass_cross_module_existential") | value_current=${cross_existential_value}, ref_current=${cross_existential_ref}, class_current=${cross_existential_class} |
 | ARC edge-case stress | $(status_symbol "$pass_arc_edge_stress") | swift_edge=${arc_swift_edge}, runtime_balance=${arc_runtime_balance} |
 | fuzz parity (seeded random) | $(status_symbol "$pass_fuzz_parity") | add_ok=${fuzz_add_ok}, divide_ok=${fuzz_divide_ok}, throw_ok=${fuzz_throw_ok}, cases=${fuzz_cases} |
+| O.3 typed-throws success path | $(status_symbol "$pass_o3_success_path") | success_path_ok=${o3_success_path_ok} |
+| O.3 typed-throws no error on success | $(status_symbol "$pass_o3_no_error") | no_error_ok=${o3_no_error_ok} |
+| O.3 typed-throws concrete error fires | $(status_symbol "$pass_o3_concrete_error") | concrete_error_ok=${o3_concrete_error_ok} |
+| O.3 typed-throws negativeInput tag=0x0001 | $(status_symbol "$pass_o3_tag_negative") | tag_negative_ok=${o3_tag_negative_ok} |
+| O.3 typed-throws outOfRange tag=0x0002 | $(status_symbol "$pass_o3_out_of_range") | out_of_range_ok=${o3_out_of_range_ok} |
+| O.3 typed-throws error identity | $(status_symbol "$pass_o3_identity") | identity_ok=${o3_identity_ok} |
+| O.3 typed-throws combinedFailure on overflow | $(status_symbol "$pass_o3_overflow") | overflow_ok=${o3_overflow_ok} |
+| O.3 typed-throws no overflow success | $(status_symbol "$pass_o3_no_overflow") | no_overflow_ok=${o3_no_overflow_ok} |
+| O.3 typed-throws async success | $(status_symbol "$pass_o3_async") | async_ok=${o3_async_ok} |
+| O.3 typed-throws lowering strategy | $(status_symbol "$pass_o3_lowering") | lowering_ok=${o3_lowering_ok} |
+| O.4 pack sum arity-0 | $(status_symbol "$pass_o4_pack_arity0") | pack_arity0_ok=${o4_pack_arity0_ok} |
+| O.4 pack sum arity-1 | $(status_symbol "$pass_o4_pack_arity1") | pack_arity1_ok=${o4_pack_arity1_ok} |
+| O.4 pack sum arity-3 | $(status_symbol "$pass_o4_pack_arity3") | pack_arity3_ok=${o4_pack_arity3_ok} |
+| O.4 pack product arity-3 | $(status_symbol "$pass_o4_pack_product") | pack_product_ok=${o4_pack_product_ok} |
+| O.4 pack lowering strategy | $(status_symbol "$pass_o4_pack_lowering") | pack_lowering_ok=${o4_pack_lowering_ok} |
+| O.5 span sum | $(status_symbol "$pass_o4_span_sum") | span_sum_ok=${o4_span_sum_ok} |
+| O.5 span length | $(status_symbol "$pass_o4_span_length") | span_length_ok=${o4_span_length_ok} |
+| O.5 span first | $(status_symbol "$pass_o4_span_first") | span_first_ok=${o4_span_first_ok} |
+| O.5 span contains | $(status_symbol "$pass_o4_span_contains") | span_contains_ok=${o4_span_contains_ok} |
+| O.5 span bounds_ok | $(status_symbol "$pass_o4_span_bounds") | span_bounds_ok=${o4_span_bounds_val} |
+| O.6 borrow identity | $(status_symbol "$pass_o5_borrow_id") | o6_borrow_id_ok=${o5_borrow_id_ok} |
+| O.6 consume double | $(status_symbol "$pass_o5_consume_double") | o6_consume_double_ok=${o5_consume_double_ok} |
+| O.6 borrow sum | $(status_symbol "$pass_o5_borrow_sum") | o6_borrow_sum_ok=${o5_borrow_sum_ok} |
+| O.6 consume negate | $(status_symbol "$pass_o5_consume_negate") | o6_consume_negate_ok=${o5_consume_negate_ok} |
+| O.6 lowering strategy | $(status_symbol "$pass_o5_o6_lowering") | o6_lowering_ok=${o5_o6_lowering_ok} |
+| O.7 NSString roundtrip | $(status_symbol "$pass_o5_ns_roundtrip") | o7_ns_roundtrip_ok=${o5_ns_roundtrip_ok} |
+| O.7 NSArray count | $(status_symbol "$pass_o5_nsarray") | o7_nsarray_ok=${o5_nsarray_ok} |
+| O.7 ARC balance | $(status_symbol "$pass_o5_arc_balance") | o7_arc_balance_ok=${o5_arc_balance_ok} |
+| O.7 NSNumber roundtrip | $(status_symbol "$pass_o5_nsnumber") | o7_nsnumber_ok=${o5_nsnumber_ok} |
+| O.7 NSString UTF-8 match | $(status_symbol "$pass_o5_utf8") | o7_utf8_ok=${o5_utf8_ok} |
+| O.10 observable increment basic | $(status_symbol "$pass_o10_inc_basic") | inc_basic_ok=${o10_inc_basic_ok} |
+| O.10 observable increment negative | $(status_symbol "$pass_o10_inc_neg") | inc_neg_ok=${o10_inc_neg_ok} |
+| O.10 observable sum3 basic | $(status_symbol "$pass_o10_sum3_basic") | sum3_basic_ok=${o10_sum3_basic_ok} |
+| O.10 observable sum3 negative | $(status_symbol "$pass_o10_sum3_neg") | sum3_neg_ok=${o10_sum3_neg_ok} |
+| O.10 observable snapshot | $(status_symbol "$pass_o10_snapshot") | snapshot_ok=${o10_snapshot_ok} |
+| O.10 tracking once | $(status_symbol "$pass_o10_track_once") | track_once_ok=${o10_track_once_ok} |
+| O.10 tracking stable | $(status_symbol "$pass_o10_track_stable") | track_stable_ok=${o10_track_stable_ok} |
+| O.10 lowering shape | $(status_symbol "$pass_o10_lower_shape") | lower_shape_ok=${o10_lower_shape_ok} |
+| O.10 lowering supported | $(status_symbol "$pass_o10_lower_supported") | lower_supported_ok=${o10_lower_supported_ok} |
+| O.10 lowering unknown | $(status_symbol "$pass_o10_lower_unknown") | lower_unknown_ok=${o10_lower_unknown_ok} |
 
 ## Artifacts
 

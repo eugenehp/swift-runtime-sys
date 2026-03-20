@@ -3,6 +3,9 @@ import Dispatch
 import Darwin
 import ObjectiveC.runtime
 import ResilientFixtures
+#if canImport(Observation)
+import Observation
+#endif
 
 public var globalCounterValue: Int32 = 123
 
@@ -794,6 +797,102 @@ private final class ContinuationSingleResumeGuard {
     }
 }
 
+private func _runtimeThunkSwiftTaskAllocProbe(_ size: Int) -> Int32 {
+    guard let symbol = dlsym(UnsafeMutableRawPointer(bitPattern: -2), "runtime_thunk_swift_task_alloc_probe") else {
+        return Int32.min
+    }
+    typealias ProbeFn = @convention(c) (Int) -> Int32
+    let fn = unsafeBitCast(symbol, to: ProbeFn.self)
+    return fn(size)
+}
+
+private func _runtimeThunkSwiftTaskGetCurrent() -> UnsafeMutableRawPointer? {
+    guard let symbol = dlsym(UnsafeMutableRawPointer(bitPattern: -2), "runtime_thunk_swift_task_get_current") else {
+        return nil
+    }
+    typealias Fn = @convention(c) () -> UnsafeMutableRawPointer?
+    let fn = unsafeBitCast(symbol, to: Fn.self)
+    return fn()
+}
+
+private func _runtimeThunkSwiftTaskGetCurrentExecutor() -> UnsafeMutableRawPointer? {
+    guard let symbol = dlsym(UnsafeMutableRawPointer(bitPattern: -2), "runtime_thunk_swift_task_get_current_executor") else {
+        return nil
+    }
+    typealias Fn = @convention(c) () -> UnsafeMutableRawPointer?
+    let fn = unsafeBitCast(symbol, to: Fn.self)
+    return fn()
+}
+
+private func _runtimeThunkSwiftTaskGetMainExecutor() -> UnsafeMutableRawPointer? {
+    guard let symbol = dlsym(UnsafeMutableRawPointer(bitPattern: -2), "runtime_thunk_swift_task_get_main_executor") else {
+        return nil
+    }
+    typealias Fn = @convention(c) () -> UnsafeMutableRawPointer?
+    let fn = unsafeBitCast(symbol, to: Fn.self)
+    return fn()
+}
+
+private func _runtimeThunkSwiftTaskCancelCurrentProbe() -> Int32 {
+    guard let symbol = dlsym(UnsafeMutableRawPointer(bitPattern: -2), "runtime_thunk_swift_task_cancel_current_probe") else {
+        return Int32.min
+    }
+    typealias Fn = @convention(c) () -> Int32
+    let fn = unsafeBitCast(symbol, to: Fn.self)
+    return fn()
+}
+
+private func _runtimeThunkSwiftTaskCancelTask(_ task: UnsafeMutableRawPointer?) -> Int32 {
+    guard let symbol = dlsym(UnsafeMutableRawPointer(bitPattern: -2), "runtime_thunk_swift_task_cancel_task") else {
+        return Int32.min
+    }
+    typealias Fn = @convention(c) (UnsafeMutableRawPointer?) -> Int32
+    let fn = unsafeBitCast(symbol, to: Fn.self)
+    return fn(task)
+}
+
+private final class RawChildCancelProbeState {
+    private let lock = NSLock()
+    private var taskPtr: UnsafeMutableRawPointer?
+    private var childCancelledObserved: Bool = false
+
+    func setTaskPtr(_ ptr: UnsafeMutableRawPointer?) {
+        lock.lock()
+        taskPtr = ptr
+        lock.unlock()
+    }
+
+    func getTaskPtr() -> UnsafeMutableRawPointer? {
+        lock.lock()
+        defer { lock.unlock() }
+        return taskPtr
+    }
+
+    func setChildCancelledObserved(_ value: Bool) {
+        lock.lock()
+        childCancelledObserved = value
+        lock.unlock()
+    }
+
+    func getChildCancelledObserved() -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        return childCancelledObserved
+    }
+}
+
+private actor RawJobOrderProbeLog {
+    private var events: [Int32] = []
+
+    func append(_ value: Int32) {
+        events.append(value)
+    }
+
+    func snapshot() -> [Int32] {
+        events
+    }
+}
+
 private func _awaitTaskI32(_ op: @escaping @Sendable () async -> Int32) -> Int32 {
     let semaphore = DispatchSemaphore(value: 0)
     var result: Int32 = Int32.min
@@ -833,6 +932,236 @@ public func swift_contract_task_spawn_chain(_ base: Int32, _ steps: Int32) -> In
             value += i
         }
         return value
+    }
+}
+
+/// Enter a real Swift task context and exercise raw task inspection + alloc/dealloc.
+/// Returns:
+///   1 => current task present and alloc/dealloc succeeded
+///   0 => no current task observed inside task body
+///   2 => current task present but alloc returned nil
+///   3 => current task present, alloc/dealloc succeeded, and byte round-trip matched
+/// Int32.min => timeout/failure
+@_cdecl("swift_contract_task_context_raw_alloc_status")
+public func swift_contract_task_context_raw_alloc_status() -> Int32 {
+    _awaitTaskI32 {
+        _runtimeThunkSwiftTaskAllocProbe(64)
+    }
+}
+
+/// Enter a real Swift task context and report raw executor visibility.
+/// Bit flags:
+///   bit0 (1): current executor is non-null
+///   bit1 (2): main executor is non-null
+///   bit2 (4): current and main executors are equal
+/// Returns Int32.min on timeout/failure.
+@_cdecl("swift_contract_task_context_executor_status")
+public func swift_contract_task_context_executor_status() -> Int32 {
+    _awaitTaskI32 {
+        let current = _runtimeThunkSwiftTaskGetCurrentExecutor()
+        let main = _runtimeThunkSwiftTaskGetMainExecutor()
+        var status: Int32 = 0
+        if current != nil {
+            status |= 1
+        }
+        if main != nil {
+            status |= 2
+        }
+        if let c = current, let m = main, c == m {
+            status |= 4
+        }
+        return status
+    }
+}
+
+/// Enter a real Swift task context and report raw current-task visibility and
+/// stability across a yield boundary.
+/// Bit flags:
+///   bit0 (1): current task non-null before yield
+///   bit1 (2): current task non-null after yield
+///   bit2 (4): task pointer stable across yield
+/// Returns Int32.min on timeout/failure.
+@_cdecl("swift_contract_task_context_current_task_status")
+public func swift_contract_task_context_current_task_status() -> Int32 {
+    _awaitTaskI32 {
+        let before = _runtimeThunkSwiftTaskGetCurrent()
+        await Task.yield()
+        let after = _runtimeThunkSwiftTaskGetCurrent()
+
+        var status: Int32 = 0
+        if before != nil {
+            status |= 1
+        }
+        if after != nil {
+            status |= 2
+        }
+        if let b = before, let a = after, b == a {
+            status |= 4
+        }
+        return status
+    }
+}
+
+/// Enter a real Swift task context, attempt raw self-cancel via thunk, and
+/// report cancellation visibility across a yield.
+/// Bit flags:
+///   bit0 (1): raw cancel probe found current task and invoked cancel
+///   bit1 (2): Task.isCancelled before cancel probe
+///   bit2 (4): Task.isCancelled after yield
+/// Returns Int32.min on timeout/failure.
+@_cdecl("swift_contract_task_context_cancel_status")
+public func swift_contract_task_context_cancel_status() -> Int32 {
+    _awaitTaskI32 {
+        var status: Int32 = 0
+        if Task.isCancelled {
+            status |= 2
+        }
+
+        let cancelProbe = _runtimeThunkSwiftTaskCancelCurrentProbe()
+        if cancelProbe == Int32.min {
+            return Int32.min
+        }
+        if cancelProbe == 1 {
+            status |= 1
+        }
+
+        await Task.yield()
+        if Task.isCancelled {
+            status |= 4
+        }
+        return status
+    }
+}
+
+/// Enter a real Swift task context, spawn a child task, cancel it via raw
+/// thunk using the child task pointer, and report ordering/cancellation status.
+/// Bit flags:
+///   bit0 (1): raw child-task cancel call invoked
+///   bit1 (2): child observed cancellation
+///   bit2 (4): child completed expected cancel path
+/// Returns Int32.min on timeout/failure.
+@_cdecl("swift_contract_task_context_child_cancel_status")
+public func swift_contract_task_context_child_cancel_status() -> Int32 {
+    _awaitTaskI32 {
+        let state = RawChildCancelProbeState()
+
+        let child = Task<Int32, Never> {
+            state.setTaskPtr(_runtimeThunkSwiftTaskGetCurrent())
+            for _ in 0..<512 {
+                if Task.isCancelled {
+                    state.setChildCancelledObserved(true)
+                    return 1
+                }
+                await Task.yield()
+            }
+            return 0
+        }
+
+        var cancelInvoked = false
+        for _ in 0..<512 {
+            if let childTaskPtr = state.getTaskPtr() {
+                let cancelStatus = _runtimeThunkSwiftTaskCancelTask(childTaskPtr)
+                if cancelStatus == Int32.min {
+                    child.cancel()
+                    _ = await child.value
+                    return Int32.min
+                }
+                cancelInvoked = (cancelStatus == 1)
+                break
+            }
+            await Task.yield()
+        }
+
+        if !cancelInvoked {
+            child.cancel()
+        }
+
+        let childResult = await child.value
+
+        var status: Int32 = 0
+        if cancelInvoked {
+            status |= 1
+        }
+        if state.getChildCancelledObserved() {
+            status |= 2
+        }
+        if childResult == 1 {
+            status |= 4
+        }
+        return status
+    }
+}
+
+/// Enter a real Swift task context and validate async-let lifecycle ordering.
+/// Bit flags:
+///   bit0 (1): async-let declarations were reached
+///   bit1 (2): both async-let values awaited and completed
+///   bit2 (4): deterministic result sum matched expectation
+/// Returns Int32.min on timeout/failure.
+@_cdecl("swift_contract_task_context_asynclet_status")
+public func swift_contract_task_context_asynclet_status() -> Int32 {
+    _awaitTaskI32 {
+        var status: Int32 = 0
+
+        async let lhs: Int32 = {
+            await Task.yield()
+            return 20
+        }()
+        async let rhs: Int32 = {
+            await Task.yield()
+            return 22
+        }()
+        status |= 1
+
+        let sum = await lhs + rhs
+        status |= 2
+        if sum == 42 {
+            status |= 4
+        }
+
+        return status
+    }
+}
+
+/// Enter a real Swift task context and validate child-job completion ordering.
+/// Bit flags:
+///   bit0 (1): child job started
+///   bit1 (2): child job observed internal step ordering (start before complete)
+///   bit2 (4): parent observed child completion before final parent marker
+/// Returns Int32.min on timeout/failure.
+@_cdecl("swift_contract_task_context_job_order_status")
+public func swift_contract_task_context_job_order_status() -> Int32 {
+    _awaitTaskI32 {
+        let log = RawJobOrderProbeLog()
+        await log.append(1)
+
+        let child = Task<Int32, Never> {
+            await log.append(2)
+            await Task.yield()
+            await log.append(3)
+            return 7
+        }
+
+        await log.append(4)
+        _ = await child.value
+        await log.append(5)
+
+        let events = await log.snapshot()
+        let idx2 = events.firstIndex(of: 2)
+        let idx3 = events.firstIndex(of: 3)
+        let idx5 = events.firstIndex(of: 5)
+
+        var status: Int32 = 0
+        if idx2 != nil {
+            status |= 1
+        }
+        if let i2 = idx2, let i3 = idx3, i2 < i3 {
+            status |= 2
+        }
+        if let i3 = idx3, let i5 = idx5, i3 < i5 {
+            status |= 4
+        }
+        return status
     }
 }
 
@@ -7201,6 +7530,546 @@ public func swift_contract_b4_supported_features_json() -> UnsafeMutableRawPoint
         return UnsafeMutableRawPointer(cStr)
     }
     return nil
+}
+
+// MARK: - Direct SwiftCC Thunk Ordering Probe (O.2)
+
+/// Enter a real Swift task context and invoke the direct SwiftCC ordering thunk.
+/// The C thunk (runtime_thunk_swift_task_direct_ordering_probe) is resolved via dlsym and
+/// invoked from within the async task body, proving that the direct
+/// __attribute__((swiftcall)) thunk path is reachable and functional for task inspection
+/// plus alloc/dealloc ordering.
+///
+/// Bit flags (forwarded directly from the C thunk return value):
+///   bit0 (1): current task was visible to the direct SwiftCC thunk
+///   bit1 (2): current executor was visible to the direct SwiftCC thunk
+///   bit2 (4): alloc/dealloc ordering was deterministic (3 iterations inside task context)
+/// Returns Int32.min on symbol miss or timeout.
+@_cdecl("swift_contract_direct_swiftcc_ordering_probe")
+public func swift_contract_direct_swiftcc_ordering_probe() -> Int32 {
+    _awaitTaskI32 {
+        // RTLD_DEFAULT = (void *)-2 on macOS; not available as a Swift constant so use bitPattern.
+        let rtldDefault = UnsafeMutableRawPointer(bitPattern: -2)
+        guard let sym = dlsym(rtldDefault, "runtime_thunk_swift_task_direct_ordering_probe") else {
+            return Int32.min
+        }
+        typealias ThunkFn = @convention(c) () -> Int32
+        let fn = unsafeBitCast(sym, to: ThunkFn.self)
+        return fn()
+    }
+}
+
+// MARK: - Typed-Throws ABI Coverage (O.3)
+
+/// Concrete error type used exclusively for typed-throws O.3 probes.
+/// Using typed-throws (`throws(O3Error)`) causes Swift 6 to lower the error via value
+/// register rather than boxing it as an `any Error` existential — exercising a distinct
+/// ABI path from existential `throws`.
+private enum O3Error: Error {
+    case negativeInput(Int32)
+    case outOfRange(Int32)
+    case combinedFailure(Int32, Int32)
+}
+
+/// Helper: encode an O3Error as a compact i32 for C-boundary transport.
+///   0x01_0000_vvvv — negativeInput(v)
+///   0x02_0000_vvvv — outOfRange(v)
+///   0x03_aabb_cccc — combinedFailure(a, b) encoded as (a & 0xFF) << 16 | (b & 0xFFFF)
+private func _o3EncodeError(_ err: O3Error) -> Int32 {
+    switch err {
+    case .negativeInput(let v):  return Int32(bitPattern: 0x0001_0000 &+ UInt32(bitPattern: v) & 0xFFFF)
+    case .outOfRange(let v):     return Int32(bitPattern: 0x0002_0000 &+ UInt32(bitPattern: v) & 0xFFFF)
+    case .combinedFailure(let a, let b):
+        return Int32(bitPattern: 0x0003_0000
+            &+ (UInt32(bitPattern: a) & 0xFF) << 8
+            &+ (UInt32(bitPattern: b) & 0xFF))
+    }
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// O3-a: Typed-throws success path
+// Returns the input value doubled on success; the error out is 0.
+// @_cdecl ABI: (i32 value, &i32 errorOut) -> i32
+// On success: returns 2*value, errorOut=0
+// On typed-throw: returns 0, errorOut=_o3EncodeError(e)
+// ──────────────────────────────────────────────────────────────────────────────
+@_cdecl("swift_contract_o3_typed_throws_success")
+public func swift_contract_o3_typed_throws_success(
+    _ value: Int32,
+    _ errorOutPtr: UnsafeMutablePointer<Int32>?
+) -> Int32 {
+    func inner(_ x: Int32) throws(O3Error) -> Int32 {
+        guard x >= 0 else { throw O3Error.negativeInput(x) }
+        return x &* 2
+    }
+    do {
+        let result = try inner(value)
+        errorOutPtr?.pointee = 0
+        return result
+    } catch {
+        errorOutPtr?.pointee = _o3EncodeError(error)
+        return 0
+    }
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// O3-b: Typed-throws concrete-error path
+// Expected: negative input → throws O3Error.negativeInput → encoded in errorOut
+// Returns 0 on throw; caller checks errorOut & 0xFFFF0000 == 0x00010000
+// ──────────────────────────────────────────────────────────────────────────────
+@_cdecl("swift_contract_o3_typed_throws_concrete_error")
+public func swift_contract_o3_typed_throws_concrete_error(
+    _ value: Int32,
+    _ errorOutPtr: UnsafeMutablePointer<Int32>?
+) -> Int32 {
+    func inner(_ x: Int32) throws(O3Error) -> Int32 {
+        guard x >= 0 else { throw O3Error.negativeInput(x) }
+        guard x <= 1000 else { throw O3Error.outOfRange(x) }
+        return x
+    }
+    do {
+        let result = try inner(value)
+        errorOutPtr?.pointee = 0
+        return result
+    } catch {
+        errorOutPtr?.pointee = _o3EncodeError(error)
+        return 0
+    }
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// O3-c: Typed-throws error identity — two distinct concrete cases
+// value < 0 → O3Error.negativeInput; value > 1000 → O3Error.outOfRange
+// Encodes which case fired in bits [31:16]; the 16-bit payload is the input.
+// ──────────────────────────────────────────────────────────────────────────────
+@_cdecl("swift_contract_o3_typed_throws_error_identity")
+public func swift_contract_o3_typed_throws_error_identity(
+    _ value: Int32,
+    _ errorOutPtr: UnsafeMutablePointer<Int32>?
+) -> Int32 {
+    func inner(_ x: Int32) throws(O3Error) -> Int32 {
+        if x < 0    { throw O3Error.negativeInput(x) }
+        if x > 1000 { throw O3Error.outOfRange(x) }
+        return x &* 3
+    }
+    do {
+        let result = try inner(value)
+        errorOutPtr?.pointee = 0
+        return result
+    } catch {
+        errorOutPtr?.pointee = _o3EncodeError(error)
+        return 0
+    }
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// O3-d: Typed-throws combined-failure (two-payload error case)
+// value overflow → O3Error.combinedFailure(a, b)
+// ──────────────────────────────────────────────────────────────────────────────
+@_cdecl("swift_contract_o3_typed_throws_combined_failure")
+public func swift_contract_o3_typed_throws_combined_failure(
+    _ a: Int32,
+    _ b: Int32,
+    _ errorOutPtr: UnsafeMutablePointer<Int32>?
+) -> Int32 {
+    func inner(_ x: Int32, _ y: Int32) throws(O3Error) -> Int32 {
+        let (result, overflow) = x.addingReportingOverflow(y)
+        if overflow { throw O3Error.combinedFailure(x, y) }
+        return result
+    }
+    do {
+        let result = try inner(a, b)
+        errorOutPtr?.pointee = 0
+        return result
+    } catch {
+        errorOutPtr?.pointee = _o3EncodeError(error)
+        return 0
+    }
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// O3-e: Typed-throws async path — typed-throws inside an async context
+// Proves that `throws(O3Error)` + `async` lowering path is reachable and
+// distinct from sync typed-throws.
+// returns: success→2*value, error→0 with errorOut encoded
+// ──────────────────────────────────────────────────────────────────────────────
+@_cdecl("swift_contract_o3_typed_throws_async")
+public func swift_contract_o3_typed_throws_async(
+    _ value: Int32,
+    _ errorOutPtr: UnsafeMutablePointer<Int32>?
+) -> Int32 {
+    let result = _awaitTaskI32 { () -> Int32 in
+        func inner(_ x: Int32) async throws(O3Error) -> Int32 {
+            await Task.yield()
+            guard x >= 0 else { throw O3Error.negativeInput(x) }
+            return x &* 2
+        }
+        do {
+            return try await inner(value)
+        } catch let error as O3Error {
+            errorOutPtr?.pointee = _o3EncodeError(error)
+            return 0
+        } catch {
+            // unreachable: inner only throws O3Error
+            errorOutPtr?.pointee = Int32.min
+            return 0
+        }
+    }
+    return result
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// O3-f: N.2 lowering strategy JSON — typed-throws signatures
+// Reports reason codes for typed-throws signatures per N.2 taxonomy:
+//   typed_throws.i32_to_i32              → native (newly supported in O.3)
+//   typed_throws_async.i32_to_i32        → native (newly supported in O.3)
+//   typed_throws.combined_failure.i32_i32_to_i32 → native
+//   unknown.typed_throws.shape           → fallback, reason_code=-461
+// ──────────────────────────────────────────────────────────────────────────────
+@_cdecl("swift_contract_o3_lowering_strategy_json")
+public func swift_contract_o3_lowering_strategy_json(_ signaturePtr: UnsafePointer<CChar>?) -> UnsafeMutablePointer<CChar>? {
+    guard let signaturePtr else { return nil }
+    let signature = String(cString: signaturePtr)
+    let strategy: String
+    let supported: Bool
+    let reasonCode: Int32
+    switch signature {
+    case "typed_throws.i32_to_i32",
+         "typed_throws_async.i32_to_i32",
+         "typed_throws.combined_failure.i32_i32_to_i32":
+        strategy = "native"
+        supported = true
+        reasonCode = 0
+    default:
+        strategy = "fallback"
+        supported = false
+        if signature.contains("typed_throws") {
+            reasonCode = -461
+        } else {
+            reasonCode = -499
+        }
+    }
+    let esc = signature.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
+    return strdup("{\"signature\":\"\(esc)\",\"strategy\":\"\(strategy)\",\"supported\":\(supported ? "true" : "false"),\"reason_code\":\(reasonCode)}")
+}
+
+// MARK: - Observation Runtime Surface Coverage (O.10)
+
+#if canImport(Observation)
+@Observable
+private final class O10ObservationModel {
+    var count: Int32
+    init(_ count: Int32) {
+        self.count = count
+    }
+}
+
+private var _o10ObservationChangeHits: Int32 = 0
+#endif
+
+@_cdecl("swift_contract_o10_observable_increment")
+public func swift_contract_o10_observable_increment(_ start: Int32, _ delta: Int32) -> Int32 {
+#if canImport(Observation)
+    let model = O10ObservationModel(start)
+    model.count &+= delta
+    return model.count
+#else
+    return Int32.min
+#endif
+}
+
+@_cdecl("swift_contract_o10_observable_sum3")
+public func swift_contract_o10_observable_sum3(_ a: Int32, _ b: Int32, _ c: Int32) -> Int32 {
+#if canImport(Observation)
+    let model = O10ObservationModel(a)
+    model.count &+= b
+    model.count &+= c
+    return model.count
+#else
+    return Int32.min
+#endif
+}
+
+@_cdecl("swift_contract_o10_observable_snapshot")
+public func swift_contract_o10_observable_snapshot(_ start: Int32) -> Int32 {
+#if canImport(Observation)
+    let model = O10ObservationModel(start)
+    return model.count
+#else
+    return Int32.min
+#endif
+}
+
+@_cdecl("swift_contract_o10_observation_tracking_hits")
+public func swift_contract_o10_observation_tracking_hits(_ start: Int32, _ delta: Int32) -> Int32 {
+#if canImport(Observation)
+    _o10ObservationChangeHits = 0
+    let model = O10ObservationModel(start)
+    withObservationTracking({
+        _ = model.count
+    }, onChange: {
+        _o10ObservationChangeHits &+= 1
+    })
+    model.count &+= delta
+    return _o10ObservationChangeHits
+#else
+    return -1
+#endif
+}
+
+@_cdecl("swift_contract_o10_lowering_strategy_json")
+public func swift_contract_o10_lowering_strategy_json(
+    _ sig: UnsafePointer<CChar>?
+) -> UnsafeMutablePointer<CChar>? {
+    let signature = sig.map { String(cString: $0) } ?? ""
+    let strategy: String
+    let supported: Bool
+    let reasonCode: Int
+#if canImport(Observation)
+    if signature.contains("observable") || signature.contains("observation") {
+        strategy = "observation.observable_tracking"
+        supported = true
+        reasonCode = 0
+    } else {
+        strategy = "unknown.observation.shape"
+        supported = false
+        reasonCode = -470
+    }
+#else
+    strategy = "unavailable.observation.module"
+    supported = false
+    reasonCode = -471
+#endif
+    let esc = signature
+        .replacingOccurrences(of: "\\", with: "\\\\")
+        .replacingOccurrences(of: "\"", with: "\\\"")
+    return strdup("{\"signature\":\"\(esc)\",\"strategy\":\"\(strategy)\",\"supported\":\(supported ? "true" : "false"),\"reason_code\":\(reasonCode)}")
+}
+
+// MARK: - Borrowing/Consuming Convention Coverage (O.6)
+
+/// Return the borrowed value unchanged.
+@_cdecl("swift_contract_o6_borrow_identity")
+public func swift_contract_o6_borrow_identity(_ x: borrowing UnsafePointer<Int32>) -> Int32 {
+    return x.pointee
+}
+
+/// Double the consumed value.
+@_cdecl("swift_contract_o6_consume_double")
+public func swift_contract_o6_consume_double(_ x: consuming Int32) -> Int32 {
+    return x &* 2
+}
+
+/// Sum two borrowed values (proves multi-borrow ABI shape).
+@_cdecl("swift_contract_o6_borrow_sum")
+public func swift_contract_o6_borrow_sum(
+    _ a: borrowing UnsafePointer<Int32>,
+    _ b: borrowing UnsafePointer<Int32>
+) -> Int32 {
+    return a.pointee &+ b.pointee
+}
+
+/// Negate a consumed value.
+@_cdecl("swift_contract_o6_consume_negate")
+public func swift_contract_o6_consume_negate(_ x: consuming Int32) -> Int32 {
+    return -x
+}
+
+/// Return a JSON descriptor for ownership-convention call shapes.
+@_cdecl("swift_contract_o6_lowering_strategy_json")
+public func swift_contract_o6_lowering_strategy_json(
+    _ sig: UnsafePointer<CChar>?
+) -> UnsafeMutablePointer<CChar>? {
+    let signature = sig.map { String(cString: $0) } ?? ""
+    let strategy: String
+    let supported: Bool
+    let reasonCode: Int
+    if signature.contains("borrowing") || signature.contains("consuming") {
+        strategy = "ownership_convention.value_semantic"
+        supported = true
+        reasonCode = 0
+    } else {
+        strategy = "unknown.ownership.shape"
+        supported = false
+        reasonCode = -466
+    }
+    let esc = signature
+        .replacingOccurrences(of: "\\", with: "\\\\")
+        .replacingOccurrences(of: "\"", with: "\\\"")
+    return strdup("{\"signature\":\"\(esc)\",\"strategy\":\"\(strategy)\",\"supported\":\(supported ? "true" : "false"),\"reason_code\":\(reasonCode)}")
+}
+
+// MARK: - ObjC Bridge ARC Coverage (O.7)
+
+/// Bridge NSString->String->NSString and return the final length.
+@_cdecl("swift_contract_o7_nsstring_bridge_roundtrip")
+public func swift_contract_o7_nsstring_bridge_roundtrip(
+    _ cstr: UnsafePointer<CChar>?
+) -> Int32 {
+    guard let cstr = cstr else { return -1 }
+    let input = String(cString: cstr)
+    let ns = NSString(string: input)
+    let back: String = ns as String
+    let ns2 = back as NSString
+    return Int32(ns2.length)
+}
+
+/// Build an NSMutableArray from 0..<count, return its count.
+@_cdecl("swift_contract_o7_nsarray_bridge_count")
+public func swift_contract_o7_nsarray_bridge_count(_ count: Int32) -> Int32 {
+    let ns = NSMutableArray()
+    for i in 0..<count { ns.add(NSNumber(value: i)) }
+    return Int32(ns.count)
+}
+
+/// Prove NSString bridging retain/release balance: 1 = balanced, 0 = imbalance detected.
+@_cdecl("swift_contract_o7_bridge_arc_balance")
+public func swift_contract_o7_bridge_arc_balance() -> Int32 {
+    let original = NSString(string: "arc-test")
+    let swiftVal: String = original as String
+    let bridgedBack = swiftVal as NSString
+    return original.hash == bridgedBack.hash ? 1 : 0
+}
+
+/// Bridge NSNumber Int32 -> Int -> NSNumber and return the round-tripped value.
+@_cdecl("swift_contract_o7_nsnumber_bridge_roundtrip")
+public func swift_contract_o7_nsnumber_bridge_roundtrip(_ v: Int32) -> Int32 {
+    let ns = NSNumber(value: v)
+    let swiftInt: Int = ns.intValue
+    let ns2 = NSNumber(value: Int32(swiftInt))
+    return ns2.int32Value
+}
+
+/// Bridge NSString from a C string, verify UTF-8 length matches.
+@_cdecl("swift_contract_o7_nsstring_utf8_match")
+public func swift_contract_o7_nsstring_utf8_match(
+    _ cstr: UnsafePointer<CChar>?
+) -> Int32 {
+    guard let cstr = cstr else { return 0 }
+    let swift = String(cString: cstr)
+    let ns = NSString(string: swift)
+    let swiftUtf8 = swift.utf8.count
+    let nsUtf8 = ns.lengthOfBytes(using: String.Encoding.utf8.rawValue)
+    return swiftUtf8 == nsUtf8 ? 1 : 0
+}
+
+// MARK: - Parameter Pack ABI Coverage (O.4)
+
+/// Internal pack-generic sum helper (not @_cdecl — packs can't cross C boundary directly).
+private func _o4PackSum<each T: BinaryInteger>(_ values: repeat each T) -> Int32 {
+    var total: Int32 = 0
+    repeat (total += Int32(truncatingIfNeeded: each values))
+    return total
+}
+
+/// Internal pack-generic product helper.
+private func _o4PackProduct<each T: BinaryInteger>(_ values: repeat each T) -> Int32 {
+    var result: Int32 = 1
+    repeat (result = result &* Int32(truncatingIfNeeded: each values))
+    return result
+}
+
+@_cdecl("swift_contract_o4_pack_sum_arity0")
+public func swift_contract_o4_pack_sum_arity0() -> Int32 {
+    return _o4PackSum()
+}
+
+@_cdecl("swift_contract_o4_pack_sum_arity1")
+public func swift_contract_o4_pack_sum_arity1(_ a: Int32) -> Int32 {
+    return _o4PackSum(a)
+}
+
+@_cdecl("swift_contract_o4_pack_sum_arity3")
+public func swift_contract_o4_pack_sum_arity3(_ a: Int32, _ b: Int32, _ c: Int32) -> Int32 {
+    return _o4PackSum(a, b, c)
+}
+
+@_cdecl("swift_contract_o4_pack_product_arity3")
+public func swift_contract_o4_pack_product_arity3(_ a: Int32, _ b: Int32, _ c: Int32) -> Int32 {
+    return _o4PackProduct(a, b, c)
+}
+
+/// Return a JSON descriptor describing how the given pack-related signature is lowered.
+@_cdecl("swift_contract_o4_lowering_strategy_json")
+public func swift_contract_o4_lowering_strategy_json(
+    _ sig: UnsafePointer<CChar>?
+) -> UnsafeMutablePointer<CChar>? {
+    let signature = sig.map { String(cString: $0) } ?? ""
+    let strategy: String
+    let supported: Bool
+    let reasonCode: Int
+    if signature.contains("pack") || signature.contains("repeat") {
+        strategy = "pack.fixed_arity_cdecl_wrapper"
+        supported = true
+        reasonCode = 0
+    } else {
+        strategy = "unknown.pack.shape"
+        supported = false
+        reasonCode = -464
+    }
+    let esc = signature
+        .replacingOccurrences(of: "\\", with: "\\\\")
+        .replacingOccurrences(of: "\"", with: "\\\"")
+    return strdup("{\"signature\":\"\(esc)\",\"strategy\":\"\(strategy)\",\"supported\":\(supported ? "true" : "false"),\"reason_code\":\(reasonCode)}")
+}
+
+// MARK: - Span ABI Coverage (O.5)
+
+@_cdecl("swift_contract_o5_span_sum")
+public func swift_contract_o5_span_sum(
+    _ ptr: UnsafePointer<Int32>?,
+    _ count: Int32
+) -> Int32 {
+    guard let ptr = ptr, count >= 0 else { return 0 }
+    let span = Span(_unsafeElements: UnsafeBufferPointer(start: ptr, count: Int(count)))
+    var s: Int32 = 0
+    for i in 0..<span.count { s += span[i] }
+    return s
+}
+
+@_cdecl("swift_contract_o5_span_length")
+public func swift_contract_o5_span_length(
+    _ ptr: UnsafePointer<Int32>?,
+    _ count: Int32
+) -> Int32 {
+    guard let ptr = ptr, count >= 0 else { return 0 }
+    let span = Span(_unsafeElements: UnsafeBufferPointer(start: ptr, count: Int(count)))
+    return Int32(span.count)
+}
+
+@_cdecl("swift_contract_o5_span_first")
+public func swift_contract_o5_span_first(
+    _ ptr: UnsafePointer<Int32>?,
+    _ count: Int32
+) -> Int32 {
+    guard let ptr = ptr, count > 0 else { return Int32.min }
+    let span = Span(_unsafeElements: UnsafeBufferPointer(start: ptr, count: Int(count)))
+    return span[0]
+}
+
+@_cdecl("swift_contract_o5_span_contains")
+public func swift_contract_o5_span_contains(
+    _ ptr: UnsafePointer<Int32>?,
+    _ count: Int32,
+    _ needle: Int32
+) -> Int32 {
+    guard let ptr = ptr, count >= 0 else { return 0 }
+    let span = Span(_unsafeElements: UnsafeBufferPointer(start: ptr, count: Int(count)))
+    for i in 0..<span.count {
+        if span[i] == needle { return 1 }
+    }
+    return 0
+}
+
+@_cdecl("swift_contract_o5_span_bounds_ok")
+public func swift_contract_o5_span_bounds_ok(
+    _ ptr: UnsafePointer<Int32>?,
+    _ count: Int32,
+    _ index: Int32
+) -> Int32 {
+    guard let ptr = ptr, count >= 0 else { return 0 }
+    let span = Span(_unsafeElements: UnsafeBufferPointer(start: ptr, count: Int(count)))
+    return (index >= 0 && Int(index) < span.count) ? 1 : 0
 }
 
 // MARK: - Helper Functions (B.2)

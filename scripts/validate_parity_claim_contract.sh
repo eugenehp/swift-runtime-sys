@@ -53,6 +53,9 @@ support_md_p = require_file("target/runtime-probe/support-matrix-signoff.md")
 promotion_md_p = require_file("target/runtime-probe/promotion-policy-signoff.md")
 plan_md_p = require_file("target/runtime-probe/plan-completion-signoff.md")
 phase_c_md_p = require_file("target/runtime-probe/phase-c-signoff/phase-c-signoff.md")
+phase_o_md_p = require_file("target/runtime-probe/phase-o-signoff/phase-o-signoff.md")
+phase_o_optional_json_p = require_file("target/runtime-probe/phase-o-optional/phase-o-optional-signoff.json")
+o10_gate_md_p = require_file("target/runtime-probe/o10-observation/o10-observation-summary.md")
 
 if parity_json_p:
     parity = read_json(parity_json_p)
@@ -98,11 +101,34 @@ def require_signoff_contains(path, needle):
 require_signoff_contains(support_md_p, "PASS")
 require_signoff_contains(promotion_md_p, "PASS")
 require_signoff_contains(phase_c_md_p, "PASS")
+require_signoff_contains(phase_o_md_p, "PASS")
+require_signoff_contains(o10_gate_md_p, "PASS")
 if plan_md_p is not None:
     text = plan_md_p.read_text(encoding="utf-8")
     if "Result: PASS" not in text and "passed" not in text.lower():
         issues.append(f"plan completion signoff is not PASS: {plan_md_p}")
 
+if phase_o_optional_json_p:
+    optional_report = read_json(phase_o_optional_json_p)
+    if optional_report.get("result") != "PASS":
+        issues.append("Phase O optional tracks signoff is not PASS")
+    expected_tracks = contract.get("optional_tracks", {})
+    observed_tracks = optional_report.get("tracks", {})
+    for track_key, expected in expected_tracks.items():
+        observed = observed_tracks.get(track_key)
+        if observed is None:
+            issues.append(f"optional track missing from report: {track_key}")
+            continue
+        if observed.get("classification") != expected.get("classification"):
+            issues.append(
+                f"optional track classification mismatch for {track_key}: "
+                f"{observed.get('classification')} != {expected.get('classification')}"
+            )
+        if observed.get("promotion_status") != expected.get("promotion_status"):
+            issues.append(
+                f"optional track promotion mismatch for {track_key}: "
+                f"{observed.get('promotion_status')} != {expected.get('promotion_status')}"
+            )
 pin = contract["toolchain_pins"]
 rust_channel = pin["rust_toolchain_channel"]
 swift_prefix = pin["swift_version_prefix"]

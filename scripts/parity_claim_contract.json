@@ -1,8 +1,8 @@
 {
   "version": 1,
   "scope": {
-    "id": "v3-dynamic",
-    "description": "Phase B COMPLETE: Dynamic metadata + multi-version adaptation (B.1 metadata introspector, B.2 witness resolver, B.3 version adapter, B.4 capability negotiation, B.5 multi-version CI matrix)"
+    "id": "v6-phase-o-o8-required",
+    "description": "Phase O expanded: O.1-O.7 plus O.8 and O.10 required coverage (RemoteMirror baseline, concurrency ABI, typed throws, parameter packs, Span, ownership conventions, ObjC bridge ARC, Rust-owned executor, Observation runtime surface) with phase-level signoff evidence"
   },
   "required_gates": [
     "parity_matrix_debug",
@@ -26,8 +26,23 @@
     "b4_capability_negotiation_gate",
     "c8_host_reliability_gate",
     "c9_host_promotion_gate",
-    "phase_c_signoff"
+    "phase_c_signoff",
+    "o1_remotemirror_gate",
+    "o2_concurrency_abi_gate",
+    "o3_typed_throws_gate",
+    "o4_packs_span_gate",
+    "o5_ownership_arc_gate",
+    "o8_rust_owned_executor_gate",
+    "o10_observation_gate",
+    "phase_o_signoff",
+    "phase_o_optional_tracks_signoff"
   ],
+  "optional_tracks": {
+    "o9_distributed_actor_surface": {
+      "classification": "experimental",
+      "promotion_status": "not-promoted"
+    }
+  },
   "minimum_budgets": {
     "ap4_seed_count": 32,
     "ap4_fragment_count": 10,
