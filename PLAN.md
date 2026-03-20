@@ -1337,7 +1337,15 @@ After completing Phase O (O1-O10 gates required, O8 promoted, O9 deferred), the 
 - **Goal**: Locale-aware formatting determinism
 - **Scope**: Decimal → String formatting, percent encoding (0.45 → "45%"), scientific notation, rounding rules
 - **Prerequisites**: P.1 String, P.3 Codable (formatting is often serialization-adjacent)
-- **Timeline**: Final phase of P
+- **Implementation Sequence** (Completed):
+  - [x] Step 1: Add Swift bridge probe export `swift_number_formatter_percent_scientific_probe_flags` for percent/scientific formatting semantics.
+  - [x] Step 2: Create `examples/runtime_p6_formatting_probe.rs` for deterministic NumberFormatter/Decimal checks.
+  - [x] Step 3: Create `scripts/run_p6_formatting_gate.sh` with debug + release equivalence validation.
+  - [x] Step 4: Validate decimal NumberFormatter render/parse/rounding/invalid handling plus Decimal arithmetic probe flags.
+  - [x] Step 5: Validate percent and scientific NumberFormatter render/parse behavior and NSNumber bridge round-trip.
+  - [x] Step 6: Generate P.6 artifacts `target/runtime-probe/p6-formatting/p6-formatting-summary.{json,md}`.
+  - [x] Step 7: Re-run parity matrix and confirm no regressions (`141/141 PASS`).
+- **Status**: P.6 gate PASS (8/8 debug + release).
 
 ### Phase P Signoff Artifact Contract
 - [ ] Add directory: `target/runtime-probe/phase-p-signoff/`
@@ -1356,8 +1364,8 @@ After completing Phase O (O1-O10 gates required, O8 promoted, O9 deferred), the 
 - Run full parity matrix after each P gate to ensure no regressions
 - Update claim-contract incrementally: v7-phase-p-foundation only after all P.1-P.6 gates PASS
 
-### Next Action: Begin P.6 Number Formatting Bridging
-Execute P.6 implementation (Decimal/Percent/Scientific notation formatting determinism) after P.5 completion.
+### Next Action: Begin Phase P Signoff Integration
+Execute Phase P signoff integration: aggregate P.1-P.6 artifacts into `target/runtime-probe/phase-p-signoff/phase-p-signoff.json` and wire a `run_phase_p_signoff.sh` gate.
 ---
 
 ## Execution Log
@@ -1404,3 +1412,11 @@ Execute P.6 implementation (Decimal/Percent/Scientific notation formatting deter
 - [x] P.5 gate PASS: 8/8 in debug and 8/8 in release; artifacts emitted under `target/runtime-probe/p5-temporal/`.
 - [x] Re-ran parity matrix after P.5 changes: `141/141 PASS` (no regressions).
 - [x] Updated Phase P plan status: P.5 complete, next action moved to P.6 number formatting bridging.
+
+### 2026-03-20 (Phase P — P.6 Number Formatting Completion)
+- [x] Added `swift_number_formatter_percent_scientific_probe_flags` in `examples/RustBridge.swift` to cover explicit percent and scientific NumberFormatter semantics.
+- [x] Added `examples/runtime_p6_formatting_probe.rs` covering decimal/percent/scientific formatting checks and NSNumber bridge round-trip.
+- [x] Added `scripts/run_p6_formatting_gate.sh` with debug/release equivalence validation and P.6 artifact output.
+- [x] P.6 gate PASS: 8/8 in debug and 8/8 in release; artifacts emitted under `target/runtime-probe/p6-formatting/`.
+- [x] Re-ran parity matrix after P.6 changes: `141/141 PASS` (no regressions).
+- [x] Updated Phase P plan status: P.6 complete; next action moved to Phase P signoff integration.

@@ -6297,6 +6297,41 @@ public func swift_number_formatter_probe_flags() -> Int32 {
     return flags
 }
 
+@_cdecl("swift_number_formatter_percent_scientific_probe_flags")
+public func swift_number_formatter_percent_scientific_probe_flags() -> Int32 {
+    var flags: Int32 = 0
+
+    let percent = NumberFormatter()
+    percent.locale = Locale(identifier: "en_US_POSIX")
+    percent.numberStyle = .percent
+    percent.usesGroupingSeparator = false
+    percent.minimumFractionDigits = 0
+    percent.maximumFractionDigits = 0
+
+    if let renderedPercent = percent.string(from: NSNumber(value: 0.45)), renderedPercent == "45%" {
+        flags |= 1
+    }
+
+    if let parsedPercent = percent.number(from: "45%"), abs(parsedPercent.doubleValue - 0.45) < 0.000_001 {
+        flags |= 2
+    }
+
+    let scientific = NumberFormatter()
+    scientific.locale = Locale(identifier: "en_US_POSIX")
+    scientific.numberStyle = .scientific
+    scientific.usesGroupingSeparator = false
+    scientific.maximumFractionDigits = 4
+
+    if let renderedScientific = scientific.string(from: NSNumber(value: 1234.5)), renderedScientific.uppercased().contains("E") {
+        flags |= 4
+        if let parsedScientific = scientific.number(from: renderedScientific), abs(parsedScientific.doubleValue - 1234.5) < 0.000_1 {
+            flags |= 8
+        }
+    }
+
+    return flags
+}
+
 // ── URL semantics parity ───────────────────────────────────────────────────
 @_cdecl("swift_url_probe_flags")
 public func swift_url_probe_flags() -> Int32 {
