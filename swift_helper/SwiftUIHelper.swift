@@ -255,20 +255,7 @@ public func swiftuiShowWindow(
 ) {
     let view = unboxView(handle)
     let title = String(bytes: UnsafeBufferPointer(start: titleUtf8, count: titleLen), encoding: .utf8) ?? "SwiftUI"
-
-    NSApplication.shared.setActivationPolicy(.regular)
-    let controller = NSHostingController(rootView: view)
-    let window = NSWindow(
-        contentRect: NSRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height)),
-        styleMask: [.titled, .closable, .resizable, .miniaturizable],
-        backing: .buffered, defer: false
-    )
-    window.contentViewController = controller
-    window.title = title
-    window.center()
-    window.makeKeyAndOrderFront(nil)
-    NSApplication.shared.activate(ignoringOtherApps: true)
-    NSApplication.shared.run()
+    runApp(rootView: view, title: title, width: CGFloat(width), height: CGFloat(height))
 }
 
 // ── Additional modifiers ──
@@ -364,21 +351,8 @@ public func swiftuiObservableWindow(
 ) {
     let title = String(bytes: UnsafeBufferPointer(start: titlePtr, count: titleLen), encoding: .utf8) ?? ""
     
-    NSApplication.shared.setActivationPolicy(.regular)
-    
     let rootView = ReactiveView(buildFn: buildFn, userData: userData)
-    let controller = NSHostingController(rootView: rootView)
-    let window = NSWindow(
-        contentRect: NSRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height)),
-        styleMask: [.titled, .closable, .resizable, .miniaturizable],
-        backing: .buffered, defer: false
-    )
-    window.contentViewController = controller
-    window.title = title
-    window.center()
-    window.makeKeyAndOrderFront(nil)
-    NSApplication.shared.activate(ignoringOtherApps: true)
-    NSApplication.shared.run()
+    runApp(rootView: rootView, title: title, width: CGFloat(width), height: CGFloat(height))
 }
 
 @Observable
@@ -435,20 +409,8 @@ public func swiftuiReactiveWindow(
     _ userData: UnsafeMutableRawPointer?
 ) {
     let title = String(bytes: UnsafeBufferPointer(start: titlePtr, count: titleLen), encoding: .utf8) ?? ""
-    NSApplication.shared.setActivationPolicy(.regular)
     let rootView = ReactiveView2(buildFn: buildFn, userData: userData)
-    let controller = NSHostingController(rootView: rootView)
-    let window = NSWindow(
-        contentRect: NSRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height)),
-        styleMask: [.titled, .closable, .resizable, .miniaturizable],
-        backing: .buffered, defer: false
-    )
-    window.contentViewController = controller
-    window.title = title
-    window.center()
-    window.makeKeyAndOrderFront(nil)
-    NSApplication.shared.activate(ignoringOtherApps: true)
-    NSApplication.shared.run()
+    runApp(rootView: rootView, title: title, width: CGFloat(width), height: CGFloat(height))
 }
 
 @_cdecl("swiftui_trigger_rebuild")

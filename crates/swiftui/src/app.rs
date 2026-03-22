@@ -1,12 +1,20 @@
-//! App initialization helpers.
+//! App initialization helpers — cross-platform (macOS + iOS).
 
+#[cfg(target_os = "macos")]
 #[link(name = "AppKit", kind = "framework")]
 unsafe extern "C" {
     fn NSApplicationLoad() -> bool;
 }
 
-/// Initialize AppKit (must be called before creating any SwiftUI views).
+#[cfg(target_os = "ios")]
+#[link(name = "UIKit", kind = "framework")]
+extern "C" {}
+
+/// Initialize the platform app runtime.
+/// - macOS: calls `NSApplicationLoad()`
+/// - iOS: no-op (UIKit manages the lifecycle)
 pub fn init_app() {
+    #[cfg(target_os = "macos")]
     unsafe {
         NSApplicationLoad();
     }
