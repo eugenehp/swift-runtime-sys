@@ -20,7 +20,14 @@ static HELPER_PATH: OnceLock<PathBuf> = OnceLock::new();
 
 /// Find the Swift helper dylib, searching multiple locations.
 pub fn find_helper() -> Option<PathBuf> {
-    // 1. Environment variable
+    // 1. Compile-time env from build.rs
+    if let Some(p) = option_env!("SWIFTUI_HELPER") {
+        if Path::new(p).exists() {
+            return Some(PathBuf::from(p));
+        }
+    }
+
+    // 2. Runtime environment variable
     if let Ok(p) = std::env::var("SWIFTUI_HELPER") {
         if Path::new(&p).exists() {
             return Some(PathBuf::from(p));
