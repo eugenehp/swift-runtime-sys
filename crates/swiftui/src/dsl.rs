@@ -317,6 +317,72 @@ pub fn button(label: &str, action: fn()) -> View {
     with_ui(|ui| View::new(ui.button(label, action)))
 }
 
+/// Create a real SwiftUI List.
+pub fn list(children: Vec<View>) -> View {
+    with_ui(|ui| {
+        let ptrs: Vec<_> = children.iter().map(|v| v.handle().as_raw()).collect();
+        View::new(ViewHandle::new(
+            unsafe { (ui.fns.list)(ptrs.as_ptr(), ptrs.len()) },
+            ui.fns.release,
+        ))
+    })
+}
+
+/// `list![view1, view2, ...]` macro.
+#[macro_export]
+macro_rules! list {
+    ($($child:expr),* $(,)?) => {
+        $crate::dsl::list(vec![$($crate::dsl::IntoView::into_view($child)),*])
+    };
+}
+
+/// Create a password field.
+pub fn secure_field(placeholder: &str, value: &str) -> View {
+    with_ui(|ui| {
+        View::new(ViewHandle::new(
+            unsafe {
+                (ui.fns.secure_field)(
+                    placeholder.as_ptr(),
+                    placeholder.len(),
+                    value.as_ptr(),
+                    value.len(),
+                )
+            },
+            ui.fns.release,
+        ))
+    })
+}
+
+/// Create a multiline text editor.
+pub fn text_editor(value: &str) -> View {
+    with_ui(|ui| {
+        View::new(ViewHandle::new(
+            unsafe { (ui.fns.text_editor)(value.as_ptr(), value.len()) },
+            ui.fns.release,
+        ))
+    })
+}
+
+/// Create a stepper.
+pub fn stepper(label: &str, value: i32, min: i32, max: i32) -> View {
+    with_ui(|ui| {
+        View::new(ViewHandle::new(
+            unsafe { (ui.fns.stepper)(label.as_ptr(), label.len(), value, min, max) },
+            ui.fns.release,
+        ))
+    })
+}
+
+/// Create a group box with title.
+pub fn group_box(title: &str, content: View) -> View {
+    with_ui(|ui| {
+        View::new(ViewHandle::new(
+            unsafe { (ui.fns.group_box)(title.as_ptr(), title.len(), content.handle().as_raw()) },
+            ui.fns.release,
+        ))
+    })
+}
+
 /// Create a label with SF Symbol icon.
 pub fn label(text: &str, system_image: &str) -> View {
     with_ui(|ui| {

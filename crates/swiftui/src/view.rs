@@ -209,6 +209,175 @@ impl View {
         })
     }
 
+    // ── Visual effects ──
+
+    pub fn blur(self, radius: f32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.blur)(self.handle.as_raw(), radius) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn brightness(self, amount: f32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.brightness)(self.handle.as_raw(), amount) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn saturation(self, amount: f32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.saturation)(self.handle.as_raw(), amount) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn grayscale(self, amount: f32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.grayscale)(self.handle.as_raw(), amount) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    // ── Text layout ──
+
+    pub fn line_limit(self, limit: i32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.line_limit)(self.handle.as_raw(), limit) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn fixed_size_mod(self) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.fixed_size_mod)(self.handle.as_raw()) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    // ── Layout ──
+
+    pub fn aspect_ratio(self, ratio: f32, fit: bool) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe {
+                    (ui.fns.aspect_ratio)(self.handle.as_raw(), ratio, if fit { 0 } else { 1 })
+                },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn clipped(self) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.clipped)(self.handle.as_raw()) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    // ── Misc ──
+
+    pub fn tint(self, c: Color) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.tint)(self.handle.as_raw(), c.r, c.g, c.b) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn badge(self, count: i32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.badge)(self.handle.as_raw(), count) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn help(self, text: &str) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.help_text)(self.handle.as_raw(), text.as_ptr(), text.len()) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    // ── Animation ──
+
+    pub fn animated(self) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.animation)(self.handle.as_raw(), 0) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn spring(self) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.animation)(self.handle.as_raw(), 4) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn bouncy(self) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.animation)(self.handle.as_raw(), 5) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    // ── Presentation ──
+
+    pub fn sheet(self, content: View, is_presented: bool) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe {
+                    (ui.fns.sheet)(self.handle.as_raw(), content.handle.as_raw(), is_presented)
+                },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn alert(self, title: &str, message: &str, is_presented: bool) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe {
+                    (ui.fns.alert)(
+                        self.handle.as_raw(),
+                        title.as_ptr(),
+                        title.len(),
+                        message.as_ptr(),
+                        message.len(),
+                        is_presented,
+                    )
+                },
+                ui.fns.release,
+            ))
+        })
+    }
+
     // ── Container modifiers ──
 
     pub fn scroll(self) -> Self {

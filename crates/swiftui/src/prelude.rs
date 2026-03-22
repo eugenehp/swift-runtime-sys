@@ -10,13 +10,15 @@ pub use crate::color::{
 };
 pub use crate::conditional::{empty, for_each, for_each_enumerated, for_each_h, when, when_else};
 pub use crate::dsl::{
-    color, divider, image, label, link, progress, show_if, slider, spacer, text, textfield, toggle,
-    view_if, IntoView, TextView,
+    color, divider, group_box, image, label, link, list, progress, secure_field, show_if, slider,
+    spacer, stepper, text, text_editor, textfield, toggle, view_if, IntoView, TextView,
 };
 pub use crate::host::{App, BackgroundMaterial, WindowStyle};
 pub use crate::nav::{back_button, nav_button, navigator};
 pub use crate::scene::SceneApp;
-pub use crate::state::{action, app, button, Cx, State};
+pub use crate::state::{
+    action, app, bound_slider, bound_textfield, bound_toggle, button, Cx, State,
+};
 pub use crate::style::{MultiStyled, StylePreset, Styled};
 pub use crate::view::{FontWeight, View};
 pub use crate::{hstack, vstack, zstack};

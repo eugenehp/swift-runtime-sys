@@ -418,3 +418,82 @@ impl<T: Any + Send + Clone + 'static> State<Vec<T>> {
         self.set(Vec::new());
     }
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Bound controls — two-way binding between Rust state and SwiftUI
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// A text field that writes back to a State<String>.
+pub fn bound_textfield(placeholder: &str, state: &State<String>) -> crate::View {
+    let s = state.clone();
+    let boxed: Box<Box<dyn Fn(*const u8, usize)>> = Box::new(Box::new(move |ptr, len| {
+        let new =
+            unsafe { String::from_utf8_lossy(std::slice::from_raw_parts(ptr, len)).into_owned() };
+        s.set(new);
+    }));
+    let ud = Box::into_raw(boxed) as *mut c_void;
+
+    unsafe extern "C" fn tramp(ptr: *const u8, len: usize, ud: *mut c_void) {
+        let f = &*(ud as *const Box<dyn Fn(*const u8, usize)>);
+        f(ptr, len);
+    }
+
+    let val = state.get();
+    crate::dsl::with_ui(|ui| {
+        crate::View::new(crate::handle::ViewHandle::new(
+            unsafe {
+                (ui.fns.bound_textfield)(
+                    placeholder.as_ptr(),
+                    placeholder.len(),
+                    val.as_ptr(),
+                    val.len(),
+                    tramp,
+                    ud,
+                )
+            },
+            ui.fns.release,
+        ))
+    })
+}
+
+/// A toggle that writes back to a State<bool>.
+pub fn bound_toggle(label: &str, state: &State<bool>) -> crate::View {
+    let s = state.clone();
+    let boxed: Box<Box<dyn Fn(bool)>> = Box::new(Box::new(move |val| {
+        s.set(val);
+    }));
+    let ud = Box::into_raw(boxed) as *mut c_void;
+
+    unsafe extern "C" fn tramp(val: bool, ud: *mut c_void) {
+        let f = &*(ud as *const Box<dyn Fn(bool)>);
+        f(val);
+    }
+
+    crate::dsl::with_ui(|ui| {
+        crate::View::new(crate::handle::ViewHandle::new(
+            unsafe { (ui.fns.bound_toggle)(label.as_ptr(), label.len(), state.get(), tramp, ud) },
+            ui.fns.release,
+        ))
+    })
+}
+
+/// A slider that writes back to a State<f32>.
+pub fn bound_slider(state: &State<f32>, min: f32, max: f32) -> crate::View {
+    let s = state.clone();
+    let boxed: Box<Box<dyn Fn(f32)>> = Box::new(Box::new(move |val| {
+        s.set(val);
+    }));
+    let ud = Box::into_raw(boxed) as *mut c_void;
+
+    unsafe extern "C" fn tramp(val: f32, ud: *mut c_void) {
+        let f = &*(ud as *const Box<dyn Fn(f32)>);
+        f(val);
+    }
+
+    crate::dsl::with_ui(|ui| {
+        crate::View::new(crate::handle::ViewHandle::new(
+            unsafe { (ui.fns.bound_slider)(state.get(), min, max, tramp, ud) },
+            ui.fns.release,
+        ))
+    })
+}

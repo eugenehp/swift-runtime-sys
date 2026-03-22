@@ -442,3 +442,292 @@ public func swiftuiOnLongPress(
     let ud = userData
     return boxView(unboxView(handle).onLongPressGesture { cb(ud) })
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Two-way binding — TextField/Toggle that write back to Rust state
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Observable model that holds a string/bool, calls Rust on change
+class BindableString: ObservableObject {
+    @Published var value: String {
+        didSet { onChange?(value) }
+    }
+    var onChange: ((String) -> Void)?
+    init(_ v: String, onChange: ((String) -> Void)?) {
+        self.value = v
+        self.onChange = onChange
+    }
+}
+
+class BindableBool: ObservableObject {
+    @Published var value: Bool {
+        didSet { onChange?(value) }
+    }
+    var onChange: ((Bool) -> Void)?
+    init(_ v: Bool, onChange: ((Bool) -> Void)?) {
+        self.value = v
+        self.onChange = onChange
+    }
+}
+
+struct BoundTextField: View {
+    @ObservedObject var model: BindableString
+    let placeholder: String
+    var body: some View {
+        TextField(placeholder, text: $model.value)
+            .textFieldStyle(.roundedBorder)
+    }
+}
+
+struct BoundToggle: View {
+    @ObservedObject var model: BindableBool
+    let label: String
+    var body: some View {
+        Toggle(label, isOn: $model.value)
+    }
+}
+
+struct BoundSlider: View {
+    @ObservedObject var model: BindableString // stores Float as String
+    let min: Float
+    let max: Float
+    var body: some View {
+        let val = Binding<Double>(
+            get: { Double(self.model.value) ?? 0 },
+            set: { self.model.value = String(Float($0)) }
+        )
+        Slider(value: val, in: Double(min)...Double(max))
+    }
+}
+
+@_cdecl("swiftui_bound_textfield")
+public func swiftuiBoundTextField(
+    _ placeholderPtr: UnsafePointer<UInt8>, _ placeholderLen: Int,
+    _ valuePtr: UnsafePointer<UInt8>, _ valueLen: Int,
+    _ callback: @convention(c) (UnsafePointer<UInt8>, Int, UnsafeMutableRawPointer?) -> Void,
+    _ userData: UnsafeMutableRawPointer?
+) -> ViewHandle {
+    let placeholder = String(bytes: UnsafeBufferPointer(start: placeholderPtr, count: placeholderLen), encoding: .utf8) ?? ""
+    let value = String(bytes: UnsafeBufferPointer(start: valuePtr, count: valueLen), encoding: .utf8) ?? ""
+    let cb = callback
+    let ud = userData
+    let model = BindableString(value) { newVal in
+        newVal.withCString { ptr in
+            cb(UnsafePointer(OpaquePointer(ptr)), newVal.utf8.count, ud)
+        }
+    }
+    return boxView(BoundTextField(model: model, placeholder: placeholder))
+}
+
+@_cdecl("swiftui_bound_toggle")
+public func swiftuiBoundToggle(
+    _ labelPtr: UnsafePointer<UInt8>, _ labelLen: Int,
+    _ value: Bool,
+    _ callback: @convention(c) (Bool, UnsafeMutableRawPointer?) -> Void,
+    _ userData: UnsafeMutableRawPointer?
+) -> ViewHandle {
+    let label = String(bytes: UnsafeBufferPointer(start: labelPtr, count: labelLen), encoding: .utf8) ?? ""
+    let cb = callback
+    let ud = userData
+    let model = BindableBool(value) { newVal in cb(newVal, ud) }
+    return boxView(BoundToggle(model: model, label: label))
+}
+
+@_cdecl("swiftui_bound_slider")
+public func swiftuiBoundSlider(
+    _ value: Float, _ min: Float, _ max: Float,
+    _ callback: @convention(c) (Float, UnsafeMutableRawPointer?) -> Void,
+    _ userData: UnsafeMutableRawPointer?
+) -> ViewHandle {
+    let cb = callback
+    let ud = userData
+    let model = BindableString(String(value)) { newVal in
+        if let f = Float(newVal) { cb(f, ud) }
+    }
+    return boxView(BoundSlider(model: model, min: min, max: max))
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// List — real SwiftUI List
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_list")
+public func swiftuiList(_ children: UnsafePointer<ViewHandle>, _ count: Int) -> ViewHandle {
+    let views = (0..<count).map { unboxView(children[$0]) }
+    return boxView(List { ForEach(views.indices, id: \.self) { views[$0] } })
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Sheet / Alert
+// ═══════════════════════════════════════════════════════════════════════════
+
+class SheetModel: ObservableObject {
+    @Published var isPresented: Bool = false
+}
+
+struct SheetWrapper: View {
+    let base: AnyView
+    let sheet: AnyView
+    @ObservedObject var model: SheetModel
+    var body: some View {
+        base.sheet(isPresented: $model.isPresented) { sheet }
+    }
+}
+
+@_cdecl("swiftui_sheet")
+public func swiftuiSheet(
+    _ baseHandle: ViewHandle,
+    _ sheetHandle: ViewHandle,
+    _ isPresented: Bool
+) -> ViewHandle {
+    let model = SheetModel()
+    model.isPresented = isPresented
+    return boxView(SheetWrapper(base: unboxView(baseHandle), sheet: unboxView(sheetHandle), model: model))
+}
+
+struct AlertWrapper: View {
+    let base: AnyView
+    let title: String
+    let message: String
+    @ObservedObject var model: SheetModel
+    var body: some View {
+        base.alert(title, isPresented: $model.isPresented) {
+            Button("OK") {}
+        } message: {
+            Text(message)
+        }
+    }
+}
+
+@_cdecl("swiftui_alert")
+public func swiftuiAlert(
+    _ baseHandle: ViewHandle,
+    _ titlePtr: UnsafePointer<UInt8>, _ titleLen: Int,
+    _ msgPtr: UnsafePointer<UInt8>, _ msgLen: Int,
+    _ isPresented: Bool
+) -> ViewHandle {
+    let title = String(bytes: UnsafeBufferPointer(start: titlePtr, count: titleLen), encoding: .utf8) ?? ""
+    let msg = String(bytes: UnsafeBufferPointer(start: msgPtr, count: msgLen), encoding: .utf8) ?? ""
+    let model = SheetModel()
+    model.isPresented = isPresented
+    return boxView(AlertWrapper(base: unboxView(baseHandle), title: title, message: msg, model: model))
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Animation
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_animation")
+public func swiftuiAnimation(_ handle: ViewHandle, _ type: Int32) -> ViewHandle {
+    let view = unboxView(handle)
+    switch type {
+    case 0: return boxView(view.animation(.default, value: true))
+    case 1: return boxView(view.animation(.easeIn, value: true))
+    case 2: return boxView(view.animation(.easeOut, value: true))
+    case 3: return boxView(view.animation(.easeInOut, value: true))
+    case 4: return boxView(view.animation(.spring, value: true))
+    case 5: return boxView(view.animation(.bouncy, value: true))
+    default: return boxView(view.animation(.default, value: true))
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Additional modifiers
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_blur")
+public func swiftuiBlur(_ handle: ViewHandle, _ radius: Float) -> ViewHandle {
+    boxView(unboxView(handle).blur(radius: CGFloat(radius)))
+}
+
+@_cdecl("swiftui_brightness")
+public func swiftuiBrightness(_ handle: ViewHandle, _ amount: Float) -> ViewHandle {
+    boxView(unboxView(handle).brightness(Double(amount)))
+}
+
+@_cdecl("swiftui_saturation")
+public func swiftuiSaturation(_ handle: ViewHandle, _ amount: Float) -> ViewHandle {
+    boxView(unboxView(handle).saturation(Double(amount)))
+}
+
+@_cdecl("swiftui_grayscale")
+public func swiftuiGrayscale(_ handle: ViewHandle, _ amount: Float) -> ViewHandle {
+    boxView(unboxView(handle).grayscale(Double(amount)))
+}
+
+@_cdecl("swiftui_help")
+public func swiftuiHelp(_ handle: ViewHandle, _ textPtr: UnsafePointer<UInt8>, _ textLen: Int) -> ViewHandle {
+    let text = String(bytes: UnsafeBufferPointer(start: textPtr, count: textLen), encoding: .utf8) ?? ""
+    return boxView(unboxView(handle).help(text))
+}
+
+@_cdecl("swiftui_line_limit")
+public func swiftuiLineLimit(_ handle: ViewHandle, _ limit: Int32) -> ViewHandle {
+    boxView(unboxView(handle).lineLimit(Int(limit)))
+}
+
+@_cdecl("swiftui_fixed_size")
+public func swiftuiFixedSize(_ handle: ViewHandle) -> ViewHandle {
+    boxView(unboxView(handle).fixedSize())
+}
+
+@_cdecl("swiftui_aspect_ratio")
+public func swiftuiAspectRatio(_ handle: ViewHandle, _ ratio: Float, _ mode: Int32) -> ViewHandle {
+    let m: ContentMode = mode == 0 ? .fit : .fill
+    return boxView(unboxView(handle).aspectRatio(CGFloat(ratio), contentMode: m))
+}
+
+@_cdecl("swiftui_clipped")
+public func swiftuiClipped(_ handle: ViewHandle) -> ViewHandle {
+    boxView(unboxView(handle).clipped())
+}
+
+@_cdecl("swiftui_tint")
+public func swiftuiTint(_ handle: ViewHandle, _ r: Float, _ g: Float, _ b: Float) -> ViewHandle {
+    boxView(unboxView(handle).tint(Color(red: Double(r), green: Double(g), blue: Double(b))))
+}
+
+@_cdecl("swiftui_badge")
+public func swiftuiBadge(_ handle: ViewHandle, _ count: Int32) -> ViewHandle {
+    boxView(unboxView(handle).badge(Int(count)))
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Additional views
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_secure_field")
+public func swiftuiSecureField(_ placeholderPtr: UnsafePointer<UInt8>, _ placeholderLen: Int, _ valuePtr: UnsafePointer<UInt8>, _ valueLen: Int) -> ViewHandle {
+    let p = String(bytes: UnsafeBufferPointer(start: placeholderPtr, count: placeholderLen), encoding: .utf8) ?? ""
+    let v = String(bytes: UnsafeBufferPointer(start: valuePtr, count: valueLen), encoding: .utf8) ?? ""
+    return boxView(SecureField(p, text: .constant(v)))
+}
+
+@_cdecl("swiftui_text_editor")
+public func swiftuiTextEditor(_ valuePtr: UnsafePointer<UInt8>, _ valueLen: Int) -> ViewHandle {
+    let v = String(bytes: UnsafeBufferPointer(start: valuePtr, count: valueLen), encoding: .utf8) ?? ""
+    return boxView(TextEditor(text: .constant(v)))
+}
+
+@_cdecl("swiftui_stepper")
+public func swiftuiStepper(
+    _ labelPtr: UnsafePointer<UInt8>, _ labelLen: Int,
+    _ value: Int32, _ min: Int32, _ max: Int32
+) -> ViewHandle {
+    let label = String(bytes: UnsafeBufferPointer(start: labelPtr, count: labelLen), encoding: .utf8) ?? ""
+    return boxView(Stepper(label, value: .constant(Int(value)), in: Int(min)...Int(max)))
+}
+
+@_cdecl("swiftui_group_box")
+public func swiftuiGroupBox(_ titlePtr: UnsafePointer<UInt8>, _ titleLen: Int, _ content: ViewHandle) -> ViewHandle {
+    let title = String(bytes: UnsafeBufferPointer(start: titlePtr, count: titleLen), encoding: .utf8) ?? ""
+    return boxView(GroupBox(title) { unboxView(content) })
+}
+
+#if os(macOS)
+@_cdecl("swiftui_date_picker")
+public func swiftuiDatePicker(_ labelPtr: UnsafePointer<UInt8>, _ labelLen: Int) -> ViewHandle {
+    let label = String(bytes: UnsafeBufferPointer(start: labelPtr, count: labelLen), encoding: .utf8) ?? ""
+    return boxView(DatePicker(label, selection: .constant(Date())))
+}
+#endif
