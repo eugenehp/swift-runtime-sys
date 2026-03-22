@@ -1,11 +1,11 @@
-//! Notes App — multi-file, deeply nested, composable views.
+//! Notes App — multi-file, composable, latest DSL.
 
 mod model;
 mod views;
 
 use model::*;
 use swiftui::prelude::*;
-use views::*;
+use swiftui::{hstack, txt, vstack};
 
 fn main() {
     app("Notes", 700.0, 500.0, |cx| {
@@ -13,21 +13,16 @@ fn main() {
         let selected = cx.state(0usize);
         let editing = cx.state(false);
 
-        let sel = selected.get();
-        let note_list = notes.get();
-        let is_editing = editing.get();
-
         hstack![
-            sidebar(&note_list, &selected, &notes).frame(220.0, -1.0),
+            views::sidebar(&notes, &selected).frame(220.0, -1.0),
             divider(),
             vstack![
-                toolbar(&note_list, sel, is_editing, &editing, &notes, &selected),
+                views::toolbar(&notes, selected.get(), &editing, &selected),
                 divider(),
-                // view_if — no .into() needed, auto-converts both branches
                 view_if(
-                    is_editing,
-                    || editor(&note_list, sel),
-                    || note_detail(&note_list, sel),
+                    editing.get(),
+                    || views::editor(&notes.get(), selected.get()),
+                    || views::detail(&notes.get(), selected.get()),
                 ),
             ],
         ]

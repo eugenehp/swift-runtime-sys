@@ -1,56 +1,36 @@
-//! Sidebar — note list with selection.
-
-use crate::model::Note;
+use crate::model::*;
 use crate::views::components::*;
 use swiftui::prelude::*;
+use swiftui::vstack;
 
-pub fn sidebar(
-    notes: &[Note],
-    selected_state: &State<usize>,
-    notes_state: &State<Vec<Note>>,
-) -> View {
-    let pinned: Vec<_> = notes.iter().enumerate().filter(|(_, n)| n.pinned).collect();
-    let unpinned: Vec<_> = notes
-        .iter()
-        .enumerate()
-        .filter(|(_, n)| !n.pinned)
-        .collect();
+pub fn sidebar(notes: &State<Vec<Note>>, selected: &State<usize>) -> View {
+    let list = notes.get();
+    let pinned: Vec<_> = list.iter().enumerate().filter(|(_, n)| n.pinned).collect();
+    let unpinned: Vec<_> = list.iter().enumerate().filter(|(_, n)| !n.pinned).collect();
 
     vstack![
         textfield("Search notes...", "").padding(8.0),
-        // Pinned section
         show_if(!pinned.is_empty(), || {
             vstack![
                 section_header("📌 Pinned"),
-                for_each(&pinned, |(idx, note)| {
-                    button(&note.title, selected_state.set_to(*idx)).padding(2.0)
+                for_each(&pinned, |(i, note)| {
+                    button(&note.title, selected.set_to(*i)).padding(2.0)
                 }),
             ]
         }),
-        // All notes
         section_header("All Notes"),
-        for_each(&unpinned, |(idx, note)| {
-            button(&note.title, selected_state.set_to(*idx)).padding(2.0)
+        for_each(&unpinned, |(i, note)| {
+            button(&note.title, selected.set_to(*i)).padding(2.0)
         }),
         spacer(),
-        // Add button
         button("+ New Note", {
-            let ns = notes_state.clone();
-            let ss = selected_state.clone();
-            action(move || {
-                ns.update(|notes| {
-                    let mut new = notes.clone();
-                    new.push(Note {
-                        title: format!("Note {}", new.len() + 1),
-                        body: "New note...".into(),
-                        pinned: false,
-                        tag: crate::model::Tag::Personal,
-                    });
-                    new
-                });
-                let len = ns.get().len();
-                ss.set(len - 1);
-            })
+            let notes = notes.clone();
+            let selected = selected.clone();
+            move || {
+                let n = notes.len();
+                notes.push(Note::new(&format!("Note {}", n + 1)));
+                selected.set(n);
+            }
         })
         .padding(8.0),
     ]

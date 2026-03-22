@@ -1,5 +1,3 @@
-//! Data model for the notes app.
-
 #[derive(Clone, Debug)]
 pub struct Note {
     pub title: String,
@@ -23,7 +21,6 @@ impl Tag {
             Tag::Ideas => "💡 Ideas",
         }
     }
-
     pub fn color(&self) -> swiftui::dsl::Color {
         use swiftui::dsl::Color;
         match self {
@@ -35,37 +32,39 @@ impl Tag {
 }
 
 impl Note {
-    pub fn samples() -> Vec<Note> {
+    pub fn new(title: &str) -> Self {
+        Self {
+            title: title.into(),
+            body: "New note...".into(),
+            pinned: false,
+            tag: Tag::Personal,
+        }
+    }
+    pub fn samples() -> Vec<Self> {
         vec![
-            Note {
-                title: "Swift Runtime Bindings".into(),
-                body: "Complete FFI bindings to the Swift runtime with 490+ symbols, arm64 asm thunks, and ABI struct layouts.".into(),
+            Self {
+                title: "Swift Runtime".into(),
+                body: "490+ symbols, arm64 asm thunks, ABI structs.".into(),
                 pinned: true,
                 tag: Tag::Work,
             },
-            Note {
+            Self {
                 title: "Grocery List".into(),
-                body: "Milk, eggs, bread, cheese, apples, coffee beans".into(),
+                body: "Milk, eggs, bread, cheese, coffee".into(),
                 pinned: false,
                 tag: Tag::Personal,
             },
-            Note {
-                title: "App Architecture".into(),
-                body: "Use cx.state() for reactive state. Compose views from small functions. Keep model separate from views.".into(),
+            Self {
+                title: "Architecture".into(),
+                body: "cx.state() for reactive. Compose views from functions.".into(),
                 pinned: true,
                 tag: Tag::Ideas,
             },
-            Note {
+            Self {
                 title: "Meeting Notes".into(),
-                body: "Discussed Q4 roadmap. Action items: finalize API, write docs, prepare demo.".into(),
+                body: "Q4 roadmap. Action: finalize API, write docs.".into(),
                 pinned: false,
                 tag: Tag::Work,
-            },
-            Note {
-                title: "Rust Tricks".into(),
-                body: "Use .bind() for button callbacks. Use for_each() for lists. Use when() for conditionals.".into(),
-                pinned: false,
-                tag: Tag::Ideas,
             },
         ]
     }

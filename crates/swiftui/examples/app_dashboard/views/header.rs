@@ -1,21 +1,17 @@
-//! Page header with title, subtitle, and refresh button.
-
 use swiftui::prelude::*;
+use swiftui::{hstack, txt, vstack};
 
-pub fn page_header(title: &str, subtitle: &str, refresh_count: &State<i32>) -> View {
-    let n = refresh_count.get();
-
+pub fn page_header(title: &str, subtitle: &str, refresh: &State<i32>) -> View {
+    let n = refresh.get();
     hstack![
         vstack![
-            text(title).style(StylePreset::Title),
-            text(subtitle).style(StylePreset::Subtitle),
+            txt!("{title}").style(Title),
+            txt!("{subtitle}").style(Subtitle)
         ],
         spacer(),
         vstack![
-            button("Refresh", refresh_count.bind(|n| n + 1)),
-            text(&format!("Refreshed {n}x"))
-                .size(10.0)
-                .foreground(Color::GRAY),
+            button("Refresh", refresh.increment()),
+            txt!("Refreshed {n}x").size(10.0).foreground(GRAY),
         ],
     ]
 }
