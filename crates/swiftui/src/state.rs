@@ -31,10 +31,10 @@ struct StoreInner {
 unsafe impl Send for StoreInner {}
 
 #[derive(Clone)]
-pub(crate) struct Store(Arc<Mutex<StoreInner>>);
+pub struct Store(Arc<Mutex<StoreInner>>);
 
 impl Store {
-    fn new() -> Self {
+    pub(crate) fn new() -> Self {
         Self(Arc::new(Mutex::new(StoreInner {
             values: Vec::new(),
             trigger: None,
@@ -63,7 +63,7 @@ impl Store {
         }
     }
 
-    fn set_trigger(&self, handle: *mut c_void) {
+    pub fn set_trigger(&self, handle: *mut c_void) {
         self.0.lock().unwrap().trigger = Some(handle);
     }
 }
@@ -101,7 +101,7 @@ fn trigger_swift(handle: *mut c_void) {
 /// ```
 pub struct State<T: Any + Send + Clone + 'static> {
     idx: usize,
-    store: Store,
+    pub store: Store,
     _phantom: std::marker::PhantomData<T>,
 }
 
@@ -157,8 +157,8 @@ impl<T: Any + Send + Clone + 'static> State<T> {
 
 /// Build context — provides state creation and access.
 pub struct Cx {
-    store: Store,
-    next_idx: std::cell::Cell<usize>,
+    pub store: Store,
+    pub next_idx: std::cell::Cell<usize>,
 }
 
 impl Cx {
@@ -292,7 +292,7 @@ pub fn app(title: &str, width: f32, height: f32, build: impl Fn(&Cx) -> crate::V
 }
 
 struct AppData {
-    store: Store,
+    pub store: Store,
     build: Box<dyn Fn(&Cx) -> crate::View>,
 }
 

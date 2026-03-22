@@ -12,6 +12,7 @@ pub use crate::dsl::{
 };
 pub use crate::host::{App, BackgroundMaterial, WindowStyle};
 pub use crate::nav::{back_button, nav_button, navigator};
+pub use crate::scene::SceneApp;
 pub use crate::state::{app, button, Cx, State};
 pub use crate::style::{StylePreset, Styled};
 pub use crate::view::{FontWeight, View};

@@ -25,6 +25,7 @@ mod handle;
 pub mod host;
 pub mod nav;
 pub mod prelude;
+pub mod scene;
 pub mod state;
 pub mod style;
 mod view;

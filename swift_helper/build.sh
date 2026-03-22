@@ -3,7 +3,7 @@
 set -e
 cd "$(dirname "$0")"
 
-SOURCES="SwiftUIHelper.swift SnapshotHelper.swift Platform.swift"
+SOURCES="SwiftUIHelper.swift SnapshotHelper.swift Platform.swift AppHost.swift"
 
 build_macos() {
     local SDK=$(xcrun -sdk macosx --show-sdk-path 2>/dev/null)
