@@ -134,6 +134,17 @@ impl TextView {
     pub fn disabled(self, d: bool) -> View {
         self.build().disabled(d)
     }
+    pub fn on_tap(self, action: impl Fn() + 'static) -> View {
+        self.build().on_tap(action)
+    }
+    pub fn on_long_press(self, action: impl Fn() + 'static) -> View {
+        self.build().on_long_press(action)
+    }
+    pub fn styles(self, presets: &[crate::style::StylePreset]) -> View {
+        use crate::style::MultiStyled;
+        let view: View = self.into();
+        view.styles(presets)
+    }
 }
 
 /// Convert `TextView` to `View` — allows using it directly in stacks.
@@ -350,4 +361,36 @@ pub fn link(text: &str, url: &str) -> View {
 /// Show a view in a window. Blocks until the window is closed.
 pub fn window(title: &str, width: f32, height: f32, view: View) {
     with_ui(|ui| ui.show_window(&view.handle, title, width, height));
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// txt! macro — unified text with inline formatting
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// `txt!("Hello {name}, count={count}")` — text with inline format args.
+/// Replaces both `text()` and `text_fmt!()`.
+/// ```ignore
+/// txt!("plain text")
+/// txt!("Count: {}", count.get())
+/// txt!("Hello {name}!")  // if name is a local variable
+/// ```
+#[macro_export]
+macro_rules! txt {
+    ($fmt:literal $(, $($arg:tt)*)?) => {
+        $crate::dsl::text(&format!($fmt $(, $($arg)*)?))
+    };
+}
+
+/// Convert any IntoView to View. Eliminates `.into()`:
+/// ```ignore
+/// // Before: if x { text("a").into() } else { text("b").into() }
+/// // After:  if x { v!(text("a")) } else { v!(text("b")) }
+/// // Or use view_if:
+/// //         view_if(x, || text("a"), || text("b"))
+/// ```
+#[macro_export]
+macro_rules! v {
+    ($e:expr) => {
+        $crate::dsl::IntoView::into_view($e)
+    };
 }

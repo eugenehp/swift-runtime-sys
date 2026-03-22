@@ -72,6 +72,12 @@ pub struct Fns {
     pub slider: unsafe extern "C" fn(f32, f32, f32) -> Handle,
     pub link: unsafe extern "C" fn(*const u8, usize, *const u8, usize) -> Handle,
 
+    // Gestures
+    pub on_tap:
+        unsafe extern "C" fn(Handle, unsafe extern "C" fn(*mut c_void), *mut c_void) -> Handle,
+    pub on_long_press:
+        unsafe extern "C" fn(Handle, unsafe extern "C" fn(*mut c_void), *mut c_void) -> Handle,
+
     // Lifecycle
     pub release: unsafe extern "C" fn(Handle),
     pub retain: unsafe extern "C" fn(Handle),
@@ -140,6 +146,8 @@ pub fn load(path: &str) -> Result<Fns, String> {
             label: std::mem::transmute(sym(h, c"swiftui_label")),
             slider: std::mem::transmute(sym(h, c"swiftui_slider")),
             link: std::mem::transmute(sym(h, c"swiftui_link")),
+            on_tap: std::mem::transmute(sym(h, c"swiftui_on_tap")),
+            on_long_press: std::mem::transmute(sym(h, c"swiftui_on_long_press")),
             release: std::mem::transmute(sym(h, c"swiftui_release")),
             retain: std::mem::transmute(sym(h, c"swiftui_retain")),
             show_window: std::mem::transmute(sym(h, c"swiftui_show_window")),

@@ -51,6 +51,27 @@ fn rgb(r: f32, g: f32, b: f32) -> Color {
     Color::rgb(r, g, b)
 }
 
+/// Apply multiple styles by chaining.
+/// ```ignore
+/// view.styles(&[Title, CardDark])  // title text inside a dark card
+/// ```
+pub trait MultiStyled {
+    fn styles(self, presets: &[StylePreset]) -> View;
+}
+
+impl MultiStyled for View {
+    fn styles(self, presets: &[StylePreset]) -> View {
+        presets.iter().fold(self, |v, s| v.style(*s))
+    }
+}
+
+impl MultiStyled for crate::dsl::TextView {
+    fn styles(self, presets: &[StylePreset]) -> View {
+        let view: View = self.into();
+        presets.iter().fold(view, |v, s| v.style(*s))
+    }
+}
+
 /// Predefined style presets.
 #[derive(Clone, Copy, Debug)]
 pub enum StylePreset {

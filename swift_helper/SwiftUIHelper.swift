@@ -418,3 +418,27 @@ public func swiftuiTriggerRebuild(_ modelPtr: UnsafeMutableRawPointer) {
     let model = Unmanaged<ReactiveModel2>.fromOpaque(modelPtr).takeUnretainedValue()
     DispatchQueue.main.async { model.bump() }
 }
+
+// ── Gestures ──
+
+@_cdecl("swiftui_on_tap")
+public func swiftuiOnTap(
+    _ handle: ViewHandle,
+    _ callback: @convention(c) (UnsafeMutableRawPointer?) -> Void,
+    _ userData: UnsafeMutableRawPointer?
+) -> ViewHandle {
+    let cb = callback
+    let ud = userData
+    return boxView(unboxView(handle).onTapGesture { cb(ud) })
+}
+
+@_cdecl("swiftui_on_long_press")
+public func swiftuiOnLongPress(
+    _ handle: ViewHandle,
+    _ callback: @convention(c) (UnsafeMutableRawPointer?) -> Void,
+    _ userData: UnsafeMutableRawPointer?
+) -> ViewHandle {
+    let cb = callback
+    let ud = userData
+    return boxView(unboxView(handle).onLongPressGesture { cb(ud) })
+}

@@ -175,6 +175,40 @@ impl View {
         })
     }
 
+    // ── Gestures ──
+
+    /// Tap gesture with a closure.
+    pub fn on_tap(self, action: impl Fn() + 'static) -> Self {
+        let boxed: Box<Box<dyn Fn()>> = Box::new(Box::new(action));
+        let ptr = Box::into_raw(boxed) as *mut core::ffi::c_void;
+        unsafe extern "C" fn tramp(p: *mut core::ffi::c_void) {
+            let f = &*(p as *const Box<dyn Fn()>);
+            f();
+        }
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.on_tap)(self.handle.as_raw(), tramp, ptr) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    /// Long press gesture with a closure.
+    pub fn on_long_press(self, action: impl Fn() + 'static) -> Self {
+        let boxed: Box<Box<dyn Fn()>> = Box::new(Box::new(action));
+        let ptr = Box::into_raw(boxed) as *mut core::ffi::c_void;
+        unsafe extern "C" fn tramp(p: *mut core::ffi::c_void) {
+            let f = &*(p as *const Box<dyn Fn()>);
+            f();
+        }
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.on_long_press)(self.handle.as_raw(), tramp, ptr) },
+                ui.fns.release,
+            ))
+        })
+    }
+
     // ── Container modifiers ──
 
     pub fn scroll(self) -> Self {

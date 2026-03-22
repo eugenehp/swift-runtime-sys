@@ -366,3 +366,55 @@ unsafe extern "C" fn app_trampoline(user_data: *mut c_void, model: *mut c_void) 
     std::mem::forget(handle);
     raw
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// State<Vec<T>> convenience methods
+// ═══════════════════════════════════════════════════════════════════════════
+
+impl<T: Any + Send + Clone + 'static> State<Vec<T>> {
+    /// Push an item to the end.
+    pub fn push(&self, item: T) {
+        self.update(|list| {
+            let mut new = list.clone();
+            new.push(item.clone());
+            new
+        });
+    }
+
+    /// Remove item at index.
+    pub fn remove(&self, index: usize) {
+        self.update(|list| {
+            let mut new = list.clone();
+            if index < new.len() {
+                new.remove(index);
+            }
+            new
+        });
+    }
+
+    /// Update item at index.
+    pub fn update_at(&self, index: usize, f: impl FnOnce(&T) -> T) {
+        self.update(|list| {
+            let mut new = list.clone();
+            if index < new.len() {
+                new[index] = f(&new[index]);
+            }
+            new
+        });
+    }
+
+    /// Get the length.
+    pub fn len(&self) -> usize {
+        self.get().len()
+    }
+
+    /// Check if empty.
+    pub fn is_empty(&self) -> bool {
+        self.get().is_empty()
+    }
+
+    /// Clear all items.
+    pub fn clear(&self) {
+        self.set(Vec::new());
+    }
+}
