@@ -1,17 +1,19 @@
 //! Combine publisher/subscriber bridge from Rust.
 //!
-//! ```ignore
-//! use combine_rs::*;
+//! Provides `Subject` (PassthroughSubject) and `CurrentValue` (CurrentValueSubject)
+//! for reactive event streams between Rust and Swift.
 //!
+//! ```ignore
 //! let subject = Subject::new();
-//! let _sub = subject.subscribe(|value| println!("Got: {value}"));
+//! let _sub = subject.subscribe(|v| println!("Got: {v}"));
 //! subject.send(42);
 //!
 //! let current = CurrentValue::new(0);
-//! println!("{}", current.get()); // 0
 //! current.set(10);
-//! println!("{}", current.get()); // 10
+//! assert_eq!(current.get(), 10);
 //! ```
+//!
+//! Subscriptions auto-cancel on drop. Subjects auto-release on drop.
 
 use core::ffi::{c_char, c_void};
 
