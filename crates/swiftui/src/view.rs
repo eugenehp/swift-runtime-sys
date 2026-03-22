@@ -2,7 +2,7 @@
 
 use crate::color::Color;
 use crate::context::with_ui;
-use crate::handle::ViewHandle;
+pub use crate::handle::ViewHandle;
 
 /// A SwiftUI view with chainable modifiers.
 ///
@@ -67,9 +67,130 @@ impl View {
         with_ui(|ui| Self::new(ui.border(&self.handle, color.r, color.g, color.b, width)))
     }
 
+    pub fn foreground(self, color: Color) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe {
+                    (ui.fns.foreground_color)(
+                        self.handle.as_raw(),
+                        color.r,
+                        color.g,
+                        color.b,
+                        color.a,
+                    )
+                },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn shadow(self, color: Color, radius: f32, x: f32, y: f32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe {
+                    (ui.fns.shadow)(
+                        self.handle.as_raw(),
+                        color.r,
+                        color.g,
+                        color.b,
+                        radius,
+                        x,
+                        y,
+                    )
+                },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn offset(self, x: f32, y: f32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.offset)(self.handle.as_raw(), x, y) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn scale(self, factor: f32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.scale)(self.handle.as_raw(), factor) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn rotation(self, degrees: f32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.rotation)(self.handle.as_raw(), degrees) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn hidden(self) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.hidden)(self.handle.as_raw()) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn disabled(self, disabled: bool) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.disabled)(self.handle.as_raw(), disabled) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn overlay(self, overlay: View) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.overlay)(self.handle.as_raw(), overlay.handle.as_raw()) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn clip_circle(self) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.clip_circle)(self.handle.as_raw()) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn font(self, size: f32, weight: FontWeight) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.font_system)(self.handle.as_raw(), size, weight as i32) },
+                ui.fns.release,
+            ))
+        })
+    }
+
     // ── Container modifiers ──
 
     pub fn scroll(self) -> Self {
         with_ui(|ui| Self::new(ui.scroll(&self.handle)))
     }
+}
+
+/// Font weight for the `.font()` modifier.
+#[repr(i32)]
+#[derive(Clone, Copy, Debug)]
+pub enum FontWeight {
+    Regular = 0,
+    Bold = 1,
+    Semibold = 2,
+    Heavy = 3,
+    Light = 4,
+    Thin = 5,
+    Medium = 6,
 }

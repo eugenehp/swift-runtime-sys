@@ -270,3 +270,138 @@ public func swiftuiShowWindow(
     NSApplication.shared.activate(ignoringOtherApps: true)
     NSApplication.shared.run()
 }
+
+// ── Additional modifiers ──
+
+@_cdecl("swiftui_foreground_color")
+public func swiftuiForegroundColor(_ handle: ViewHandle, _ r: Float, _ g: Float, _ b: Float, _ a: Float) -> ViewHandle {
+    boxView(unboxView(handle).foregroundColor(Color(red: Double(r), green: Double(g), blue: Double(b), opacity: Double(a))))
+}
+
+@_cdecl("swiftui_shadow")
+public func swiftuiShadow(_ handle: ViewHandle, _ r: Float, _ g: Float, _ b: Float, _ radius: Float, _ x: Float, _ y: Float) -> ViewHandle {
+    boxView(unboxView(handle).shadow(color: Color(red: Double(r), green: Double(g), blue: Double(b)), radius: CGFloat(radius), x: CGFloat(x), y: CGFloat(y)))
+}
+
+@_cdecl("swiftui_offset")
+public func swiftuiOffset(_ handle: ViewHandle, _ x: Float, _ y: Float) -> ViewHandle {
+    boxView(unboxView(handle).offset(x: CGFloat(x), y: CGFloat(y)))
+}
+
+@_cdecl("swiftui_scale")
+public func swiftuiScale(_ handle: ViewHandle, _ scale: Float) -> ViewHandle {
+    boxView(unboxView(handle).scaleEffect(CGFloat(scale)))
+}
+
+@_cdecl("swiftui_rotation")
+public func swiftuiRotation(_ handle: ViewHandle, _ degrees: Float) -> ViewHandle {
+    boxView(unboxView(handle).rotationEffect(.degrees(Double(degrees))))
+}
+
+@_cdecl("swiftui_hidden")
+public func swiftuiHidden(_ handle: ViewHandle) -> ViewHandle {
+    boxView(unboxView(handle).hidden())
+}
+
+@_cdecl("swiftui_disabled")
+public func swiftuiDisabled(_ handle: ViewHandle, _ disabled: Bool) -> ViewHandle {
+    boxView(unboxView(handle).disabled(disabled))
+}
+
+@_cdecl("swiftui_overlay")
+public func swiftuiOverlay(_ handle: ViewHandle, _ overlay: ViewHandle) -> ViewHandle {
+    boxView(unboxView(handle).overlay(unboxView(overlay)))
+}
+
+@_cdecl("swiftui_clip_circle")
+public func swiftuiClipCircle(_ handle: ViewHandle) -> ViewHandle {
+    boxView(unboxView(handle).clipShape(Circle()))
+}
+
+@_cdecl("swiftui_font_system")
+public func swiftuiFontSystem(_ handle: ViewHandle, _ size: Float, _ weight: Int32) -> ViewHandle {
+    let w: Font.Weight = switch weight {
+        case 1: .bold
+        case 2: .semibold
+        case 3: .heavy
+        case 4: .light
+        case 5: .thin
+        case 6: .medium
+        default: .regular
+    }
+    return boxView(unboxView(handle).font(.system(size: CGFloat(size), weight: w)))
+}
+
+// ── Additional views ──
+
+@_cdecl("swiftui_label")
+public func swiftuiLabel(_ textPtr: UnsafePointer<UInt8>, _ textLen: Int, _ iconPtr: UnsafePointer<UInt8>, _ iconLen: Int) -> ViewHandle {
+    let text = String(bytes: UnsafeBufferPointer(start: textPtr, count: textLen), encoding: .utf8) ?? ""
+    let icon = String(bytes: UnsafeBufferPointer(start: iconPtr, count: iconLen), encoding: .utf8) ?? ""
+    return boxView(Label(text, systemImage: icon))
+}
+
+@_cdecl("swiftui_slider")
+public func swiftuiSlider(_ value: Float, _ min: Float, _ max: Float) -> ViewHandle {
+    boxView(Slider(value: .constant(Double(value)), in: Double(min)...Double(max)))
+}
+
+@_cdecl("swiftui_link")
+public func swiftuiLink(_ textPtr: UnsafePointer<UInt8>, _ textLen: Int, _ urlPtr: UnsafePointer<UInt8>, _ urlLen: Int) -> ViewHandle {
+    let text = String(bytes: UnsafeBufferPointer(start: textPtr, count: textLen), encoding: .utf8) ?? ""
+    let url = String(bytes: UnsafeBufferPointer(start: urlPtr, count: urlLen), encoding: .utf8) ?? ""
+    return boxView(Link(text, destination: URL(string: url)!))
+}
+
+// ── Reactive state: rebuild callback ──
+
+@_cdecl("swiftui_observable_window")
+public func swiftuiObservableWindow(
+    _ titlePtr: UnsafePointer<UInt8>, _ titleLen: Int,
+    _ width: Float, _ height: Float,
+    _ buildFn: @convention(c) (UnsafeMutableRawPointer?) -> ViewHandle,
+    _ userData: UnsafeMutableRawPointer?
+) {
+    let title = String(bytes: UnsafeBufferPointer(start: titlePtr, count: titleLen), encoding: .utf8) ?? ""
+    
+    NSApplication.shared.setActivationPolicy(.regular)
+    
+    let rootView = ReactiveView(buildFn: buildFn, userData: userData)
+    let controller = NSHostingController(rootView: rootView)
+    let window = NSWindow(
+        contentRect: NSRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height)),
+        styleMask: [.titled, .closable, .resizable, .miniaturizable],
+        backing: .buffered, defer: false
+    )
+    window.contentViewController = controller
+    window.title = title
+    window.center()
+    window.makeKeyAndOrderFront(nil)
+    NSApplication.shared.activate(ignoringOtherApps: true)
+    NSApplication.shared.run()
+}
+
+@Observable
+class ReactiveModel {
+    var version: Int = 0
+    func bump() { version += 1 }
+}
+
+struct ReactiveView: View {
+    let buildFn: @convention(c) (UnsafeMutableRawPointer?) -> ViewHandle
+    let userData: UnsafeMutableRawPointer?
+    @State private var model = ReactiveModel()
+    
+    var body: some View {
+        let _ = model.version // subscribe to changes
+        let handle = buildFn(userData)
+        let view = unboxView(handle)
+        view.environment(model)
+    }
+}
+
+@_cdecl("swiftui_trigger_update")
+public func swiftuiTriggerUpdate(_ modelPtr: UnsafeMutableRawPointer) {
+    let model = Unmanaged<ReactiveModel>.fromOpaque(modelPtr).takeUnretainedValue()
+    DispatchQueue.main.async { model.bump() }
+}

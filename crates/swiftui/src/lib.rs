@@ -28,7 +28,7 @@ pub use app::show_window;
 pub use handle::ViewHandle;
 pub use views::SwiftUI;
 // Color is re-exported via dsl::Color
-pub use view::View;
+pub use view::{FontWeight, View};
 
 /// Initialize SwiftUI with the helper dylib path.
 /// Must be called before using any DSL functions.

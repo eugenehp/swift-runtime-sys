@@ -14,6 +14,7 @@ pub use crate::color::Color;
 pub use crate::color::{hex, rgb, rgba};
 
 use crate::context::with_ui;
+use crate::handle::ViewHandle;
 use crate::view::View;
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -93,6 +94,24 @@ impl TextView {
     }
     pub fn opacity(self, value: f32) -> View {
         self.build().opacity(value)
+    }
+    pub fn foreground(self, c: Color) -> View {
+        self.build().foreground(c)
+    }
+    pub fn shadow(self, c: Color, r: f32, x: f32, y: f32) -> View {
+        self.build().shadow(c, r, x, y)
+    }
+    pub fn offset(self, x: f32, y: f32) -> View {
+        self.build().offset(x, y)
+    }
+    pub fn scale(self, factor: f32) -> View {
+        self.build().scale(factor)
+    }
+    pub fn rotation(self, degrees: f32) -> View {
+        self.build().rotation(degrees)
+    }
+    pub fn clip_circle(self) -> View {
+        self.build().clip_circle()
     }
 }
 
@@ -229,6 +248,43 @@ pub fn textfield(placeholder: &str, value: &str) -> View {
 /// Create a button with a callback.
 pub fn button(label: &str, action: fn()) -> View {
     with_ui(|ui| View::new(ui.button(label, action)))
+}
+
+/// Create a label with SF Symbol icon.
+pub fn label(text: &str, system_image: &str) -> View {
+    with_ui(|ui| {
+        View::new(ViewHandle::new(
+            unsafe {
+                (ui.fns.label)(
+                    text.as_ptr(),
+                    text.len(),
+                    system_image.as_ptr(),
+                    system_image.len(),
+                )
+            },
+            ui.fns.release,
+        ))
+    })
+}
+
+/// Create a slider.
+pub fn slider(value: f32, min: f32, max: f32) -> View {
+    with_ui(|ui| {
+        View::new(ViewHandle::new(
+            unsafe { (ui.fns.slider)(value, min, max) },
+            ui.fns.release,
+        ))
+    })
+}
+
+/// Create a link that opens a URL.
+pub fn link(text: &str, url: &str) -> View {
+    with_ui(|ui| {
+        View::new(ViewHandle::new(
+            unsafe { (ui.fns.link)(text.as_ptr(), text.len(), url.as_ptr(), url.len()) },
+            ui.fns.release,
+        ))
+    })
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
