@@ -21,9 +21,18 @@ fn main() {
         fn(&RuntimeFactory) -> Result<bool, RuntimeFactoryError>,
     ); 6] = [
         ("manifest version is v1", test_manifest_version),
-        ("manifest JSON includes planned probes", test_manifest_json_shape),
-        ("manifest lists four O9 probe ids", test_manifest_lists_four_probes),
-        ("scaffold flags cover all dormant probes", test_scaffold_flags),
+        (
+            "manifest JSON includes planned probes",
+            test_manifest_json_shape,
+        ),
+        (
+            "manifest lists four O9 probe ids",
+            test_manifest_lists_four_probes,
+        ),
+        (
+            "scaffold flags cover all dormant probes",
+            test_scaffold_flags,
+        ),
         (
             "distributed import capability matches manifest field",
             test_manifest_distributed_field,
@@ -108,7 +117,9 @@ fn test_manifest_distributed_field(factory: &RuntimeFactory) -> Result<bool, Run
     )
 }
 
-fn test_individual_probe_status_exports(factory: &RuntimeFactory) -> Result<bool, RuntimeFactoryError> {
+fn test_individual_probe_status_exports(
+    factory: &RuntimeFactory,
+) -> Result<bool, RuntimeFactoryError> {
     let statuses = [
         factory.call_to_i32("swift_contract_o9_metadata_descriptor_status")?,
         factory.call_to_i32("swift_contract_o9_distributed_invocation_status")?,

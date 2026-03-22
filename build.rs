@@ -18,6 +18,11 @@ fn main() {
     // println!("cargo:rerun-if-changed=swift");
     // println!("cargo:rustc-link-search=/usr/lib");
     println!("cargo:rustc-link-lib=dylib=swiftCore");
+    println!("cargo:rustc-link-lib=dylib=swift_Concurrency");
+
+    // Set rpath so the dynamic linker can find Swift libraries at runtime
+    println!("cargo:rustc-link-arg=-Wl,-rpath,{}", swift_runtime);
+    println!("cargo:rustc-link-arg=-Wl,-rpath,/usr/lib/swift");
 
     if std::env::var_os(GENERATE_BINDINGS).is_some() {
         build_all();

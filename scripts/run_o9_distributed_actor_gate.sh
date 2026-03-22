@@ -10,6 +10,8 @@ SUMMARY_JSON="$OUT_DIR/o9-distributed-actor-summary.json"
 SUMMARY_MD="$OUT_DIR/o9-distributed-actor-summary.md"
 DEBUG_LOG="$OUT_DIR/o9-distributed-actor-debug.log"
 RELEASE_LOG="$OUT_DIR/o9-distributed-actor-release.log"
+IMPL_DEBUG_LOG="$OUT_DIR/o9-distributed-impl-debug.log"
+IMPL_RELEASE_LOG="$OUT_DIR/o9-distributed-impl-release.log"
 
 mkdir -p "$OUT_DIR"
 mkdir -p "$FIXTURE_DIR"
@@ -77,6 +79,13 @@ fi
 # O13 gate skeleton policy:
 # - If host is not fully supported, skip (non-blocking) and emit deterministic artifact.
 # - If host is supported, emit transitional "PENDING_IMPLEMENTATION" state until O14 probes exist.
+impl_debug_passed=""
+impl_release_passed=""
+impl_debug_flags=""
+impl_release_flags=""
+implementation_ready=false
+o14_probe_suite_present=false
+
 if [[ "$scaffold_probe_status" != "PASS" ]]; then
   gate_status="FAIL_SCAFFOLD"
   result="FAIL"
@@ -90,9 +99,36 @@ elif [[ "${O9_ENABLE_IMPLEMENTATION:-0}" != "1" ]]; then
   result="PASS"
   detail="Host is SUPPORTED and scaffold validated, but real O9 probes are deferred to Wave O14; set O9_ENABLE_IMPLEMENTATION=1 when probes are implemented"
 else
-  gate_status="PENDING_IMPLEMENTATION"
-  result="PASS"
-  detail="O9 implementation flag enabled, scaffold validated, but the real O14 probe suite is not implemented yet"
+  swiftc -emit-library -g \
+    -I "$FIXTURE_DIR" -L "$FIXTURE_DIR" -lResilientFixtures \
+    -o libRustBridge.dylib examples/RustBridge.swift examples/O9DistributedImpl.swift
+
+  cargo build --example runtime_o9_distributed_actor_probe >/dev/null
+  cargo build --release --example runtime_o9_distributed_actor_probe >/dev/null
+
+  DYLD_LIBRARY_PATH="$FIXTURE_DIR:." "$ROOT/target/debug/examples/runtime_o9_distributed_actor_probe" | tee "$IMPL_DEBUG_LOG"
+  DYLD_LIBRARY_PATH="$FIXTURE_DIR:." "$ROOT/target/release/examples/runtime_o9_distributed_actor_probe" | tee "$IMPL_RELEASE_LOG"
+
+  impl_debug_passed="$(grep -E '^Passed:' "$IMPL_DEBUG_LOG" | tail -1 | awk '{print $2}')"
+  impl_release_passed="$(grep -E '^Passed:' "$IMPL_RELEASE_LOG" | tail -1 | awk '{print $2}')"
+  impl_debug_flags="$(grep -E '^o9 distributed runtime parity =>' "$IMPL_DEBUG_LOG" | tail -1 | sed 's/^o9 distributed runtime parity => //')"
+  impl_release_flags="$(grep -E '^o9 distributed runtime parity =>' "$IMPL_RELEASE_LOG" | tail -1 | sed 's/^o9 distributed runtime parity => //')"
+
+  if [[ -z "$impl_debug_passed" || -z "$impl_release_passed" ]]; then
+    gate_status="FAIL_IMPLEMENTATION"
+    result="FAIL"
+    detail="Missing summary output from O9 implementation probe"
+  elif [[ "$impl_debug_passed" != "$impl_release_passed" || "$impl_debug_flags" != "$impl_release_flags" ]]; then
+    gate_status="FAIL_IMPLEMENTATION"
+    result="FAIL"
+    detail="O9 implementation probe debug/release mismatch (debug_pass=$impl_debug_passed, release_pass=$impl_release_passed)"
+  else
+    gate_status="PASS"
+    result="PASS"
+    detail="O9 implementation probe suite passed with debug/release parity (pass_count=$impl_debug_passed)"
+    implementation_ready=true
+    o14_probe_suite_present=true
+  fi
 fi
 
 cat > "$SUMMARY_JSON" <<EOF
@@ -113,10 +149,16 @@ cat > "$SUMMARY_JSON" <<EOF
   "release_flags": "$release_flags",
   "debug_log": "$(basename "$DEBUG_LOG")",
   "release_log": "$(basename "$RELEASE_LOG")",
+  "implementation_debug_pass": "$impl_debug_passed",
+  "implementation_release_pass": "$impl_release_passed",
+  "implementation_debug_flags": "$impl_debug_flags",
+  "implementation_release_flags": "$impl_release_flags",
+  "implementation_debug_log": "$(basename "$IMPL_DEBUG_LOG")",
+  "implementation_release_log": "$(basename "$IMPL_RELEASE_LOG")",
   "detail": "$detail",
-  "implementation_ready": false,
+  "implementation_ready": $implementation_ready,
   "o14_probe_scaffold_present": true,
-  "o14_probe_suite_present": false
+  "o14_probe_suite_present": $o14_probe_suite_present
 }
 EOF
 
@@ -138,10 +180,17 @@ cat > "$SUMMARY_MD" <<EOF
 - release flags: $release_flags
 - debug log: $(basename "$DEBUG_LOG")
 - release log: $(basename "$RELEASE_LOG")
+- implementation debug passed: ${impl_debug_passed:-n/a}
+- implementation release passed: ${impl_release_passed:-n/a}
+- implementation debug flags: ${impl_debug_flags:-n/a}
+- implementation release flags: ${impl_release_flags:-n/a}
+- implementation debug log: $(basename "$IMPL_DEBUG_LOG")
+- implementation release log: $(basename "$IMPL_RELEASE_LOG")
 - detail: $detail
 
-This gate now validates the dormant O14b scaffold path on every host cell, while
-still deferring real distributed-actor runtime execution until host support reaches SUPPORTED.
+This gate validates the dormant O14b scaffold path on every host cell and, when
+watch_status=SUPPORTED with O9_ENABLE_IMPLEMENTATION=1, executes the real O9.1-O9.4
+distributed-runtime probe suite with required debug/release parity.
 EOF
 
 echo "Wrote $SUMMARY_JSON"
