@@ -1,0 +1,12 @@
+[package]
+name = "swift-data"
+description = "Persistent key-value store backed by UserDefaults (SwiftData alternative)"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "swift_data"
+
+[dependencies]
+libc = "0.2"

@@ -8,5 +8,7 @@ members = [
     "crates/swiftui",
     "crates/realitykit-sys",
     "crates/realitykit",
+    "crates/combine",
+    "crates/swift-data",
     "crates/swift-bridge-gen",
 ]
