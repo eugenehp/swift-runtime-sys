@@ -179,9 +179,13 @@ pub mod DlsymStdlib;
 #[allow(non_snake_case)]
 pub mod ConcurrencyThunks;
 
-/// Dynamic SwiftUI View conformance builder (approach 3)
+/// Dynamic SwiftUI View conformance builder (approach 3 — experimental)
 #[allow(non_snake_case)]
 pub mod ViewConformanceBuilder;
+
+/// SwiftUI bridge — construct and display SwiftUI views from Rust
+#[allow(non_snake_case)]
+pub mod SwiftUIBridge;
 
 // ── Platform-specific ──
 #[cfg(target_os = "windows")]
