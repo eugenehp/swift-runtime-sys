@@ -8,8 +8,12 @@ pub struct Color {
 }
 
 impl Color {
-    pub const fn rgba(r: f32, g: f32, b: f32, a: f32) -> Self { Self { r, g, b, a } }
-    pub const fn rgb(r: f32, g: f32, b: f32) -> Self { Self { r, g, b, a: 1.0 } }
+    pub const fn rgba(r: f32, g: f32, b: f32, a: f32) -> Self {
+        Self { r, g, b, a }
+    }
+    pub const fn rgb(r: f32, g: f32, b: f32) -> Self {
+        Self { r, g, b, a: 1.0 }
+    }
 
     pub const WHITE: Self = Self::rgb(1.0, 1.0, 1.0);
     pub const BLACK: Self = Self::rgb(0.0, 0.0, 0.0);
@@ -25,10 +29,14 @@ impl Color {
 }
 
 /// Shorthand: `rgb(0.2, 0.4, 0.8)`
-pub const fn rgb(r: f32, g: f32, b: f32) -> Color { Color::rgb(r, g, b) }
+pub const fn rgb(r: f32, g: f32, b: f32) -> Color {
+    Color::rgb(r, g, b)
+}
 
 /// Shorthand: `rgba(0.2, 0.4, 0.8, 0.5)`
-pub const fn rgba(r: f32, g: f32, b: f32, a: f32) -> Color { Color::rgba(r, g, b, a) }
+pub const fn rgba(r: f32, g: f32, b: f32, a: f32) -> Color {
+    Color::rgba(r, g, b, a)
+}
 
 /// Hex color: `hex(0x3366CC)`
 pub const fn hex(v: u32) -> Color {

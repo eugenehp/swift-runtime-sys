@@ -28,7 +28,10 @@ fn main() {
     unsafe {
         // 0. Initialize AppKit + load SwiftUI
         NSApplicationLoad();
-        dlopen(c"/System/Library/Frameworks/SwiftUI.framework/SwiftUI".as_ptr(), 1);
+        dlopen(
+            c"/System/Library/Frameworks/SwiftUI.framework/SwiftUI".as_ptr(),
+            1,
+        );
 
         let sizes = dlopen(c"/tmp/swiftui_analysis/libSizes.dylib".as_ptr(), 1);
         let probe = dlopen(c"/tmp/swiftui_analysis/libProbeWT.dylib".as_ptr(), 1);
@@ -39,12 +42,15 @@ fn main() {
 
         // 1. Create Swift.String (PURE RUST — inline asm)
         let msg = "Hello from Rust! 🦀";
-        let string_init = dlsym((-2isize) as *mut c_void,
-            c"$sSS21_builtinStringLiteral17utf8CodeUnitCount7isASCIISSBp_BwBi1_tcfC".as_ptr());
+        let string_init = dlsym(
+            (-2isize) as *mut c_void,
+            c"$sSS21_builtinStringLiteral17utf8CodeUnitCount7isASCIISSBp_BwBi1_tcfC".as_ptr(),
+        );
         let string_meta = dlsym((-2isize) as *mut c_void, c"$sSSN".as_ptr());
         assert!(!string_init.is_null() && !string_meta.is_null());
 
-        let s0: u64; let s1: u64;
+        let s0: u64;
+        let s1: u64;
         core::arch::asm!(
             "blr {func}",
             func = in(reg) string_init,
@@ -73,7 +79,8 @@ fn main() {
 
         // 3. Create Text (Swift helper for CC)
         type CreateText = unsafe extern "C" fn(*const c_void, *mut c_void) -> usize;
-        let create_text: CreateText = core::mem::transmute(dlsym(sizes, c"step_create_text".as_ptr()));
+        let create_text: CreateText =
+            core::mem::transmute(dlsym(sizes, c"step_create_text".as_ptr()));
         let mut text = [0u8; 64];
         let text_size = create_text(lsk.as_ptr() as _, text.as_mut_ptr() as _);
         println!("Step 3 — Text ({text_size} bytes)");
@@ -82,19 +89,19 @@ fn main() {
         let text_meta = dlsym((-2isize) as *mut c_void, c"$s7SwiftUI4TextVN".as_ptr());
         let view_proto = dlsym((-2isize) as *mut c_void, c"$s7SwiftUI4ViewMp".as_ptr());
         type ConformsFn = unsafe extern "C" fn(*const c_void, *const c_void) -> *const c_void;
-        let conforms: ConformsFn = core::mem::transmute(
-            dlsym((-2isize) as *mut c_void, c"swift_conformsToProtocol".as_ptr())
-        );
+        let conforms: ConformsFn = core::mem::transmute(dlsym(
+            (-2isize) as *mut c_void,
+            c"swift_conformsToProtocol".as_ptr(),
+        ));
         let wt = conforms(text_meta as _, view_proto as _);
         println!("Step 4 — metadata={:?}, witness_table={:?}", text_meta, wt);
 
         // 5. Create hosting controller + show window (Swift helper)
         type CreateCtrl = unsafe extern "C" fn(*const u8, usize) -> *mut c_void;
         type ShowWin = unsafe extern "C" fn(*mut c_void);
-        let create_ctrl: CreateCtrl = core::mem::transmute(
-            dlsym(probe, c"create_text_hosting_controller".as_ptr()));
-        let show_win: ShowWin = core::mem::transmute(
-            dlsym(probe, c"show_window".as_ptr()));
+        let create_ctrl: CreateCtrl =
+            core::mem::transmute(dlsym(probe, c"create_text_hosting_controller".as_ptr()));
+        let show_win: ShowWin = core::mem::transmute(dlsym(probe, c"show_window".as_ptr()));
 
         println!("\nStep 5 — Opening SwiftUI window with: '{msg}'");
         let ctrl = create_ctrl(msg.as_ptr(), msg.len());

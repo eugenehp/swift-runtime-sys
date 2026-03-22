@@ -11,15 +11,10 @@ pub type OpaqueValueRef = *mut c_void;
 
 unsafe extern "C" {
     /// Get the number of children for a value of the given type.
-    pub fn swift_reflectionMirror_count(
-        value: OpaqueValueRef,
-        metadata: MetadataRef,
-    ) -> isize;
+    pub fn swift_reflectionMirror_count(value: OpaqueValueRef, metadata: MetadataRef) -> isize;
 
     /// Get the total recursive count of children.
-    pub fn swift_reflectionMirror_recursiveCount(
-        metadata: MetadataRef,
-    ) -> isize;
+    pub fn swift_reflectionMirror_recursiveCount(metadata: MetadataRef) -> isize;
 
     /// Get a child of a reflected value by index.
     pub fn swift_reflectionMirror_subscript(
@@ -32,9 +27,7 @@ unsafe extern "C" {
     );
 
     /// Get the display style of a reflected value.
-    pub fn swift_reflectionMirror_displayStyle(
-        metadata: MetadataRef,
-    ) -> u8;
+    pub fn swift_reflectionMirror_displayStyle(metadata: MetadataRef) -> u8;
 
     /// Get the normalized type for reflection.
     pub fn swift_reflectionMirror_normalizedType(

@@ -122,24 +122,41 @@ pub unsafe fn get_value_witness_table(metadata: *const c_void) -> *const ValueWi
 // ═══════════════════════════════════════════════════════════════════════════
 
 /// Function pointer types for value witnesses.
-pub type InitializeBufferWithCopyOfBufferFn =
-    unsafe extern "C" fn(dest: *mut c_void, src: *mut c_void, metadata: *const c_void) -> *mut c_void;
-pub type DestroyFn =
-    unsafe extern "C" fn(value: *mut c_void, metadata: *const c_void);
-pub type InitializeWithCopyFn =
-    unsafe extern "C" fn(dest: *mut c_void, src: *mut c_void, metadata: *const c_void) -> *mut c_void;
-pub type AssignWithCopyFn =
-    unsafe extern "C" fn(dest: *mut c_void, src: *mut c_void, metadata: *const c_void) -> *mut c_void;
-pub type InitializeWithTakeFn =
-    unsafe extern "C" fn(dest: *mut c_void, src: *mut c_void, metadata: *const c_void) -> *mut c_void;
-pub type AssignWithTakeFn =
-    unsafe extern "C" fn(dest: *mut c_void, src: *mut c_void, metadata: *const c_void) -> *mut c_void;
+pub type InitializeBufferWithCopyOfBufferFn = unsafe extern "C" fn(
+    dest: *mut c_void,
+    src: *mut c_void,
+    metadata: *const c_void,
+) -> *mut c_void;
+pub type DestroyFn = unsafe extern "C" fn(value: *mut c_void, metadata: *const c_void);
+pub type InitializeWithCopyFn = unsafe extern "C" fn(
+    dest: *mut c_void,
+    src: *mut c_void,
+    metadata: *const c_void,
+) -> *mut c_void;
+pub type AssignWithCopyFn = unsafe extern "C" fn(
+    dest: *mut c_void,
+    src: *mut c_void,
+    metadata: *const c_void,
+) -> *mut c_void;
+pub type InitializeWithTakeFn = unsafe extern "C" fn(
+    dest: *mut c_void,
+    src: *mut c_void,
+    metadata: *const c_void,
+) -> *mut c_void;
+pub type AssignWithTakeFn = unsafe extern "C" fn(
+    dest: *mut c_void,
+    src: *mut c_void,
+    metadata: *const c_void,
+) -> *mut c_void;
 pub type GetEnumTagSinglePayloadFn =
     unsafe extern "C" fn(value: *const c_void, empty_cases: u32, metadata: *const c_void) -> u32;
-pub type StoreEnumTagSinglePayloadFn =
-    unsafe extern "C" fn(value: *mut c_void, which_case: u32, empty_cases: u32, metadata: *const c_void);
-pub type GetEnumTagFn =
-    unsafe extern "C" fn(value: *const c_void, metadata: *const c_void) -> u32;
+pub type StoreEnumTagSinglePayloadFn = unsafe extern "C" fn(
+    value: *mut c_void,
+    which_case: u32,
+    empty_cases: u32,
+    metadata: *const c_void,
+);
+pub type GetEnumTagFn = unsafe extern "C" fn(value: *const c_void, metadata: *const c_void) -> u32;
 pub type DestructiveProjectEnumDataFn =
     unsafe extern "C" fn(value: *mut c_void, metadata: *const c_void);
 pub type DestructiveInjectEnumTagFn =
@@ -336,7 +353,7 @@ impl ValueWitnessTable {
 // ═══════════════════════════════════════════════════════════════════════════
 
 /// The full metadata header layout for value types.
-/// In memory: [VWT pointer] [Kind]
+/// In memory: `VWT_pointer | Kind`
 /// The metadata pointer points at the Kind field.
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
@@ -348,7 +365,7 @@ pub struct FullTypeMetadata {
 }
 
 /// Struct metadata layout.
-/// [VWT] [Kind] [TypeDescriptor] [FieldOffsets...]
+/// `VWT_ptr | Kind | TypeDescriptor | FieldOffsets...`
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct StructMetadata {
@@ -357,7 +374,7 @@ pub struct StructMetadata {
 }
 
 /// Enum metadata layout.
-/// [VWT] [Kind] [TypeDescriptor]
+/// `VWT_ptr | Kind | TypeDescriptor`
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct EnumMetadata {
@@ -374,7 +391,7 @@ pub struct TupleElement {
 }
 
 /// Tuple metadata layout.
-/// [VWT] [Kind] [NumElements] [Labels] [Elements...]
+/// `VWT_ptr | Kind | NumElements | Labels | Elements...`
 #[repr(C)]
 #[derive(Debug)]
 pub struct TupleMetadata {
@@ -396,7 +413,7 @@ impl TupleMetadata {
 }
 
 /// Function metadata layout.
-/// [VWT] [Kind] [Flags] [ResultType] [Parameters...]
+/// `VWT_ptr | Kind | Flags | ResultType | Parameters...`
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct FunctionMetadata {
@@ -629,11 +646,11 @@ impl ContextDescriptor {
 /// Layout shared by all type (Class/Struct/Enum) context descriptors.
 ///
 /// In memory:
-///   [ContextDescriptor::flags]    4 bytes
-///   [ContextDescriptor::parent]   4 bytes (relative)
-///   [Name]                        4 bytes (relative pointer to C string)
-///   [AccessFunction]              4 bytes (relative pointer or null)
-///   [Fields]                      4 bytes (relative pointer to FieldDescriptor or null)
+///   ContextDescriptor fields    4 bytes
+///   ContextDescriptor fields   4 bytes (relative)
+///   Name —                        4 bytes (relative pointer to C string)
+///   AccessFunction —              4 bytes (relative pointer or null)
+///   Fields —                      4 bytes (relative pointer to FieldDescriptor or null)
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct TypeContextDescriptor {
@@ -669,8 +686,8 @@ impl TypeContextDescriptor {
 /// Struct-specific descriptor (extends TypeContextDescriptor).
 ///
 /// After the base TypeContextDescriptor fields:
-///   [NumFields]          4 bytes
-///   [FieldOffsetVector]  4 bytes (relative pointer)
+///   NumFields —          4 bytes
+///   FieldOffsetVectorOffset —  4 bytes (relative pointer)
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct StructDescriptor {
@@ -684,12 +701,12 @@ pub struct StructDescriptor {
 /// Class-specific descriptor (extends TypeContextDescriptor).
 ///
 /// After the base TypeContextDescriptor fields:
-///   [SuperclassType]                  4 bytes (relative pointer or null)
-///   [MetadataNegativeSizeInWords]     4 bytes (union with ResilientMetadataBounds)
-///   [MetadataPositiveSizeInWords]     4 bytes (union with ExtraClassFlags)
-///   [NumImmediateMembers]             4 bytes
-///   [NumFields]                       4 bytes
-///   [FieldOffsetVectorOffset]         4 bytes
+///   SuperclassType —                  4 bytes (relative pointer or null)
+///   MetadataNegativeSizeInWords —     4 bytes (union with ResilientMetadataBounds)
+///   MetadataPositiveSizeInWords —     4 bytes (union with ExtraClassFlags)
+///   NumImmediateMembers —             4 bytes
+///   NumFields —                       4 bytes
+///   FieldOffsetVectorOffset —         4 bytes
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct ClassDescriptor {
@@ -712,8 +729,8 @@ pub struct ClassDescriptor {
 /// Enum-specific descriptor (extends TypeContextDescriptor).
 ///
 /// After the base TypeContextDescriptor fields:
-///   [NumPayloadCasesAndPayloadSizeOffset]   4 bytes
-///   [NumEmptyCases]                         4 bytes
+///   NumPayloadCasesAndPayloadSizeOffset —   4 bytes
+///   NumEmptyCases —                         4 bytes
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct EnumDescriptor {
@@ -743,11 +760,11 @@ impl EnumDescriptor {
 
 /// Protocol context descriptor.
 ///
-///   [ContextDescriptor base]
-///   [Name]                         4 bytes (relative pointer to C string)
-///   [NumRequirementsInSignature]   4 bytes
-///   [NumRequirements]              4 bytes
-///   [AssociatedTypeNames]          4 bytes (relative pointer or null)
+///   ContextDescriptor fields
+///   Name —                         4 bytes (relative pointer to C string)
+///   NumRequirements fields   4 bytes
+///   NumRequirements fields              4 bytes
+///   AssociatedTypeNames —          4 bytes (relative pointer or null)
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct ProtocolDescriptor {
@@ -777,10 +794,10 @@ impl ProtocolDescriptor {
 
 /// A protocol conformance descriptor.
 ///
-///   [Protocol]             4 bytes (relative indirectable pointer)
-///   [TypeRef]              4 bytes (relative indirectable pointer)
-///   [WitnessTablePattern]  4 bytes (relative pointer)
-///   [Flags]                4 bytes
+///   Protocol —             4 bytes (relative indirectable pointer)
+///   TypeRef —              4 bytes (relative indirectable pointer)
+///   WitnessTablePattern —  4 bytes (relative pointer)
+///   Flags —                4 bytes
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct ProtocolConformanceDescriptor {
@@ -801,10 +818,10 @@ pub struct ProtocolConformanceDescriptor {
 /// Generic context header, present when ContextDescriptorFlags::is_generic().
 /// Follows immediately after the specific descriptor (Struct/Class/Enum).
 ///
-///   [NumParams]                2 bytes
-///   [NumRequirements]          2 bytes
-///   [NumKeyArguments]          2 bytes
-///   [NumExtraArguments]        2 bytes
+///   NumParams —                2 bytes
+///   NumRequirements fields          2 bytes
+///   NumKeyArguments —          2 bytes
+///   NumExtraArguments —        2 bytes
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct GenericContextDescriptorHeader {
@@ -845,12 +862,12 @@ pub enum FieldDescriptorKind {
 
 /// A field descriptor: describes all the fields/cases of a type.
 ///
-///   [MangledTypeName]    4 bytes (relative pointer)
-///   [Superclass]         4 bytes (relative pointer or null)
-///   [Kind]               2 bytes
-///   [FieldRecordSize]    2 bytes
-///   [NumFields]          4 bytes
-///   [FieldRecords...]    NumFields × FieldRecordSize bytes
+///   MangledTypeName —    4 bytes (relative pointer)
+///   Superclass —         4 bytes (relative pointer or null)
+///   Kind —               2 bytes
+///   FieldRecordSize —    2 bytes
+///   NumFields —          4 bytes
+///   FieldRecords —    NumFields × FieldRecordSize bytes
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct FieldDescriptor {
@@ -879,9 +896,9 @@ impl FieldDescriptor {
 
 /// A single field record (within a FieldDescriptor).
 ///
-///   [Flags]              4 bytes
-///   [MangledTypeName]    4 bytes (relative pointer)
-///   [FieldName]          4 bytes (relative pointer)
+///   Flags —              4 bytes
+///   MangledTypeName —    4 bytes (relative pointer)
+///   FieldName —          4 bytes (relative pointer)
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct FieldRecord {
@@ -1172,14 +1189,25 @@ impl MethodDescriptorFlags {
             _ => MethodDescriptorKind::Method,
         }
     }
-    pub fn is_instance(&self) -> bool { self.0 & 0x10 != 0 }
-    pub fn is_dynamic(&self) -> bool { self.0 & 0x20 != 0 }
-    pub fn is_async(&self) -> bool { self.0 & 0x40 != 0 }
+    pub fn is_instance(&self) -> bool {
+        self.0 & 0x10 != 0
+    }
+    pub fn is_dynamic(&self) -> bool {
+        self.0 & 0x20 != 0
+    }
+    pub fn is_async(&self) -> bool {
+        self.0 & 0x40 != 0
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum MethodDescriptorKind {
-    Method, Init, Getter, Setter, ModifyCoroutine, ReadCoroutine,
+    Method,
+    Init,
+    Getter,
+    Setter,
+    ModifyCoroutine,
+    ReadCoroutine,
 }
 
 /// A method descriptor — describes a single vtable entry.
@@ -1249,15 +1277,25 @@ impl ProtocolRequirementFlags {
             _ => ProtocolRequirementKind::Method,
         }
     }
-    pub fn is_instance(&self) -> bool { self.0 & 0x10 != 0 }
-    pub fn is_async(&self) -> bool { self.0 & 0x40 != 0 }
+    pub fn is_instance(&self) -> bool {
+        self.0 & 0x10 != 0
+    }
+    pub fn is_async(&self) -> bool {
+        self.0 & 0x40 != 0
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ProtocolRequirementKind {
-    BaseProtocol, Method, Init, Getter, Setter,
-    ReadCoroutine, ModifyCoroutine,
-    AssociatedTypeAccessFunction, AssociatedConformanceAccessFunction,
+    BaseProtocol,
+    Method,
+    Init,
+    Getter,
+    Setter,
+    ReadCoroutine,
+    ModifyCoroutine,
+    AssociatedTypeAccessFunction,
+    AssociatedConformanceAccessFunction,
 }
 
 /// A protocol requirement descriptor.
@@ -1278,7 +1316,7 @@ pub unsafe fn read_witness_method(
     witness_table: *const c_void,
     requirement_index: usize,
 ) -> *const c_void {
-    // Witness table layout: [0] = protocol conformance descriptor,
+    // Witness table layout: entry 0 = = protocol conformance descriptor,
     // then [1..] = witness entries (function pointers or associated types).
     let base = witness_table as *const *const c_void;
     *base.add(1 + requirement_index)
@@ -1343,8 +1381,8 @@ pub struct AsyncFunctionPointer {
 
 /// The base async context layout.
 ///
-///   [0] Parent context pointer (pointer to caller's async context)
-///   [8] Resume function pointer (where to continue after await)
+///   offset 0: Parent context pointer (pointer to caller's async context)
+///   offset 8: Resume function pointer (where to continue after await)
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct AsyncContext {

@@ -30,7 +30,10 @@ fn ensure_init() {
     INIT.call_once(|| {
         unsafe {
             NSApplicationLoad();
-            dlopen(c"/System/Library/Frameworks/SwiftUI.framework/SwiftUI".as_ptr(), 1);
+            dlopen(
+                c"/System/Library/Frameworks/SwiftUI.framework/SwiftUI".as_ptr(),
+                1,
+            );
             // Try multiple paths
             let paths = [
                 c"swift_helper/libSwiftUIHelper.dylib".as_ptr(),
@@ -39,14 +42,18 @@ fn ensure_init() {
             ];
             for p in paths {
                 LIB = dlopen(p, 2);
-                if !LIB.is_null() { break; }
+                if !LIB.is_null() {
+                    break;
+                }
             }
         }
     });
     assert!(!unsafe { LIB }.is_null(), "Build the helper first");
 }
 
-fn lib() -> *mut c_void { unsafe { LIB } }
+fn lib() -> *mut c_void {
+    unsafe { LIB }
+}
 
 /// Snapshot a Swift-native view (ground truth).
 fn snapshot_swift_text(text: &str, w: f32, h: f32) -> Vec<u8> {
@@ -67,13 +74,51 @@ fn snapshot_swift_text(text: &str, w: f32, h: f32) -> Vec<u8> {
 }
 
 /// Snapshot a Swift-native styled text.
-fn snapshot_swift_styled_text(text: &str, size: f32, weight: i32, r: f32, g: f32, b: f32, a: f32, w: f32, h: f32) -> Vec<u8> {
+fn snapshot_swift_styled_text(
+    text: &str,
+    size: f32,
+    weight: i32,
+    r: f32,
+    g: f32,
+    b: f32,
+    a: f32,
+    w: f32,
+    h: f32,
+) -> Vec<u8> {
     ensure_init();
-    type F = unsafe extern "C" fn(*const u8, usize, f32, i32, f32, f32, f32, f32, f32, f32, *mut *mut c_void, *mut usize) -> bool;
+    type F = unsafe extern "C" fn(
+        *const u8,
+        usize,
+        f32,
+        i32,
+        f32,
+        f32,
+        f32,
+        f32,
+        f32,
+        f32,
+        *mut *mut c_void,
+        *mut usize,
+    ) -> bool;
     let f: F = unsafe { std::mem::transmute(dlsym(lib(), c"snapshot_styled_text".as_ptr())) };
     let mut ptr: *mut c_void = std::ptr::null_mut();
     let mut len: usize = 0;
-    let ok = unsafe { f(text.as_ptr(), text.len(), size, weight, r, g, b, a, w, h, &mut ptr, &mut len) };
+    let ok = unsafe {
+        f(
+            text.as_ptr(),
+            text.len(),
+            size,
+            weight,
+            r,
+            g,
+            b,
+            a,
+            w,
+            h,
+            &mut ptr,
+            &mut len,
+        )
+    };
     assert!(ok, "snapshot_styled_text failed");
     let data = unsafe { std::slice::from_raw_parts(ptr as *const u8, len).to_vec() };
     unsafe {
@@ -87,13 +132,31 @@ fn snapshot_swift_styled_text(text: &str, size: f32, weight: i32, r: f32, g: f32
 /// Snapshot a Swift-native VStack of texts.
 fn snapshot_swift_vstack_texts(texts: &[&str], w: f32, h: f32) -> Vec<u8> {
     ensure_init();
-    type F = unsafe extern "C" fn(*const *const u8, *const usize, usize, f32, f32, *mut *mut c_void, *mut usize) -> bool;
+    type F = unsafe extern "C" fn(
+        *const *const u8,
+        *const usize,
+        usize,
+        f32,
+        f32,
+        *mut *mut c_void,
+        *mut usize,
+    ) -> bool;
     let f: F = unsafe { std::mem::transmute(dlsym(lib(), c"snapshot_vstack_texts".as_ptr())) };
     let ptrs: Vec<*const u8> = texts.iter().map(|s| s.as_ptr()).collect();
     let lens: Vec<usize> = texts.iter().map(|s| s.len()).collect();
     let mut ptr: *mut c_void = std::ptr::null_mut();
     let mut len: usize = 0;
-    let ok = unsafe { f(ptrs.as_ptr(), lens.as_ptr(), texts.len(), w, h, &mut ptr, &mut len) };
+    let ok = unsafe {
+        f(
+            ptrs.as_ptr(),
+            lens.as_ptr(),
+            texts.len(),
+            w,
+            h,
+            &mut ptr,
+            &mut len,
+        )
+    };
     assert!(ok, "snapshot_vstack_texts failed");
     let data = unsafe { std::slice::from_raw_parts(ptr as *const u8, len).to_vec() };
     unsafe {
@@ -127,7 +190,15 @@ fn compare(a: &[u8], b: &[u8], tolerance_percent: f32) -> f32 {
     ensure_init();
     type F = unsafe extern "C" fn(*const c_void, usize, *const c_void, usize, f32) -> f32;
     let f: F = unsafe { std::mem::transmute(dlsym(lib(), c"compare_png_bytes".as_ptr())) };
-    unsafe { f(a.as_ptr() as _, a.len(), b.as_ptr() as _, b.len(), tolerance_percent) }
+    unsafe {
+        f(
+            a.as_ptr() as _,
+            a.len(),
+            b.as_ptr() as _,
+            b.len(),
+            tolerance_percent,
+        )
+    }
 }
 
 /// Create a Rust view via the helper.
@@ -138,7 +209,15 @@ fn rust_text(s: &str) -> *mut c_void {
     unsafe { f(s.as_ptr(), s.len()) }
 }
 
-fn rust_styled_text(s: &str, size: f32, weight: i32, r: f32, g: f32, b: f32, a: f32) -> *mut c_void {
+fn rust_styled_text(
+    s: &str,
+    size: f32,
+    weight: i32,
+    r: f32,
+    g: f32,
+    b: f32,
+    a: f32,
+) -> *mut c_void {
     ensure_init();
     type F = unsafe extern "C" fn(*const u8, usize, f32, i32, f32, f32, f32, f32) -> *mut c_void;
     let f: F = unsafe { std::mem::transmute(dlsym(lib(), c"swiftui_text_styled".as_ptr())) };
@@ -173,7 +252,10 @@ fn pixel_parity_plain_text() {
 
     let match_pct = compare(&swift_png, &rust_png, 2.0);
     println!("plain_text: {match_pct:.1}% pixel match");
-    assert!(match_pct >= PASS_THRESHOLD, "Plain text: {match_pct:.1}% < {PASS_THRESHOLD}%");
+    assert!(
+        match_pct >= PASS_THRESHOLD,
+        "Plain text: {match_pct:.1}% < {PASS_THRESHOLD}%"
+    );
 }
 
 #[test]
@@ -187,7 +269,10 @@ fn pixel_parity_styled_text() {
 
     let match_pct = compare(&swift_png, &rust_png, 2.0);
     println!("styled_text: {match_pct:.1}% pixel match");
-    assert!(match_pct >= PASS_THRESHOLD, "Styled text: {match_pct:.1}% < {PASS_THRESHOLD}%");
+    assert!(
+        match_pct >= PASS_THRESHOLD,
+        "Styled text: {match_pct:.1}% < {PASS_THRESHOLD}%"
+    );
 }
 
 #[test]
@@ -203,7 +288,10 @@ fn pixel_parity_vstack() {
 
     let match_pct = compare(&swift_png, &rust_png, 2.0);
     println!("vstack: {match_pct:.1}% pixel match");
-    assert!(match_pct >= PASS_THRESHOLD, "VStack: {match_pct:.1}% < {PASS_THRESHOLD}%");
+    assert!(
+        match_pct >= PASS_THRESHOLD,
+        "VStack: {match_pct:.1}% < {PASS_THRESHOLD}%"
+    );
 }
 
 #[test]
@@ -217,7 +305,10 @@ fn pixel_parity_emoji_text() {
 
     let match_pct = compare(&swift_png, &rust_png, 2.0);
     println!("emoji: {match_pct:.1}% pixel match");
-    assert!(match_pct >= PASS_THRESHOLD, "Emoji: {match_pct:.1}% < {PASS_THRESHOLD}%");
+    assert!(
+        match_pct >= PASS_THRESHOLD,
+        "Emoji: {match_pct:.1}% < {PASS_THRESHOLD}%"
+    );
 }
 
 #[test]
@@ -231,12 +322,16 @@ fn pixel_parity_italic_blue() {
 
     let match_pct = compare(&swift_png, &rust_png, 2.0);
     println!("italic_blue: {match_pct:.1}% pixel match");
-    assert!(match_pct >= PASS_THRESHOLD, "Italic blue: {match_pct:.1}% < {PASS_THRESHOLD}%");
+    assert!(
+        match_pct >= PASS_THRESHOLD,
+        "Italic blue: {match_pct:.1}% < {PASS_THRESHOLD}%"
+    );
 }
 
 #[test]
 fn pixel_parity_long_text() {
-    let long = "The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.";
+    let long =
+        "The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.";
     let swift_png = snapshot_swift_text(long, 400.0, 100.0);
     let rust_handle = rust_text(long);
     let rust_png = snapshot_rust_view(rust_handle, 400.0, 100.0);
@@ -246,5 +341,8 @@ fn pixel_parity_long_text() {
 
     let match_pct = compare(&swift_png, &rust_png, 2.0);
     println!("long_text: {match_pct:.1}% pixel match");
-    assert!(match_pct >= PASS_THRESHOLD, "Long text: {match_pct:.1}% < {PASS_THRESHOLD}%");
+    assert!(
+        match_pct >= PASS_THRESHOLD,
+        "Long text: {match_pct:.1}% < {PASS_THRESHOLD}%"
+    );
 }

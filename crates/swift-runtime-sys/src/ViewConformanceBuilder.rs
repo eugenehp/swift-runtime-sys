@@ -71,18 +71,18 @@ impl SwiftUISymbols {
         let default_make_view_list = sym(
             c"$s7SwiftUI4ViewPAAE05_makeC4List4view6inputsAA01_cE7OutputsVAA11_GraphValueVyxG_AA01_cE6InputsVtFZ"
         );
-        let default_view_list_count = sym(
-            c"$s7SwiftUI4ViewPAAE14_viewListCount6inputsSiSgAA01_ceF6InputsV_tFZ"
-        );
+        let default_view_list_count =
+            sym(c"$s7SwiftUI4ViewPAAE14_viewListCount6inputsSiSgAA01_ceF6InputsV_tFZ");
         let empty_vwt = sym(c"$sytWV");
         let text_metadata = sym(c"$s7SwiftUI4TextVN");
-        let text_view_witness_table = sym(
-            c"$s7SwiftUI4TextVAA4ViewAAWP"
-        );
+        let text_view_witness_table = sym(c"$s7SwiftUI4TextVAA4ViewAAWP");
 
-        if view_protocol.is_null() || default_make_view.is_null()
-            || default_make_view_list.is_null() || default_view_list_count.is_null()
-            || empty_vwt.is_null() || text_metadata.is_null()
+        if view_protocol.is_null()
+            || default_make_view.is_null()
+            || default_make_view_list.is_null()
+            || default_view_list_count.is_null()
+            || empty_vwt.is_null()
+            || text_metadata.is_null()
         {
             return None;
         }
@@ -135,8 +135,7 @@ pub type BodyGetterFn = unsafe extern "C" fn(result: *mut c_void, self_val: *con
 
 /// Wrapper around the body getter that matches the witness_method convention.
 /// Signature: (@out Body, @in_guaranteed Self) -> ()
-pub type WitnessBodyGetterFn =
-    unsafe extern "C" fn(result: *mut c_void, self_val: *const c_void);
+pub type WitnessBodyGetterFn = unsafe extern "C" fn(result: *mut c_void, self_val: *const c_void);
 
 /// Result of building a dynamic View conformance.
 #[derive(Debug)]
@@ -188,17 +187,21 @@ pub unsafe fn build_dynamic_view(
     name: &str,
     body_getter: BodyGetterFn,
 ) -> Result<DynamicView, ViewBuilderError> {
-    let syms = SwiftUISymbols::resolve()
-        .ok_or_else(|| ViewBuilderError::SymbolsNotFound(
-            "Could not resolve SwiftUI symbols (View protocol, default impls, Text metadata)".into()
-        ))?;
+    let syms = SwiftUISymbols::resolve().ok_or_else(|| {
+        ViewBuilderError::SymbolsNotFound(
+            "Could not resolve SwiftUI symbols (View protocol, default impls, Text metadata)"
+                .into(),
+        )
+    })?;
 
     let mut allocs: Vec<*mut c_void> = Vec::new();
 
     // ── 1. Allocate and fill the nominal type descriptor ──
     let name_cstr = CString::new(name).unwrap();
     let desc = malloc(STRUCT_DESCRIPTOR_SIZE);
-    if desc.is_null() { return Err(ViewBuilderError::AllocationFailed); }
+    if desc.is_null() {
+        return Err(ViewBuilderError::AllocationFailed);
+    }
     allocs.push(desc);
     core::ptr::write_bytes(desc as *mut u8, 0, STRUCT_DESCRIPTOR_SIZE);
 
@@ -220,7 +223,9 @@ pub unsafe fn build_dynamic_view(
 
     // ── 2. Allocate and fill full type metadata ──
     let meta = malloc(FULL_METADATA_SIZE);
-    if meta.is_null() { return Err(ViewBuilderError::AllocationFailed); }
+    if meta.is_null() {
+        return Err(ViewBuilderError::AllocationFailed);
+    }
     allocs.push(meta);
     core::ptr::write_bytes(meta as *mut u8, 0, FULL_METADATA_SIZE);
 
@@ -245,14 +250,16 @@ pub unsafe fn build_dynamic_view(
     // The witness table layout for View:
     //   [0] = protocol conformance descriptor (we'll set to null for now)
     //   [1] = associated type Body metadata accessor function
-    //   [2] = associated conformance Body: View accessor function  
+    //   [2] = associated conformance Body: View accessor function
     //   [3] = _makeView witness (calls default impl)
     //   [4] = _makeViewList witness (calls default impl)
     //   [5] = _viewListCount witness (calls default impl)
     //   [6] = body.getter witness (OUR function)
 
     let wt = malloc(WITNESS_TABLE_SIZE);
-    if wt.is_null() { return Err(ViewBuilderError::AllocationFailed); }
+    if wt.is_null() {
+        return Err(ViewBuilderError::AllocationFailed);
+    }
     allocs.push(wt);
     core::ptr::write_bytes(wt as *mut u8, 0, WITNESS_TABLE_SIZE);
 
@@ -304,7 +311,10 @@ unsafe fn create_body_type_accessor(text_metadata: *const c_void) -> *const c_vo
     // We use a trampoline approach: store the metadata pointer in a static
     // and return it. For a real implementation you'd generate code or use
     // a closure. For simplicity, we store in a global.
-    BODY_TYPE_METADATA.store(text_metadata as usize, core::sync::atomic::Ordering::Release);
+    BODY_TYPE_METADATA.store(
+        text_metadata as usize,
+        core::sync::atomic::Ordering::Release,
+    );
     body_type_accessor_trampoline as *const c_void
 }
 
@@ -351,9 +361,7 @@ pub unsafe fn create_text(_result: *mut c_void, _string: &str) -> bool {
     let text_init = sym(
         c"$s7SwiftUI4TextV_9tableName6bundle7commentAcA18LocalizedStringKeyV_SSSgSo8NSBundleCSgs06StaticI0VSgtcfC"
     );
-    let lsk_init = sym(
-        c"$s7SwiftUI18LocalizedStringKeyV13stringLiteralACSS_tcfC"
-    );
+    let lsk_init = sym(c"$s7SwiftUI18LocalizedStringKeyV13stringLiteralACSS_tcfC");
 
     if text_init.is_null() || lsk_init.is_null() {
         return false;
@@ -361,18 +369,27 @@ pub unsafe fn create_text(_result: *mut c_void, _string: &str) -> bool {
 
     // Step 1: Create a Swift.String
     let string_init = sym(c"$sSS21_builtinStringLiteral17utf8CodeUnitCount7isASCIISSBp_BwBi1_tcfC");
-    if string_init.is_null() { return false; }
+    if string_init.is_null() {
+        return false;
+    }
 
     type StringInitFn = unsafe extern "C" fn(*const u8, usize, bool, *const c_void) -> [u8; 16];
     let make_string: StringInitFn = core::mem::transmute(string_init);
     let string_metatype = sym(c"$sSSN");
-    let swift_string = make_string(_string.as_ptr(), _string.len(), _string.is_ascii(), string_metatype);
+    let swift_string = make_string(
+        _string.as_ptr(),
+        _string.len(),
+        _string.is_ascii(),
+        string_metatype,
+    );
 
     // Step 2: Create LocalizedStringKey from string
     type LskInitFn = unsafe extern "C" fn([u8; 16], *const c_void) -> [u8; 24]; // LSK is ~24 bytes
     let make_lsk: LskInitFn = core::mem::transmute(lsk_init);
     let lsk_metatype = sym(c"$s7SwiftUI18LocalizedStringKeyVN");
-    if lsk_metatype.is_null() { return false; }
+    if lsk_metatype.is_null() {
+        return false;
+    }
     let _lsk = make_lsk(swift_string, lsk_metatype);
 
     // Step 3: Create Text from LSK
@@ -393,20 +410,32 @@ pub unsafe fn create_text(_result: *mut c_void, _string: &str) -> bool {
 /// Get the size of a SwiftUI.Text value.
 pub fn text_value_size() -> Option<usize> {
     let text_meta = sym(c"$s7SwiftUI4TextVN");
-    if text_meta.is_null() { return None; }
+    if text_meta.is_null() {
+        return None;
+    }
     let vwt = unsafe { crate::SwiftABI::get_value_witness_table(text_meta) };
-    if vwt.is_null() { return None; }
+    if vwt.is_null() {
+        return None;
+    }
     Some(unsafe { (*vwt).size })
 }
 
 /// Get the metadata for SwiftUI.Text.
 pub fn text_metadata() -> Option<*const c_void> {
     let m = sym(c"$s7SwiftUI4TextVN");
-    if m.is_null() { None } else { Some(m) }
+    if m.is_null() {
+        None
+    } else {
+        Some(m)
+    }
 }
 
 /// Get the View protocol witness table for SwiftUI.Text.
 pub fn text_view_witness_table() -> Option<*const c_void> {
     let m = sym(c"$s7SwiftUI4TextVAA4ViewAAWP");
-    if m.is_null() { None } else { Some(m) }
+    if m.is_null() {
+        None
+    } else {
+        Some(m)
+    }
 }

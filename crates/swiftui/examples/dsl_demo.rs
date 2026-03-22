@@ -9,30 +9,35 @@
 //!   cargo run -p swiftui --example dsl_demo
 
 use swiftui::dsl::*;
-use swiftui::{vstack, hstack};
+use swiftui::{hstack, vstack};
 
 fn main() {
     swiftui::init("swift_helper/libSwiftUIHelper.dylib");
 
-    fn on_click() { println!("🦀 Button clicked from Rust!"); }
+    fn on_click() {
+        println!("🦀 Button clicked from Rust!");
+    }
 
-    window("Rust DSL → SwiftUI", 480.0, 520.0,
-
+    window(
+        "Rust DSL → SwiftUI",
+        480.0,
+        520.0,
         vstack![
             // Header
             text("🦀 SwiftUI DSL").bold().size(28.0).color(Color::BLUE),
-            text("Built with Rust macros").italic().size(14.0).color(Color::GRAY),
-
+            text("Built with Rust macros")
+                .italic()
+                .size(14.0)
+                .color(Color::GRAY),
             divider(),
-
             // Buttons row
             hstack![
                 button("Say Hello", on_click),
                 spacer(),
                 image("star.fill"),
                 text("Starred"),
-            ].padding(8.0),
-
+            ]
+            .padding(8.0),
             // Card
             vstack![
                 text("Settings").bold().size(18.0),
@@ -40,8 +45,10 @@ fn main() {
                 toggle("Notifications", false),
                 progress(0.7, 1.0),
                 textfield("Search...", ""),
-            ].padding(16.0).bg(Color::DARK).rounded(12.0),
-
+            ]
+            .padding(16.0)
+            .bg(Color::DARK)
+            .rounded(12.0),
             // Colors
             hstack![
                 swatch(Color::RED, "Red"),
@@ -50,9 +57,7 @@ fn main() {
                 swatch(Color::YELLOW, "Gold"),
                 swatch(Color::PURPLE, "Purple"),
             ],
-
             spacer(),
-
             // Footer
             text("swift-runtime-sys v0.0.3")
                 .size(11.0)
@@ -60,8 +65,7 @@ fn main() {
         ]
         .padding(20.0)
         .bg(Color::DARKER)
-        .scroll()
-
+        .scroll(),
     );
 }
 

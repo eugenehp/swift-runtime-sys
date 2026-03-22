@@ -54,10 +54,7 @@ unsafe extern "C" {
     pub fn swift_unknownObjectUnownedLoadStrong(ref_storage: UnownedRefRef) -> HeapObjectRef;
 
     /// Check if two unowned references are equal.
-    pub fn swift_unknownObjectUnownedIsEqual(
-        lhs: UnownedRefRef,
-        rhs: HeapObjectRef,
-    ) -> bool;
+    pub fn swift_unknownObjectUnownedIsEqual(lhs: UnownedRefRef, rhs: HeapObjectRef) -> bool;
 
     // ── Weak ──
 

@@ -18,10 +18,7 @@ unsafe extern "C" {
     ) -> OpaqueValueRef;
 
     /// Destroy a POD value (no-op for PODs).
-    pub fn swift_pod_destroy(
-        value: OpaqueValueRef,
-        self_type: MetadataRef,
-    );
+    pub fn swift_pod_destroy(value: OpaqueValueRef, self_type: MetadataRef);
 
     /// Directly initialize a buffer with a copy of a POD buffer.
     pub fn swift_pod_direct_initializeBufferWithCopyOfBuffer(

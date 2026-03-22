@@ -28,10 +28,7 @@ unsafe extern "C" {
     ) -> *const c_void;
 
     /// Hash a C string as a CFString.
-    pub fn swift_stdlib_CFStringHashCString(
-        bytes: *const u8,
-        length: usize,
-    ) -> usize;
+    pub fn swift_stdlib_CFStringHashCString(bytes: *const u8, length: usize) -> usize;
 
     /// Hash an NSString as a CFString.
     pub fn swift_stdlib_CFStringHashNSString(object: *const c_void) -> usize;
@@ -43,16 +40,10 @@ unsafe extern "C" {
     ) -> *const c_void;
 
     /// NSObject isEqual.
-    pub fn swift_stdlib_NSObject_isEqual(
-        lhs: *const c_void,
-        rhs: *const c_void,
-    ) -> bool;
+    pub fn swift_stdlib_NSObject_isEqual(lhs: *const c_void, rhs: *const c_void) -> bool;
 
     /// NSObject isKindOfClass.
-    pub fn swift_stdlib_NSObject_isKindOfClass(
-        object: *const c_void,
-        cls: *const c_void,
-    ) -> bool;
+    pub fn swift_stdlib_NSObject_isKindOfClass(object: *const c_void, cls: *const c_void) -> bool;
 
     /// NSString CString using encoding trampoline.
     pub fn swift_stdlib_NSStringCStringUsingEncodingTrampoline(
@@ -61,10 +52,7 @@ unsafe extern "C" {
     ) -> *const c_char;
 
     /// Create an NSString from UTF-8.
-    pub fn swift_stdlib_NSStringFromUTF8(
-        bytes: *const c_char,
-        length: usize,
-    ) -> *mut c_void;
+    pub fn swift_stdlib_NSStringFromUTF8(bytes: *const c_char, length: usize) -> *mut c_void;
 
     /// NSString getCString trampoline.
     pub fn swift_stdlib_NSStringGetCStringTrampoline(
@@ -75,16 +63,10 @@ unsafe extern "C" {
     ) -> bool;
 
     /// NSString hash value.
-    pub fn swift_stdlib_NSStringHashValue(
-        object: *const c_void,
-        is_ascii: bool,
-    ) -> usize;
+    pub fn swift_stdlib_NSStringHashValue(object: *const c_void, is_ascii: bool) -> usize;
 
     /// NSString hash value pointer.
-    pub fn swift_stdlib_NSStringHashValuePointer(
-        object: *const c_void,
-        is_ascii: bool,
-    ) -> usize;
+    pub fn swift_stdlib_NSStringHashValuePointer(object: *const c_void, is_ascii: bool) -> usize;
 
     /// NSString length of bytes in encoding trampoline.
     pub fn swift_stdlib_NSStringLengthOfBytesInEncodingTrampoline(
@@ -111,14 +93,10 @@ unsafe extern "C" {
     );
 
     /// Get the ObjC class instance extents.
-    pub fn swift_getObjCClassInstanceExtents(
-        cls: *const c_void,
-    ) -> ClassInstanceExtents;
+    pub fn swift_getObjCClassInstanceExtents(cls: *const c_void) -> ClassInstanceExtents;
 
     /// Get the Swift class instance extents.
-    pub fn swift_getSwiftClassInstanceExtents(
-        metadata: MetadataRef,
-    ) -> ClassInstanceExtents;
+    pub fn swift_getSwiftClassInstanceExtents(metadata: MetadataRef) -> ClassInstanceExtents;
 
     /// Root ObjC dealloc.
     pub fn swift_rootObjCDealloc(object: HeapObjectRef);

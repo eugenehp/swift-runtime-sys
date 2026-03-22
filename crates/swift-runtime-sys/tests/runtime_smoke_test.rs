@@ -68,9 +68,8 @@ fn test_get_type_name() {
     assert!(!metadata.is_null(), "Failed to look up String metadata");
 
     // Get the human-readable type name
-    let name_pair = unsafe {
-        swift_runtime_sys::MetadataIntrospection::swift_getTypeName(metadata, true)
-    };
+    let name_pair =
+        unsafe { swift_runtime_sys::MetadataIntrospection::swift_getTypeName(metadata, true) };
     assert!(!name_pair.data.is_null());
     assert!(name_pair.length > 0);
 
@@ -139,7 +138,11 @@ fn test_metadata_kind_for_types() {
     assert!(!metadata.is_null());
     let kind_raw = unsafe { *(metadata as *const usize) };
     let kind = get_enumerated_metadata_kind(kind_raw);
-    assert_eq!(kind, MetadataKind::Optional, "Optional<Int> should be Optional");
+    assert_eq!(
+        kind,
+        MetadataKind::Optional,
+        "Optional<Int> should be Optional"
+    );
 }
 
 #[test]
@@ -185,14 +188,23 @@ fn test_error_retain_release() {
 #[test]
 fn test_stdlib_hardware_concurrency_dlsym() {
     use core::ffi::{c_char, c_void};
-    unsafe extern "C" { fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void; }
-    let sym = unsafe { dlsym((-2isize) as *mut c_void, c"swift_stdlib_getHardwareConcurrency".as_ptr()) };
+    unsafe extern "C" {
+        fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
+    }
+    let sym = unsafe {
+        dlsym(
+            (-2isize) as *mut c_void,
+            c"swift_stdlib_getHardwareConcurrency".as_ptr(),
+        )
+    };
     if !sym.is_null() {
         let f: unsafe extern "C" fn() -> usize = unsafe { std::mem::transmute(sym) };
         let count = unsafe { f() };
         assert!(count > 0, "Hardware concurrency should be > 0, got {count}");
     } else {
-        println!("swift_stdlib_getHardwareConcurrency not found via dlsym (expected on some platforms)");
+        println!(
+            "swift_stdlib_getHardwareConcurrency not found via dlsym (expected on some platforms)"
+        );
     }
 }
 
@@ -281,8 +293,6 @@ fn test_is_class_type() {
             0,
         )
     };
-    let is_class = unsafe {
-        swift_runtime_sys::MetadataIntrospection::swift_isClassType(metadata)
-    };
+    let is_class = unsafe { swift_runtime_sys::MetadataIntrospection::swift_isClassType(metadata) };
     assert!(!is_class, "Int should not be a class type");
 }

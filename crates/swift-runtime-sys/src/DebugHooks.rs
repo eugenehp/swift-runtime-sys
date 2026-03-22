@@ -9,23 +9,13 @@ pub type MetadataRef = *const c_void;
 
 unsafe extern "C" {
     /// Report to the debugger.
-    pub fn swift_reportToDebugger(
-        flags: u32,
-        message: *const c_char,
-        details: *const c_void,
-    );
+    pub fn swift_reportToDebugger(flags: u32, message: *const c_char, details: *const c_void);
 
     /// Report a runtime error.
-    pub fn swift_reportError(
-        flags: u32,
-        message: *const c_char,
-    );
+    pub fn swift_reportError(flags: u32, message: *const c_char);
 
     /// Report a runtime warning.
-    pub fn swift_reportWarning(
-        flags: u32,
-        message: *const c_char,
-    );
+    pub fn swift_reportWarning(flags: u32, message: *const c_char);
 
     /// Set whether fatal errors should be reported to the debugger.
     pub fn swift_reportFatalErrorsToDebugger(should_report: bool);
@@ -34,11 +24,7 @@ unsafe extern "C" {
     pub fn swift_shouldReportFatalErrorsToDebugger() -> bool;
 
     /// Hook for all runtime reports. Set via function pointer.
-    pub fn swift_runtime_on_report(
-        flags: u32,
-        message: *const c_char,
-        details: *const c_void,
-    );
+    pub fn swift_runtime_on_report(flags: u32, message: *const c_char, details: *const c_void);
 
     /// Demangle a Swift symbol name.
     pub fn swift_demangle(
@@ -50,9 +36,7 @@ unsafe extern "C" {
     ) -> *mut c_char;
 
     /// Find an accessible function by name.
-    pub fn swift_findAccessibleFunction(
-        name: *const c_char,
-    ) -> *const c_void;
+    pub fn swift_findAccessibleFunction(name: *const c_char) -> *const c_void;
 
     /// Thread-safe once initialization.
     pub fn swift_once(

@@ -10,7 +10,11 @@ pub struct Metadata(*const c_void);
 impl Metadata {
     /// Create from a raw pointer. Returns None if null.
     pub fn from_raw(ptr: *const c_void) -> Option<Self> {
-        if ptr.is_null() { None } else { Some(Self(ptr)) }
+        if ptr.is_null() {
+            None
+        } else {
+            Some(Self(ptr))
+        }
     }
 
     /// Get the raw pointer.
@@ -51,9 +55,8 @@ impl Metadata {
 
     /// Get the human-readable type name.
     pub fn type_name(&self, qualified: bool) -> Option<String> {
-        let result = unsafe {
-            swift_runtime_sys::SwiftCCThunks::swift_getTypeName(self.0, qualified)
-        };
+        let result =
+            unsafe { swift_runtime_sys::SwiftCCThunks::swift_getTypeName(self.0, qualified) };
         match result {
             Ok((name, len)) if len > 0 => Some(name.to_string()),
             _ => None,
@@ -62,9 +65,8 @@ impl Metadata {
 
     /// Get the type context descriptor.
     pub fn descriptor(&self) -> Option<*const c_void> {
-        let result = unsafe {
-            swift_runtime_sys::SwiftCCThunks::swift_getTypeContextDescriptor(self.0)
-        };
+        let result =
+            unsafe { swift_runtime_sys::SwiftCCThunks::swift_getTypeContextDescriptor(self.0) };
         match result {
             Ok(ptr) if !ptr.is_null() => Some(ptr),
             _ => None,
@@ -82,8 +84,16 @@ impl Metadata {
 
 impl std::fmt::Debug for Metadata {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let name = self.type_name(true).unwrap_or_else(|| format!("{:?}", self.0));
-        write!(f, "Metadata({}, kind={:?}, size={})", name, self.kind(), self.size())
+        let name = self
+            .type_name(true)
+            .unwrap_or_else(|| format!("{:?}", self.0));
+        write!(
+            f,
+            "Metadata({}, kind={:?}, size={})",
+            name,
+            self.kind(),
+            self.size()
+        )
     }
 }
 

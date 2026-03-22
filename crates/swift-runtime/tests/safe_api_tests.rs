@@ -49,21 +49,30 @@ fn test_metadata_debug() {
     let m = types::int().unwrap();
     let dbg = format!("{:?}", m);
     assert!(dbg.contains("Int"), "Debug should contain 'Int': {dbg}");
-    assert!(dbg.contains("Struct"), "Debug should contain 'Struct': {dbg}");
+    assert!(
+        dbg.contains("Struct"),
+        "Debug should contain 'Struct': {dbg}"
+    );
 }
 
 #[test]
 fn test_optional_metadata() {
     let int_m = types::int().unwrap();
     let opt_m = types::optional(&int_m).expect("Should resolve Optional<Int>");
-    assert_eq!(opt_m.kind(), swift_runtime_sys::SwiftABI::MetadataKind::Optional);
+    assert_eq!(
+        opt_m.kind(),
+        swift_runtime_sys::SwiftABI::MetadataKind::Optional
+    );
 }
 
 #[test]
 fn test_array_metadata() {
     let int_m = types::int().unwrap();
     let arr_m = types::array(&int_m).expect("Should resolve Array<Int>");
-    assert_eq!(arr_m.kind(), swift_runtime_sys::SwiftABI::MetadataKind::Struct);
+    assert_eq!(
+        arr_m.kind(),
+        swift_runtime_sys::SwiftABI::MetadataKind::Struct
+    );
 }
 
 #[test]
@@ -71,7 +80,10 @@ fn test_dictionary_metadata() {
     let str_m = types::string().unwrap();
     let int_m = types::int().unwrap();
     let dict_m = types::dictionary(&str_m, &int_m).expect("Should resolve Dictionary<String,Int>");
-    assert_eq!(dict_m.kind(), swift_runtime_sys::SwiftABI::MetadataKind::Struct);
+    assert_eq!(
+        dict_m.kind(),
+        swift_runtime_sys::SwiftABI::MetadataKind::Struct
+    );
 }
 
 #[test]

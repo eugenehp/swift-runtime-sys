@@ -13,7 +13,6 @@
 
 use core::ffi::{c_char, c_void, CStr};
 
-
 const RTLD_DEFAULT: *mut c_void = (-2isize) as *mut c_void;
 
 unsafe extern "C" {
@@ -36,7 +35,9 @@ pub struct MetadataResponse {
 fn resolve(name: &CStr) -> Result<*const c_void, ThunkError> {
     let ptr = unsafe { dlsym(RTLD_DEFAULT, name.as_ptr()) };
     if ptr.is_null() {
-        Err(ThunkError::SymbolNotFound(name.to_string_lossy().into_owned()))
+        Err(ThunkError::SymbolNotFound(
+            name.to_string_lossy().into_owned(),
+        ))
     } else {
         Ok(ptr as *const c_void)
     }
@@ -241,7 +242,12 @@ mod arch {
         arg2: *const c_void,
         arg3: *const c_void,
     ) -> MetadataResponse {
-        type F = unsafe extern "C" fn(usize, *const c_void, *const c_void, *const c_void) -> MetadataResponse;
+        type F = unsafe extern "C" fn(
+            usize,
+            *const c_void,
+            *const c_void,
+            *const c_void,
+        ) -> MetadataResponse;
         let f: F = core::mem::transmute(func);
         f(arg0, arg1, arg2, arg3)
     }
@@ -280,7 +286,12 @@ pub unsafe fn swift_getGenericMetadata(
     description: *const c_void,
 ) -> Result<MetadataResponse, ThunkError> {
     let func = resolve(c"swift_getGenericMetadata")?;
-    Ok(arch::call_metadata_response_3(func, request, arguments as _, description))
+    Ok(arch::call_metadata_response_3(
+        func,
+        request,
+        arguments as _,
+        description,
+    ))
 }
 
 /// Safely call `swift_checkMetadataState` (Swift CC).
@@ -308,7 +319,9 @@ pub unsafe fn swift_getFixedArrayTypeMetadata(
     element: *const c_void,
 ) -> Result<MetadataResponse, ThunkError> {
     let func = resolve(c"swift_getFixedArrayTypeMetadata")?;
-    Ok(arch::call_metadata_response_3(func, request, count as _, element))
+    Ok(arch::call_metadata_response_3(
+        func, request, count as _, element,
+    ))
 }
 
 /// Safely call `swift_getTupleTypeMetadata2` (Swift CC).
@@ -355,7 +368,13 @@ pub unsafe fn swift_getTupleTypeMetadata2(
     }
     #[cfg(target_arch = "x86_64")]
     {
-        type F = unsafe extern "C" fn(usize, *const c_void, *const c_void, *const c_char, *const c_void) -> MetadataResponse;
+        type F = unsafe extern "C" fn(
+            usize,
+            *const c_void,
+            *const c_void,
+            *const c_char,
+            *const c_void,
+        ) -> MetadataResponse;
         let f: F = core::mem::transmute(func);
         Ok(f(request, elt0, elt1, labels, proposed))
     }
@@ -403,7 +422,9 @@ pub unsafe fn swift_getCanonicalSpecializedMetadata(
     cache: *mut *const c_void,
 ) -> Result<MetadataResponse, ThunkError> {
     let func = resolve(c"swift_getCanonicalSpecializedMetadata")?;
-    Ok(arch::call_metadata_response_3(func, request, candidate, cache as _))
+    Ok(arch::call_metadata_response_3(
+        func, request, candidate, cache as _,
+    ))
 }
 
 /// Safely call `swift_getCanonicalPrespecializedGenericMetadata` (Swift CC).
@@ -414,7 +435,13 @@ pub unsafe fn swift_getCanonicalPrespecializedGenericMetadata(
     token: *mut usize,
 ) -> Result<MetadataResponse, ThunkError> {
     let func = resolve(c"swift_getCanonicalPrespecializedGenericMetadata")?;
-    Ok(arch::call_metadata_response_4(func, request, arguments as _, description, token as _))
+    Ok(arch::call_metadata_response_4(
+        func,
+        request,
+        arguments as _,
+        description,
+        token as _,
+    ))
 }
 
 /// Safely call `swift_getAssociatedTypeWitness` (Swift CC, 5 args).
@@ -460,7 +487,13 @@ pub unsafe fn swift_getAssociatedTypeWitness(
     }
     #[cfg(target_arch = "x86_64")]
     {
-        type F = unsafe extern "C" fn(usize, *const c_void, *const c_void, *const c_void, *const c_void) -> MetadataResponse;
+        type F = unsafe extern "C" fn(
+            usize,
+            *const c_void,
+            *const c_void,
+            *const c_void,
+            *const c_void,
+        ) -> MetadataResponse;
         let f: F = core::mem::transmute(func);
         Ok(f(request, wtable, conforming_type, req_base, assoc_type))
     }
@@ -526,7 +559,14 @@ pub unsafe fn swift_getAssociatedTypeWitnessRelative(
     assoc_type: *const c_void,
 ) -> Result<MetadataResponse, ThunkError> {
     let func = resolve(c"swift_getAssociatedTypeWitnessRelative")?;
-    Ok(call_swift_cc_5_to_mr(func, request, wtable, conforming_type, req_base, assoc_type))
+    Ok(call_swift_cc_5_to_mr(
+        func,
+        request,
+        wtable,
+        conforming_type,
+        req_base,
+        assoc_type,
+    ))
 }
 
 /// Safely call `swift_getAssociatedConformanceWitness` (Swift CC, 5 args -> ptr).
@@ -538,7 +578,14 @@ pub unsafe fn swift_getAssociatedConformanceWitness(
     assoc_conformance: *const c_void,
 ) -> Result<*const c_void, ThunkError> {
     let func = resolve(c"swift_getAssociatedConformanceWitness")?;
-    Ok(call_swift_cc_5_to_ptr(func, wtable, conforming_type, assoc_type, req_base, assoc_conformance))
+    Ok(call_swift_cc_5_to_ptr(
+        func,
+        wtable,
+        conforming_type,
+        assoc_type,
+        req_base,
+        assoc_conformance,
+    ))
 }
 
 /// Safely call `swift_getAssociatedConformanceWitnessRelative`.
@@ -550,12 +597,20 @@ pub unsafe fn swift_getAssociatedConformanceWitnessRelative(
     assoc_conformance: *const c_void,
 ) -> Result<*const c_void, ThunkError> {
     let func = resolve(c"swift_getAssociatedConformanceWitnessRelative")?;
-    Ok(call_swift_cc_5_to_ptr(func, wtable, conforming_type, assoc_type, req_base, assoc_conformance))
+    Ok(call_swift_cc_5_to_ptr(
+        func,
+        wtable,
+        conforming_type,
+        assoc_type,
+        req_base,
+        assoc_conformance,
+    ))
 }
 
 /// Safely call `swift_compareTypeContextDescriptors` (Swift CC, bool return).
 pub unsafe fn swift_compareTypeContextDescriptors(
-    lhs: *const c_void, rhs: *const c_void,
+    lhs: *const c_void,
+    rhs: *const c_void,
 ) -> Result<bool, ThunkError> {
     let func = resolve(c"swift_compareTypeContextDescriptors")?;
     Ok(call_swift_cc_2_to_bool(func, lhs, rhs))
@@ -563,7 +618,8 @@ pub unsafe fn swift_compareTypeContextDescriptors(
 
 /// Safely call `swift_compareWitnessTables` (Swift CC, bool return).
 pub unsafe fn swift_compareWitnessTables(
-    lhs: *const c_void, rhs: *const c_void,
+    lhs: *const c_void,
+    rhs: *const c_void,
 ) -> Result<bool, ThunkError> {
     let func = resolve(c"swift_compareWitnessTables")?;
     Ok(call_swift_cc_2_to_bool(func, lhs, rhs))
@@ -571,7 +627,8 @@ pub unsafe fn swift_compareWitnessTables(
 
 /// Safely call `swift_compareProtocolConformanceDescriptors` (Swift CC, bool return).
 pub unsafe fn swift_compareProtocolConformanceDescriptors(
-    lhs: *const c_void, rhs: *const c_void,
+    lhs: *const c_void,
+    rhs: *const c_void,
 ) -> Result<bool, ThunkError> {
     let func = resolve(c"swift_compareProtocolConformanceDescriptors")?;
     Ok(call_swift_cc_2_to_bool(func, lhs, rhs))
@@ -579,7 +636,8 @@ pub unsafe fn swift_compareProtocolConformanceDescriptors(
 
 /// Safely call `swift_allocateMetadataPack` (Swift CC).
 pub unsafe fn swift_allocateMetadataPack(
-    elements: *const *const c_void, count: usize,
+    elements: *const *const c_void,
+    count: usize,
 ) -> Result<*const c_void, ThunkError> {
     let func = resolve(c"swift_allocateMetadataPack")?;
     Ok(call_swift_cc_2_to_ptr(func, elements as _, count as _))
@@ -587,7 +645,8 @@ pub unsafe fn swift_allocateMetadataPack(
 
 /// Safely call `swift_allocateWitnessTablePack` (Swift CC).
 pub unsafe fn swift_allocateWitnessTablePack(
-    tables: *const *const c_void, count: usize,
+    tables: *const *const c_void,
+    count: usize,
 ) -> Result<*const c_void, ThunkError> {
     let func = resolve(c"swift_allocateWitnessTablePack")?;
     Ok(call_swift_cc_2_to_ptr(func, tables as _, count as _))
@@ -595,45 +654,88 @@ pub unsafe fn swift_allocateWitnessTablePack(
 
 /// Safely call `swift_getTupleTypeMetadata` (Swift CC, 5 args).
 pub unsafe fn swift_getTupleTypeMetadata(
-    request: usize, flags: usize, elements: *const *const c_void,
-    labels: *const c_char, proposed: *const c_void,
+    request: usize,
+    flags: usize,
+    elements: *const *const c_void,
+    labels: *const c_char,
+    proposed: *const c_void,
 ) -> Result<MetadataResponse, ThunkError> {
     let func = resolve(c"swift_getTupleTypeMetadata")?;
-    Ok(call_swift_cc_5_to_mr(func, request, flags as _, elements as _, labels as _, proposed))
+    Ok(call_swift_cc_5_to_mr(
+        func,
+        request,
+        flags as _,
+        elements as _,
+        labels as _,
+        proposed,
+    ))
 }
 
 /// Safely call `swift_getTupleTypeMetadata3` (Swift CC, 6 args).
 pub unsafe fn swift_getTupleTypeMetadata3(
-    request: usize, elt0: *const c_void, elt1: *const c_void,
-    elt2: *const c_void, labels: *const c_char, proposed: *const c_void,
+    request: usize,
+    elt0: *const c_void,
+    elt1: *const c_void,
+    elt2: *const c_void,
+    labels: *const c_char,
+    proposed: *const c_void,
 ) -> Result<MetadataResponse, ThunkError> {
     let func = resolve(c"swift_getTupleTypeMetadata3")?;
-    Ok(call_swift_cc_6_to_mr(func, request, elt0, elt1, elt2, labels as _, proposed))
+    Ok(call_swift_cc_6_to_mr(
+        func,
+        request,
+        elt0,
+        elt1,
+        elt2,
+        labels as _,
+        proposed,
+    ))
 }
 
 /// Safely call `swift_initClassMetadata2` (Swift CC, 5 args, void return).
 pub unsafe fn swift_initClassMetadata2(
-    metadata: *const c_void, flags: usize, num_fields: usize,
-    field_types: *const *const c_void, field_offsets: *mut usize,
+    metadata: *const c_void,
+    flags: usize,
+    num_fields: usize,
+    field_types: *const *const c_void,
+    field_offsets: *mut usize,
 ) -> Result<(), ThunkError> {
     let func = resolve(c"swift_initClassMetadata2")?;
-    call_swift_cc_5_void(func, metadata, flags as _, num_fields as _, field_types as _, field_offsets as _);
+    call_swift_cc_5_void(
+        func,
+        metadata,
+        flags as _,
+        num_fields as _,
+        field_types as _,
+        field_offsets as _,
+    );
     Ok(())
 }
 
 /// Safely call `swift_updateClassMetadata2` (Swift CC, 5 args, void return).
 pub unsafe fn swift_updateClassMetadata2(
-    metadata: *const c_void, flags: usize, num_fields: usize,
-    field_types: *const *const c_void, field_offsets: *mut usize,
+    metadata: *const c_void,
+    flags: usize,
+    num_fields: usize,
+    field_types: *const *const c_void,
+    field_offsets: *mut usize,
 ) -> Result<(), ThunkError> {
     let func = resolve(c"swift_updateClassMetadata2")?;
-    call_swift_cc_5_void(func, metadata, flags as _, num_fields as _, field_types as _, field_offsets as _);
+    call_swift_cc_5_void(
+        func,
+        metadata,
+        flags as _,
+        num_fields as _,
+        field_types as _,
+        field_offsets as _,
+    );
     Ok(())
 }
 
 /// Safely call `swift_conformsToProtocolCommon` (Swift CC, returns WitnessTable*).
 pub unsafe fn swift_conformsToProtocolCommon(
-    metadata: *const c_void, protocol: *const c_void,
+    metadata: *const c_void,
+    protocol: *const c_void,
 ) -> Result<*const c_void, ThunkError> {
     let func = resolve(c"swift_conformsToProtocolCommon")?;
     Ok(call_swift_cc_2_to_ptr(func, metadata, protocol))
@@ -641,7 +743,9 @@ pub unsafe fn swift_conformsToProtocolCommon(
 
 /// Safely call `swift_conformsToProtocolWithExecutionContext` (Swift CC, 3 args).
 pub unsafe fn swift_conformsToProtocolWithExecutionContext(
-    metadata: *const c_void, protocol: *const c_void, context: *mut c_void,
+    metadata: *const c_void,
+    protocol: *const c_void,
+    context: *mut c_void,
 ) -> Result<*const c_void, ThunkError> {
     let func = resolve(c"swift_conformsToProtocolWithExecutionContext")?;
     Ok(call_swift_cc_3_to_ptr(func, metadata, protocol, context))
@@ -649,8 +753,10 @@ pub unsafe fn swift_conformsToProtocolWithExecutionContext(
 
 /// Safely call `swift_allocError` (Swift CC, returns BoxPair).
 pub unsafe fn swift_allocError(
-    error_type: *const c_void, conformance: *const c_void,
-    value: *mut c_void, is_take: bool,
+    error_type: *const c_void,
+    conformance: *const c_void,
+    value: *mut c_void,
+    is_take: bool,
 ) -> Result<(*mut c_void, *mut c_void), ThunkError> {
     let func = resolve(c"swift_allocError")?;
     call_swift_cc_4_to_pair(func, error_type, conformance, value, is_take as usize as _)
@@ -658,7 +764,9 @@ pub unsafe fn swift_allocError(
 
 /// Safely call `swift_makeBoxUnique` (Swift CC, returns BoxPair).
 pub unsafe fn swift_makeBoxUnique(
-    buffer: *mut c_void, metadata: *const c_void, align_mask: usize,
+    buffer: *mut c_void,
+    metadata: *const c_void,
+    align_mask: usize,
 ) -> Result<(*mut c_void, *mut c_void), ThunkError> {
     let func = resolve(c"swift_makeBoxUnique")?;
     call_swift_cc_3_to_pair(func, buffer, metadata, align_mask as _)
@@ -666,20 +774,38 @@ pub unsafe fn swift_makeBoxUnique(
 
 /// Safely call `swift_getEnumTagSinglePayloadGeneric` (Swift CC, 4 args -> u32).
 pub unsafe fn swift_getEnumTagSinglePayloadGeneric(
-    value: *const c_void, empty_cases: u32, payload_type: *const c_void,
+    value: *const c_void,
+    empty_cases: u32,
+    payload_type: *const c_void,
     get_tag: *const c_void,
 ) -> Result<u32, ThunkError> {
     let func = resolve(c"swift_getEnumTagSinglePayloadGeneric")?;
-    Ok(call_swift_cc_4_to_u32(func, value, empty_cases as usize as _, payload_type, get_tag))
+    Ok(call_swift_cc_4_to_u32(
+        func,
+        value,
+        empty_cases as usize as _,
+        payload_type,
+        get_tag,
+    ))
 }
 
 /// Safely call `swift_storeEnumTagSinglePayloadGeneric` (Swift CC, 5 args, void).
 pub unsafe fn swift_storeEnumTagSinglePayloadGeneric(
-    value: *mut c_void, which_case: u32, empty_cases: u32,
-    payload_type: *const c_void, store_tag: *const c_void,
+    value: *mut c_void,
+    which_case: u32,
+    empty_cases: u32,
+    payload_type: *const c_void,
+    store_tag: *const c_void,
 ) -> Result<(), ThunkError> {
     let func = resolve(c"swift_storeEnumTagSinglePayloadGeneric")?;
-    call_swift_cc_5_void(func, value, which_case as usize as _, empty_cases as usize as _, payload_type, store_tag);
+    call_swift_cc_5_void(
+        func,
+        value,
+        which_case as usize as _,
+        empty_cases as usize as _,
+        payload_type,
+        store_tag,
+    );
     Ok(())
 }
 
@@ -689,10 +815,15 @@ pub unsafe fn swift_storeEnumTagSinglePayloadGeneric(
 
 #[cfg(target_arch = "aarch64")]
 unsafe fn call_swift_cc_5_to_mr(
-    func: *const c_void, a0: usize, a1: *const c_void, a2: *const c_void,
-    a3: *const c_void, a4: *const c_void,
+    func: *const c_void,
+    a0: usize,
+    a1: *const c_void,
+    a2: *const c_void,
+    a3: *const c_void,
+    a4: *const c_void,
 ) -> MetadataResponse {
-    let m: *const c_void; let s: usize;
+    let m: *const c_void;
+    let s: usize;
     core::arch::asm!("blr {f}", f = in(reg) func,
         in("x0") a0, in("x1") a1, in("x2") a2, in("x3") a3, in("x4") a4,
         lateout("x0") m, lateout("x1") s,
@@ -701,25 +832,44 @@ unsafe fn call_swift_cc_5_to_mr(
         lateout("x13") _, lateout("x14") _, lateout("x15") _, lateout("x16") _,
         lateout("x17") _, lateout("lr") _, clobber_abi("C"),
     );
-    MetadataResponse { metadata: m, state: s }
+    MetadataResponse {
+        metadata: m,
+        state: s,
+    }
 }
 
 #[cfg(target_arch = "x86_64")]
 unsafe fn call_swift_cc_5_to_mr(
-    func: *const c_void, a0: usize, a1: *const c_void, a2: *const c_void,
-    a3: *const c_void, a4: *const c_void,
+    func: *const c_void,
+    a0: usize,
+    a1: *const c_void,
+    a2: *const c_void,
+    a3: *const c_void,
+    a4: *const c_void,
 ) -> MetadataResponse {
-    type F = unsafe extern "C" fn(usize, *const c_void, *const c_void, *const c_void, *const c_void) -> MetadataResponse;
+    type F = unsafe extern "C" fn(
+        usize,
+        *const c_void,
+        *const c_void,
+        *const c_void,
+        *const c_void,
+    ) -> MetadataResponse;
     let f: F = core::mem::transmute(func);
     f(a0, a1, a2, a3, a4)
 }
 
 #[cfg(target_arch = "aarch64")]
 unsafe fn call_swift_cc_6_to_mr(
-    func: *const c_void, a0: usize, a1: *const c_void, a2: *const c_void,
-    a3: *const c_void, a4: *const c_void, a5: *const c_void,
+    func: *const c_void,
+    a0: usize,
+    a1: *const c_void,
+    a2: *const c_void,
+    a3: *const c_void,
+    a4: *const c_void,
+    a5: *const c_void,
 ) -> MetadataResponse {
-    let m: *const c_void; let s: usize;
+    let m: *const c_void;
+    let s: usize;
     core::arch::asm!("blr {f}", f = in(reg) func,
         in("x0") a0, in("x1") a1, in("x2") a2, in("x3") a3, in("x4") a4, in("x5") a5,
         lateout("x0") m, lateout("x1") s,
@@ -728,23 +878,42 @@ unsafe fn call_swift_cc_6_to_mr(
         lateout("x13") _, lateout("x14") _, lateout("x15") _, lateout("x16") _,
         lateout("x17") _, lateout("lr") _, clobber_abi("C"),
     );
-    MetadataResponse { metadata: m, state: s }
+    MetadataResponse {
+        metadata: m,
+        state: s,
+    }
 }
 
 #[cfg(target_arch = "x86_64")]
 unsafe fn call_swift_cc_6_to_mr(
-    func: *const c_void, a0: usize, a1: *const c_void, a2: *const c_void,
-    a3: *const c_void, a4: *const c_void, a5: *const c_void,
+    func: *const c_void,
+    a0: usize,
+    a1: *const c_void,
+    a2: *const c_void,
+    a3: *const c_void,
+    a4: *const c_void,
+    a5: *const c_void,
 ) -> MetadataResponse {
-    type F = unsafe extern "C" fn(usize, *const c_void, *const c_void, *const c_void, *const c_void, *const c_void) -> MetadataResponse;
+    type F = unsafe extern "C" fn(
+        usize,
+        *const c_void,
+        *const c_void,
+        *const c_void,
+        *const c_void,
+        *const c_void,
+    ) -> MetadataResponse;
     let f: F = core::mem::transmute(func);
     f(a0, a1, a2, a3, a4, a5)
 }
 
 #[cfg(target_arch = "aarch64")]
 unsafe fn call_swift_cc_5_to_ptr(
-    func: *const c_void, a0: *const c_void, a1: *const c_void,
-    a2: *const c_void, a3: *const c_void, a4: *const c_void,
+    func: *const c_void,
+    a0: *const c_void,
+    a1: *const c_void,
+    a2: *const c_void,
+    a3: *const c_void,
+    a4: *const c_void,
 ) -> *const c_void {
     let r: *const c_void;
     core::arch::asm!("blr {f}", f = in(reg) func,
@@ -760,15 +929,29 @@ unsafe fn call_swift_cc_5_to_ptr(
 
 #[cfg(target_arch = "x86_64")]
 unsafe fn call_swift_cc_5_to_ptr(
-    func: *const c_void, a0: *const c_void, a1: *const c_void,
-    a2: *const c_void, a3: *const c_void, a4: *const c_void,
+    func: *const c_void,
+    a0: *const c_void,
+    a1: *const c_void,
+    a2: *const c_void,
+    a3: *const c_void,
+    a4: *const c_void,
 ) -> *const c_void {
-    type F = unsafe extern "C" fn(*const c_void, *const c_void, *const c_void, *const c_void, *const c_void) -> *const c_void;
+    type F = unsafe extern "C" fn(
+        *const c_void,
+        *const c_void,
+        *const c_void,
+        *const c_void,
+        *const c_void,
+    ) -> *const c_void;
     (core::mem::transmute::<_, F>(func))(a0, a1, a2, a3, a4)
 }
 
 #[cfg(target_arch = "aarch64")]
-unsafe fn call_swift_cc_2_to_bool(func: *const c_void, a0: *const c_void, a1: *const c_void) -> bool {
+unsafe fn call_swift_cc_2_to_bool(
+    func: *const c_void,
+    a0: *const c_void,
+    a1: *const c_void,
+) -> bool {
     let r: usize;
     core::arch::asm!("blr {f}", f = in(reg) func,
         in("x0") a0, in("x1") a1,
@@ -783,13 +966,21 @@ unsafe fn call_swift_cc_2_to_bool(func: *const c_void, a0: *const c_void, a1: *c
 }
 
 #[cfg(target_arch = "x86_64")]
-unsafe fn call_swift_cc_2_to_bool(func: *const c_void, a0: *const c_void, a1: *const c_void) -> bool {
+unsafe fn call_swift_cc_2_to_bool(
+    func: *const c_void,
+    a0: *const c_void,
+    a1: *const c_void,
+) -> bool {
     type F = unsafe extern "C" fn(*const c_void, *const c_void) -> bool;
     (core::mem::transmute::<_, F>(func))(a0, a1)
 }
 
 #[cfg(target_arch = "aarch64")]
-unsafe fn call_swift_cc_2_to_ptr(func: *const c_void, a0: *const c_void, a1: *const c_void) -> *const c_void {
+unsafe fn call_swift_cc_2_to_ptr(
+    func: *const c_void,
+    a0: *const c_void,
+    a1: *const c_void,
+) -> *const c_void {
     let r: *const c_void;
     core::arch::asm!("blr {f}", f = in(reg) func,
         in("x0") a0, in("x1") a1,
@@ -804,13 +995,22 @@ unsafe fn call_swift_cc_2_to_ptr(func: *const c_void, a0: *const c_void, a1: *co
 }
 
 #[cfg(target_arch = "x86_64")]
-unsafe fn call_swift_cc_2_to_ptr(func: *const c_void, a0: *const c_void, a1: *const c_void) -> *const c_void {
+unsafe fn call_swift_cc_2_to_ptr(
+    func: *const c_void,
+    a0: *const c_void,
+    a1: *const c_void,
+) -> *const c_void {
     type F = unsafe extern "C" fn(*const c_void, *const c_void) -> *const c_void;
     (core::mem::transmute::<_, F>(func))(a0, a1)
 }
 
 #[cfg(target_arch = "aarch64")]
-unsafe fn call_swift_cc_3_to_ptr(func: *const c_void, a0: *const c_void, a1: *const c_void, a2: *const c_void) -> *const c_void {
+unsafe fn call_swift_cc_3_to_ptr(
+    func: *const c_void,
+    a0: *const c_void,
+    a1: *const c_void,
+    a2: *const c_void,
+) -> *const c_void {
     let r: *const c_void;
     core::arch::asm!("blr {f}", f = in(reg) func,
         in("x0") a0, in("x1") a1, in("x2") a2,
@@ -825,15 +1025,24 @@ unsafe fn call_swift_cc_3_to_ptr(func: *const c_void, a0: *const c_void, a1: *co
 }
 
 #[cfg(target_arch = "x86_64")]
-unsafe fn call_swift_cc_3_to_ptr(func: *const c_void, a0: *const c_void, a1: *const c_void, a2: *const c_void) -> *const c_void {
+unsafe fn call_swift_cc_3_to_ptr(
+    func: *const c_void,
+    a0: *const c_void,
+    a1: *const c_void,
+    a2: *const c_void,
+) -> *const c_void {
     type F = unsafe extern "C" fn(*const c_void, *const c_void, *const c_void) -> *const c_void;
     (core::mem::transmute::<_, F>(func))(a0, a1, a2)
 }
 
 #[cfg(target_arch = "aarch64")]
 unsafe fn call_swift_cc_5_void(
-    func: *const c_void, a0: *const c_void, a1: *const c_void,
-    a2: *const c_void, a3: *const c_void, a4: *const c_void,
+    func: *const c_void,
+    a0: *const c_void,
+    a1: *const c_void,
+    a2: *const c_void,
+    a3: *const c_void,
+    a4: *const c_void,
 ) {
     core::arch::asm!("blr {f}", f = in(reg) func,
         in("x0") a0, in("x1") a1, in("x2") a2, in("x3") a3, in("x4") a4,
@@ -847,19 +1056,33 @@ unsafe fn call_swift_cc_5_void(
 
 #[cfg(target_arch = "x86_64")]
 unsafe fn call_swift_cc_5_void(
-    func: *const c_void, a0: *const c_void, a1: *const c_void,
-    a2: *const c_void, a3: *const c_void, a4: *const c_void,
+    func: *const c_void,
+    a0: *const c_void,
+    a1: *const c_void,
+    a2: *const c_void,
+    a3: *const c_void,
+    a4: *const c_void,
 ) {
-    type F = unsafe extern "C" fn(*const c_void, *const c_void, *const c_void, *const c_void, *const c_void);
+    type F = unsafe extern "C" fn(
+        *const c_void,
+        *const c_void,
+        *const c_void,
+        *const c_void,
+        *const c_void,
+    );
     (core::mem::transmute::<_, F>(func))(a0, a1, a2, a3, a4);
 }
 
 #[cfg(target_arch = "aarch64")]
 unsafe fn call_swift_cc_4_to_pair(
-    func: *const c_void, a0: *const c_void, a1: *const c_void,
-    a2: *const c_void, a3: *const c_void,
+    func: *const c_void,
+    a0: *const c_void,
+    a1: *const c_void,
+    a2: *const c_void,
+    a3: *const c_void,
 ) -> Result<(*mut c_void, *mut c_void), ThunkError> {
-    let r0: *mut c_void; let r1: *mut c_void;
+    let r0: *mut c_void;
+    let r1: *mut c_void;
     core::arch::asm!("blr {f}", f = in(reg) func,
         in("x0") a0, in("x1") a1, in("x2") a2, in("x3") a3,
         lateout("x0") r0, lateout("x1") r1,
@@ -873,10 +1096,14 @@ unsafe fn call_swift_cc_4_to_pair(
 
 #[cfg(target_arch = "x86_64")]
 unsafe fn call_swift_cc_4_to_pair(
-    func: *const c_void, a0: *const c_void, a1: *const c_void,
-    a2: *const c_void, a3: *const c_void,
+    func: *const c_void,
+    a0: *const c_void,
+    a1: *const c_void,
+    a2: *const c_void,
+    a3: *const c_void,
 ) -> Result<(*mut c_void, *mut c_void), ThunkError> {
-    #[repr(C)] struct P(*mut c_void, *mut c_void);
+    #[repr(C)]
+    struct P(*mut c_void, *mut c_void);
     type F = unsafe extern "C" fn(*const c_void, *const c_void, *const c_void, *const c_void) -> P;
     let p = (core::mem::transmute::<_, F>(func))(a0, a1, a2, a3);
     Ok((p.0, p.1))
@@ -884,9 +1111,13 @@ unsafe fn call_swift_cc_4_to_pair(
 
 #[cfg(target_arch = "aarch64")]
 unsafe fn call_swift_cc_3_to_pair(
-    func: *const c_void, a0: *const c_void, a1: *const c_void, a2: *const c_void,
+    func: *const c_void,
+    a0: *const c_void,
+    a1: *const c_void,
+    a2: *const c_void,
 ) -> Result<(*mut c_void, *mut c_void), ThunkError> {
-    let r0: *mut c_void; let r1: *mut c_void;
+    let r0: *mut c_void;
+    let r1: *mut c_void;
     core::arch::asm!("blr {f}", f = in(reg) func,
         in("x0") a0, in("x1") a1, in("x2") a2,
         lateout("x0") r0, lateout("x1") r1,
@@ -900,9 +1131,13 @@ unsafe fn call_swift_cc_3_to_pair(
 
 #[cfg(target_arch = "x86_64")]
 unsafe fn call_swift_cc_3_to_pair(
-    func: *const c_void, a0: *const c_void, a1: *const c_void, a2: *const c_void,
+    func: *const c_void,
+    a0: *const c_void,
+    a1: *const c_void,
+    a2: *const c_void,
 ) -> Result<(*mut c_void, *mut c_void), ThunkError> {
-    #[repr(C)] struct P(*mut c_void, *mut c_void);
+    #[repr(C)]
+    struct P(*mut c_void, *mut c_void);
     type F = unsafe extern "C" fn(*const c_void, *const c_void, *const c_void) -> P;
     let p = (core::mem::transmute::<_, F>(func))(a0, a1, a2);
     Ok((p.0, p.1))
@@ -910,8 +1145,11 @@ unsafe fn call_swift_cc_3_to_pair(
 
 #[cfg(target_arch = "aarch64")]
 unsafe fn call_swift_cc_4_to_u32(
-    func: *const c_void, a0: *const c_void, a1: *const c_void,
-    a2: *const c_void, a3: *const c_void,
+    func: *const c_void,
+    a0: *const c_void,
+    a1: *const c_void,
+    a2: *const c_void,
+    a3: *const c_void,
 ) -> u32 {
     let r: usize;
     core::arch::asm!("blr {f}", f = in(reg) func,
@@ -927,9 +1165,13 @@ unsafe fn call_swift_cc_4_to_u32(
 
 #[cfg(target_arch = "x86_64")]
 unsafe fn call_swift_cc_4_to_u32(
-    func: *const c_void, a0: *const c_void, a1: *const c_void,
-    a2: *const c_void, a3: *const c_void,
+    func: *const c_void,
+    a0: *const c_void,
+    a1: *const c_void,
+    a2: *const c_void,
+    a3: *const c_void,
 ) -> u32 {
-    type F = unsafe extern "C" fn(*const c_void, *const c_void, *const c_void, *const c_void) -> u32;
+    type F =
+        unsafe extern "C" fn(*const c_void, *const c_void, *const c_void, *const c_void) -> u32;
     (core::mem::transmute::<_, F>(func))(a0, a1, a2, a3)
 }

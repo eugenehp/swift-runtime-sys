@@ -24,16 +24,10 @@ unsafe extern "C" {
     ) -> *mut c_void;
 
     /// Initialize an object header for a stack-allocated object.
-    pub fn swift_initStackObject(
-        metadata: MetadataRef,
-        object: HeapObjectRef,
-    ) -> HeapObjectRef;
+    pub fn swift_initStackObject(metadata: MetadataRef, object: HeapObjectRef) -> HeapObjectRef;
 
     /// Initialize an object header for a statically allocated object.
-    pub fn swift_initStaticObject(
-        metadata: MetadataRef,
-        object: HeapObjectRef,
-    ) -> HeapObjectRef;
+    pub fn swift_initStaticObject(metadata: MetadataRef, object: HeapObjectRef) -> HeapObjectRef;
 
     /// Initialize an inert heap object.
     pub fn swift_instantiateInertHeapObject(

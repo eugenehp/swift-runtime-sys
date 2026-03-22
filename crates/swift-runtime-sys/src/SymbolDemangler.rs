@@ -12,12 +12,12 @@ impl SymbolDemangler {
     /// Create a new demangler with the system swift-demangle tool.
     pub fn new() -> Result<Self, String> {
         let path = "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-demangle";
-        
+
         // Verify the tool exists
         if !std::path::Path::new(path).exists() {
             return Err("swift-demangle tool not found at standard Xcode location".to_string());
         }
-        
+
         Ok(SymbolDemangler {
             cache: HashMap::new(),
             swift_demangle_path: path.to_string(),
@@ -44,7 +44,7 @@ impl SymbolDemangler {
                 // We extract the part after the arrow
                 if let Some(arrow_pos) = stdout.find("--->") {
                     let after_arrow = stdout[arrow_pos + 4..].trim();
-                    
+
                     // Extract the meaningful part (skip module prefix if present)
                     // Format is often: "ModuleName.functionName(...)" or just "functionName(...)"
                     // We want to extract just the readable part
@@ -90,7 +90,7 @@ mod tests {
         let mut demangler = SymbolDemangler::new().expect("failed to create demangler");
         let mangled = "_$s10RustBridge23swift_contract_any_wrapySvSgs5Int32V_ACtF";
         let demangled = demangler.demangle(mangled);
-        
+
         // Should contain readable parts like "any_wrap" and "Int32"
         assert!(demangled.contains("any_wrap"), "demangled: {}", demangled);
         assert!(demangled.contains("Int32"), "demangled: {}", demangled);
@@ -100,11 +100,11 @@ mod tests {
     fn test_cache() {
         let mut demangler = SymbolDemangler::new().expect("failed to create demangler");
         let mangled = "_$s10RustBridge23swift_contract_any_wrapySvSgs5Int32V_ACtF";
-        
+
         // First call (cache miss)
         let result1 = demangler.demangle(mangled);
         assert_eq!(demangler.cache_size(), 1);
-        
+
         // Second call (cache hit)
         let result2 = demangler.demangle(mangled);
         assert_eq!(result1, result2);

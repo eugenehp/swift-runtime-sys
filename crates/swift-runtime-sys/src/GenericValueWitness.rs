@@ -11,10 +11,7 @@ pub type OpaqueValueRef = *mut c_void;
 
 unsafe extern "C" {
     /// Destroy a value of the given type.
-    pub fn swift_generic_destroy(
-        value: OpaqueValueRef,
-        self_type: MetadataRef,
-    );
+    pub fn swift_generic_destroy(value: OpaqueValueRef, self_type: MetadataRef);
 
     /// Initialize a value with a copy.
     pub fn swift_generic_initWithCopy(

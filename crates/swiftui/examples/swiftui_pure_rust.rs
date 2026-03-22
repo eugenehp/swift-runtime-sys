@@ -14,7 +14,9 @@
 use std::ffi::{c_char, c_void};
 
 #[link(name = "AppKit", kind = "framework")]
-unsafe extern "C" { fn NSApplicationLoad() -> bool; }
+unsafe extern "C" {
+    fn NSApplicationLoad() -> bool;
+}
 unsafe extern "C" {
     fn dlopen(path: *const c_char, mode: i32) -> *mut c_void;
     fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
@@ -23,7 +25,10 @@ unsafe extern "C" {
 fn main() {
     unsafe {
         NSApplicationLoad();
-        dlopen(c"/System/Library/Frameworks/SwiftUI.framework/SwiftUI".as_ptr(), 1);
+        dlopen(
+            c"/System/Library/Frameworks/SwiftUI.framework/SwiftUI".as_ptr(),
+            1,
+        );
         let h = dlopen(c"/tmp/swiftui_analysis/libCCProbe.dylib".as_ptr(), 10);
         assert!(!h.is_null(), "Compile the helper first — see doc comment");
 
@@ -31,8 +36,10 @@ fn main() {
 
         // ── Step 1: Create Swift.String in pure Rust (inline asm) ──
         let msg = "Hi Rust";
-        let string_init = dlsym((-2isize) as *mut c_void,
-            c"$sSS21_builtinStringLiteral17utf8CodeUnitCount7isASCIISSBp_BwBi1_tcfC".as_ptr());
+        let string_init = dlsym(
+            (-2isize) as *mut c_void,
+            c"$sSS21_builtinStringLiteral17utf8CodeUnitCount7isASCIISSBp_BwBi1_tcfC".as_ptr(),
+        );
         let string_meta = dlsym((-2isize) as *mut c_void, c"$sSSN".as_ptr());
 
         let s0: u64;
@@ -57,7 +64,7 @@ fn main() {
         let mut string_bytes = [0u8; 16];
         string_bytes[..8].copy_from_slice(&s0.to_le_bytes());
         string_bytes[8..].copy_from_slice(&s1.to_le_bytes());
-        
+
         let to_ex_ptr = dlsym(h, c"rust_string_to_existential".as_ptr());
         println!("  to_existential fn: {:?}", to_ex_ptr);
         assert!(!to_ex_ptr.is_null(), "rust_string_to_existential not found");
@@ -74,15 +81,20 @@ fn main() {
         let text_meta = dlsym((-2isize) as *mut c_void, c"$s7SwiftUI4TextVN".as_ptr()) as u64;
         let view_proto = dlsym((-2isize) as *mut c_void, c"$s7SwiftUI4ViewMp".as_ptr());
         type ConformsFn = unsafe extern "C" fn(*const c_void, *const c_void) -> *const c_void;
-        let conforms: ConformsFn = core::mem::transmute(
-            dlsym((-2isize) as *mut c_void, c"swift_conformsToProtocol".as_ptr()));
+        let conforms: ConformsFn = core::mem::transmute(dlsym(
+            (-2isize) as *mut c_void,
+            c"swift_conformsToProtocol".as_ptr(),
+        ));
         let wt = conforms(text_meta as *const c_void, view_proto as _) as u64;
-        println!("3. Metadata verified: meta={}, wt={} ✓", ex_meta == text_meta, ex_wt == wt);
+        println!(
+            "3. Metadata verified: meta={}, wt={} ✓",
+            ex_meta == text_meta,
+            ex_wt == wt
+        );
 
         // ── Step 3: Show in window ──
         type ShowFn = unsafe extern "C" fn(*const c_void);
-        let show: ShowFn = core::mem::transmute(
-            dlsym(h, c"rust_show_existential".as_ptr()));
+        let show: ShowFn = core::mem::transmute(dlsym(h, c"rust_show_existential".as_ptr()));
         println!("\n4. Opening SwiftUI window with: '{msg}'");
         show(existential.as_ptr() as _);
     }

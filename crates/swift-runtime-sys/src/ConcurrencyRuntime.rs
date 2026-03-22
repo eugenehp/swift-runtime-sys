@@ -74,10 +74,7 @@ unsafe extern "C" {
     pub fn swift_task_suspend() -> AsyncTaskRef;
 
     /// Switch to an executor.
-    pub fn swift_task_switch(
-        resuming: AsyncContextRef,
-        new_executor: ExecutorRef,
-    );
+    pub fn swift_task_switch(resuming: AsyncContextRef, new_executor: ExecutorRef);
 
     /// Create and immediately run a task.
     pub fn swift_task_immediate(
@@ -88,9 +85,7 @@ unsafe extern "C" {
     );
 
     /// Start a task on the main actor.
-    pub fn swift_task_startOnMainActor(
-        context: AsyncContextRef,
-    );
+    pub fn swift_task_startOnMainActor(context: AsyncContextRef);
 
     /// Get the base priority of a task.
     pub fn swift_task_basePriority(task: AsyncTaskRef) -> u32;
@@ -122,10 +117,7 @@ unsafe extern "C" {
     pub fn swift_task_enqueueGlobal(job: JobRef);
 
     /// Enqueue a job on the global executor with a delay.
-    pub fn swift_task_enqueueGlobalWithDelay(
-        delay: u64,
-        job: JobRef,
-    );
+    pub fn swift_task_enqueueGlobalWithDelay(delay: u64, job: JobRef);
 
     /// Enqueue a job on the global executor with a deadline.
     pub fn swift_task_enqueueGlobalWithDeadline(
@@ -141,16 +133,10 @@ unsafe extern "C" {
     pub fn swift_task_enqueueMainExecutor(job: JobRef);
 
     /// Enqueue a task on a dispatch queue.
-    pub fn swift_task_enqueueOnDispatchQueue(
-        job: JobRef,
-        queue: *const c_void,
-    );
+    pub fn swift_task_enqueueOnDispatchQueue(job: JobRef, queue: *const c_void);
 
     /// Enqueue a task on a specific task executor.
-    pub fn swift_task_enqueueTaskOnExecutor(
-        task: AsyncTaskRef,
-        executor: ExecutorRef,
-    );
+    pub fn swift_task_enqueueTaskOnExecutor(task: AsyncTaskRef, executor: ExecutorRef);
 
     /// Drain the main queue in an async main entry point.
     pub fn swift_task_asyncMainDrainQueue() -> !;
@@ -167,19 +153,14 @@ unsafe extern "C" {
     pub fn swift_task_isCurrentExecutor(executor: ExecutorRef) -> bool;
 
     /// Check if currently on the given executor (with flags).
-    pub fn swift_task_isCurrentExecutorWithFlags(
-        executor: ExecutorRef,
-        flags: usize,
-    ) -> bool;
+    pub fn swift_task_isCurrentExecutorWithFlags(executor: ExecutorRef, flags: usize) -> bool;
 
     /// Check if currently on the main executor.
     pub fn swift_task_isMainExecutor(executor: ExecutorRef) -> bool;
 
     /// Check if a task is on an executor.
-    pub fn swift_task_isOnExecutor(
-        identity: *const c_void,
-        expected_executor: ExecutorRef,
-    ) -> bool;
+    pub fn swift_task_isOnExecutor(identity: *const c_void, expected_executor: ExecutorRef)
+        -> bool;
 
     /// Check that the current context is isolated to the expected executor.
     pub fn swift_task_checkIsolated(executor: ExecutorRef);
@@ -224,9 +205,7 @@ unsafe extern "C" {
     pub fn swift_task_localsCopyTo(target: AsyncTaskRef);
 
     /// Report illegal task-local binding within withTaskGroup.
-    pub fn swift_task_reportIllegalTaskLocalBindingWithinWithTaskGroup(
-        key: *const c_void,
-    );
+    pub fn swift_task_reportIllegalTaskLocalBindingWithinWithTaskGroup(key: *const c_void);
 
     // ── Task executor preference ──
 
@@ -260,25 +239,16 @@ unsafe extern "C" {
     // ── Continuations ──
 
     /// Initialize a continuation.
-    pub fn swift_continuation_init(
-        continuation: ContinuationRef,
-        flags: u32,
-    ) -> AsyncTaskRef;
+    pub fn swift_continuation_init(continuation: ContinuationRef, flags: u32) -> AsyncTaskRef;
 
     /// Await a continuation.
-    pub fn swift_continuation_await(
-        continuation: ContinuationRef,
-    );
+    pub fn swift_continuation_await(continuation: ContinuationRef);
 
     /// Resume a continuation with a value.
-    pub fn swift_continuation_resume(
-        continuation: ContinuationRef,
-    );
+    pub fn swift_continuation_resume(continuation: ContinuationRef);
 
     /// Resume a throwing continuation with a value.
-    pub fn swift_continuation_throwingResume(
-        continuation: ContinuationRef,
-    );
+    pub fn swift_continuation_throwingResume(continuation: ContinuationRef);
 
     /// Resume a throwing continuation with an error.
     pub fn swift_continuation_throwingResumeWithError(
@@ -289,16 +259,10 @@ unsafe extern "C" {
     // ── Task groups ──
 
     /// Initialize a task group.
-    pub fn swift_taskGroup_initialize(
-        flags: usize,
-        group: TaskGroupRef,
-    );
+    pub fn swift_taskGroup_initialize(flags: usize, group: TaskGroupRef);
 
     /// Initialize a task group with flags.
-    pub fn swift_taskGroup_initializeWithFlags(
-        flags: usize,
-        group: TaskGroupRef,
-    );
+    pub fn swift_taskGroup_initializeWithFlags(flags: usize, group: TaskGroupRef);
 
     /// Initialize a task group with options.
     pub fn swift_taskGroup_initializeWithOptions(
@@ -311,16 +275,10 @@ unsafe extern "C" {
     pub fn swift_taskGroup_destroy(group: TaskGroupRef);
 
     /// Add a pending task to the group.
-    pub fn swift_taskGroup_addPending(
-        group: TaskGroupRef,
-        unconditionally: bool,
-    ) -> bool;
+    pub fn swift_taskGroup_addPending(group: TaskGroupRef, unconditionally: bool) -> bool;
 
     /// Attach a child task to the group.
-    pub fn swift_taskGroup_attachChild(
-        group: TaskGroupRef,
-        child: AsyncTaskRef,
-    );
+    pub fn swift_taskGroup_attachChild(group: TaskGroupRef, child: AsyncTaskRef);
 
     /// Cancel all tasks in the group.
     pub fn swift_taskGroup_cancelAll(group: TaskGroupRef);
@@ -402,25 +360,16 @@ unsafe extern "C" {
     );
 
     /// Finish an async let.
-    pub fn swift_asyncLet_finish(
-        async_let: AsyncLetRef,
-        resumeFunction: *const c_void,
-    );
+    pub fn swift_asyncLet_finish(async_let: AsyncLetRef, resumeFunction: *const c_void);
 
     /// End an async let.
     pub fn swift_asyncLet_end(async_let: AsyncLetRef);
 
     /// Wait for an async let.
-    pub fn swift_asyncLet_wait(
-        async_let: AsyncLetRef,
-        resumeFunction: *const c_void,
-    );
+    pub fn swift_asyncLet_wait(async_let: AsyncLetRef, resumeFunction: *const c_void);
 
     /// Wait for a throwing async let.
-    pub fn swift_asyncLet_wait_throwing(
-        async_let: AsyncLetRef,
-        resumeFunction: *const c_void,
-    );
+    pub fn swift_asyncLet_wait_throwing(async_let: AsyncLetRef, resumeFunction: *const c_void);
 
     // ── Actors ──
 
@@ -440,17 +389,13 @@ unsafe extern "C" {
     pub fn swift_defaultActor_enqueue(job: JobRef, actor: DefaultActorRef);
 
     /// Initialize a remote distributed actor.
-    pub fn swift_distributedActor_remote_initialize(
-        actor_type: MetadataRef,
-    ) -> *mut c_void;
+    pub fn swift_distributedActor_remote_initialize(actor_type: MetadataRef) -> *mut c_void;
 
     /// Check if a distributed actor is remote.
     pub fn swift_distributed_actor_is_remote(actor: *const c_void) -> bool;
 
     /// Initialize a non-default distributed actor.
-    pub fn swift_nonDefaultDistributedActor_initialize(
-        actor_type: MetadataRef,
-    ) -> *mut c_void;
+    pub fn swift_nonDefaultDistributedActor_initialize(actor_type: MetadataRef) -> *mut c_void;
 
     // ── Jobs ──
 
@@ -465,16 +410,10 @@ unsafe extern "C" {
     );
 
     /// Run a job on a task executor.
-    pub fn swift_job_run_on_task_executor(
-        job: JobRef,
-        executor: ExecutorRef,
-    );
+    pub fn swift_job_run_on_task_executor(job: JobRef, executor: ExecutorRef);
 
     /// Allocate a job.
-    pub fn swift_job_allocate(
-        flags: JobFlags,
-        function: *const c_void,
-    ) -> JobRef;
+    pub fn swift_job_allocate(flags: JobFlags, function: *const c_void) -> JobRef;
 
     /// Deallocate a job.
     pub fn swift_job_deallocate(job: JobRef);
@@ -486,26 +425,15 @@ unsafe extern "C" {
     ) -> JobRef;
 
     /// Deinit on executor.
-    pub fn swift_task_deinitOnExecutor(
-        object: *mut c_void,
-        executor: ExecutorRef,
-    );
+    pub fn swift_task_deinitOnExecutor(object: *mut c_void, executor: ExecutorRef);
 
     // ── Clock / sleep ──
 
     /// Get the current time.
-    pub fn swift_get_time(
-        seconds: *mut i64,
-        nanoseconds: *mut i64,
-        clock: i32,
-    );
+    pub fn swift_get_time(seconds: *mut i64, nanoseconds: *mut i64, clock: i32);
 
     /// Get the clock resolution.
-    pub fn swift_get_clock_res(
-        seconds: *mut i64,
-        nanoseconds: *mut i64,
-        clock: i32,
-    );
+    pub fn swift_get_clock_res(seconds: *mut i64, nanoseconds: *mut i64, clock: i32);
 
     /// Sleep for a duration.
     pub fn swift_sleep(
@@ -519,9 +447,7 @@ unsafe extern "C" {
     );
 
     /// Donate the current thread to the global executor.
-    pub fn swift_task_donateThreadToGlobalExecutorUntil(
-        condition: *const c_void,
-    );
+    pub fn swift_task_donateThreadToGlobalExecutorUntil(condition: *const c_void);
 
     // ── Misc concurrency ──
 

@@ -8,7 +8,9 @@
 use std::ffi::{c_char, c_void};
 
 #[link(name = "AppKit", kind = "framework")]
-unsafe extern "C" { fn NSApplicationLoad() -> bool; }
+unsafe extern "C" {
+    fn NSApplicationLoad() -> bool;
+}
 unsafe extern "C" {
     fn dlopen(path: *const c_char, mode: i32) -> *mut c_void;
     fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
@@ -25,13 +27,17 @@ macro_rules! func {
 fn main() {
     unsafe {
         NSApplicationLoad();
-        dlopen(c"/System/Library/Frameworks/SwiftUI.framework/SwiftUI".as_ptr(), 1);
+        dlopen(
+            c"/System/Library/Frameworks/SwiftUI.framework/SwiftUI".as_ptr(),
+            1,
+        );
         let h = dlopen(c"swift_helper/libSwiftUIHelper.dylib".as_ptr(), 2);
         assert!(!h.is_null(), "Build the helper first — see doc comment");
 
         // Resolve all functions
         type TextFn = unsafe extern "C" fn(*const u8, usize) -> V;
-        type StyledTextFn = unsafe extern "C" fn(*const u8, usize, f32, i32, f32, f32, f32, f32) -> V;
+        type StyledTextFn =
+            unsafe extern "C" fn(*const u8, usize, f32, i32, f32, f32, f32, f32) -> V;
         type ImageFn = unsafe extern "C" fn(*const u8, usize) -> V;
         type SpacerFn = unsafe extern "C" fn() -> V;
         type DividerFn = unsafe extern "C" fn() -> V;
@@ -43,7 +49,12 @@ fn main() {
         type OpacityFn = unsafe extern "C" fn(V, f32) -> V;
         type BorderFn = unsafe extern "C" fn(V, f32, f32, f32, f32) -> V;
         type ScrollFn = unsafe extern "C" fn(V) -> V;
-        type ButtonFn = unsafe extern "C" fn(*const u8, usize, unsafe extern "C" fn(*mut c_void), *mut c_void) -> V;
+        type ButtonFn = unsafe extern "C" fn(
+            *const u8,
+            usize,
+            unsafe extern "C" fn(*mut c_void),
+            *mut c_void,
+        ) -> V;
         type ToggleFn = unsafe extern "C" fn(*const u8, usize, bool) -> V;
         type ProgressFn = unsafe extern "C" fn(f32, f32) -> V;
         type ColorFn = unsafe extern "C" fn(f32, f32, f32, f32) -> V;
@@ -105,7 +116,9 @@ fn main() {
 
         // Controls section
         let (p, l) = s("Click me!");
-        unsafe extern "C" fn on_click(_: *mut c_void) { println!("Button clicked from Rust!"); }
+        unsafe extern "C" fn on_click(_: *mut c_void) {
+            println!("Button clicked from Rust!");
+        }
         let btn = button(p, l, on_click, std::ptr::null_mut());
 
         let tgl = {
@@ -159,7 +172,16 @@ fn main() {
 
         // Assemble everything
         let content = {
-            let items = [header, divider(), stats_row, controls, swatches, spacer(), divider(), footer];
+            let items = [
+                header,
+                divider(),
+                stats_row,
+                controls,
+                swatches,
+                spacer(),
+                divider(),
+                footer,
+            ];
             let stack = vstack(items.as_ptr(), items.len());
             padding(stack, 20.0)
         };

@@ -13,7 +13,10 @@ pub struct ViewHandle {
 
 impl ViewHandle {
     pub(crate) fn new(ptr: *mut c_void, release_fn: unsafe extern "C" fn(*mut c_void)) -> Self {
-        Self { ptr, release_fn: Some(release_fn) }
+        Self {
+            ptr,
+            release_fn: Some(release_fn),
+        }
     }
 
     /// Get the raw pointer (for passing to helper functions).

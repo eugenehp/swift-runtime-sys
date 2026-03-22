@@ -85,16 +85,10 @@ unsafe extern "C" {
     );
 
     /// Relocate class metadata for a resilient superclass.
-    pub fn swift_relocateClassMetadata(
-        metadata: MetadataRef,
-        superclass: MetadataRef,
-    );
+    pub fn swift_relocateClassMetadata(metadata: MetadataRef, superclass: MetadataRef);
 
     /// Set the class metadata for an object.
-    pub fn swift_setClassMetadata(
-        metadata: MetadataRef,
-        superclass: MetadataRef,
-    );
+    pub fn swift_setClassMetadata(metadata: MetadataRef, superclass: MetadataRef);
 
     /// Update pure ObjC class metadata.
     pub fn swift_updatePureObjCClassMetadata(

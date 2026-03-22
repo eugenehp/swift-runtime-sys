@@ -10,7 +10,8 @@ unsafe extern "C" {
 }
 
 type TextFn = unsafe extern "C" fn(*const u8, usize) -> *mut c_void;
-type StyledTextFn = unsafe extern "C" fn(*const u8, usize, f32, i32, f32, f32, f32, f32) -> *mut c_void;
+type StyledTextFn =
+    unsafe extern "C" fn(*const u8, usize, f32, i32, f32, f32, f32, f32) -> *mut c_void;
 type ImageFn = unsafe extern "C" fn(*const u8, usize) -> *mut c_void;
 type VoidToViewFn = unsafe extern "C" fn() -> *mut c_void;
 type StackFn = unsafe extern "C" fn(*const *mut c_void, usize) -> *mut c_void;
@@ -19,7 +20,12 @@ type FrameFn = unsafe extern "C" fn(*mut c_void, f32, f32) -> *mut c_void;
 type ColorModFn = unsafe extern "C" fn(*mut c_void, f32, f32, f32, f32) -> *mut c_void;
 type BorderFn = unsafe extern "C" fn(*mut c_void, f32, f32, f32, f32) -> *mut c_void;
 type ScrollFn = unsafe extern "C" fn(*mut c_void) -> *mut c_void;
-type ButtonFn = unsafe extern "C" fn(*const u8, usize, unsafe extern "C" fn(*mut c_void), *mut c_void) -> *mut c_void;
+type ButtonFn = unsafe extern "C" fn(
+    *const u8,
+    usize,
+    unsafe extern "C" fn(*mut c_void),
+    *mut c_void,
+) -> *mut c_void;
 type ToggleFn = unsafe extern "C" fn(*const u8, usize, bool) -> *mut c_void;
 type ProgressFn = unsafe extern "C" fn(f32, f32) -> *mut c_void;
 type ColorFn = unsafe extern "C" fn(f32, f32, f32, f32) -> *mut c_void;
@@ -55,7 +61,11 @@ pub struct SwiftUI {
 
 fn resolve(h: *mut c_void, name: &[u8]) -> *mut c_void {
     let ptr = unsafe { dlsym(h, name.as_ptr() as *const c_char) };
-    assert!(!ptr.is_null(), "Symbol not found: {}", std::str::from_utf8(&name[..name.len()-1]).unwrap());
+    assert!(
+        !ptr.is_null(),
+        "Symbol not found: {}",
+        std::str::from_utf8(&name[..name.len() - 1]).unwrap()
+    );
     ptr
 }
 
@@ -64,7 +74,10 @@ impl SwiftUI {
     pub fn load(helper_path: &str) -> Result<Self, String> {
         unsafe {
             // Load SwiftUI framework
-            dlopen(c"/System/Library/Frameworks/SwiftUI.framework/SwiftUI".as_ptr(), 1);
+            dlopen(
+                c"/System/Library/Frameworks/SwiftUI.framework/SwiftUI".as_ptr(),
+                1,
+            );
 
             let path = CString::new(helper_path).unwrap();
             let h = dlopen(path.as_ptr(), 2);
@@ -109,7 +122,16 @@ impl SwiftUI {
         self.handle(unsafe { (self.text_fn)(s.as_ptr(), s.len()) })
     }
 
-    pub fn styled_text(&self, s: &str, size: f32, weight: i32, r: f32, g: f32, b: f32, a: f32) -> ViewHandle {
+    pub fn styled_text(
+        &self,
+        s: &str,
+        size: f32,
+        weight: i32,
+        r: f32,
+        g: f32,
+        b: f32,
+        a: f32,
+    ) -> ViewHandle {
         self.handle(unsafe { (self.styled_text_fn)(s.as_ptr(), s.len(), size, weight, r, g, b, a) })
     }
 
@@ -142,7 +164,14 @@ impl SwiftUI {
     }
 
     pub fn textfield(&self, placeholder: &str, value: &str) -> ViewHandle {
-        self.handle(unsafe { (self.textfield_fn)(placeholder.as_ptr(), placeholder.len(), value.as_ptr(), value.len()) })
+        self.handle(unsafe {
+            (self.textfield_fn)(
+                placeholder.as_ptr(),
+                placeholder.len(),
+                value.as_ptr(),
+                value.len(),
+            )
+        })
     }
 
     // ── Stacks ──
@@ -198,7 +227,12 @@ impl SwiftUI {
     ///
     /// # Safety
     /// The callback and userdata must remain valid for the lifetime of the button.
-    pub fn button_raw(&self, label: &str, callback: unsafe extern "C" fn(*mut c_void), userdata: *mut c_void) -> ViewHandle {
+    pub fn button_raw(
+        &self,
+        label: &str,
+        callback: unsafe extern "C" fn(*mut c_void),
+        userdata: *mut c_void,
+    ) -> ViewHandle {
         self.handle(unsafe { (self.button_fn)(label.as_ptr(), label.len(), callback, userdata) })
     }
 
@@ -208,7 +242,14 @@ impl SwiftUI {
             let f: fn() = std::mem::transmute(ptr);
             f();
         }
-        self.handle(unsafe { (self.button_fn)(label.as_ptr(), label.len(), trampoline, callback as *mut c_void) })
+        self.handle(unsafe {
+            (self.button_fn)(
+                label.as_ptr(),
+                label.len(),
+                trampoline,
+                callback as *mut c_void,
+            )
+        })
     }
 
     // ── Window ──

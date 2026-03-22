@@ -9,8 +9,7 @@ thread_local! {
 
 /// Initialize the thread-local SwiftUI context.
 pub fn init(helper_path: &str) {
-    let ui = SwiftUI::load(helper_path)
-        .expect("Failed to load SwiftUI helper");
+    let ui = SwiftUI::load(helper_path).expect("Failed to load SwiftUI helper");
     UI.with(|cell| {
         *cell.borrow_mut() = Some(ui);
     });
@@ -20,7 +19,9 @@ pub fn init(helper_path: &str) {
 pub(crate) fn with_ui<R>(f: impl FnOnce(&SwiftUI) -> R) -> R {
     UI.with(|cell| {
         let borrow = cell.borrow();
-        let ui = borrow.as_ref().expect("SwiftUI not initialized. Call swiftui::init() first.");
+        let ui = borrow
+            .as_ref()
+            .expect("SwiftUI not initialized. Call swiftui::init() first.");
         f(ui)
     })
 }

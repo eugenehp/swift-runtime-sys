@@ -6,6 +6,6 @@
 pub use swift_runtime_sys as sys;
 
 pub mod metadata;
+pub mod retain;
 pub mod string;
 pub mod types;
-pub mod retain;

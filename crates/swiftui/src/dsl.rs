@@ -11,7 +11,7 @@
 //! ```
 
 pub use crate::color::Color;
-pub use crate::color::{rgb, rgba, hex};
+pub use crate::color::{hex, rgb, rgba};
 
 use crate::context::with_ui;
 use crate::view::View;
@@ -39,10 +39,22 @@ pub struct TextView {
 }
 
 impl TextView {
-    pub fn size(mut self, size: f32) -> Self { self.font_size = Some(size); self }
-    pub fn bold(mut self) -> Self { self.weight |= 1; self }
-    pub fn italic(mut self) -> Self { self.weight |= 2; self }
-    pub fn color(mut self, c: Color) -> Self { self.color = Some(c); self }
+    pub fn size(mut self, size: f32) -> Self {
+        self.font_size = Some(size);
+        self
+    }
+    pub fn bold(mut self) -> Self {
+        self.weight |= 1;
+        self
+    }
+    pub fn italic(mut self) -> Self {
+        self.weight |= 2;
+        self
+    }
+    pub fn color(mut self, c: Color) -> Self {
+        self.color = Some(c);
+        self
+    }
 
     /// Build into a `View`.
     pub fn build(self) -> View {
@@ -50,7 +62,15 @@ impl TextView {
             let c = self.color.unwrap_or(Color::WHITE);
             let size = self.font_size.unwrap_or(0.0);
             if size > 0.0 || self.weight != 0 || self.color.is_some() {
-                View::new(ui.styled_text(&self.text, size.max(14.0), self.weight, c.r, c.g, c.b, c.a))
+                View::new(ui.styled_text(
+                    &self.text,
+                    size.max(14.0),
+                    self.weight,
+                    c.r,
+                    c.g,
+                    c.b,
+                    c.a,
+                ))
             } else {
                 View::new(ui.text(&self.text))
             }
@@ -59,16 +79,28 @@ impl TextView {
 
     // ── Modifier pass-through (builds first, then applies modifier) ──
 
-    pub fn padding(self, amount: f32) -> View { self.build().padding(amount) }
-    pub fn bg(self, color: Color) -> View { self.build().bg(color) }
-    pub fn rounded(self, radius: f32) -> View { self.build().rounded(radius) }
-    pub fn frame(self, w: f32, h: f32) -> View { self.build().frame(w, h) }
-    pub fn opacity(self, value: f32) -> View { self.build().opacity(value) }
+    pub fn padding(self, amount: f32) -> View {
+        self.build().padding(amount)
+    }
+    pub fn bg(self, color: Color) -> View {
+        self.build().bg(color)
+    }
+    pub fn rounded(self, radius: f32) -> View {
+        self.build().rounded(radius)
+    }
+    pub fn frame(self, w: f32, h: f32) -> View {
+        self.build().frame(w, h)
+    }
+    pub fn opacity(self, value: f32) -> View {
+        self.build().opacity(value)
+    }
 }
 
 /// Convert `TextView` to `View` — allows using it directly in stacks.
 impl From<TextView> for View {
-    fn from(tv: TextView) -> View { tv.build() }
+    fn from(tv: TextView) -> View {
+        tv.build()
+    }
 }
 
 /// A trait for things that can become a View (TextView, View, etc.)
@@ -77,11 +109,15 @@ pub trait IntoView {
 }
 
 impl IntoView for View {
-    fn into_view(self) -> View { self }
+    fn into_view(self) -> View {
+        self
+    }
 }
 
 impl IntoView for TextView {
-    fn into_view(self) -> View { self.build() }
+    fn into_view(self) -> View {
+        self.build()
+    }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

@@ -40,10 +40,7 @@ unsafe extern "C" {
     ) -> BoxPair;
 
     /// Deallocate an error object whose contained object has already been destroyed.
-    pub fn swift_deallocError(
-        error: SwiftErrorRef,
-        error_type: MetadataRef,
-    );
+    pub fn swift_deallocError(error: SwiftErrorRef, error_type: MetadataRef);
 
     /// Extract a pointer to the value, the type metadata, and the Error
     /// protocol witness from an error object.
@@ -60,10 +57,7 @@ unsafe extern "C" {
     pub fn swift_errorRelease(object: SwiftErrorRef);
 
     /// Called when throwing an error. Serves as a breakpoint hook for debuggers.
-    pub fn swift_willThrow(
-        unused: *mut c_void,
-        error: *mut SwiftErrorRef,
-    );
+    pub fn swift_willThrow(unused: *mut c_void, error: *mut SwiftErrorRef);
 
     /// Called when throwing a typed error. Serves as a breakpoint hook.
     pub fn swift_willThrowTypedImpl(
@@ -85,7 +79,5 @@ unsafe extern "C" {
     ) -> !;
 
     /// Set a handler to be called when an error is about to be thrown.
-    pub fn swift_setWillThrowHandler(
-        handler: Option<unsafe extern "C" fn(SwiftErrorRef)>,
-    );
+    pub fn swift_setWillThrowHandler(handler: Option<unsafe extern "C" fn(SwiftErrorRef)>);
 }

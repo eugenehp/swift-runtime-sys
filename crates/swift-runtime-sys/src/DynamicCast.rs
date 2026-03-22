@@ -34,10 +34,8 @@ unsafe extern "C" {
     ) -> bool;
 
     /// Checked dynamic cast to a Swift class type. Returns null on failure.
-    pub fn swift_dynamicCastClass(
-        object: *const c_void,
-        target_type: MetadataRef,
-    ) -> *const c_void;
+    pub fn swift_dynamicCastClass(object: *const c_void, target_type: MetadataRef)
+        -> *const c_void;
 
     /// Unconditional checked dynamic cast to a Swift class type. Aborts on failure.
     pub fn swift_dynamicCastClassUnconditional(
@@ -124,9 +122,7 @@ unsafe extern "C" {
     ) -> MetadataRef;
 
     /// Conditional cast of a metatype to an ObjC object.
-    pub fn swift_dynamicCastMetatypeToObjectConditional(
-        source_type: MetadataRef,
-    ) -> *const c_void;
+    pub fn swift_dynamicCastMetatypeToObjectConditional(source_type: MetadataRef) -> *const c_void;
 
     /// Unconditional cast of a metatype to an ObjC object.
     pub fn swift_dynamicCastMetatypeToObjectUnconditional(

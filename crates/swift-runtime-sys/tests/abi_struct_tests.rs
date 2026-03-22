@@ -1,9 +1,9 @@
 //! Tests for ABI struct layouts, SwiftCCThunks, StdlibTypes, and DlsymStdlib.
 
-use swift_runtime_sys::RuntimeRaw::*;
-use swift_runtime_sys::SwiftABI::*;
-use swift_runtime_sys::StdlibTypes;
 use swift_runtime_sys::DlsymStdlib;
+use swift_runtime_sys::RuntimeRaw::*;
+use swift_runtime_sys::StdlibTypes;
+use swift_runtime_sys::SwiftABI::*;
 
 fn resolve_type(mangled: &[u8]) -> *const core::ffi::c_void {
     unsafe {
@@ -33,7 +33,10 @@ fn test_stdlib_int_metadata() {
 fn test_stdlib_string_metadata() {
     let m = StdlibTypes::string_metadata();
     assert!(m.is_some());
-    assert_eq!(StdlibTypes::metadata_kind(m.unwrap()), Some(MetadataKind::Struct));
+    assert_eq!(
+        StdlibTypes::metadata_kind(m.unwrap()),
+        Some(MetadataKind::Struct)
+    );
 }
 
 #[test]
@@ -59,7 +62,10 @@ fn test_stdlib_optional_int_metadata() {
     let int_m = StdlibTypes::int_metadata().unwrap();
     let opt_m = StdlibTypes::optional_metadata(int_m);
     assert!(opt_m.is_some());
-    assert_eq!(StdlibTypes::metadata_kind(opt_m.unwrap()), Some(MetadataKind::Optional));
+    assert_eq!(
+        StdlibTypes::metadata_kind(opt_m.unwrap()),
+        Some(MetadataKind::Optional)
+    );
 }
 
 #[test]
@@ -67,7 +73,10 @@ fn test_stdlib_array_int_metadata() {
     let int_m = StdlibTypes::int_metadata().unwrap();
     let arr_m = StdlibTypes::array_metadata(int_m);
     assert!(arr_m.is_some(), "Should resolve Array<Int> metadata");
-    assert_eq!(StdlibTypes::metadata_kind(arr_m.unwrap()), Some(MetadataKind::Struct));
+    assert_eq!(
+        StdlibTypes::metadata_kind(arr_m.unwrap()),
+        Some(MetadataKind::Struct)
+    );
 }
 
 #[test]
@@ -75,16 +84,31 @@ fn test_stdlib_dictionary_metadata() {
     let str_m = StdlibTypes::string_metadata().unwrap();
     let int_m = StdlibTypes::int_metadata().unwrap();
     let dict_m = StdlibTypes::dictionary_metadata(str_m, int_m);
-    assert!(dict_m.is_some(), "Should resolve Dictionary<String, Int> metadata");
+    assert!(
+        dict_m.is_some(),
+        "Should resolve Dictionary<String, Int> metadata"
+    );
 }
 
 #[test]
 fn test_stdlib_is_pod() {
-    assert_eq!(StdlibTypes::is_pod(StdlibTypes::int_metadata().unwrap()), Some(true));
-    assert_eq!(StdlibTypes::is_pod(StdlibTypes::bool_metadata().unwrap()), Some(true));
-    assert_eq!(StdlibTypes::is_pod(StdlibTypes::double_metadata().unwrap()), Some(true));
+    assert_eq!(
+        StdlibTypes::is_pod(StdlibTypes::int_metadata().unwrap()),
+        Some(true)
+    );
+    assert_eq!(
+        StdlibTypes::is_pod(StdlibTypes::bool_metadata().unwrap()),
+        Some(true)
+    );
+    assert_eq!(
+        StdlibTypes::is_pod(StdlibTypes::double_metadata().unwrap()),
+        Some(true)
+    );
     // String is NOT pod (has non-trivial copy/destroy)
-    assert_eq!(StdlibTypes::is_pod(StdlibTypes::string_metadata().unwrap()), Some(false));
+    assert_eq!(
+        StdlibTypes::is_pod(StdlibTypes::string_metadata().unwrap()),
+        Some(false)
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -171,41 +195,40 @@ fn test_relative_pointer_null() {
 #[test]
 fn test_thunk_get_type_name() {
     let m = StdlibTypes::int_metadata().unwrap();
-    let result = unsafe {
-        swift_runtime_sys::SwiftCCThunks::swift_getTypeName(m, true)
-    };
+    let result = unsafe { swift_runtime_sys::SwiftCCThunks::swift_getTypeName(m, true) };
     assert!(result.is_ok());
     let (name, len) = result.unwrap();
     assert!(len > 0);
-    assert!(name.contains("Int"), "Expected 'Int' in type name, got '{name}'");
+    assert!(
+        name.contains("Int"),
+        "Expected 'Int' in type name, got '{name}'"
+    );
 }
 
 #[test]
 fn test_thunk_get_type_name_string() {
     let m = StdlibTypes::string_metadata().unwrap();
-    let (name, _) = unsafe {
-        swift_runtime_sys::SwiftCCThunks::swift_getTypeName(m, true)
-    }.unwrap();
+    let (name, _) =
+        unsafe { swift_runtime_sys::SwiftCCThunks::swift_getTypeName(m, true) }.unwrap();
     assert_eq!(name, "Swift.String");
 }
 
 #[test]
 fn test_thunk_check_metadata_state() {
     let m = StdlibTypes::int_metadata().unwrap();
-    let resp = unsafe {
-        swift_runtime_sys::SwiftCCThunks::swift_checkMetadataState(0, m)
-    };
+    let resp = unsafe { swift_runtime_sys::SwiftCCThunks::swift_checkMetadataState(0, m) };
     assert!(resp.is_ok());
     let resp = resp.unwrap();
-    assert_eq!(resp.metadata, m, "checkMetadataState should return same metadata");
+    assert_eq!(
+        resp.metadata, m,
+        "checkMetadataState should return same metadata"
+    );
 }
 
 #[test]
 fn test_thunk_get_type_context_descriptor() {
     let m = StdlibTypes::int_metadata().unwrap();
-    let desc = unsafe {
-        swift_runtime_sys::SwiftCCThunks::swift_getTypeContextDescriptor(m)
-    };
+    let desc = unsafe { swift_runtime_sys::SwiftCCThunks::swift_getTypeContextDescriptor(m) };
     assert!(desc.is_ok());
     let desc = desc.unwrap();
     assert!(!desc.is_null(), "Int should have a type context descriptor");
@@ -219,9 +242,8 @@ fn test_thunk_get_type_context_descriptor() {
 #[test]
 fn test_struct_descriptor_fields() {
     let m = StdlibTypes::int_metadata().unwrap();
-    let desc = unsafe {
-        swift_runtime_sys::SwiftCCThunks::swift_getTypeContextDescriptor(m)
-    }.unwrap();
+    let desc =
+        unsafe { swift_runtime_sys::SwiftCCThunks::swift_getTypeContextDescriptor(m) }.unwrap();
 
     let sd = unsafe { &*(desc as *const StructDescriptor) };
     let name = unsafe { sd.base.get_name() }.to_str().unwrap();
@@ -248,7 +270,10 @@ fn test_dlsym_os_version() {
     if let Some(v) = v {
         // The function uses Swift CC and returns a struct — on arm64 this may
         // return garbage via C ABI. Just check it doesn't crash.
-        println!("OS version (may be incorrect on arm64 due to CC): {}.{}.{}", v.major, v.minor, v.patch);
+        println!(
+            "OS version (may be incorrect on arm64 due to CC): {}.{}.{}",
+            v.major, v.minor, v.patch
+        );
     } else {
         println!("OS version symbol not found");
     }
@@ -260,7 +285,10 @@ fn test_dlsym_random() {
     let ok = DlsymStdlib::random(&mut buf);
     if ok {
         // Extremely unlikely all 16 bytes are still zero
-        assert!(buf.iter().any(|&b| b != 0), "random buffer should have non-zero bytes");
+        assert!(
+            buf.iter().any(|&b| b != 0),
+            "random buffer should have non-zero bytes"
+        );
     } else {
         println!("random symbol not found (OK on some platforms)");
     }
@@ -283,10 +311,11 @@ fn test_dlsym_stack_bounds() {
 fn test_dynamic_cast_metatype() {
     let int_m = StdlibTypes::int_metadata().unwrap();
     // Cast Int metatype to itself — should succeed
-    let result = unsafe {
-        swift_runtime_sys::DynamicCast::swift_dynamicCastMetatype(int_m, int_m)
-    };
-    assert!(!result.is_null(), "Casting Int metatype to itself should succeed");
+    let result = unsafe { swift_runtime_sys::DynamicCast::swift_dynamicCastMetatype(int_m, int_m) };
+    assert!(
+        !result.is_null(),
+        "Casting Int metatype to itself should succeed"
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -298,12 +327,18 @@ fn test_enum_optional_is_optional_kind() {
     // Verify Optional<Int> resolves and has the right kind
     let opt_m = resolve_type(b"SiSg");
     assert!(!opt_m.is_null(), "Should resolve Optional<Int>");
-    assert_eq!(StdlibTypes::metadata_kind(opt_m), Some(MetadataKind::Optional));
+    assert_eq!(
+        StdlibTypes::metadata_kind(opt_m),
+        Some(MetadataKind::Optional)
+    );
     // Verify VWT is accessible
     let vwt = unsafe { &*get_value_witness_table(opt_m) };
     // Optional<Int> should be 8 bytes (Int + tag fits in spare bits on 64-bit)
-    assert!(vwt.get_size() == 8 || vwt.get_size() == 9,
-        "Optional<Int> size should be 8 or 9, got {}", vwt.get_size());
+    assert!(
+        vwt.get_size() == 8 || vwt.get_size() == 9,
+        "Optional<Int> size should be 8 or 9, got {}",
+        vwt.get_size()
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -343,7 +378,9 @@ fn test_box_alloc_project_dealloc() {
 fn test_weak_init_load_destroy() {
     // swift_weakInit/LoadStrong/Destroy are in libswiftCore, use dlsym
     use core::ffi::{c_char, c_void};
-    unsafe extern "C" { fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void; }
+    unsafe extern "C" {
+        fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
+    }
     let rtld = (-2isize) as *mut c_void;
 
     let init_fn = unsafe { dlsym(rtld, c"swift_weakInit".as_ptr()) };
@@ -433,7 +470,10 @@ fn test_tuple_metadata_inspection() {
     };
     assert!(resp.is_ok());
     let resp = resp.unwrap();
-    assert!(!resp.metadata.is_null(), "Tuple metadata should be non-null");
+    assert!(
+        !resp.metadata.is_null(),
+        "Tuple metadata should be non-null"
+    );
 
     // Check it's a tuple
     let kind = StdlibTypes::metadata_kind(resp.metadata).unwrap();
@@ -462,7 +502,7 @@ fn test_function_metadata_inspection() {
     // Get metadata for () -> () via swift_getFunctionTypeMetadata0
     let void_to_void = unsafe {
         swift_runtime_sys::MetadataIntrospection::swift_getFunctionTypeMetadata0(
-            0x04000000, // escaping, 0 params
+            0x04000000,          // escaping, 0 params
             resolve_type(b"yt"), // Void result type
         )
     };
@@ -487,11 +527,26 @@ fn test_function_metadata_inspection() {
 
 #[test]
 fn test_protocol_descriptors() {
-    assert!(StdlibTypes::error_protocol_descriptor().is_some(), "Should find Error protocol");
-    assert!(StdlibTypes::hashable_protocol_descriptor().is_some(), "Should find Hashable protocol");
-    assert!(StdlibTypes::equatable_protocol_descriptor().is_some(), "Should find Equatable protocol");
-    assert!(StdlibTypes::comparable_protocol_descriptor().is_some(), "Should find Comparable protocol");
-    assert!(StdlibTypes::coding_key_protocol_descriptor().is_some(), "Should find CodingKey protocol");
+    assert!(
+        StdlibTypes::error_protocol_descriptor().is_some(),
+        "Should find Error protocol"
+    );
+    assert!(
+        StdlibTypes::hashable_protocol_descriptor().is_some(),
+        "Should find Hashable protocol"
+    );
+    assert!(
+        StdlibTypes::equatable_protocol_descriptor().is_some(),
+        "Should find Equatable protocol"
+    );
+    assert!(
+        StdlibTypes::comparable_protocol_descriptor().is_some(),
+        "Should find Comparable protocol"
+    );
+    assert!(
+        StdlibTypes::coding_key_protocol_descriptor().is_some(),
+        "Should find CodingKey protocol"
+    );
     // Sendable and Actor are marker protocols — may not have descriptors
     if StdlibTypes::sendable_protocol_descriptor().is_some() {
         println!("Found Sendable protocol descriptor");
@@ -549,9 +604,8 @@ fn test_swift_small_string() {
 #[test]
 fn test_concurrency_hook_read() {
     // Read the current enqueueGlobal hook — should be null (no hook installed)
-    let hook = unsafe {
-        swift_runtime_sys::ConcurrencyHooks::read_hook(c"swift_task_enqueueGlobal_hook")
-    };
+    let hook =
+        unsafe { swift_runtime_sys::ConcurrencyHooks::read_hook(c"swift_task_enqueueGlobal_hook") };
     // The hook might be non-null if something else installed one, but at least
     // this proves the symbol resolves.
     println!("swift_task_enqueueGlobal_hook = {:?}", hook);
@@ -571,7 +625,10 @@ fn test_concurrency_hook_install_uninstall() {
     }
 
     let installed = unsafe {
-        install_hook(c"swift_task_enqueueGlobal_hook", passthrough_hook as *const core::ffi::c_void)
+        install_hook(
+            c"swift_task_enqueueGlobal_hook",
+            passthrough_hook as *const core::ffi::c_void,
+        )
     };
     assert!(installed, "Should be able to install hook");
 
@@ -592,9 +649,8 @@ fn test_concurrency_hook_install_uninstall() {
 #[test]
 fn test_compare_type_descriptors() {
     let int_m = StdlibTypes::int_metadata().unwrap();
-    let desc = unsafe {
-        swift_runtime_sys::SwiftCCThunks::swift_getTypeContextDescriptor(int_m)
-    }.unwrap();
+    let desc =
+        unsafe { swift_runtime_sys::SwiftCCThunks::swift_getTypeContextDescriptor(int_m) }.unwrap();
 
     // Comparing a descriptor to itself should return true
     let result = unsafe {
@@ -605,14 +661,16 @@ fn test_compare_type_descriptors() {
 
     // Compare with a different descriptor
     let str_m = StdlibTypes::string_metadata().unwrap();
-    let str_desc = unsafe {
-        swift_runtime_sys::SwiftCCThunks::swift_getTypeContextDescriptor(str_m)
-    }.unwrap();
+    let str_desc =
+        unsafe { swift_runtime_sys::SwiftCCThunks::swift_getTypeContextDescriptor(str_m) }.unwrap();
     let result = unsafe {
         swift_runtime_sys::SwiftCCThunks::swift_compareTypeContextDescriptors(desc, str_desc)
     };
     assert!(result.is_ok());
-    assert!(!result.unwrap(), "Int and String descriptors should not be equal");
+    assert!(
+        !result.unwrap(),
+        "Int and String descriptors should not be equal"
+    );
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -621,7 +679,10 @@ fn test_compare_type_descriptors() {
 
 #[test]
 fn test_vtable_descriptor_header_size() {
-    assert_eq!(core::mem::size_of::<swift_runtime_sys::SwiftABI::VTableDescriptorHeader>(), 8);
+    assert_eq!(
+        core::mem::size_of::<swift_runtime_sys::SwiftABI::VTableDescriptorHeader>(),
+        8
+    );
 }
 
 #[test]
@@ -657,7 +718,9 @@ fn test_witness_table_for_int_hashable() {
 
     // swift_conformsToProtocol is C ABI — use dlsym to call it
     use core::ffi::{c_char, c_void as V};
-    unsafe extern "C" { fn dlsym(h: *mut V, s: *const c_char) -> *mut V; }
+    unsafe extern "C" {
+        fn dlsym(h: *mut V, s: *const c_char) -> *mut V;
+    }
     type ConformsFn = unsafe extern "C" fn(*const V, *const V) -> *const V;
     let sym = unsafe { dlsym((-2isize) as *mut V, c"swift_conformsToProtocol".as_ptr()) };
     assert!(!sym.is_null(), "swift_conformsToProtocol should exist");
@@ -687,10 +750,15 @@ fn test_concurrency_thunk_get_main_executor() {
     let result = unsafe { swift_runtime_sys::ConcurrencyThunks::swift_task_getMainExecutor() };
     assert!(result.is_ok(), "Should resolve swift_task_getMainExecutor");
     let executor = result.unwrap();
-    println!("Main executor: identity={:?}, impl={:?}", executor.identity, executor.implementation);
+    println!(
+        "Main executor: identity={:?}, impl={:?}",
+        executor.identity, executor.implementation
+    );
     // Main executor should be non-null
-    assert!(!executor.identity.is_null() || !executor.implementation.is_null(),
-        "Main executor should have at least one non-null field");
+    assert!(
+        !executor.identity.is_null() || !executor.implementation.is_null(),
+        "Main executor should have at least one non-null field"
+    );
 }
 
 #[test]
@@ -705,7 +773,8 @@ fn test_concurrency_thunk_get_time() {
     let mut sec: i64 = 0;
     let mut nsec: i64 = 0;
     let result = unsafe {
-        swift_runtime_sys::ConcurrencyThunks::swift_get_time(&mut sec, &mut nsec, 1) // clock 1 = continuous
+        swift_runtime_sys::ConcurrencyThunks::swift_get_time(&mut sec, &mut nsec, 1)
+        // clock 1 = continuous
     };
     assert!(result.is_ok());
     assert!(sec > 0 || nsec > 0, "Time should be non-zero");
@@ -714,8 +783,10 @@ fn test_concurrency_thunk_get_time() {
 
 #[test]
 fn test_concurrency_thunk_is_main_executor() {
-    let main_exec = unsafe { swift_runtime_sys::ConcurrencyThunks::swift_task_getMainExecutor() }.unwrap();
-    let is_main = unsafe { swift_runtime_sys::ConcurrencyThunks::swift_task_isMainExecutor(main_exec) };
+    let main_exec =
+        unsafe { swift_runtime_sys::ConcurrencyThunks::swift_task_getMainExecutor() }.unwrap();
+    let is_main =
+        unsafe { swift_runtime_sys::ConcurrencyThunks::swift_task_isMainExecutor(main_exec) };
     assert!(is_main.is_ok());
     assert!(is_main.unwrap(), "Main executor should report as main");
 }
@@ -728,7 +799,9 @@ fn test_concurrency_thunk_is_main_executor() {
 fn test_set_will_throw_handler() {
     // swift_setWillThrowHandler may be SPI — use dlsym
     use core::ffi::{c_char, c_void as V};
-    unsafe extern "C" { fn dlsym(h: *mut V, s: *const c_char) -> *mut V; }
+    unsafe extern "C" {
+        fn dlsym(h: *mut V, s: *const c_char) -> *mut V;
+    }
 
     unsafe extern "C" fn my_handler(_error: *mut V) {}
 
@@ -752,7 +825,12 @@ fn ensure_swiftui_loaded() -> bool {
     unsafe extern "C" {
         fn dlopen(path: *const c_char, mode: i32) -> *mut V;
     }
-    let handle = unsafe { dlopen(c"/System/Library/Frameworks/SwiftUI.framework/SwiftUI".as_ptr(), 0x1) };
+    let handle = unsafe {
+        dlopen(
+            c"/System/Library/Frameworks/SwiftUI.framework/SwiftUI".as_ptr(),
+            0x1,
+        )
+    };
     !handle.is_null()
 }
 
@@ -774,18 +852,27 @@ fn test_text_metadata_resolution() {
 
 #[test]
 fn test_text_view_witness_table() {
-    if !ensure_swiftui_loaded() { println!("SwiftUI not available"); return; }
+    if !ensure_swiftui_loaded() {
+        println!("SwiftUI not available");
+        return;
+    }
     let wt = swift_runtime_sys::ViewConformanceBuilder::text_view_witness_table();
     assert!(wt.is_some(), "Should resolve Text:View witness table");
 }
 
 #[test]
 fn test_build_dynamic_view_struct() {
-    unsafe extern "C" fn dummy_body(_result: *mut core::ffi::c_void, _self_val: *const core::ffi::c_void) {
+    unsafe extern "C" fn dummy_body(
+        _result: *mut core::ffi::c_void,
+        _self_val: *const core::ffi::c_void,
+    ) {
         // In a real implementation this would write a Text value into result
     }
 
-    if !ensure_swiftui_loaded() { println!("SwiftUI not available"); return; }
+    if !ensure_swiftui_loaded() {
+        println!("SwiftUI not available");
+        return;
+    }
 
     let result = unsafe {
         swift_runtime_sys::ViewConformanceBuilder::build_dynamic_view("TestRustView", dummy_body)
@@ -794,7 +881,10 @@ fn test_build_dynamic_view_struct() {
     match result {
         Ok(view) => {
             assert!(!view.metadata.is_null(), "Metadata should be non-null");
-            assert!(!view.witness_table.is_null(), "Witness table should be non-null");
+            assert!(
+                !view.witness_table.is_null(),
+                "Witness table should be non-null"
+            );
             assert!(!view.descriptor.is_null(), "Descriptor should be non-null");
 
             // Verify the metadata kind
@@ -802,7 +892,8 @@ fn test_build_dynamic_view_struct() {
             assert_eq!(kind, 0x200, "Kind should be Struct (0x200)");
 
             // Verify the VWT pointer
-            let vwt_ptr = unsafe { *((view.metadata as *const *const core::ffi::c_void).offset(-1)) };
+            let vwt_ptr =
+                unsafe { *((view.metadata as *const *const core::ffi::c_void).offset(-1)) };
             assert!(!vwt_ptr.is_null(), "VWT should be non-null");
 
             println!("Successfully built dynamic View conformance for 'TestRustView'");
@@ -811,7 +902,10 @@ fn test_build_dynamic_view_struct() {
             println!("  descriptor: {:?}", view.descriptor);
         }
         Err(e) => {
-            println!("build_dynamic_view failed (expected if SwiftUI not available): {:?}", e);
+            println!(
+                "build_dynamic_view failed (expected if SwiftUI not available): {:?}",
+                e
+            );
         }
     }
 }

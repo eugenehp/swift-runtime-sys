@@ -30,7 +30,11 @@ unsafe fn resolve_type(mangled: &[u8]) -> Option<MetadataRef> {
         core::ptr::null(),
         0,
     );
-    if result.is_null() { None } else { Some(result) }
+    if result.is_null() {
+        None
+    } else {
+        Some(result)
+    }
 }
 
 /// Resolve a generic type with one type argument.
@@ -39,28 +43,32 @@ unsafe fn resolve_type(mangled: &[u8]) -> Option<MetadataRef> {
 /// The mangled name must be valid and expect exactly one generic argument.
 unsafe fn resolve_generic_1(mangled: &[u8], arg: MetadataRef) -> Option<MetadataRef> {
     let args = [arg];
-    let result = swift_getTypeByMangledNameInEnvironment(
-        mangled.as_ptr(),
-        mangled.len(),
-        args.as_ptr(),
-        1,
-    );
-    if result.is_null() { None } else { Some(result) }
+    let result =
+        swift_getTypeByMangledNameInEnvironment(mangled.as_ptr(), mangled.len(), args.as_ptr(), 1);
+    if result.is_null() {
+        None
+    } else {
+        Some(result)
+    }
 }
 
 /// Resolve a generic type with two type arguments.
 ///
 /// # Safety
 /// The mangled name must be valid and expect exactly two generic arguments.
-unsafe fn resolve_generic_2(mangled: &[u8], arg0: MetadataRef, arg1: MetadataRef) -> Option<MetadataRef> {
+unsafe fn resolve_generic_2(
+    mangled: &[u8],
+    arg0: MetadataRef,
+    arg1: MetadataRef,
+) -> Option<MetadataRef> {
     let args = [arg0, arg1];
-    let result = swift_getTypeByMangledNameInEnvironment(
-        mangled.as_ptr(),
-        mangled.len(),
-        args.as_ptr(),
-        2,
-    );
-    if result.is_null() { None } else { Some(result) }
+    let result =
+        swift_getTypeByMangledNameInEnvironment(mangled.as_ptr(), mangled.len(), args.as_ptr(), 2);
+    if result.is_null() {
+        None
+    } else {
+        Some(result)
+    }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -154,11 +162,15 @@ pub fn optional_metadata(element: MetadataRef) -> Option<MetadataRef> {
     // Optional<Int> = "SiSg" etc, but for arbitrary element we need
     // swift_getTypeByMangledNameInContext. Use a simpler approach: dlsym the accessor.
     use core::ffi::c_char;
-    unsafe extern "C" { fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void; }
+    unsafe extern "C" {
+        fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
+    }
     let rtld = (-2isize) as *mut c_void;
     // Use swift_getGenericMetadata approach via metadata accessor
     let accessor = unsafe { dlsym(rtld, c"$sSqMa".as_ptr()) };
-    if accessor.is_null() { return None; }
+    if accessor.is_null() {
+        return None;
+    }
     // Metadata accessor signature: (MetadataRequest, Element) -> MetadataResponse
     // On arm64 this is Swift CC but for metadata accessors the pattern is:
     // (request: usize) -> (metadata, state) with generic args in subsequent registers
@@ -180,7 +192,11 @@ pub fn optional_metadata(element: MetadataRef) -> Option<MetadataRef> {
             lateout("lr") _,
             clobber_abi("C"),
         );
-        if metadata.is_null() { None } else { Some(metadata) }
+        if metadata.is_null() {
+            None
+        } else {
+            Some(metadata)
+        }
     }
     #[cfg(target_arch = "x86_64")]
     unsafe {
@@ -189,34 +205,50 @@ pub fn optional_metadata(element: MetadataRef) -> Option<MetadataRef> {
         type F = unsafe extern "C" fn(usize, MetadataRef) -> Resp;
         let f: F = core::mem::transmute(accessor);
         let resp = f(0, element);
-        if resp.0.is_null() { None } else { Some(resp.0) }
+        if resp.0.is_null() {
+            None
+        } else {
+            Some(resp.0)
+        }
     }
 }
 
 /// Get metadata for `Swift.Array<Element>`.
 pub fn array_metadata(element: MetadataRef) -> Option<MetadataRef> {
     use core::ffi::c_char;
-    unsafe extern "C" { fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void; }
+    unsafe extern "C" {
+        fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
+    }
     let accessor = unsafe { dlsym((-2isize) as *mut c_void, c"$sSaMa".as_ptr()) };
-    if accessor.is_null() { return None; }
+    if accessor.is_null() {
+        return None;
+    }
     call_metadata_accessor_1(accessor, element)
 }
 
 /// Get metadata for `Swift.Set<Element>`.
 pub fn set_metadata(element: MetadataRef) -> Option<MetadataRef> {
     use core::ffi::c_char;
-    unsafe extern "C" { fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void; }
+    unsafe extern "C" {
+        fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
+    }
     let accessor = unsafe { dlsym((-2isize) as *mut c_void, c"$sShMa".as_ptr()) };
-    if accessor.is_null() { return None; }
+    if accessor.is_null() {
+        return None;
+    }
     call_metadata_accessor_1(accessor, element)
 }
 
 /// Get metadata for `Swift.Dictionary<Key, Value>`.
 pub fn dictionary_metadata(key: MetadataRef, value: MetadataRef) -> Option<MetadataRef> {
     use core::ffi::c_char;
-    unsafe extern "C" { fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void; }
+    unsafe extern "C" {
+        fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
+    }
     let accessor = unsafe { dlsym((-2isize) as *mut c_void, c"$sSDMa".as_ptr()) };
-    if accessor.is_null() { return None; }
+    if accessor.is_null() {
+        return None;
+    }
     call_metadata_accessor_2(accessor, key, value)
 }
 
@@ -239,7 +271,11 @@ fn call_metadata_accessor_1(accessor: *mut c_void, arg: MetadataRef) -> Option<M
             lateout("lr") _,
             clobber_abi("C"),
         );
-        if metadata.is_null() { None } else { Some(metadata) }
+        if metadata.is_null() {
+            None
+        } else {
+            Some(metadata)
+        }
     }
     #[cfg(target_arch = "x86_64")]
     unsafe {
@@ -248,11 +284,19 @@ fn call_metadata_accessor_1(accessor: *mut c_void, arg: MetadataRef) -> Option<M
         type F = unsafe extern "C" fn(usize, MetadataRef) -> Resp;
         let f: F = core::mem::transmute(accessor);
         let resp = f(0, arg);
-        if resp.0.is_null() { None } else { Some(resp.0) }
+        if resp.0.is_null() {
+            None
+        } else {
+            Some(resp.0)
+        }
     }
 }
 
-fn call_metadata_accessor_2(accessor: *mut c_void, arg0: MetadataRef, arg1: MetadataRef) -> Option<MetadataRef> {
+fn call_metadata_accessor_2(
+    accessor: *mut c_void,
+    arg0: MetadataRef,
+    arg1: MetadataRef,
+) -> Option<MetadataRef> {
     #[cfg(target_arch = "aarch64")]
     unsafe {
         let metadata: *const c_void;
@@ -272,7 +316,11 @@ fn call_metadata_accessor_2(accessor: *mut c_void, arg0: MetadataRef, arg1: Meta
             lateout("lr") _,
             clobber_abi("C"),
         );
-        if metadata.is_null() { None } else { Some(metadata) }
+        if metadata.is_null() {
+            None
+        } else {
+            Some(metadata)
+        }
     }
     #[cfg(target_arch = "x86_64")]
     unsafe {
@@ -281,7 +329,11 @@ fn call_metadata_accessor_2(accessor: *mut c_void, arg0: MetadataRef, arg1: Meta
         type F = unsafe extern "C" fn(usize, MetadataRef, MetadataRef) -> Resp;
         let f: F = core::mem::transmute(accessor);
         let resp = f(0, arg0, arg1);
-        if resp.0.is_null() { None } else { Some(resp.0) }
+        if resp.0.is_null() {
+            None
+        } else {
+            Some(resp.0)
+        }
     }
 }
 
@@ -328,47 +380,75 @@ pub fn metadata_kind(metadata: MetadataRef) -> Option<crate::SwiftABI::MetadataK
 // ═══════════════════════════════════════════════════════════════════════════
 
 use core::ffi::c_char;
-unsafe extern "C" { fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void; }
+unsafe extern "C" {
+    fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
+}
 const RTLD: *mut c_void = (-2isize) as *mut c_void;
 
 /// Resolve a symbol from the Swift runtime.
 fn sym(name: &core::ffi::CStr) -> Option<*const c_void> {
     let p = unsafe { dlsym(RTLD, name.as_ptr()) };
-    if p.is_null() { None } else { Some(p as *const c_void) }
+    if p.is_null() {
+        None
+    } else {
+        Some(p as *const c_void)
+    }
 }
 
 /// Get the `Swift.Error` protocol descriptor.
-pub fn error_protocol_descriptor() -> Option<*const c_void> { sym(c"$ss5ErrorMp") }
+pub fn error_protocol_descriptor() -> Option<*const c_void> {
+    sym(c"$ss5ErrorMp")
+}
 
 /// Get the `Swift.Hashable` protocol descriptor (`SH`).
-pub fn hashable_protocol_descriptor() -> Option<*const c_void> { sym(c"$sSHMp") }
+pub fn hashable_protocol_descriptor() -> Option<*const c_void> {
+    sym(c"$sSHMp")
+}
 
 /// Get the `Swift.Equatable` protocol descriptor (`SQ`).
-pub fn equatable_protocol_descriptor() -> Option<*const c_void> { sym(c"$sSQMp") }
+pub fn equatable_protocol_descriptor() -> Option<*const c_void> {
+    sym(c"$sSQMp")
+}
 
 /// Get the `Swift.Comparable` protocol descriptor (`SL`).
-pub fn comparable_protocol_descriptor() -> Option<*const c_void> { sym(c"$sSLMp") }
+pub fn comparable_protocol_descriptor() -> Option<*const c_void> {
+    sym(c"$sSLMp")
+}
 
 /// Get the `Swift.CodingKey` protocol descriptor.
-pub fn coding_key_protocol_descriptor() -> Option<*const c_void> { sym(c"$ss9CodingKeyMp") }
+pub fn coding_key_protocol_descriptor() -> Option<*const c_void> {
+    sym(c"$ss9CodingKeyMp")
+}
 
 /// Get the `Swift.Sendable` protocol descriptor.
-pub fn sendable_protocol_descriptor() -> Option<*const c_void> { sym(c"$ss8SendableMp") }
+pub fn sendable_protocol_descriptor() -> Option<*const c_void> {
+    sym(c"$ss8SendableMp")
+}
 
 /// Get the `Swift.Actor` protocol descriptor.
-pub fn actor_protocol_descriptor() -> Option<*const c_void> { sym(c"$sScAMp") }
+pub fn actor_protocol_descriptor() -> Option<*const c_void> {
+    sym(c"$sScAMp")
+}
 
 /// Get the direct type metadata pointer for `Swift.Int`.
-pub fn int_metadata_direct() -> Option<*const c_void> { sym(c"$sSiN") }
+pub fn int_metadata_direct() -> Option<*const c_void> {
+    sym(c"$sSiN")
+}
 
 /// Get the direct type metadata pointer for `Swift.Double`.
-pub fn double_metadata_direct() -> Option<*const c_void> { sym(c"$sSdN") }
+pub fn double_metadata_direct() -> Option<*const c_void> {
+    sym(c"$sSdN")
+}
 
 /// Get the direct type metadata pointer for `Swift.Bool`.
-pub fn bool_metadata_direct() -> Option<*const c_void> { sym(c"$sSbN") }
+pub fn bool_metadata_direct() -> Option<*const c_void> {
+    sym(c"$sSbN")
+}
 
 /// Get the direct type metadata pointer for `Swift.String`.
-pub fn string_metadata_direct() -> Option<*const c_void> { sym(c"$sSSN") }
+pub fn string_metadata_direct() -> Option<*const c_void> {
+    sym(c"$sSSN")
+}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // String construction / extraction helpers
@@ -415,6 +495,8 @@ pub fn extract_small_string(buf: &[u8; 16]) -> Option<&str> {
     }
     // Count is stored in the low 4 bits
     let count = (discriminator & 0x0F) as usize;
-    if count > 15 { return None; }
+    if count > 15 {
+        return None;
+    }
     core::str::from_utf8(&buf[..count]).ok()
 }

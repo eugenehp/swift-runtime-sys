@@ -16,17 +16,17 @@
 //! );
 //! ```
 
-mod handle;
-mod views;
 mod app;
 mod color;
-mod view;
 mod context;
 pub mod dsl;
+mod handle;
+mod view;
+mod views;
 
+pub use app::show_window;
 pub use handle::ViewHandle;
 pub use views::SwiftUI;
-pub use app::show_window;
 // Color is re-exported via dsl::Color
 pub use view::View;
 

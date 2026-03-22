@@ -78,22 +78,13 @@ unsafe extern "C" {
     ) -> WitnessTableRef;
 
     /// Register protocol conformance records.
-    pub fn swift_registerProtocolConformances(
-        begin: *const c_void,
-        end: *const c_void,
-    );
+    pub fn swift_registerProtocolConformances(begin: *const c_void, end: *const c_void);
 
     /// Register protocol records.
-    pub fn swift_registerProtocols(
-        begin: *const c_void,
-        end: *const c_void,
-    );
+    pub fn swift_registerProtocols(begin: *const c_void, end: *const c_void);
 
     /// Register type metadata records.
-    pub fn swift_registerTypeMetadataRecords(
-        begin: *const c_void,
-        end: *const c_void,
-    );
+    pub fn swift_registerTypeMetadataRecords(begin: *const c_void, end: *const c_void);
 
     /// Compare two protocol conformance descriptors.
     pub fn swift_compareProtocolConformanceDescriptors(
@@ -102,16 +93,10 @@ unsafe extern "C" {
     ) -> bool;
 
     /// Compare two type context descriptors.
-    pub fn swift_compareTypeContextDescriptors(
-        lhs: *const c_void,
-        rhs: *const c_void,
-    ) -> bool;
+    pub fn swift_compareTypeContextDescriptors(lhs: *const c_void, rhs: *const c_void) -> bool;
 
     /// Compare two witness tables.
-    pub fn swift_compareWitnessTables(
-        lhs: WitnessTableRef,
-        rhs: WitnessTableRef,
-    ) -> bool;
+    pub fn swift_compareWitnessTables(lhs: WitnessTableRef, rhs: WitnessTableRef) -> bool;
 
     /// Check protocol conformance (v2).
     pub fn swift_conformsToProtocol2(

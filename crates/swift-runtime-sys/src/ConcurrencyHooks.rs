@@ -84,8 +84,11 @@ pub type CheckIsolatedHook =
     unsafe extern "C" fn(executor: SerialExecutorRef, original: CheckIsolatedOriginal);
 
 /// Original function type for isOnExecutor.
-pub type IsOnExecutorOriginal =
-    unsafe extern "C" fn(executor: *mut c_void, self_type: *const c_void, wtable: *const c_void) -> bool;
+pub type IsOnExecutorOriginal = unsafe extern "C" fn(
+    executor: *mut c_void,
+    self_type: *const c_void,
+    wtable: *const c_void,
+) -> bool;
 /// Hook type for swift_task_isOnExecutor.
 pub type IsOnExecutorHook = unsafe extern "C" fn(
     executor: *mut c_void,
@@ -101,14 +104,19 @@ pub type IsMainExecutorHook =
     unsafe extern "C" fn(executor: SerialExecutorRef, original: IsMainExecutorOriginal) -> bool;
 
 /// Original function type for isIsolatingCurrentContext.
-pub type IsIsolatingCurrentContextOriginal = unsafe extern "C" fn(executor: SerialExecutorRef) -> i8;
+pub type IsIsolatingCurrentContextOriginal =
+    unsafe extern "C" fn(executor: SerialExecutorRef) -> i8;
 /// Hook type for swift_task_isIsolatingCurrentContext.
-pub type IsIsolatingCurrentContextHook =
-    unsafe extern "C" fn(executor: SerialExecutorRef, original: IsIsolatingCurrentContextOriginal) -> i8;
+pub type IsIsolatingCurrentContextHook = unsafe extern "C" fn(
+    executor: SerialExecutorRef,
+    original: IsIsolatingCurrentContextOriginal,
+) -> i8;
 
 /// Original function type for donateThreadToGlobalExecutorUntil.
-pub type DonateThreadOriginal =
-    unsafe extern "C" fn(condition: unsafe extern "C" fn(*mut c_void) -> bool, context: *mut c_void);
+pub type DonateThreadOriginal = unsafe extern "C" fn(
+    condition: unsafe extern "C" fn(*mut c_void) -> bool,
+    context: *mut c_void,
+);
 /// Hook type for swift_task_donateThreadToGlobalExecutorUntil.
 pub type DonateThreadHook = unsafe extern "C" fn(
     condition: unsafe extern "C" fn(*mut c_void) -> bool,

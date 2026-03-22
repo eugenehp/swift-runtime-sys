@@ -1,3 +1,9 @@
+#![allow(
+    rustdoc::bare_urls,
+    rustdoc::invalid_html_tags,
+    rustdoc::broken_intra_doc_links
+)]
+
 // ── Auto-generated bindgen modules (from Swift runtime headers) ──
 pub mod Atomic;
 pub mod Backtrace;

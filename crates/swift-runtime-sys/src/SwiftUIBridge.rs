@@ -63,12 +63,20 @@ pub fn ensure_loaded() -> Result<(), SwiftUIError> {
         return Ok(());
     }
     let handle = unsafe {
-        dlopen(c"/System/Library/Frameworks/SwiftUI.framework/SwiftUI".as_ptr(), 1)
+        dlopen(
+            c"/System/Library/Frameworks/SwiftUI.framework/SwiftUI".as_ptr(),
+            1,
+        )
     };
     if handle.is_null() {
         return Err(SwiftUIError::FrameworkNotLoaded);
     }
-    unsafe { dlopen(c"/System/Library/Frameworks/AppKit.framework/AppKit".as_ptr(), 1); }
+    unsafe {
+        dlopen(
+            c"/System/Library/Frameworks/AppKit.framework/AppKit".as_ptr(),
+            1,
+        );
+    }
     LOADED.store(true, std::sync::atomic::Ordering::Release);
     Ok(())
 }
@@ -81,20 +89,30 @@ pub fn ensure_loaded() -> Result<(), SwiftUIError> {
 pub fn get_view_witness_table(metadata: *const c_void) -> Option<*const c_void> {
     let conforms = sym(c"swift_conformsToProtocol");
     let view_proto = sym(c"$s7SwiftUI4ViewMp");
-    if conforms.is_null() || view_proto.is_null() { return None; }
+    if conforms.is_null() || view_proto.is_null() {
+        return None;
+    }
     type ConformsFn = unsafe extern "C" fn(*const c_void, *const c_void) -> *const c_void;
     let f: ConformsFn = unsafe { core::mem::transmute(conforms) };
     let wt = unsafe { f(metadata, view_proto) };
-    if wt.is_null() { None } else { Some(wt) }
+    if wt.is_null() {
+        None
+    } else {
+        Some(wt)
+    }
 }
 
 /// Get the size of SwiftUI.Text values.
 pub fn text_size() -> Option<usize> {
     ensure_loaded().ok()?;
     let meta = sym(c"$s7SwiftUI4TextVN");
-    if meta.is_null() { return None; }
+    if meta.is_null() {
+        return None;
+    }
     let vwt = unsafe { crate::SwiftABI::get_value_witness_table(meta) };
-    if vwt.is_null() { return None; }
+    if vwt.is_null() {
+        return None;
+    }
     Some(unsafe { (*vwt).size })
 }
 
@@ -107,9 +125,7 @@ pub fn text_size() -> Option<usize> {
 /// Returns the 16-byte String representation.
 /// Proven correct: output matches byte-for-byte with Swift-created Strings.
 pub unsafe fn create_swift_string(s: &str) -> Result<[u8; 16], SwiftUIError> {
-    let string_init = sym(
-        c"$sSS21_builtinStringLiteral17utf8CodeUnitCount7isASCIISSBp_BwBi1_tcfC"
-    );
+    let string_init = sym(c"$sSS21_builtinStringLiteral17utf8CodeUnitCount7isASCIISSBp_BwBi1_tcfC");
     let string_meta = sym(c"$sSSN");
     if string_init.is_null() || string_meta.is_null() {
         return Err(SwiftUIError::SymbolNotFound("String.init".into()));
@@ -181,7 +197,11 @@ impl SwiftUIHelper {
         let create_ctrl = dlsym(handle, c"create_text_hosting_controller".as_ptr());
         let show_win = dlsym(handle, c"show_window".as_ptr());
 
-        if create_lsk.is_null() || create_text.is_null() || create_ctrl.is_null() || show_win.is_null() {
+        if create_lsk.is_null()
+            || create_text.is_null()
+            || create_ctrl.is_null()
+            || show_win.is_null()
+        {
             return Err(SwiftUIError::SymbolNotFound("helper functions".into()));
         }
 
@@ -200,7 +220,10 @@ impl SwiftUIHelper {
     }
 
     /// Create a LocalizedStringKey from a Swift String (uses helper).
-    pub unsafe fn create_localized_string_key(&self, string_bytes: &[u8; 16]) -> Result<Vec<u8>, SwiftUIError> {
+    pub unsafe fn create_localized_string_key(
+        &self,
+        string_bytes: &[u8; 16],
+    ) -> Result<Vec<u8>, SwiftUIError> {
         let mut buf = vec![0u8; 64];
         let size = (self.create_lsk)(string_bytes.as_ptr() as _, buf.as_mut_ptr() as _);
         buf.truncate(size);
@@ -223,7 +246,10 @@ impl SwiftUIHelper {
     }
 
     /// Create an `any View` existential from a Text value.
-    pub unsafe fn text_to_existential(&self, text_bytes: &[u8]) -> Result<AnyViewExistential, SwiftUIError> {
+    pub unsafe fn text_to_existential(
+        &self,
+        text_bytes: &[u8],
+    ) -> Result<AnyViewExistential, SwiftUIError> {
         let text_meta = sym(c"$s7SwiftUI4TextVN");
         if text_meta.is_null() {
             return Err(SwiftUIError::SymbolNotFound("Text metadata".into()));
@@ -262,7 +288,11 @@ impl SwiftUIHelper {
 
             // Copy the Text value into the box buffer
             // Use initializeWithCopy from the VWT to properly retain references
-            ((*vwt).initialize_with_copy)(box_buf as _, text_bytes.as_ptr() as *mut c_void, text_meta);
+            ((*vwt).initialize_with_copy)(
+                box_buf as _,
+                text_bytes.as_ptr() as *mut c_void,
+                text_meta,
+            );
 
             // Store the box object pointer in the first word of the inline buffer
             container.inline_buffer[0] = box_obj as u64;
@@ -272,7 +302,10 @@ impl SwiftUIHelper {
     }
 
     /// Full pipeline: Rust &str → SwiftUI.Text → any View existential.
-    pub unsafe fn create_text_existential(&self, s: &str) -> Result<AnyViewExistential, SwiftUIError> {
+    pub unsafe fn create_text_existential(
+        &self,
+        s: &str,
+    ) -> Result<AnyViewExistential, SwiftUIError> {
         let text_bytes = self.create_text(s)?;
         self.text_to_existential(&text_bytes)
     }
@@ -284,7 +317,10 @@ impl SwiftUIHelper {
     }
 
     /// Show an existential in a SwiftUI window.
-    pub unsafe fn show_existential_window(&self, existential: &AnyViewExistential) -> Result<(), SwiftUIError> {
+    pub unsafe fn show_existential_window(
+        &self,
+        existential: &AnyViewExistential,
+    ) -> Result<(), SwiftUIError> {
         let show_ex = dlsym(self.handle, c"step_show_existential".as_ptr());
         if show_ex.is_null() {
             return Err(SwiftUIError::SymbolNotFound("step_show_existential".into()));

@@ -11,7 +11,11 @@ impl Retained {
     /// # Safety
     /// The pointer must be a valid, retained Swift heap object.
     pub unsafe fn from_raw(ptr: *mut c_void) -> Option<Self> {
-        if ptr.is_null() { None } else { Some(Self(ptr)) }
+        if ptr.is_null() {
+            None
+        } else {
+            Some(Self(ptr))
+        }
     }
 
     /// Get the raw pointer without consuming.
@@ -30,14 +34,18 @@ impl Retained {
 
 impl Clone for Retained {
     fn clone(&self) -> Self {
-        unsafe { swift_runtime_sys::RuntimeRaw::swift_retain(self.0); }
+        unsafe {
+            swift_runtime_sys::RuntimeRaw::swift_retain(self.0);
+        }
         Self(self.0)
     }
 }
 
 impl Drop for Retained {
     fn drop(&mut self) {
-        unsafe { swift_runtime_sys::RuntimeRaw::swift_release(self.0); }
+        unsafe {
+            swift_runtime_sys::RuntimeRaw::swift_release(self.0);
+        }
     }
 }
 

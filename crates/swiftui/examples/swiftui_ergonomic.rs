@@ -12,16 +12,17 @@ fn main() {
         500.0,
         500.0,
         |ui| {
-            fn on_hello() { println!("Hello clicked!"); }
-            fn on_world() { println!("World clicked!"); }
+            fn on_hello() {
+                println!("Hello clicked!");
+            }
+            fn on_world() {
+                println!("World clicked!");
+            }
 
             let title = ui.bold_text("🦀 Rust + SwiftUI", 28.0);
             let subtitle = ui.styled_text("Ergonomic API demo", 14.0, 2, 0.5, 0.5, 0.5, 1.0);
 
-            let buttons = ui.hstack(&[
-                ui.button("Hello", on_hello),
-                ui.button("World", on_world),
-            ]);
+            let buttons = ui.hstack(&[ui.button("Hello", on_hello), ui.button("World", on_world)]);
 
             let info = ui.hstack(&[
                 ui.system_image("swift"),
@@ -47,7 +48,8 @@ fn main() {
             ]);
 
             let content = ui.vstack(&[
-                title, subtitle,
+                title,
+                subtitle,
                 ui.divider(),
                 buttons,
                 card,

@@ -17,8 +17,11 @@ pub type TypeLayoutRef = *const c_void;
 pub type EnumLayoutFlags = u32;
 
 /// Callback type for getExtraInhabitantTag.
-pub type GetExtraInhabitantTagFn =
-    unsafe extern "C" fn(value: *const c_void, num_extra: c_uint, payload_type: MetadataRef) -> c_uint;
+pub type GetExtraInhabitantTagFn = unsafe extern "C" fn(
+    value: *const c_void,
+    num_extra: c_uint,
+    payload_type: MetadataRef,
+) -> c_uint;
 
 /// Callback type for storeExtraInhabitantTag.
 pub type StoreExtraInhabitantTagFn =
@@ -26,10 +29,7 @@ pub type StoreExtraInhabitantTagFn =
 
 unsafe extern "C" {
     /// Get the name of an enum case.
-    pub fn swift_EnumCaseName(
-        metadata: MetadataRef,
-        tag: c_uint,
-    ) -> *const c_char;
+    pub fn swift_EnumCaseName(metadata: MetadataRef, tag: c_uint) -> *const c_char;
 
     /// Initialize enum metadata for a single-case enum.
     pub fn swift_initEnumMetadataSingleCase(
@@ -123,10 +123,7 @@ unsafe extern "C" {
     );
 
     /// Simple enum: get tag.
-    pub fn swift_enumSimple_getEnumTag(
-        value: *const c_void,
-        metadata: MetadataRef,
-    ) -> c_uint;
+    pub fn swift_enumSimple_getEnumTag(value: *const c_void, metadata: MetadataRef) -> c_uint;
 
     /// Simple enum: destructively inject tag.
     pub fn swift_enumSimple_destructiveInjectEnumTag(
@@ -136,10 +133,7 @@ unsafe extern "C" {
     );
 
     /// Enum function-based: get tag.
-    pub fn swift_enumFn_getEnumTag(
-        value: *const c_void,
-        metadata: MetadataRef,
-    ) -> c_uint;
+    pub fn swift_enumFn_getEnumTag(value: *const c_void, metadata: MetadataRef) -> c_uint;
 
     /// Single-payload enum generic: get tag.
     pub fn swift_singlePayloadEnumGeneric_getEnumTag(
@@ -168,10 +162,7 @@ unsafe extern "C" {
     );
 
     /// Singleton enum: get tag.
-    pub fn swift_singletonEnum_getEnumTag(
-        value: *const c_void,
-        metadata: MetadataRef,
-    ) -> c_uint;
+    pub fn swift_singletonEnum_getEnumTag(value: *const c_void, metadata: MetadataRef) -> c_uint;
 
     /// Singleton enum: destructively inject tag.
     pub fn swift_singletonEnum_destructiveInjectEnumTag(

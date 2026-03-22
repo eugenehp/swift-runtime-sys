@@ -12,19 +12,13 @@ unsafe extern "C" {
     ) -> *const c_void;
 
     /// Get the original of a replaceable function.
-    pub fn swift_getOrigOfReplaceable(
-        table: *const *const c_void,
-    ) -> *const c_void;
+    pub fn swift_getOrigOfReplaceable(table: *const *const c_void) -> *const c_void;
 
     /// Enable a dynamic replacement scope.
-    pub fn swift_enableDynamicReplacementScope(
-        scope: *const c_void,
-    );
+    pub fn swift_enableDynamicReplacementScope(scope: *const c_void);
 
     /// Disable a dynamic replacement scope.
-    pub fn swift_disableDynamicReplacementScope(
-        scope: *const c_void,
-    );
+    pub fn swift_disableDynamicReplacementScope(scope: *const c_void);
 
     /// Look up a class method.
     pub fn swift_lookUpClassMethod(

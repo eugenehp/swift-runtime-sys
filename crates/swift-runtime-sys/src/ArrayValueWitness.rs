@@ -76,9 +76,5 @@ unsafe extern "C" {
     );
 
     /// Destroy all elements in an array.
-    pub fn swift_arrayDestroy(
-        begin: OpaqueValueRef,
-        count: usize,
-        self_type: MetadataRef,
-    );
+    pub fn swift_arrayDestroy(begin: OpaqueValueRef, count: usize, self_type: MetadataRef);
 }

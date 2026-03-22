@@ -9,9 +9,7 @@ pub type MetadataRef = *const c_void;
 
 unsafe extern "C" {
     /// Create a linear map context.
-    pub fn swift_autoDiffCreateLinearMapContext(
-        top_level_subcontext_size: usize,
-    ) -> *mut c_void;
+    pub fn swift_autoDiffCreateLinearMapContext(top_level_subcontext_size: usize) -> *mut c_void;
 
     /// Create a linear map context with type.
     pub fn swift_autoDiffCreateLinearMapContextWithType(
@@ -19,10 +17,7 @@ unsafe extern "C" {
     ) -> *mut c_void;
 
     /// Allocate a subcontext.
-    pub fn swift_autoDiffAllocateSubcontext(
-        context: *mut c_void,
-        size: usize,
-    ) -> *mut c_void;
+    pub fn swift_autoDiffAllocateSubcontext(context: *mut c_void, size: usize) -> *mut c_void;
 
     /// Allocate a subcontext with type.
     pub fn swift_autoDiffAllocateSubcontextWithType(
@@ -31,7 +26,5 @@ unsafe extern "C" {
     ) -> *mut c_void;
 
     /// Project the top-level subcontext.
-    pub fn swift_autoDiffProjectTopLevelSubcontext(
-        context: *const c_void,
-    ) -> *mut c_void;
+    pub fn swift_autoDiffProjectTopLevelSubcontext(context: *const c_void) -> *mut c_void;
 }

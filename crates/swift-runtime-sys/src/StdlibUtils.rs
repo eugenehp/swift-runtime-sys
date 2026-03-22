@@ -18,25 +18,16 @@ unsafe extern "C" {
     pub fn swift_stdlib_random(buf: *mut c_void, nbytes: usize);
 
     /// Read a line from stdin.
-    pub fn swift_stdlib_readLine_stdin(
-        line_ptr: *mut *mut u8,
-        line_length: *mut usize,
-    ) -> bool;
+    pub fn swift_stdlib_readLine_stdin(line_ptr: *mut *mut u8, line_length: *mut usize) -> bool;
 
     /// Get the hardware concurrency (number of CPUs).
     pub fn swift_stdlib_getHardwareConcurrency() -> usize;
 
     /// Get the current stack bounds.
-    pub fn swift_stdlib_getCurrentStackBounds(
-        begin: *mut *mut c_void,
-        end: *mut *mut c_void,
-    );
+    pub fn swift_stdlib_getCurrentStackBounds(begin: *mut *mut c_void, end: *mut *mut c_void);
 
     /// Check if stack allocation is safe.
-    pub fn swift_stdlib_isStackAllocationSafe(
-        size: usize,
-        alignment: usize,
-    ) -> bool;
+    pub fn swift_stdlib_isStackAllocationSafe(size: usize, alignment: usize) -> bool;
 
     /// Get the operating system version.
     pub fn swift_stdlib_operatingSystemVersion() -> OSVersion;
@@ -51,9 +42,7 @@ unsafe extern "C" {
     ) -> *mut c_void;
 
     /// Get the default error code.
-    pub fn swift_stdlib_getDefaultErrorCode(
-        error: *const c_void,
-    ) -> isize;
+    pub fn swift_stdlib_getDefaultErrorCode(error: *const c_void) -> isize;
 
     /// Report a fatal error.
     pub fn swift_stdlib_reportFatalError(
@@ -110,34 +99,19 @@ unsafe extern "C" {
     pub fn swift_stdlib_funlockfile_stdout();
 
     /// Override unsafe argv/argc.
-    pub fn swift_stdlib_overrideUnsafeArgvArgc(
-        argv: *const *const c_char,
-        argc: i32,
-    );
+    pub fn swift_stdlib_overrideUnsafeArgvArgc(argv: *const *const c_char, argc: i32);
 
     /// Parse a double from a C string using the C locale.
-    pub fn swift_stdlib_strtod_clocale(
-        str: *const c_char,
-        end: *mut *mut c_char,
-    ) -> f64;
+    pub fn swift_stdlib_strtod_clocale(str: *const c_char, end: *mut *mut c_char) -> f64;
 
     /// Parse a float from a C string using the C locale.
-    pub fn swift_stdlib_strtof_clocale(
-        str: *const c_char,
-        end: *mut *mut c_char,
-    ) -> f32;
+    pub fn swift_stdlib_strtof_clocale(str: *const c_char, end: *mut *mut c_char) -> f32;
 
     /// Parse a float16 from a C string using the C locale.
-    pub fn swift_stdlib_strtof16_clocale(
-        str: *const c_char,
-        end: *mut *mut c_char,
-    ) -> u16;
+    pub fn swift_stdlib_strtof16_clocale(str: *const c_char, end: *mut *mut c_char) -> u16;
 
     /// Parse a long double from a C string using the C locale.
-    pub fn swift_stdlib_strtold_clocale(
-        str: *const c_char,
-        end: *mut *mut c_char,
-    ) -> f64; // long double varies by platform
+    pub fn swift_stdlib_strtold_clocale(str: *const c_char, end: *mut *mut c_char) -> f64; // long double varies by platform
 
     /// Hashing parameters.
     pub static swift_stdlib_Hashing_parameters: [u64; 2];

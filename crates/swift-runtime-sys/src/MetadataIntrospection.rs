@@ -45,35 +45,22 @@ unsafe extern "C" {
     ) -> MetadataResponse;
 
     /// Get the kind of a metadata record.
-    pub fn swift_getMetadataKind(
-        metadata: MetadataRef,
-    ) -> usize;
+    pub fn swift_getMetadataKind(metadata: MetadataRef) -> usize;
 
     /// Fetch a uniqued metatype metadata.
-    pub fn swift_getMetatypeMetadata(
-        instance_type: MetadataRef,
-    ) -> MetadataRef;
+    pub fn swift_getMetatypeMetadata(instance_type: MetadataRef) -> MetadataRef;
 
     /// Get the runtime type metadata of a heap object.
-    pub fn swift_getObjectType(
-        object: HeapObjectRef,
-    ) -> MetadataRef;
+    pub fn swift_getObjectType(object: HeapObjectRef) -> MetadataRef;
 
     /// Return the human-readable name of a Swift type.
-    pub fn swift_getTypeName(
-        metadata: MetadataRef,
-        qualified: bool,
-    ) -> TypeNamePair;
+    pub fn swift_getTypeName(metadata: MetadataRef, qualified: bool) -> TypeNamePair;
 
     /// Return the mangled name of a Swift type.
-    pub fn swift_getMangledTypeName(
-        metadata: MetadataRef,
-    ) -> TypeNamePair;
+    pub fn swift_getMangledTypeName(metadata: MetadataRef) -> TypeNamePair;
 
     /// Get the type context descriptor from metadata.
-    pub fn swift_getTypeContextDescriptor(
-        metadata: MetadataRef,
-    ) -> TypeContextDescriptorRef;
+    pub fn swift_getTypeContextDescriptor(metadata: MetadataRef) -> TypeContextDescriptorRef;
 
     /// Check that metadata has the right state.
     pub fn swift_checkMetadataState(
@@ -103,45 +90,28 @@ unsafe extern "C" {
     ) -> MetadataResponse;
 
     /// Get the ObjC class metadata from type metadata.
-    pub fn swift_getObjCClassFromMetadata(
-        metadata: MetadataRef,
-    ) -> MetadataRef;
+    pub fn swift_getObjCClassFromMetadata(metadata: MetadataRef) -> MetadataRef;
 
     /// Get the ObjC class from a heap object.
-    pub fn swift_getObjCClassFromObject(
-        object: HeapObjectRef,
-    ) -> MetadataRef;
+    pub fn swift_getObjCClassFromObject(object: HeapObjectRef) -> MetadataRef;
 
     /// Fetch uniqued type metadata for an ObjC class.
-    pub fn swift_getObjCClassMetadata(
-        the_class: MetadataRef,
-    ) -> MetadataRef;
+    pub fn swift_getObjCClassMetadata(the_class: MetadataRef) -> MetadataRef;
 
     /// Get the initialized ObjC class.
-    pub fn swift_getInitializedObjCClass(
-        c: *mut c_void,
-    ) -> *mut c_void;
+    pub fn swift_getInitializedObjCClass(c: *mut c_void) -> *mut c_void;
 
     /// Check if a type is a class type.
-    pub fn swift_isClassType(
-        metadata: MetadataRef,
-    ) -> bool;
+    pub fn swift_isClassType(metadata: MetadataRef) -> bool;
 
     /// Check if a type is an Optional type.
-    pub fn swift_isOptionalType(
-        metadata: MetadataRef,
-    ) -> MetadataRef;
+    pub fn swift_isOptionalType(metadata: MetadataRef) -> MetadataRef;
 
     /// Check if a type is a class or ObjC existential type.
-    pub fn swift_isClassOrObjCExistentialType(
-        metadata: MetadataRef,
-    ) -> bool;
+    pub fn swift_isClassOrObjCExistentialType(metadata: MetadataRef) -> bool;
 
     /// Check if one class is a subclass of another.
-    pub fn swift_class_isSubclass(
-        subclass: MetadataRef,
-        superclass: MetadataRef,
-    ) -> bool;
+    pub fn swift_class_isSubclass(subclass: MetadataRef, superclass: MetadataRef) -> bool;
 
     // ── Function type metadata ──
 
@@ -154,10 +124,7 @@ unsafe extern "C" {
     ) -> MetadataRef;
 
     /// Fetch uniqued metadata for a 0-parameter function type.
-    pub fn swift_getFunctionTypeMetadata0(
-        flags: usize,
-        result: MetadataRef,
-    ) -> MetadataRef;
+    pub fn swift_getFunctionTypeMetadata0(flags: usize, result: MetadataRef) -> MetadataRef;
 
     /// Fetch uniqued metadata for a 1-parameter function type.
     pub fn swift_getFunctionTypeMetadata1(
@@ -213,20 +180,13 @@ unsafe extern "C" {
     ) -> MetadataRef;
 
     /// Get the number of parameters in a function type.
-    pub fn swift_func_getParameterCount(
-        metadata: MetadataRef,
-    ) -> usize;
+    pub fn swift_func_getParameterCount(metadata: MetadataRef) -> usize;
 
     /// Get the type info for a parameter.
-    pub fn swift_func_getParameterTypeInfo(
-        metadata: MetadataRef,
-        index: usize,
-    ) -> MetadataRef;
+    pub fn swift_func_getParameterTypeInfo(metadata: MetadataRef, index: usize) -> MetadataRef;
 
     /// Get the return type info.
-    pub fn swift_func_getReturnTypeInfo(
-        metadata: MetadataRef,
-    ) -> MetadataRef;
+    pub fn swift_func_getReturnTypeInfo(metadata: MetadataRef) -> MetadataRef;
 
     /// Get a function's full name from its mangled name.
     pub fn swift_getFunctionFullNameFromMangledName(
@@ -300,9 +260,7 @@ unsafe extern "C" {
     ) -> MetadataRef;
 
     /// Fetch uniqued metadata for an existential metatype.
-    pub fn swift_getExistentialMetatypeMetadata(
-        instance_type: MetadataRef,
-    ) -> MetadataRef;
+    pub fn swift_getExistentialMetatypeMetadata(instance_type: MetadataRef) -> MetadataRef;
 
     /// Fetch uniqued metadata for an extended existential type.
     pub fn swift_getExtendedExistentialTypeMetadata(
@@ -317,9 +275,7 @@ unsafe extern "C" {
     ) -> MetadataRef;
 
     /// Get the shape of an extended existential type.
-    pub fn swift_getExtendedExistentialTypeShape(
-        descriptor: *const c_void,
-    ) -> *const c_void;
+    pub fn swift_getExtendedExistentialTypeShape(descriptor: *const c_void) -> *const c_void;
 
     /// Assign a value into an existential container with copy semantics.
     pub fn swift_assignExistentialWithCopy(

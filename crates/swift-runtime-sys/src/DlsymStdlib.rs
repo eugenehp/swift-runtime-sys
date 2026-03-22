@@ -18,7 +18,11 @@ unsafe extern "C" {
 /// Resolve a symbol from the default search path.
 fn sym(name: &core::ffi::CStr) -> Option<*const c_void> {
     let ptr = unsafe { dlsym(RTLD_DEFAULT, name.as_ptr()) };
-    if ptr.is_null() { None } else { Some(ptr as *const c_void) }
+    if ptr.is_null() {
+        None
+    } else {
+        Some(ptr as *const c_void)
+    }
 }
 
 // ── Resolved SPI functions ──
@@ -44,29 +48,32 @@ static S_PUTC_STDERR: OnceLock<Option<PutcStderrFn>> = OnceLock::new();
 static S_IS_NSSTRING: OnceLock<Option<IsNSStringFn>> = OnceLock::new();
 
 fn resolve_fn<T: Copy>(lock: &OnceLock<Option<T>>, name: &core::ffi::CStr) -> Option<T> {
-    *lock.get_or_init(|| {
-        sym(name).map(|p| unsafe { core::mem::transmute_copy(&p) })
-    })
+    *lock.get_or_init(|| sym(name).map(|p| unsafe { core::mem::transmute_copy(&p) }))
 }
 
 // ── Public API ──
 
 /// Get the number of hardware threads. Returns None if symbol unavailable.
 pub fn get_hardware_concurrency() -> Option<usize> {
-    resolve_fn(&S_HARDWARE_CONCURRENCY, c"_swift_stdlib_getHardwareConcurrency")
-        .map(|f| unsafe { f() })
+    resolve_fn(
+        &S_HARDWARE_CONCURRENCY,
+        c"_swift_stdlib_getHardwareConcurrency",
+    )
+    .map(|f| unsafe { f() })
 }
 
 /// Get the OS version. Returns None if symbol unavailable.
 pub fn get_os_version() -> Option<crate::StdlibUtils::OSVersion> {
-    resolve_fn(&S_OS_VERSION, c"_swift_stdlib_operatingSystemVersion")
-        .map(|f| unsafe { f() })
+    resolve_fn(&S_OS_VERSION, c"_swift_stdlib_operatingSystemVersion").map(|f| unsafe { f() })
 }
 
 /// Fill a buffer with random bytes. Returns false if symbol unavailable.
 pub fn random(buf: &mut [u8]) -> bool {
     match resolve_fn(&S_RANDOM, c"_swift_stdlib_random") {
-        Some(f) => { unsafe { f(buf.as_mut_ptr() as _, buf.len()) }; true }
+        Some(f) => {
+            unsafe { f(buf.as_mut_ptr() as _, buf.len()) };
+            true
+        }
         None => false,
     }
 }
@@ -105,7 +112,10 @@ pub fn is_stack_allocation_safe(size: usize, alignment: usize) -> Option<bool> {
 /// Immortalize a Swift object (make it never deallocated).
 pub fn immortalize(object: *mut c_void) -> bool {
     match resolve_fn(&S_IMMORTALIZE, c"_swift_stdlib_immortalize") {
-        Some(f) => { unsafe { f(object) }; true }
+        Some(f) => {
+            unsafe { f(object) };
+            true
+        }
         None => false,
     }
 }
@@ -113,13 +123,15 @@ pub fn immortalize(object: *mut c_void) -> bool {
 /// Write a character to stderr.
 pub fn putc_stderr(c: u32) -> bool {
     match resolve_fn(&S_PUTC_STDERR, c"_swift_stdlib_putc_stderr") {
-        Some(f) => { unsafe { f(c) }; true }
+        Some(f) => {
+            unsafe { f(c) };
+            true
+        }
         None => false,
     }
 }
 
 /// Check if a value is an NSString.
 pub fn is_nsstring(object: *const c_void) -> Option<bool> {
-    resolve_fn(&S_IS_NSSTRING, c"_swift_stdlib_isNSString")
-        .map(|f| unsafe { f(object) })
+    resolve_fn(&S_IS_NSSTRING, c"_swift_stdlib_isNSString").map(|f| unsafe { f(object) })
 }
