@@ -1670,3 +1670,127 @@ public func swiftuiSensoryFeedback(_ h: ViewHandle, _ type: Int32, _ trigger: Bo
     return boxView(unboxView(h).sensoryFeedback(f, trigger: trigger))
 }
 #endif
+
+// ═══════════════════════════════════════════════════════════════════════════
+// onChange(of:) — observe state changes per-view
+// ═══════════════════════════════════════════════════════════════════════════
+
+class OnChangeModel: ObservableObject {
+    @Published var value: Int = 0
+}
+
+@_cdecl("swiftui_on_change_int")
+public func swiftuiOnChangeInt(
+    _ h: ViewHandle, _ currentValue: Int,
+    _ cb: @convention(c) (Int, UnsafeMutableRawPointer?) -> Void,
+    _ ud: UnsafeMutableRawPointer?
+) -> ViewHandle {
+    let callback = cb; let userData = ud; let val = currentValue
+    return boxView(unboxView(h).onChange(of: val) { _, new in callback(new, userData) })
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// containerRelativeFrame
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_container_relative_frame")
+public func swiftuiContainerRelativeFrame(_ h: ViewHandle, _ axes: Int32) -> ViewHandle {
+    let a: Axis.Set = axes == 0 ? .horizontal : (axes == 1 ? .vertical : [.horizontal, .vertical])
+    return boxView(unboxView(h).containerRelativeFrame(a))
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Canvas draw commands — Rust builds a command buffer, Swift executes it
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Command format: [type:u8][...params as f32s]
+// Types:
+//   0 = fill_rect(x, y, w, h, r, g, b, a)
+//   1 = fill_circle(cx, cy, radius, r, g, b, a)
+//   2 = stroke_rect(x, y, w, h, r, g, b, a, lineWidth)
+//   3 = fill_rounded_rect(x, y, w, h, cornerRadius, r, g, b, a)
+//   4 = fill_ellipse(x, y, w, h, r, g, b, a)
+//   5 = stroke_line(x1, y1, x2, y2, r, g, b, a, lineWidth)
+//   6 = fill_text(text_ptr, text_len, x, y, size, r, g, b, a) — special
+
+@_cdecl("swiftui_canvas_commands")
+public func swiftuiCanvasCommands(
+    _ width: Float, _ height: Float,
+    _ cmdPtr: UnsafePointer<Float>, _ cmdCount: Int
+) -> ViewHandle {
+    // Parse commands into an array
+    let cmds = Array(UnsafeBufferPointer(start: cmdPtr, count: cmdCount))
+    let w = CGFloat(width); let h = CGFloat(height)
+    
+    struct CmdCanvas: View {
+        let w: CGFloat; let h: CGFloat; let cmds: [Float]
+        var body: some View {
+            Canvas { ctx, size in
+                var i = 0
+                while i < cmds.count {
+                    let type = Int(cmds[i]); i += 1
+                    switch type {
+                    case 0: // fill_rect
+                        guard i + 8 <= cmds.count else { return }
+                        let rect = CGRect(x: CGFloat(cmds[i]), y: CGFloat(cmds[i+1]), width: CGFloat(cmds[i+2]), height: CGFloat(cmds[i+3]))
+                        let color = Color(red: Double(cmds[i+4]), green: Double(cmds[i+5]), blue: Double(cmds[i+6]), opacity: Double(cmds[i+7]))
+                        ctx.fill(Path(rect), with: .color(color)); i += 8
+                    case 1: // fill_circle
+                        guard i + 7 <= cmds.count else { return }
+                        let r = CGFloat(cmds[i+2])
+                        let rect = CGRect(x: CGFloat(cmds[i])-r, y: CGFloat(cmds[i+1])-r, width: r*2, height: r*2)
+                        let color = Color(red: Double(cmds[i+3]), green: Double(cmds[i+4]), blue: Double(cmds[i+5]), opacity: Double(cmds[i+6]))
+                        ctx.fill(Path(ellipseIn: rect), with: .color(color)); i += 7
+                    case 2: // stroke_rect
+                        guard i + 9 <= cmds.count else { return }
+                        let rect = CGRect(x: CGFloat(cmds[i]), y: CGFloat(cmds[i+1]), width: CGFloat(cmds[i+2]), height: CGFloat(cmds[i+3]))
+                        let color = Color(red: Double(cmds[i+4]), green: Double(cmds[i+5]), blue: Double(cmds[i+6]), opacity: Double(cmds[i+7]))
+                        ctx.stroke(Path(rect), with: .color(color), lineWidth: CGFloat(cmds[i+8])); i += 9
+                    case 3: // fill_rounded_rect
+                        guard i + 9 <= cmds.count else { return }
+                        let rect = CGRect(x: CGFloat(cmds[i]), y: CGFloat(cmds[i+1]), width: CGFloat(cmds[i+2]), height: CGFloat(cmds[i+3]))
+                        let cr = CGFloat(cmds[i+4])
+                        let color = Color(red: Double(cmds[i+5]), green: Double(cmds[i+6]), blue: Double(cmds[i+7]), opacity: Double(cmds[i+8]))
+                        ctx.fill(Path(roundedRect: rect, cornerRadius: cr), with: .color(color)); i += 9
+                    case 4: // fill_ellipse
+                        guard i + 8 <= cmds.count else { return }
+                        let rect = CGRect(x: CGFloat(cmds[i]), y: CGFloat(cmds[i+1]), width: CGFloat(cmds[i+2]), height: CGFloat(cmds[i+3]))
+                        let color = Color(red: Double(cmds[i+4]), green: Double(cmds[i+5]), blue: Double(cmds[i+6]), opacity: Double(cmds[i+7]))
+                        ctx.fill(Path(ellipseIn: rect), with: .color(color)); i += 8
+                    case 5: // stroke_line
+                        guard i + 9 <= cmds.count else { return }
+                        var path = Path()
+                        path.move(to: CGPoint(x: CGFloat(cmds[i]), y: CGFloat(cmds[i+1])))
+                        path.addLine(to: CGPoint(x: CGFloat(cmds[i+2]), y: CGFloat(cmds[i+3])))
+                        let color = Color(red: Double(cmds[i+4]), green: Double(cmds[i+5]), blue: Double(cmds[i+6]), opacity: Double(cmds[i+7]))
+                        ctx.stroke(path, with: .color(color), lineWidth: CGFloat(cmds[i+8])); i += 9
+                    default:
+                        return
+                    }
+                }
+            }.frame(width: w, height: h)
+        }
+    }
+    return boxView(CmdCanvas(w: w, h: h, cmds: cmds))
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Keyframe / Phase animations
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_phase_animation")
+public func swiftuiPhaseAnimation(_ h: ViewHandle, _ phaseCount: Int32) -> ViewHandle {
+    // Phase animation cycles through opacity values
+    let phases = (0..<Int(phaseCount)).map { Double($0) / Double(phaseCount) }
+    return boxView(unboxView(h).phaseAnimator(phases) { content, phase in
+        content.opacity(0.3 + phase * 0.7)
+    })
+}
+
+@_cdecl("swiftui_phase_animation_scale")
+public func swiftuiPhaseAnimationScale(_ h: ViewHandle, _ scales: UnsafePointer<Float>, _ count: Int) -> ViewHandle {
+    let s = (0..<count).map { Double(scales[$0]) }
+    return boxView(unboxView(h).phaseAnimator(s) { content, phase in
+        content.scaleEffect(phase)
+    })
+}

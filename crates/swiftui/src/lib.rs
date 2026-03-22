@@ -17,6 +17,7 @@
 //! ```
 
 mod app;
+pub mod canvas;
 mod color;
 pub mod conditional;
 mod context;

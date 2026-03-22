@@ -270,6 +270,18 @@ pub struct Fns {
     pub navigation_stack: unsafe extern "C" fn(Handle) -> Handle,
     pub navigation_link: unsafe extern "C" fn(*const u8, usize, Handle) -> Handle,
 
+    // onChange / containerRelativeFrame / Canvas / Phase animation
+    pub on_change_int: unsafe extern "C" fn(
+        Handle,
+        isize,
+        unsafe extern "C" fn(isize, *mut c_void),
+        *mut c_void,
+    ) -> Handle,
+    pub container_relative_frame: unsafe extern "C" fn(Handle, i32) -> Handle,
+    pub canvas_commands: unsafe extern "C" fn(f32, f32, *const f32, usize) -> Handle,
+    pub phase_animation: unsafe extern "C" fn(Handle, i32) -> Handle,
+    pub phase_animation_scale: unsafe extern "C" fn(Handle, *const f32, usize) -> Handle,
+
     // Symbol effects
     pub symbol_effect_bounce: unsafe extern "C" fn(Handle) -> Handle,
     pub symbol_effect_pulse: unsafe extern "C" fn(Handle) -> Handle,
@@ -426,6 +438,14 @@ pub fn load(path: &str) -> Result<Fns, String> {
             app_storage_set_bool: std::mem::transmute(sym(h, c"swiftui_app_storage_set_bool")),
             navigation_stack: std::mem::transmute(sym(h, c"swiftui_navigation_stack")),
             navigation_link: std::mem::transmute(sym(h, c"swiftui_navigation_link")),
+            on_change_int: std::mem::transmute(sym(h, c"swiftui_on_change_int")),
+            container_relative_frame: std::mem::transmute(sym(
+                h,
+                c"swiftui_container_relative_frame",
+            )),
+            canvas_commands: std::mem::transmute(sym(h, c"swiftui_canvas_commands")),
+            phase_animation: std::mem::transmute(sym(h, c"swiftui_phase_animation")),
+            phase_animation_scale: std::mem::transmute(sym(h, c"swiftui_phase_animation_scale")),
             symbol_effect_bounce: std::mem::transmute(sym(h, c"swiftui_symbol_effect_bounce")),
             symbol_effect_pulse: std::mem::transmute(sym(h, c"swiftui_symbol_effect_pulse")),
             symbol_effect_variable_color: std::mem::transmute(sym(

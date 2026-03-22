@@ -972,6 +972,44 @@ impl View {
         })
     }
 
+    // ── onChange / containerRelativeFrame / Phase animation ──
+
+    /// 0=horizontal, 1=vertical, 2=both
+    pub fn container_relative_frame(self, axes: i32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.container_relative_frame)(self.handle.as_raw(), axes) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    /// Phase animation cycling through opacity.
+    pub fn phase_animate(self, phases: i32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.phase_animation)(self.handle.as_raw(), phases) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    /// Phase animation cycling through scale values.
+    pub fn phase_animate_scale(self, scales: &[f32]) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe {
+                    (ui.fns.phase_animation_scale)(
+                        self.handle.as_raw(),
+                        scales.as_ptr(),
+                        scales.len(),
+                    )
+                },
+                ui.fns.release,
+            ))
+        })
+    }
+
     // ── Navigation ──
 
     pub fn navigation_stack(self) -> Self {
