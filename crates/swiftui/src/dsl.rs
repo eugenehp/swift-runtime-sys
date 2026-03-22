@@ -481,6 +481,25 @@ pub fn share_link(text: &str, url: &str) -> View {
     })
 }
 
+/// Create a photos picker.
+pub fn photos_picker(label: &str, on_select: impl Fn(&[u8]) + 'static) -> View {
+    let boxed: Box<Box<dyn Fn(*const u8, usize)>> = Box::new(Box::new(move |ptr, len| {
+        let data = unsafe { std::slice::from_raw_parts(ptr, len) };
+        on_select(data);
+    }));
+    let ud = Box::into_raw(boxed) as *mut core::ffi::c_void;
+    unsafe extern "C" fn tramp(ptr: *const u8, len: usize, ud: *mut core::ffi::c_void) {
+        let f = &*(ud as *const Box<dyn Fn(*const u8, usize)>);
+        f(ptr, len);
+    }
+    with_ui(|ui| {
+        View::new(ViewHandle::new(
+            unsafe { (ui.fns.photos_picker)(label.as_ptr(), label.len(), tramp, ud) },
+            ui.fns.release,
+        ))
+    })
+}
+
 /// Create a Map view centered on coordinates.
 pub fn map(lat: f32, lon: f32, span_lat: f32, span_lon: f32) -> View {
     with_ui(|ui| {

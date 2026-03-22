@@ -801,6 +801,32 @@ impl View {
         })
     }
 
+    // ── Matched geometry / Task ──
+
+    pub fn matched_geometry(self, id: &str) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.matched_geometry)(self.handle.as_raw(), id.as_ptr(), id.len()) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn task(self, action: impl Fn() + 'static) -> Self {
+        let boxed: Box<Box<dyn Fn()>> = Box::new(Box::new(action));
+        let ptr = Box::into_raw(boxed) as *mut core::ffi::c_void;
+        unsafe extern "C" fn tramp(p: *mut core::ffi::c_void) {
+            let f = &*(p as *const Box<dyn Fn()>);
+            f();
+        }
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.task)(self.handle.as_raw(), tramp, ptr) },
+                ui.fns.release,
+            ))
+        })
+    }
+
     // ── Container modifiers ──
 
     pub fn scroll(self) -> Self {

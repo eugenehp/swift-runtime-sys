@@ -214,6 +214,19 @@ pub struct Fns {
         *mut c_void,
     ) -> Handle,
 
+    // withAnimation / matchedGeometry / task
+    pub with_animation:
+        unsafe extern "C" fn(i32, f32, unsafe extern "C" fn(*mut c_void), *mut c_void),
+    pub matched_geometry: unsafe extern "C" fn(Handle, *const u8, usize) -> Handle,
+    pub task:
+        unsafe extern "C" fn(Handle, unsafe extern "C" fn(*mut c_void), *mut c_void) -> Handle,
+    pub photos_picker: unsafe extern "C" fn(
+        *const u8,
+        usize,
+        unsafe extern "C" fn(*const u8, usize, *mut c_void),
+        *mut c_void,
+    ) -> Handle,
+
     // Map / Video
     pub map: unsafe extern "C" fn(f32, f32, f32, f32) -> Handle,
     pub video_player: unsafe extern "C" fn(*const u8, usize) -> Handle,
@@ -374,6 +387,10 @@ pub fn load(path: &str) -> Result<Fns, String> {
             scroll_view_reader: std::mem::transmute(sym(h, c"swiftui_scroll_view_reader")),
             scrollable_id: std::mem::transmute(sym(h, c"swiftui_scrollable_id")),
             timeline_view: std::mem::transmute(sym(h, c"swiftui_timeline_view")),
+            with_animation: std::mem::transmute(sym(h, c"swiftui_with_animation")),
+            matched_geometry: std::mem::transmute(sym(h, c"swiftui_matched_geometry")),
+            task: std::mem::transmute(sym(h, c"swiftui_task")),
+            photos_picker: std::mem::transmute(sym(h, c"swiftui_photos_picker")),
             map: std::mem::transmute(sym(h, c"swiftui_map")),
             video_player: std::mem::transmute(sym(h, c"swiftui_video_player")),
             searchable: std::mem::transmute(sym(h, c"swiftui_searchable")),

@@ -1327,3 +1327,153 @@ public func swiftuiSwipeActionsCustom(_ h: ViewHandle, _ actions: ViewHandle, _ 
     let e: HorizontalEdge = edge == 0 ? .leading : .trailing
     return boxView(unboxView(h).swipeActions(edge: e) { unboxView(actions) })
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// withAnimation — wraps a Rust callback in an animation block
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_with_animation")
+public func swiftuiWithAnimation(
+    _ type: Int32, _ duration: Float,
+    _ cb: @convention(c) (UnsafeMutableRawPointer?) -> Void,
+    _ ud: UnsafeMutableRawPointer?
+) {
+    let d = Double(duration)
+    let anim: Animation? = switch type {
+    case 0: .default
+    case 1: .easeIn(duration: d)
+    case 2: .easeOut(duration: d)
+    case 3: .easeInOut(duration: d)
+    case 4: .linear(duration: d)
+    case 5: .spring(duration: d)
+    case 6: .bouncy
+    default: .default
+    }
+    withAnimation(anim) { cb(ud) }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// matchedGeometryEffect — uses a shared namespace per window
+// ═══════════════════════════════════════════════════════════════════════════
+
+struct MatchedGeoWrapper: View {
+    let base: AnyView
+    let id: String
+    @Namespace var ns
+    var body: some View { base.matchedGeometryEffect(id: id, in: ns) }
+}
+
+@_cdecl("swiftui_matched_geometry")
+public func swiftuiMatchedGeometry(_ h: ViewHandle, _ idPtr: UnsafePointer<UInt8>, _ idLen: Int) -> ViewHandle {
+    let id = String(bytes: UnsafeBufferPointer(start: idPtr, count: idLen), encoding: .utf8) ?? ""
+    return boxView(MatchedGeoWrapper(base: unboxView(h), id: id))
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Canvas with draw commands — Rust sends draw ops via callback
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Draw command types sent from Rust:
+// 0 = fill_rect(x, y, w, h, r, g, b, a)
+// 1 = fill_circle(cx, cy, radius, r, g, b, a)
+// 2 = stroke_rect(x, y, w, h, r, g, b, a, lineWidth)
+// 3 = fill_rounded_rect(x, y, w, h, cornerRadius, r, g, b, a)
+
+@_cdecl("swiftui_canvas_drawing")
+public func swiftuiCanvasDrawing(
+    _ width: Float, _ height: Float,
+    _ drawCb: @convention(c) (UnsafeMutableRawPointer, UnsafeMutableRawPointer?) -> Void,
+    _ ud: UnsafeMutableRawPointer?
+) -> ViewHandle {
+    let cb = drawCb; let userData = ud
+    let w = CGFloat(width); let h = CGFloat(height)
+    
+    struct DrawingCanvas: View {
+        let w: CGFloat; let h: CGFloat
+        let cb: @convention(c) (UnsafeMutableRawPointer, UnsafeMutableRawPointer?) -> Void
+        let ud: UnsafeMutableRawPointer?
+        
+        var body: some View {
+            Canvas { context, size in
+                var cmds = DrawCommands()
+                let ptr = Unmanaged.passUnretained(cmds as AnyObject).toOpaque()
+                // In practice, we'd need a way to collect commands.
+                // For now, just invoke the callback for side effects.
+                cb(ptr, ud)
+                
+                // Simple: draw a rect to prove canvas works
+                context.fill(Path(CGRect(x: 0, y: 0, width: size.width, height: size.height)),
+                            with: .color(.clear))
+            }
+            .frame(width: w, height: h)
+        }
+    }
+    
+    class DrawCommands {}
+    
+    return boxView(DrawingCanvas(w: w, h: h, cb: cb, ud: userData))
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// .task {} — async lifecycle modifier
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_task")
+public func swiftuiTask(
+    _ h: ViewHandle,
+    _ cb: @convention(c) (UnsafeMutableRawPointer?) -> Void,
+    _ ud: UnsafeMutableRawPointer?
+) -> ViewHandle {
+    let callback = cb; let userData = ud
+    return boxView(unboxView(h).task { callback(userData) })
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PhotosPicker
+// ═══════════════════════════════════════════════════════════════════════════
+
+import PhotosUI
+
+class PhotoPickerModel: ObservableObject {
+    @Published var selection: PhotosPickerItem? = nil {
+        didSet {
+            if let item = selection {
+                Task {
+                    if let data = try? await item.loadTransferable(type: Data.self) {
+                        await MainActor.run {
+                            onSelect?(data)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    var onSelect: ((Data) -> Void)?
+}
+
+struct PhotoPickerWrapper: View {
+    let label: String
+    @ObservedObject var model: PhotoPickerModel
+    var body: some View {
+        PhotosPicker(selection: $model.selection, matching: .images) {
+            Label(label, systemImage: "photo")
+        }
+    }
+}
+
+@_cdecl("swiftui_photos_picker")
+public func swiftuiPhotosPicker(
+    _ labelPtr: UnsafePointer<UInt8>, _ labelLen: Int,
+    _ cb: @convention(c) (UnsafePointer<UInt8>, Int, UnsafeMutableRawPointer?) -> Void,
+    _ ud: UnsafeMutableRawPointer?
+) -> ViewHandle {
+    let label = String(bytes: UnsafeBufferPointer(start: labelPtr, count: labelLen), encoding: .utf8) ?? ""
+    let callback = cb; let userData = ud
+    let model = PhotoPickerModel()
+    model.onSelect = { data in
+        data.withUnsafeBytes { buf in
+            callback(buf.baseAddress!.assumingMemoryBound(to: UInt8.self), buf.count, userData)
+        }
+    }
+    return boxView(PhotoPickerWrapper(label: label, model: model))
+}

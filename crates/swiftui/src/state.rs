@@ -577,3 +577,50 @@ pub fn bound_picker(label: &str, options: &[&str], state: &State<i32>) -> crate:
         ))
     })
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// withAnimation — wraps a closure in a SwiftUI animation block
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// Animation curve for `with_animation`.
+#[derive(Clone, Copy)]
+pub enum AnimCurve {
+    Default = 0,
+    EaseIn = 1,
+    EaseOut = 2,
+    EaseInOut = 3,
+    Linear = 4,
+    Spring = 5,
+    Bouncy = 6,
+}
+
+/// Run a closure inside a SwiftUI animation block.
+/// State changes made inside `f` will be animated.
+///
+/// ```ignore
+/// with_animation(AnimCurve::Spring, 0.3, || {
+///     count.set(count.get() + 1);
+///     offset.set(100.0);
+/// });
+/// ```
+pub fn with_animation(curve: AnimCurve, duration: f32, f: impl FnOnce()) {
+    let boxed: Box<Box<dyn FnOnce()>> = Box::new(Box::new(f));
+    let ptr = Box::into_raw(boxed) as *mut core::ffi::c_void;
+    unsafe extern "C" fn tramp(p: *mut core::ffi::c_void) {
+        let f = Box::from_raw(p as *mut Box<dyn FnOnce()>);
+        f();
+    }
+    crate::dsl::with_ui(|ui| {
+        unsafe { (ui.fns.with_animation)(curve as i32, duration, tramp, ptr) };
+    });
+}
+
+/// Convenience: animate with default curve.
+pub fn animate(f: impl FnOnce()) {
+    with_animation(AnimCurve::Default, 0.3, f);
+}
+
+/// Convenience: animate with spring.
+pub fn animate_spring(f: impl FnOnce()) {
+    with_animation(AnimCurve::Spring, 0.5, f);
+}
