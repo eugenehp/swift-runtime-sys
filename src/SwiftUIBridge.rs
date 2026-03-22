@@ -2,13 +2,9 @@
 
 //! SwiftUI bridge — construct and display SwiftUI views from Rust.
 //!
-//! This works by:
-//! 1. Calling SwiftUI type initializers (Text.init, VStack.init, etc.) via dlsym
-//! 2. Getting the View witness table via swift_conformsToProtocol
-//! 3. Constructing an existential container (`any View` = 40 bytes)
-//! 4. Passing it to NSHostingController/NSHostingView
-//!
-//! No fake metadata or witness tables needed — we use the real ones from SwiftUI.
+//! Uses a small Swift helper dylib for operations that require complex
+//! calling conventions (LSK/Text creation, existential boxing, window display).
+//! The Rust side handles: String creation, metadata verification, dlsym resolution.
 
 use core::ffi::{c_char, c_void};
 use std::ffi::CString;
@@ -26,8 +22,10 @@ fn sym(name: &core::ffi::CStr) -> *const c_void {
 #[derive(Debug)]
 pub enum SwiftUIError {
     FrameworkNotLoaded,
+    HelperNotLoaded(String),
     SymbolNotFound(String),
     TypeTooLarge(usize),
+    CreationFailed(String),
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -37,7 +35,8 @@ pub enum SwiftUIError {
 /// An existential container for `any View`.
 ///
 /// Layout (64-bit):
-///   [0..24]  inline value buffer (3 words)
+///   [0..24]  inline value buffer (3 words) — for types ≤24 bytes
+///            OR: [0..8] = box pointer, rest unused — for types >24 bytes
 ///   [24..32] type metadata pointer
 ///   [32..40] View witness table pointer
 #[repr(C)]
@@ -50,39 +49,10 @@ pub struct AnyViewExistential {
 
 impl AnyViewExistential {
     pub const SIZE: usize = 40;
-
-    /// Create an existential container from a value, its metadata, and witness table.
-    ///
-    /// # Safety
-    /// - `value` must point to a valid value of the type described by `metadata`
-    /// - `value_size` must match the type's actual size
-    /// - `metadata` must be valid type metadata
-    /// - `witness_table` must be the View witness table for this type
-    pub unsafe fn new(
-        value: *const c_void,
-        value_size: usize,
-        metadata: *const c_void,
-        witness_table: *const c_void,
-    ) -> Result<Self, SwiftUIError> {
-        if value_size > 24 {
-            return Err(SwiftUIError::TypeTooLarge(value_size));
-        }
-        let mut container = AnyViewExistential {
-            inline_buffer: [0; 3],
-            metadata,
-            witness_table,
-        };
-        core::ptr::copy_nonoverlapping(
-            value as *const u8,
-            container.inline_buffer.as_mut_ptr() as *mut u8,
-            value_size,
-        );
-        Ok(container)
-    }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// SwiftUI framework loader
+// Framework loading
 // ═══════════════════════════════════════════════════════════════════════════
 
 static LOADED: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
@@ -98,36 +68,25 @@ pub fn ensure_loaded() -> Result<(), SwiftUIError> {
     if handle.is_null() {
         return Err(SwiftUIError::FrameworkNotLoaded);
     }
-    // Also load AppKit
-    unsafe {
-        dlopen(c"/System/Library/Frameworks/AppKit.framework/AppKit".as_ptr(), 1);
-    }
+    unsafe { dlopen(c"/System/Library/Frameworks/AppKit.framework/AppKit".as_ptr(), 1); }
     LOADED.store(true, std::sync::atomic::Ordering::Release);
     Ok(())
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// Get View witness table for any SwiftUI type
+// View witness table lookup
 // ═══════════════════════════════════════════════════════════════════════════
 
-/// Get the View protocol witness table for a type.
-///
-/// Uses `swift_conformsToProtocol(metadata, ViewProtocol)`.
+/// Get the View protocol witness table for a type via swift_conformsToProtocol.
 pub fn get_view_witness_table(metadata: *const c_void) -> Option<*const c_void> {
     let conforms = sym(c"swift_conformsToProtocol");
     let view_proto = sym(c"$s7SwiftUI4ViewMp");
-    if conforms.is_null() || view_proto.is_null() {
-        return None;
-    }
+    if conforms.is_null() || view_proto.is_null() { return None; }
     type ConformsFn = unsafe extern "C" fn(*const c_void, *const c_void) -> *const c_void;
     let f: ConformsFn = unsafe { core::mem::transmute(conforms) };
     let wt = unsafe { f(metadata, view_proto) };
     if wt.is_null() { None } else { Some(wt) }
 }
-
-// ═══════════════════════════════════════════════════════════════════════════
-// SwiftUI.Text construction
-// ═══════════════════════════════════════════════════════════════════════════
 
 /// Get the size of SwiftUI.Text values.
 pub fn text_size() -> Option<usize> {
@@ -139,185 +98,200 @@ pub fn text_size() -> Option<usize> {
     Some(unsafe { (*vwt).size })
 }
 
-/// Create a `SwiftUI.Text` value from a Rust string.
+// ═══════════════════════════════════════════════════════════════════════════
+// Pure-Rust Swift.String creation
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// Create a Swift.String from a Rust &str, entirely from Rust using inline asm.
 ///
-/// Returns the raw bytes of the Text value and its metadata.
-///
-/// # Safety
-/// The returned bytes are a valid Swift Text value that must be properly
-/// destroyed when no longer needed (via the VWT destroy function).
-pub unsafe fn create_text(s: &str) -> Result<(Vec<u8>, *const c_void, *const c_void), SwiftUIError> {
-    ensure_loaded()?;
-
-    let text_meta = sym(c"$s7SwiftUI4TextVN");
-    if text_meta.is_null() {
-        return Err(SwiftUIError::SymbolNotFound("SwiftUI.Text metadata".into()));
-    }
-
-    let vwt = crate::SwiftABI::get_value_witness_table(text_meta);
-    let size = (*vwt).size;
-
-    let wt = get_view_witness_table(text_meta)
-        .ok_or_else(|| SwiftUIError::SymbolNotFound("Text:View conformance".into()))?;
-
-    // Resolve Text.init(_:tableName:bundle:comment:)
-    let text_init = sym(
-        c"$s7SwiftUI4TextV_9tableName6bundle7commentAcA18LocalizedStringKeyV_SSSgSo8NSBundleCSgs06StaticI0VSgtcfC"
+/// Returns the 16-byte String representation.
+/// Proven correct: output matches byte-for-byte with Swift-created Strings.
+pub unsafe fn create_swift_string(s: &str) -> Result<[u8; 16], SwiftUIError> {
+    let string_init = sym(
+        c"$sSS21_builtinStringLiteral17utf8CodeUnitCount7isASCIISSBp_BwBi1_tcfC"
     );
-    let lsk_init = sym(c"$s7SwiftUI18LocalizedStringKeyV13stringLiteralACSS_tcfC");
-    let string_init = sym(c"$sSS21_builtinStringLiteral17utf8CodeUnitCount7isASCIISSBp_BwBi1_tcfC");
     let string_meta = sym(c"$sSSN");
-    let lsk_meta = sym(c"$s7SwiftUI18LocalizedStringKeyVN");
-    let text_type_meta = sym(c"$s7SwiftUI4TextVN");
-
-    if text_init.is_null() || lsk_init.is_null() || string_init.is_null()
-        || string_meta.is_null() || lsk_meta.is_null() || text_type_meta.is_null()
-    {
-        return Err(SwiftUIError::SymbolNotFound("Text init chain".into()));
+    if string_init.is_null() || string_meta.is_null() {
+        return Err(SwiftUIError::SymbolNotFound("String.init".into()));
     }
 
-    // Step 1: Create Swift.String
-    // String.init(_builtinStringLiteral:utf8CodeUnitCount:isASCII:)
-    // Returns String (16 bytes) via C ABI
-    type StringInitFn = unsafe extern "C" fn(*const u8, usize, bool, *const c_void) -> [u8; 16];
-    let make_string: StringInitFn = core::mem::transmute(string_init);
-    let swift_string = make_string(s.as_ptr(), s.len(), s.is_ascii(), string_meta);
+    let s0: u64;
+    let s1: u64;
 
-    // Step 2: Create LocalizedStringKey
-    // LocalizedStringKey.init(stringLiteral:) 
-    // Takes ownership of the String, returns LSK
-    // LSK size can vary — let's get it from metadata
-    let lsk_vwt = crate::SwiftABI::get_value_witness_table(lsk_meta);
-    let lsk_size = (*lsk_vwt).size;
-
-    // Allocate buffer for LSK
-    let mut lsk_buf = vec![0u8; lsk_size];
-
-    // Call LSK init — this is a Swift CC function that takes String and returns LSK
-    // On arm64, for struct returns > 16 bytes, the return is via an indirect pointer (x8)
-    // But for many SwiftUI types, the return fits in registers.
-    // Let's use the asm approach:
     #[cfg(target_arch = "aarch64")]
     {
-        let lsk_ptr = lsk_buf.as_mut_ptr() as *mut c_void;
-        // LSK.init(stringLiteral:) takes String (16 bytes in x0,x1) + metatype
-        // Returns LSK which may be indirect via x8
         core::arch::asm!(
-            "mov x8, {result}",  // indirect return pointer
             "blr {func}",
-            func = in(reg) lsk_init,
-            result = in(reg) lsk_ptr,
-            in("x0") u64::from_le_bytes(swift_string[0..8].try_into().unwrap()),
-            in("x1") u64::from_le_bytes(swift_string[8..16].try_into().unwrap()),
-            in("x2") lsk_meta, // metatype
-            lateout("x0") _,
-            lateout("x1") _,
-            lateout("x3") _, lateout("x4") _, lateout("x5") _,
-            lateout("x6") _, lateout("x7") _,
-            lateout("x9") _, lateout("x10") _, lateout("x11") _,
-            lateout("x12") _, lateout("x13") _, lateout("x14") _, lateout("x15") _,
-            lateout("x16") _, lateout("x17") _, lateout("lr") _,
-            clobber_abi("C"),
+            func = in(reg) string_init,
+            in("x0") s.as_ptr(),
+            in("x1") s.len(),
+            in("x2") s.is_ascii() as u64,
+            in("x3") string_meta,
+            lateout("x0") s0,
+            lateout("x1") s1,
+            lateout("x2") _, lateout("x3") _, lateout("x4") _, lateout("x5") _,
+            lateout("x6") _, lateout("x7") _, lateout("x8") _,
+            lateout("x9") _, lateout("x10") _, lateout("x11") _, lateout("x12") _,
+            lateout("x13") _, lateout("x14") _, lateout("x15") _, lateout("x16") _,
+            lateout("x17") _, lateout("lr") _, clobber_abi("C"),
         );
     }
     #[cfg(target_arch = "x86_64")]
     {
-        // On x86_64, large struct returns use a hidden first parameter
-        type LskInitFn = unsafe extern "C" fn(*mut c_void, [u8; 16], *const c_void);
-        let f: LskInitFn = core::mem::transmute(lsk_init);
-        f(lsk_buf.as_mut_ptr() as _, swift_string, lsk_meta);
+        type F = unsafe extern "C" fn(*const u8, usize, bool, *const c_void) -> (u64, u64);
+        let f: F = core::mem::transmute(string_init);
+        let r = f(s.as_ptr(), s.len(), s.is_ascii(), string_meta);
+        s0 = r.0;
+        s1 = r.1;
     }
 
-    // Step 3: Create Text from LSK
-    // Text.init(_:tableName:bundle:comment:)
-    // Args: LSK, Optional<String>=nil, Optional<Bundle>=nil, Optional<StaticString>=nil, Text.Type
-    let mut text_buf = vec![0u8; size];
-    
-    #[cfg(target_arch = "aarch64")]
-    {
-        let text_ptr = text_buf.as_mut_ptr() as *mut c_void;
-        // This function takes LSK (passed indirectly), nil, nil, nil, metatype
-        // and returns Text (indirectly via x8)
-        // LSK is passed in x0 (pointer to value for large structs)
-        core::arch::asm!(
-            "mov x8, {result}",
-            "blr {func}",
-            func = in(reg) text_init,
-            result = in(reg) text_ptr,
-            in("x0") lsk_buf.as_ptr(),  // LSK pointer (passed indirectly)
-            in("x1") 0u64,              // tableName = nil  
-            in("x2") 0u64,              // bundle = nil
-            in("x3") 0u64,              // comment = nil (Optional<StaticString>)
-            in("x4") text_type_meta,    // Text.Type metatype
-            lateout("x0") _,
-            lateout("x1") _,
-            lateout("x5") _, lateout("x6") _, lateout("x7") _,
-            lateout("x9") _, lateout("x10") _, lateout("x11") _,
-            lateout("x12") _, lateout("x13") _, lateout("x14") _, lateout("x15") _,
-            lateout("x16") _, lateout("x17") _, lateout("lr") _,
-            clobber_abi("C"),
-        );
-    }
-    #[cfg(target_arch = "x86_64")]
-    {
-        type TextInitFn = unsafe extern "C" fn(*mut c_void, *const c_void, u64, u64, u64, *const c_void);
-        let f: TextInitFn = core::mem::transmute(text_init);
-        f(text_buf.as_mut_ptr() as _, lsk_buf.as_ptr() as _, 0, 0, 0, text_type_meta);
-    }
-
-    // Destroy the LSK (it was consumed by Text.init, but let's be safe)
-    // Actually, Swift init methods take ownership, so LSK is consumed. Don't destroy.
-
-    Ok((text_buf, text_meta, wt))
-}
-
-/// Create an `any View` existential containing a `Text` with the given string.
-pub unsafe fn create_text_existential(s: &str) -> Result<AnyViewExistential, SwiftUIError> {
-    let (text_bytes, metadata, wt) = create_text(s)?;
-    AnyViewExistential::new(
-        text_bytes.as_ptr() as *const c_void,
-        text_bytes.len(),
-        metadata,
-        wt,
-    )
+    let mut buf = [0u8; 16];
+    buf[..8].copy_from_slice(&s0.to_le_bytes());
+    buf[8..].copy_from_slice(&s1.to_le_bytes());
+    Ok(buf)
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// Window display
+// Helper dylib interface
 // ═══════════════════════════════════════════════════════════════════════════
 
-/// Show a SwiftUI view in a window.
-///
-/// This requires a compiled Swift helper dylib that provides `show_existential_in_window`.
-/// The helper creates NSHostingController and NSWindow from the existential.
-///
-/// If no helper is available, this returns an error.
-pub unsafe fn show_in_window(
-    existential: &AnyViewExistential,
-    helper_path: &str,
-) -> Result<(), SwiftUIError> {
-    let path = CString::new(helper_path).unwrap();
-    let handle = dlopen(path.as_ptr(), 1);
-    if handle.is_null() {
-        return Err(SwiftUIError::SymbolNotFound(format!("Could not load helper: {helper_path}")));
-    }
-
-    let show_fn = dlsym(handle, c"show_existential_in_window".as_ptr());
-    if show_fn.is_null() {
-        return Err(SwiftUIError::SymbolNotFound("show_existential_in_window".into()));
-    }
-
-    type ShowFn = unsafe extern "C" fn(*const c_void);
-    let show: ShowFn = core::mem::transmute(show_fn);
-    show(existential as *const AnyViewExistential as *const c_void);
-
-    Ok(())
+/// A loaded Swift helper dylib that provides SwiftUI bridging functions.
+pub struct SwiftUIHelper {
+    handle: *mut c_void,
+    // Resolved function pointers
+    create_lsk: unsafe extern "C" fn(*const c_void, *mut c_void) -> usize,
+    create_text: unsafe extern "C" fn(*const c_void, *mut c_void) -> usize,
+    create_text_controller: unsafe extern "C" fn(*const u8, usize) -> *mut c_void,
+    show_window: unsafe extern "C" fn(*mut c_void),
 }
 
-/// Show a Text view in a window using the probe helper.
-///
-/// This is the simplest end-to-end path: Rust string → SwiftUI window.
-pub unsafe fn show_text(s: &str, helper_path: &str) -> Result<(), SwiftUIError> {
-    let existential = create_text_existential(s)?;
-    show_in_window(&existential, helper_path)
+impl SwiftUIHelper {
+    /// Load the Swift helper dylib.
+    pub unsafe fn load(path: &str) -> Result<Self, SwiftUIError> {
+        ensure_loaded()?;
+
+        let cpath = CString::new(path).unwrap();
+        let handle = dlopen(cpath.as_ptr(), 1);
+        if handle.is_null() {
+            return Err(SwiftUIError::HelperNotLoaded(path.to_string()));
+        }
+
+        let create_lsk = dlsym(handle, c"step_create_lsk".as_ptr());
+        let create_text = dlsym(handle, c"step_create_text".as_ptr());
+        let create_ctrl = dlsym(handle, c"create_text_hosting_controller".as_ptr());
+        let show_win = dlsym(handle, c"show_window".as_ptr());
+
+        if create_lsk.is_null() || create_text.is_null() || create_ctrl.is_null() || show_win.is_null() {
+            return Err(SwiftUIError::SymbolNotFound("helper functions".into()));
+        }
+
+        Ok(Self {
+            handle,
+            create_lsk: core::mem::transmute(create_lsk),
+            create_text: core::mem::transmute(create_text),
+            create_text_controller: core::mem::transmute(create_ctrl),
+            show_window: core::mem::transmute(show_win),
+        })
+    }
+
+    /// Create a Swift String from Rust (pure Rust, no helper needed).
+    pub unsafe fn create_string(&self, s: &str) -> Result<[u8; 16], SwiftUIError> {
+        create_swift_string(s)
+    }
+
+    /// Create a LocalizedStringKey from a Swift String (uses helper).
+    pub unsafe fn create_localized_string_key(&self, string_bytes: &[u8; 16]) -> Result<Vec<u8>, SwiftUIError> {
+        let mut buf = vec![0u8; 64];
+        let size = (self.create_lsk)(string_bytes.as_ptr() as _, buf.as_mut_ptr() as _);
+        buf.truncate(size);
+        Ok(buf)
+    }
+
+    /// Create a SwiftUI.Text from a LocalizedStringKey (uses helper).
+    pub unsafe fn create_text_from_lsk(&self, lsk_bytes: &[u8]) -> Result<Vec<u8>, SwiftUIError> {
+        let mut buf = vec![0u8; 64];
+        let size = (self.create_text)(lsk_bytes.as_ptr() as _, buf.as_mut_ptr() as _);
+        buf.truncate(size);
+        Ok(buf)
+    }
+
+    /// Create a Text from a Rust string (String created in Rust, LSK+Text via helper).
+    pub unsafe fn create_text(&self, s: &str) -> Result<Vec<u8>, SwiftUIError> {
+        let string = self.create_string(s)?;
+        let lsk = self.create_localized_string_key(&string)?;
+        self.create_text_from_lsk(&lsk)
+    }
+
+    /// Create an `any View` existential from a Text value.
+    pub unsafe fn text_to_existential(&self, text_bytes: &[u8]) -> Result<AnyViewExistential, SwiftUIError> {
+        let text_meta = sym(c"$s7SwiftUI4TextVN");
+        if text_meta.is_null() {
+            return Err(SwiftUIError::SymbolNotFound("Text metadata".into()));
+        }
+
+        let wt = get_view_witness_table(text_meta)
+            .ok_or_else(|| SwiftUIError::SymbolNotFound("Text:View conformance".into()))?;
+
+        let vwt = crate::SwiftABI::get_value_witness_table(text_meta);
+        let text_size = (*vwt).size;
+
+        let mut container = AnyViewExistential {
+            inline_buffer: [0; 3],
+            metadata: text_meta,
+            witness_table: wt,
+        };
+
+        if text_size <= 24 {
+            // Inline: copy value directly
+            core::ptr::copy_nonoverlapping(
+                text_bytes.as_ptr(),
+                container.inline_buffer.as_mut_ptr() as *mut u8,
+                text_size,
+            );
+        } else {
+            // Box: allocate a box and copy the value into it
+            // Use swift_allocBox to allocate
+            let alloc_box = sym(c"swift_allocBox");
+            if alloc_box.is_null() {
+                return Err(SwiftUIError::SymbolNotFound("swift_allocBox".into()));
+            }
+
+            // swift_allocBox is Swift CC — use our thunk
+            let (box_obj, box_buf) = crate::SwiftCCThunks::swift_allocBox(text_meta)
+                .map_err(|_| SwiftUIError::SymbolNotFound("swift_allocBox thunk".into()))?;
+
+            // Copy the Text value into the box buffer
+            // Use initializeWithCopy from the VWT to properly retain references
+            ((*vwt).initialize_with_copy)(box_buf as _, text_bytes.as_ptr() as *mut c_void, text_meta);
+
+            // Store the box object pointer in the first word of the inline buffer
+            container.inline_buffer[0] = box_obj as u64;
+        }
+
+        Ok(container)
+    }
+
+    /// Full pipeline: Rust &str → SwiftUI.Text → any View existential.
+    pub unsafe fn create_text_existential(&self, s: &str) -> Result<AnyViewExistential, SwiftUIError> {
+        let text_bytes = self.create_text(s)?;
+        self.text_to_existential(&text_bytes)
+    }
+
+    /// Show a text string in a SwiftUI window (simplest path, all via helper).
+    pub unsafe fn show_text_window(&self, s: &str) {
+        let controller = (self.create_text_controller)(s.as_ptr(), s.len());
+        (self.show_window)(controller);
+    }
+
+    /// Show an existential in a SwiftUI window.
+    pub unsafe fn show_existential_window(&self, existential: &AnyViewExistential) -> Result<(), SwiftUIError> {
+        let show_ex = dlsym(self.handle, c"step_show_existential".as_ptr());
+        if show_ex.is_null() {
+            return Err(SwiftUIError::SymbolNotFound("step_show_existential".into()));
+        }
+        type ShowFn = unsafe extern "C" fn(*const c_void);
+        let show: ShowFn = core::mem::transmute(show_ex);
+        show(existential as *const AnyViewExistential as *const c_void);
+        Ok(())
+    }
 }
