@@ -1235,3 +1235,95 @@ public func swiftuiTimelineView(
     }
     return boxView(TV(interval: TimeInterval(intervalSeconds), cb: cb, ud: userData))
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Map (MapKit)
+// ═══════════════════════════════════════════════════════════════════════════
+
+import MapKit
+
+@_cdecl("swiftui_map")
+public func swiftuiMap(_ lat: Float, _ lon: Float, _ spanLat: Float, _ spanLon: Float) -> ViewHandle {
+    let region = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: Double(lat), longitude: Double(lon)),
+        span: MKCoordinateSpan(latitudeDelta: Double(spanLat), longitudeDelta: Double(spanLon))
+    )
+    return boxView(Map(initialPosition: .region(region)))
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// VideoPlayer (AVKit)
+// ═══════════════════════════════════════════════════════════════════════════
+
+import AVKit
+
+@_cdecl("swiftui_video_player")
+public func swiftuiVideoPlayer(_ urlPtr: UnsafePointer<UInt8>, _ urlLen: Int) -> ViewHandle {
+    let urlStr = String(bytes: UnsafeBufferPointer(start: urlPtr, count: urlLen), encoding: .utf8) ?? ""
+    if let url = URL(string: urlStr) {
+        return boxView(VideoPlayer(player: AVPlayer(url: url)))
+    }
+    return boxView(Text("Invalid video URL"))
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// .searchable / .refreshable / .swipeActions / .onChange
+// ═══════════════════════════════════════════════════════════════════════════
+
+class SearchModel: ObservableObject {
+    @Published var text: String = ""
+    var onChange: ((String) -> Void)?
+    init(_ cb: ((String) -> Void)?) { self.onChange = cb }
+}
+
+struct SearchableWrapper: View {
+    let base: AnyView
+    @ObservedObject var model: SearchModel
+    var body: some View {
+        base.searchable(text: $model.text)
+            .onChange(of: model.text) { _, new in model.onChange?(new) }
+    }
+}
+
+@_cdecl("swiftui_searchable")
+public func swiftuiSearchable(
+    _ h: ViewHandle,
+    _ cb: @convention(c) (UnsafePointer<UInt8>, Int, UnsafeMutableRawPointer?) -> Void,
+    _ ud: UnsafeMutableRawPointer?
+) -> ViewHandle {
+    let callback = cb; let userData = ud
+    let model = SearchModel { text in
+        text.withCString { ptr in
+            callback(UnsafePointer(OpaquePointer(ptr)), text.utf8.count, userData)
+        }
+    }
+    return boxView(SearchableWrapper(base: unboxView(h), model: model))
+}
+
+@_cdecl("swiftui_refreshable")
+public func swiftuiRefreshable(
+    _ h: ViewHandle,
+    _ cb: @convention(c) (UnsafeMutableRawPointer?) -> Void,
+    _ ud: UnsafeMutableRawPointer?
+) -> ViewHandle {
+    let callback = cb; let userData = ud
+    return boxView(unboxView(h).refreshable { callback(userData) })
+}
+
+@_cdecl("swiftui_swipe_actions_delete")
+public func swiftuiSwipeActionsDelete(
+    _ h: ViewHandle,
+    _ cb: @convention(c) (UnsafeMutableRawPointer?) -> Void,
+    _ ud: UnsafeMutableRawPointer?
+) -> ViewHandle {
+    let callback = cb; let userData = ud
+    return boxView(unboxView(h).swipeActions(edge: .trailing) {
+        Button(role: .destructive) { callback(userData) } label: { Label("Delete", systemImage: "trash") }
+    })
+}
+
+@_cdecl("swiftui_swipe_actions_custom")
+public func swiftuiSwipeActionsCustom(_ h: ViewHandle, _ actions: ViewHandle, _ edge: Int32) -> ViewHandle {
+    let e: HorizontalEdge = edge == 0 ? .leading : .trailing
+    return boxView(unboxView(h).swipeActions(edge: e) { unboxView(actions) })
+}

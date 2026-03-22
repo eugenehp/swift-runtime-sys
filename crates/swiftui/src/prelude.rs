@@ -11,9 +11,9 @@ pub use crate::color::{
 pub use crate::conditional::{empty, for_each, for_each_enumerated, for_each_h, when, when_else};
 pub use crate::dsl::{
     color, content_unavailable, disclosure_group, divider, form, grid, group_box, image, label,
-    labeled_content, link, list, menu, navigation_split_view, progress, section, secure_field,
-    share_link, show_if, slider, spacer, stepper, text, text_editor, textfield, toggle, view_if,
-    IntoView, TextView,
+    labeled_content, link, list, map, menu, navigation_split_view, progress, section, secure_field,
+    share_link, show_if, slider, spacer, stepper, text, text_editor, textfield, toggle,
+    video_player, view_if, IntoView, TextView,
 };
 pub use crate::host::{App, BackgroundMaterial, WindowStyle};
 pub use crate::nav::{back_button, nav_button, navigator};

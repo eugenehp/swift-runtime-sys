@@ -214,6 +214,22 @@ pub struct Fns {
         *mut c_void,
     ) -> Handle,
 
+    // Map / Video
+    pub map: unsafe extern "C" fn(f32, f32, f32, f32) -> Handle,
+    pub video_player: unsafe extern "C" fn(*const u8, usize) -> Handle,
+
+    // Searchable / Refreshable / SwipeActions
+    pub searchable: unsafe extern "C" fn(
+        Handle,
+        unsafe extern "C" fn(*const u8, usize, *mut c_void),
+        *mut c_void,
+    ) -> Handle,
+    pub refreshable:
+        unsafe extern "C" fn(Handle, unsafe extern "C" fn(*mut c_void), *mut c_void) -> Handle,
+    pub swipe_actions_delete:
+        unsafe extern "C" fn(Handle, unsafe extern "C" fn(*mut c_void), *mut c_void) -> Handle,
+    pub swipe_actions_custom: unsafe extern "C" fn(Handle, Handle, i32) -> Handle,
+
     // Remaining views
     pub disclosure_group: unsafe extern "C" fn(*const u8, usize, Handle) -> Handle,
     pub labeled_content: unsafe extern "C" fn(*const u8, usize, Handle) -> Handle,
@@ -358,6 +374,12 @@ pub fn load(path: &str) -> Result<Fns, String> {
             scroll_view_reader: std::mem::transmute(sym(h, c"swiftui_scroll_view_reader")),
             scrollable_id: std::mem::transmute(sym(h, c"swiftui_scrollable_id")),
             timeline_view: std::mem::transmute(sym(h, c"swiftui_timeline_view")),
+            map: std::mem::transmute(sym(h, c"swiftui_map")),
+            video_player: std::mem::transmute(sym(h, c"swiftui_video_player")),
+            searchable: std::mem::transmute(sym(h, c"swiftui_searchable")),
+            refreshable: std::mem::transmute(sym(h, c"swiftui_refreshable")),
+            swipe_actions_delete: std::mem::transmute(sym(h, c"swiftui_swipe_actions_delete")),
+            swipe_actions_custom: std::mem::transmute(sym(h, c"swiftui_swipe_actions_custom")),
             release: std::mem::transmute(sym(h, c"swiftui_release")),
             retain: std::mem::transmute(sym(h, c"swiftui_retain")),
             show_window: std::mem::transmute(sym(h, c"swiftui_show_window")),

@@ -735,6 +735,72 @@ impl View {
         })
     }
 
+    // ── Searchable / Refreshable / SwipeActions ──
+
+    pub fn searchable(self, on_change: impl Fn(&str) + 'static) -> Self {
+        let boxed: Box<Box<dyn Fn(*const u8, usize)>> = Box::new(Box::new(move |ptr, len| {
+            let s = unsafe { std::str::from_utf8_unchecked(std::slice::from_raw_parts(ptr, len)) };
+            on_change(s);
+        }));
+        let ud = Box::into_raw(boxed) as *mut core::ffi::c_void;
+        unsafe extern "C" fn tramp(ptr: *const u8, len: usize, ud: *mut core::ffi::c_void) {
+            let f = &*(ud as *const Box<dyn Fn(*const u8, usize)>);
+            f(ptr, len);
+        }
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.searchable)(self.handle.as_raw(), tramp, ud) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn refreshable(self, action: impl Fn() + 'static) -> Self {
+        let boxed: Box<Box<dyn Fn()>> = Box::new(Box::new(action));
+        let ptr = Box::into_raw(boxed) as *mut core::ffi::c_void;
+        unsafe extern "C" fn tramp(p: *mut core::ffi::c_void) {
+            let f = &*(p as *const Box<dyn Fn()>);
+            f();
+        }
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.refreshable)(self.handle.as_raw(), tramp, ptr) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn swipe_delete(self, action: impl Fn() + 'static) -> Self {
+        let boxed: Box<Box<dyn Fn()>> = Box::new(Box::new(action));
+        let ptr = Box::into_raw(boxed) as *mut core::ffi::c_void;
+        unsafe extern "C" fn tramp(p: *mut core::ffi::c_void) {
+            let f = &*(p as *const Box<dyn Fn()>);
+            f();
+        }
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.swipe_actions_delete)(self.handle.as_raw(), tramp, ptr) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn swipe_actions(self, actions: View, leading: bool) -> Self {
+        let edge = if leading { 0 } else { 1 };
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe {
+                    (ui.fns.swipe_actions_custom)(
+                        self.handle.as_raw(),
+                        actions.handle.as_raw(),
+                        edge,
+                    )
+                },
+                ui.fns.release,
+            ))
+        })
+    }
+
     // ── Container modifiers ──
 
     pub fn scroll(self) -> Self {

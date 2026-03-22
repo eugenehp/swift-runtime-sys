@@ -481,6 +481,26 @@ pub fn share_link(text: &str, url: &str) -> View {
     })
 }
 
+/// Create a Map view centered on coordinates.
+pub fn map(lat: f32, lon: f32, span_lat: f32, span_lon: f32) -> View {
+    with_ui(|ui| {
+        View::new(ViewHandle::new(
+            unsafe { (ui.fns.map)(lat, lon, span_lat, span_lon) },
+            ui.fns.release,
+        ))
+    })
+}
+
+/// Create a video player from URL.
+pub fn video_player(url: &str) -> View {
+    with_ui(|ui| {
+        View::new(ViewHandle::new(
+            unsafe { (ui.fns.video_player)(url.as_ptr(), url.len()) },
+            ui.fns.release,
+        ))
+    })
+}
+
 /// Create a group box with title.
 pub fn group_box(title: &str, content: View) -> View {
     with_ui(|ui| {
