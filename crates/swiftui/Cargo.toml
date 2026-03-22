@@ -16,3 +16,11 @@ swift-runtime = { path = "../swift-runtime" }
 swiftui-sys = { path = "../swiftui-sys" }
 swiftui-macros = { path = "../swiftui-macros" }
 libc = "0.2"
+
+[[example]]
+name = "app_notes"
+path = "examples/app_notes/main.rs"
+
+[[example]]
+name = "app_dashboard"
+path = "examples/app_dashboard/main.rs"
