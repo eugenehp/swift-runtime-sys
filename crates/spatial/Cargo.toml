@@ -1,0 +1,9 @@
+[package]
+name = "spatial-rs"
+description = "Apple Spatial framework — 3D math types from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "spatial"

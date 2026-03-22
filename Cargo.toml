@@ -10,5 +10,7 @@ members = [
     "crates/realitykit",
     "crates/combine",
     "crates/swift-data",
+    "crates/spatial",
+    "crates/translation",
     "crates/swift-bridge-gen",
 ]

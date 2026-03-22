@@ -1,0 +1,9 @@
+[package]
+name = "translation-rs"
+description = "Apple Translation framework — on-device text translation from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "translation"
