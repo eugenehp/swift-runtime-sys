@@ -23,6 +23,7 @@ mod context;
 pub mod dsl;
 mod handle;
 pub mod host;
+pub mod loader;
 pub mod nav;
 pub mod prelude;
 pub mod scene;

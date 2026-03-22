@@ -76,12 +76,37 @@ pub struct MaterialBuilder {
 // ═══════════════════════════════════════════════════════════════════════════
 
 impl RealityKit {
+    /// Load from a specific helper dylib path.
     pub fn load(helper_path: &str) -> Result<Self, String> {
         Ok(Self {
             inner: Rc::new(Inner {
                 fns: realitykit_sys::load(helper_path)?,
             }),
         })
+    }
+
+    /// Auto-discover and load the helper dylib.
+    /// Searches: SWIFTUI_HELPER env, swift_helper/, next to exe.
+    pub fn new() -> Result<Self, String> {
+        let candidates = [
+            std::env::var("SWIFTUI_HELPER").ok(),
+            Some("swift_helper/libSwiftUIHelper.dylib".into()),
+            Some("../../swift_helper/libSwiftUIHelper.dylib".into()),
+            Some("libSwiftUIHelper.dylib".into()),
+            std::env::current_exe().ok().and_then(|e| {
+                e.parent().map(|d| {
+                    d.join("libSwiftUIHelper.dylib")
+                        .to_string_lossy()
+                        .into_owned()
+                })
+            }),
+        ];
+        for c in candidates.iter().flatten() {
+            if std::path::Path::new(c).exists() {
+                return Self::load(c);
+            }
+        }
+        Err("Swift helper not found. Build it: swift_helper/build.sh".into())
     }
 
     fn f(&self) -> &realitykit_sys::Fns {

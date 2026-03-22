@@ -186,18 +186,13 @@ impl App {
     pub fn run(self, build: impl Fn(&Cx) -> View + 'static) {
         crate::app::init_app();
 
-        // Find and load the helper
-        let helper = self
-            .helper_path
-            .as_deref()
-            .unwrap_or("swift_helper/libSwiftUIHelper.dylib");
-        let paths = [helper, "../../swift_helper/libSwiftUIHelper.dylib"];
-        for p in paths {
-            if std::path::Path::new(p).exists() {
-                crate::init(p);
-                break;
-            }
+        // Auto-discover and load the helper
+        let default_path = crate::loader::helper_path().to_str().unwrap().to_string();
+        let helper = self.helper_path.as_deref().unwrap_or(&default_path);
+        if !crate::context::is_initialized() {
+            crate::init(helper);
         }
+        crate::loader::ensure_loaded();
 
         // Apply host configuration via C calls
         self.apply_config();

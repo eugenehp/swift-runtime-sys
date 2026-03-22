@@ -22,7 +22,6 @@ use core::ffi::{c_char, c_void};
 
 unsafe extern "C" {
     fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
-    fn dlopen(path: *const c_char, mode: i32) -> *mut c_void;
 }
 
 fn sym(name: &core::ffi::CStr) -> *const c_void {
@@ -137,26 +136,13 @@ impl SceneApp {
     pub fn launch(self) {
         crate::app::init_app();
 
-        // Load helper
-        let helper = self
-            .helper_path
-            .as_deref()
-            .unwrap_or("swift_helper/libSwiftUIHelper.dylib");
-        let paths = [helper, "../../swift_helper/libSwiftUIHelper.dylib"];
-        for p in paths {
-            if std::path::Path::new(p).exists() {
-                crate::init(p);
-                break;
-            }
+        // Auto-discover and load the helper
+        let default_path = crate::loader::helper_path().to_str().unwrap().to_string();
+        let helper = self.helper_path.as_deref().unwrap_or(&default_path);
+        if !crate::context::is_initialized() {
+            crate::init(helper);
         }
-
-        // Ensure AppHost symbols are loaded
-        unsafe {
-            for p in paths {
-                let cp = std::ffi::CString::new(p).unwrap();
-                dlopen(cp.as_ptr(), 2);
-            }
-        }
+        crate::loader::ensure_loaded();
 
         // Register each scene
         for _entry in &self.scenes {

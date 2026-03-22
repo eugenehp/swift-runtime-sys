@@ -297,19 +297,12 @@ unsafe extern "C" fn trampoline(ptr: *mut c_void) {
 /// ```
 pub fn app(title: &str, width: f32, height: f32, build: impl Fn(&Cx) -> crate::View + 'static) {
     crate::app::init_app();
+    // Auto-discover and load the helper
+    let helper = crate::loader::helper_path();
     if !crate::context::is_initialized() {
-        // Try common paths
-        let paths = [
-            "swift_helper/libSwiftUIHelper.dylib",
-            "../../swift_helper/libSwiftUIHelper.dylib",
-        ];
-        for p in paths {
-            if std::path::Path::new(p).exists() {
-                crate::init(p);
-                break;
-            }
-        }
+        crate::init(helper.to_str().unwrap());
     }
+    crate::loader::ensure_loaded();
 
     let store = Store::new();
     let data = Box::new(AppData {
@@ -322,14 +315,6 @@ pub fn app(title: &str, width: f32, height: f32, build: impl Fn(&Cx) -> crate::V
         use core::ffi::c_char;
         unsafe extern "C" {
             fn dlsym(h: *mut c_void, s: *const c_char) -> *mut c_void;
-            fn dlopen(p: *const c_char, m: i32) -> *mut c_void;
-        }
-        let paths = [
-            c"swift_helper/libSwiftUIHelper.dylib".as_ptr(),
-            c"../../swift_helper/libSwiftUIHelper.dylib".as_ptr(),
-        ];
-        for p in paths {
-            dlopen(p, 2);
         }
 
         let f = dlsym(
