@@ -1,0 +1,16 @@
+[package]
+name = "swiftui"
+description = "Build SwiftUI views from Rust"
+version = "0.0.3"
+edition = "2021"
+license = "Apache-2.0"
+repository = "https://github.com/eugenehp/swift-runtime-sys"
+keywords = ["swift", "swiftui", "gui", "macos", "ui"]
+
+[lib]
+name = "swiftui"
+
+[dependencies]
+swift-runtime-sys = { path = "../swift-runtime-sys" }
+swift-runtime = { path = "../swift-runtime" }
+libc = "0.2"
