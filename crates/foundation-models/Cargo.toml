@@ -1,0 +1,12 @@
+[package]
+name = "foundation-models"
+description = "Apple Intelligence on-device LLM from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "foundation_models"
+
+[dependencies]
+libc = "0.2"
