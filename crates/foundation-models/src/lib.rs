@@ -96,7 +96,7 @@ impl Session {
         let token_ud = Box::into_raw(token_box) as *mut c_void;
 
         let done_box: Box<Box<dyn Fn()>> = Box::new(Box::new(|| {}));
-        let done_ud = Box::into_raw(done_box) as *mut c_void;
+        let _done_ud = Box::into_raw(done_box) as *mut c_void;
 
         unsafe extern "C" fn token_tramp(ptr: *const u8, len: usize, ud: *mut c_void) {
             let f = &*(ud as *const Box<dyn Fn(*const u8, usize)>);
@@ -133,7 +133,91 @@ impl Session {
         let f: F = unsafe { std::mem::transmute(sym(c"fm_is_responding")) };
         unsafe { f(self.ptr) }
     }
+
+    /// Send a prompt and get a response asynchronously.
+    /// Requires the `async` feature: `foundation-models = { features = ["async"] }`
+    #[cfg(feature = "async")]
+    pub async fn respond_async(&self, prompt: &str) -> Option<String> {
+        let prompt = prompt.to_string();
+        let ptr = self.ptr as usize; // coerce to usize for Send
+        let result = tokio::task::spawn_blocking(move || unsafe {
+            let ptr = ptr as *mut c_void;
+            type F = unsafe extern "C" fn(
+                *mut c_void,
+                *const u8,
+                usize,
+                *mut *mut c_void,
+                *mut usize,
+            ) -> bool;
+            let f: F = std::mem::transmute(sym(c"fm_respond"));
+            let mut out_ptr: *mut c_void = std::ptr::null_mut();
+            let mut out_len: usize = 0;
+            let ok = f(
+                ptr,
+                prompt.as_ptr(),
+                prompt.len(),
+                &mut out_ptr,
+                &mut out_len,
+            );
+            if ok && !out_ptr.is_null() && out_len > 0 {
+                let s = String::from_utf8_lossy(std::slice::from_raw_parts(
+                    out_ptr as *const u8,
+                    out_len,
+                ))
+                .into_owned();
+                libc::free(out_ptr);
+                Some(s)
+            } else {
+                None
+            }
+        })
+        .await;
+        result.ok().flatten()
+    }
+
+    /// Stream a response asynchronously, yielding each token via a channel.
+    /// Returns a receiver that produces token strings.
+    pub fn stream_channel(&self, prompt: &str) -> std::sync::mpsc::Receiver<String> {
+        let (tx, rx) = std::sync::mpsc::channel();
+        let token_box: Box<Box<dyn Fn(*const u8, usize)>> = Box::new(Box::new(move |ptr, len| {
+            let s = unsafe { std::str::from_utf8_unchecked(std::slice::from_raw_parts(ptr, len)) };
+            let _ = tx.send(s.to_string());
+        }));
+        let token_ud = Box::into_raw(token_box) as *mut c_void;
+
+        unsafe extern "C" fn token_tramp(ptr: *const u8, len: usize, ud: *mut c_void) {
+            let f = &*(ud as *const Box<dyn Fn(*const u8, usize)>);
+            f(ptr, len);
+        }
+        unsafe extern "C" fn done_tramp(_ud: *mut c_void) {}
+
+        type F = unsafe extern "C" fn(
+            *mut c_void,
+            *const u8,
+            usize,
+            unsafe extern "C" fn(*const u8, usize, *mut c_void),
+            unsafe extern "C" fn(*mut c_void),
+            *mut c_void,
+        );
+        let f: F = unsafe { std::mem::transmute(sym(c"fm_stream_respond")) };
+        unsafe {
+            f(
+                self.ptr,
+                prompt.as_ptr(),
+                prompt.len(),
+                token_tramp,
+                done_tramp,
+                token_ud,
+            )
+        };
+
+        rx
+    }
 }
+
+// Safety: Session pointer is only accessed from the main thread via Swift dispatch
+unsafe impl Send for Session {}
+unsafe impl Sync for Session {}
 
 impl Drop for Session {
     fn drop(&mut self) {

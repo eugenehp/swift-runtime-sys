@@ -10,3 +10,11 @@ name = "foundation_models"
 
 [dependencies]
 libc = "0.2"
+tokio = { version = "1", features = ["rt"], optional = true }
+
+[features]
+default = []
+async = ["tokio"]
+
+[dev-dependencies]
+tokio = { version = "1", features = ["full"] }
