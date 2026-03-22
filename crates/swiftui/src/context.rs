@@ -27,6 +27,6 @@ pub(crate) fn with_ui<R>(f: impl FnOnce(&SwiftUI) -> R) -> R {
 }
 
 /// Check if the context is initialized.
-pub fn _is_initialized() -> bool {
+pub fn is_initialized() -> bool {
     UI.with(|cell| cell.borrow().is_some())
 }

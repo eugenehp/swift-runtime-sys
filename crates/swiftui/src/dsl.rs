@@ -13,7 +13,7 @@
 pub use crate::color::Color;
 pub use crate::color::{hex, rgb, rgba};
 
-use crate::context::with_ui;
+pub(crate) use crate::context::with_ui;
 use crate::handle::ViewHandle;
 use crate::view::View;
 

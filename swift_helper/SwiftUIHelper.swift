@@ -405,3 +405,54 @@ public func swiftuiTriggerUpdate(_ modelPtr: UnsafeMutableRawPointer) {
     let model = Unmanaged<ReactiveModel>.fromOpaque(modelPtr).takeUnretainedValue()
     DispatchQueue.main.async { model.bump() }
 }
+
+// ── Reactive state: Rust calls buildFn on every state change ──
+
+@Observable
+class ReactiveModel2 {
+    var version: Int = 0
+    func bump() { version += 1 }
+}
+
+struct ReactiveView2: View {
+    let buildFn: @convention(c) (UnsafeMutableRawPointer?, UnsafeMutableRawPointer) -> ViewHandle
+    let userData: UnsafeMutableRawPointer?
+    @State private var model = ReactiveModel2()
+    
+    var body: some View {
+        let _ = model.version
+        let modelHandle = Unmanaged.passUnretained(model).toOpaque()
+        let handle = buildFn(userData, modelHandle)
+        unboxView(handle)
+    }
+}
+
+@_cdecl("swiftui_reactive_window")
+public func swiftuiReactiveWindow(
+    _ titlePtr: UnsafePointer<UInt8>, _ titleLen: Int,
+    _ width: Float, _ height: Float,
+    _ buildFn: @convention(c) (UnsafeMutableRawPointer?, UnsafeMutableRawPointer) -> ViewHandle,
+    _ userData: UnsafeMutableRawPointer?
+) {
+    let title = String(bytes: UnsafeBufferPointer(start: titlePtr, count: titleLen), encoding: .utf8) ?? ""
+    NSApplication.shared.setActivationPolicy(.regular)
+    let rootView = ReactiveView2(buildFn: buildFn, userData: userData)
+    let controller = NSHostingController(rootView: rootView)
+    let window = NSWindow(
+        contentRect: NSRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height)),
+        styleMask: [.titled, .closable, .resizable, .miniaturizable],
+        backing: .buffered, defer: false
+    )
+    window.contentViewController = controller
+    window.title = title
+    window.center()
+    window.makeKeyAndOrderFront(nil)
+    NSApplication.shared.activate(ignoringOtherApps: true)
+    NSApplication.shared.run()
+}
+
+@_cdecl("swiftui_trigger_rebuild")
+public func swiftuiTriggerRebuild(_ modelPtr: UnsafeMutableRawPointer) {
+    let model = Unmanaged<ReactiveModel2>.fromOpaque(modelPtr).takeUnretainedValue()
+    DispatchQueue.main.async { model.bump() }
+}
