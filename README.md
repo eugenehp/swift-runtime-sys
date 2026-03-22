@@ -1,556 +1,309 @@
 # swift-runtime-sys
 
-An attempt to have Rust bindings generated for the Swift Runtime.
+Full Rust control over the Swift runtime on macOS and iOS. Build native SwiftUI apps from Rust with reactive state, pixel-perfect rendering, and a declarative DSL.
 
-**Status**: WIP!
+## Quick Start
 
-## SwiftUI from Rust
+```rust
+use swiftui::prelude::*;
 
-Not directly.
+fn main() {
+    app("My App", 400.0, 300.0, |cx| {
+        let count = cx.state(0i32);
 
-SwiftUI is a Swift framework built around Swift-only language features such as
-generics, protocol conformances, property wrappers, result builders, and
-compiler-generated metadata. This crate exposes pieces of the Swift runtime, but
-that is not enough to construct or drive SwiftUI views from Rust.
-
-The practical architecture is:
-
-1. Write the UI in SwiftUI.
-2. Put application logic, state transitions, parsing, networking, or compute in Rust.
-3. Expose Rust through a stable C ABI.
-4. Call that Rust API from Swift and adapt it into `ObservableObject` or `@State`.
-
-See SWIFTUI.md for a minimal bridge pattern.
-
-## Pick Swift version
-
-```shell
-git clone --depth 1 --branch swift-6.2.4-RELEASE https://github.com/swiftlang/swift.git swift
+        vstack![
+            text_fmt!("Count: {count}").bold().size(48.0),
+            button("+1", count.bind(|n| n + 1)),
+            button("Reset", count.set_to(0)),
+        ]
+        .padding(24.0)
+        .bg(Color::DARKER)
+    });
+}
 ```
 
-## Build the bindings
+## Setup
 
-```shell
-export SWIFT_RUNTIME=$(xcrun -show-sdk-path)/usr/lib/swift
-SWIFT_RUNTIME_SYS_GENERATE_BINDINGS=1 cargo build
+```bash
+# Clone
+git clone https://github.com/eugenehp/swift-runtime-sys
+cd swift-runtime-sys
+
+# Build the Swift helper (required for SwiftUI)
+swift_helper/build.sh
+
+# Run the showcase
+cargo run -p swiftui --example showcase
+
+# Run tests
+cargo test --workspace -- --test-threads=1
 ```
 
-For normal builds after the checked-in bindings have been regenerated, `cargo build`
-is sufficient.
+## Workspace
 
-## Create Swift Structs / Classes / Functions from Rust (basic)
+```
+crates/
+├── swift-runtime-sys/    Raw FFI bindings to the Swift runtime
+├── swift-runtime/        Safe Rust wrappers (Metadata, types, Retained)
+├── swiftui-sys/          Raw SwiftUI FFI (function pointers via dlsym)
+├── swiftui-macros/       Proc macros (#[derive(View)], text_fmt!)
+├── swiftui/              Ergonomic SwiftUI DSL
+└── swift-bridge-gen/     Code generator for any Apple framework
 
-Directly constructing arbitrary Swift types only through runtime internals is not a
-stable API surface. The practical approach is to export explicit C ABI functions from
-Swift and call them from Rust.
-
-This repository now includes a minimal bridge example:
-
-- Swift side exports constructors and methods: [examples/RustBridge.swift](examples/RustBridge.swift)
-- Rust side wraps those exports with RAII handles: [examples/swift_bridge.rs](examples/swift_bridge.rs)
-
-The example covers:
-
-- Swift `struct` allocation and field access (`Person`)
-- Swift `class` allocation, method invocation, and drop (`Counter`)
-- Swift global function calls (`swift_add`, `swift_greet`)
-
-Build the Swift bridge as a dynamic library on macOS:
-
-```shell
-swiftc -emit-library -o libRustBridge.dylib examples/RustBridge.swift
+swift_helper/
+├── SwiftUIHelper.swift   @_cdecl view constructors + modifiers
+├── SnapshotHelper.swift  Off-screen rendering for pixel tests
+├── Platform.swift        macOS/iOS window hosting abstraction
+└── build.sh              Build script [macos|ios-sim|ios|all]
 ```
 
-Compile and run the Rust example against that library:
+## Crate Overview
 
-```shell
-rustc examples/swift_bridge.rs -L . -l RustBridge -o swift_bridge_demo
-DYLD_LIBRARY_PATH=. ./swift_bridge_demo
+### `swift-runtime-sys`
+
+Complete FFI bindings to the Swift runtime — 490+ symbols across `libswiftCore`, `libswift_Concurrency`, and `libswiftRemoteMirror`.
+
+- All ABI struct layouts (HeapObject, ValueWitnessTable, Metadata, descriptors)
+- Arm64 inline assembly thunks for Swift CC, swiftasync CC, and error CC
+- VTable and witness table dispatch
+- Type introspection, dynamic casting, protocol conformance
+- Concurrency (tasks, actors, executors, groups, async let, continuations)
+- Concurrency executor hooks for custom Rust executors
+
+### `swift-runtime`
+
+Safe wrappers around `swift-runtime-sys`:
+
+```rust
+use swift_runtime::{types, metadata::Metadata};
+
+let int_meta = types::int().unwrap();
+println!("{:?}", int_meta);  // Metadata(Swift.Int, kind=Struct, size=8)
+assert!(int_meta.is_pod());
+assert_eq!(int_meta.descriptor_name(), Some("Int".to_string()));
+
+let arr = types::array(&int_meta).unwrap();  // Array<Int>
 ```
 
-If you want this integrated into Cargo targets, the same ABI can be linked from a
-`build.rs` script that compiles the Swift source and emits `cargo:rustc-link-lib` and
-`cargo:rustc-link-search` directives.
+### `swiftui`
 
-## Direct Runtime/Memory Mode (experimental)
+Declarative SwiftUI DSL with reactive state:
 
-If you want no Swift `@_cdecl` bridge and instead direct runtime calls from Rust,
-use the raw runtime API module:
-
-- [src/RuntimeRaw.rs](src/RuntimeRaw.rs)
-
-This exposes low-level symbols like:
-
-- `swift_allocObject`
-- `swift_deallocClassInstance`
-- `swift_retain` / `swift_release`
-- `swift_getTypeByMangledNameInContext`
-- `swift_getTypeByMangledNameInEnvironment`
-
-Important limitations:
-
-- Allocating a class object with `swift_allocObject` does not run Swift initializers.
-- There is no stable public ABI for constructing arbitrary Swift `struct` values from
-	Rust memory alone, especially for resilient or generic types.
-- Calling arbitrary Swift methods/functions directly requires matching Swift calling
-	conventions and metadata/witness arguments, which are ABI-sensitive.
-
-In practice, direct runtime mode is good for runtime research and experimentation,
-but not yet a stable application integration layer.
-
-### RuntimeFactory API
-
-The crate now exposes a generic runtime-construction module:
-
-- [src/RuntimeFactory.rs](src/RuntimeFactory.rs)
-
-`RuntimeFactory` can load Swift/thunk libraries and perform direct runtime work from Rust:
-
-- class allocating initializers by mangled symbol
-- value initializers by mangled symbol
-- generated thunk method calls for supported ABI shapes
-- retain/release/retainCount
-- raw object alloc/dealloc using Swift runtime symbols
-- raw symbol address resolution (`symbol_address`)
-- direct typed variable memory reads/writes (`read_i32`, `write_i32`, offset variants)
-- experimental class-protocol existential container construction
-
-Protocol example in this repo:
-
-- `CounterLike` protocol and `Counter: CounterLike` conformance in
-	[examples/RustBridge.swift](examples/RustBridge.swift)
-- witness table symbol used by demo:
-	`$s10RustBridge7CounterCAA0C4LikeAAWP`
-
-End-to-end demo using crate API:
-
-```shell
-./scripts/build_runtime_thunks.sh
-swiftc -emit-library -g -o libRustBridge.dylib examples/RustBridge.swift
-DYLD_LIBRARY_PATH=. cargo run --example runtime_factory_demo
+#### Views
+```rust
+text("Hello")                          // Text
+text("Hello").bold().size(24.0)        // Styled text
+image("star.fill")                     // SF Symbol
+label("Settings", "gear")             // Icon + text
+button("Click", || println!("!"))      // Button with callback
+toggle("Dark mode", true)             // Toggle switch
+textfield("Search...", "")            // Text field
+slider(0.5, 0.0, 1.0)                // Slider
+progress(0.7, 1.0)                   // Progress bar
+link("Rust", "https://rust-lang.org") // URL link
+color(Color::RED)                     // Color swatch
+spacer()                              // Flexible space
+divider()                             // Line separator
 ```
 
-Versioned contract descriptor plus normalized construction/dispatch probe:
-
-```shell
-./scripts/run_contract_parity.sh
+#### Stacks
+```rust
+vstack![view1, view2, view3]          // Vertical
+hstack![view1, view2]                 // Horizontal
+zstack![background, foreground]       // Layered
 ```
 
-Compiler-feature cooperation boundary for promoted parity flows:
-
-- Swift side owns resilience-sensitive layouts, protocol-backed wrappers, and any
-	required compiler-generated metadata or witness exports.
-- Rust side owns contract validation, typed argument/result boxing, and capability
-	negotiation for `supported`, `fallback`, and `unsupported` compiler-sensitive flows.
-- Raw runtime symbol chasing remains research mode and is not the required path for
-	promoted contract parity.
-- Required registry exports now include deterministic metadata lookup for
-	`Person`, `Counter`, and `ContractGenericBox<Int32>`, plus protocol-conformance
-	lookup and wrapper-based `CounterLike.current` dispatch.
-
-## Host-Cell Coverage Classification (Phase C)
-
-Promotion policy for host-cell deepening features uses three buckets:
-`required`, `optional`, and `experimental`. A feature is promoted to
-`required` only after a green history window with zero undocumented deviations.
-
-| Phase | Classification | Promotion Evidence |
-|---|---|---|
-| C.1 | required | `scripts/run_c1_ownership_gate.sh` |
-| C.2 | required | `scripts/run_c2_existentials_gate.sh` |
-| C.3 | required | `scripts/run_c3_enum_gate.sh` |
-| C.4 | required | `scripts/run_c4_closure_gate.sh` |
-| C.5 | required | `scripts/run_c5_optimizer_gate.sh` |
-| C.6 | required | `scripts/run_c6_lowering_gate.sh` |
-| C.7 | required | `scripts/run_c7_safety_gate.sh` |
-| C.8 | required | `scripts/run_c8_host_reliability_gate.sh` |
-| C.9 | required | `scripts/run_c9_host_promotion_gate.sh` |
-
-This is the practical way to scale direct Rust control over Swift memory objects.
-For protocols and fully generic existential construction, public stable runtime ABI
-coverage is still incomplete and remains an active research area.
-
-### Runtime Probe + LLDB Capture
-
-Use the direct-runtime probe:
-
-- [examples/runtime_raw_probe.rs](examples/runtime_raw_probe.rs)
-
-This probe performs:
-
-- direct mangled call to a Swift global function
-- direct mangled construction of a Swift value type (`Person`)
-- direct mangled allocating init for a Swift class (`Counter`)
-- runtime retain/release inspection
-- memory footprint dump (`malloc_size` + first object words)
-
-Run probe:
-
-```shell
-swiftc -emit-library -g -o libRustBridge.dylib examples/RustBridge.swift
-./scripts/build_runtime_thunks.sh
-rustc -g examples/runtime_raw_probe.rs -o target/runtime_raw_probe
-DYLD_LIBRARY_PATH=. ./target/runtime_raw_probe
+#### Modifiers
+```rust
+view.padding(16.0)                    // Padding
+view.frame(200.0, 100.0)             // Fixed size
+view.bg(Color::DARK)                  // Background color
+view.foreground(Color::BLUE)          // Text/content color
+view.rounded(12.0)                    // Corner radius
+view.opacity(0.5)                     // Transparency
+view.shadow(Color::BLACK, 8.0, 0.0, 4.0)  // Drop shadow
+view.offset(10.0, -5.0)              // Position offset
+view.scale(1.5)                       // Scale transform
+view.rotation(45.0)                   // Rotation (degrees)
+view.border(Color::GRAY, 1.0)        // Border
+view.clip_circle()                    // Circular clip
+view.hidden()                         // Hide
+view.disabled(true)                   // Disable interaction
+view.overlay(badge)                   // Overlay another view
+view.font(18.0, FontWeight::Bold)     // Font size + weight
+view.scroll()                         // Wrap in ScrollView
+view.style(StylePreset::Elevated)     // Apply style preset
 ```
 
-Direct class-method probes now run as part of the default parity path; no
-separate `RUNTIME_TRY_INCREMENT` toggle is required.
-
-Current status on Apple Silicon:
-
-- `Counter.increment(by:)` works through `libRuntimeThunks.dylib` using an arm64
-	register-shaped thunk that places `self` in `x20` and `delta` in `w0` before
-	calling the mangled symbol.
-- Thunks are generated from [examples/runtime_thunk_methods.txt](examples/runtime_thunk_methods.txt)
-	by [scripts/generate_runtime_thunks.sh](scripts/generate_runtime_thunks.sh),
-	producing [examples/runtime_swiftcall_thunks.generated.c](examples/runtime_swiftcall_thunks.generated.c)
-- Supported generated signatures currently include:
-	- `self_i32_to_i32`
-	- `self_to_i32`
-	- `self_i32_to_void`
-	- `self_i32_i32_to_i32`
-	- `self_to_void`
-
-Validated through the probe on arm64:
-
-- `Counter.increment(by:) -> Int32`
-- `Counter.current() -> Int32`
-- `Counter.reset(to:) -> Void`
-- `Counter.addPair(_: _:) -> Int32`
-- `Counter.clear() -> Void`
-
-Capture debugger trace:
-
-```shell
-./scripts/run_lldb_capture.sh
+#### Style Presets
+```rust
+text("Title").style(StylePreset::Title)        // Bold 28pt white
+text("Sub").style(StylePreset::Subtitle)       // 14pt gray
+text("Note").style(StylePreset::Caption)       // 11pt dim
+card.style(StylePreset::CardDark)              // padding + dark bg + rounded
+card.style(StylePreset::Elevated)              // card + shadow
+page.style(StylePreset::Page)                  // padding + dark bg + scroll
+text("Tag").style(StylePreset::Pill)           // small rounded pill
 ```
 
-Generate a full parity matrix report (probe + tmux lldb):
+#### Reactive State
+```rust
+app("Counter", 400.0, 300.0, |cx| {
+    let count = cx.state(0i32);          // Create reactive state
+    let name = cx.state("World".into()); // Any Clone + Send type
 
-```shell
-./scripts/run_parity_matrix.sh
+    vstack![
+        text_fmt!("Hello {name}!"),          // State interpolation macro
+        text_fmt!("Count: {count}").size(48.0),
+        button("+1", count.bind(|n| n + 1)), // Closure that updates state
+        button("Reset", count.set_to(0)),    // Set to fixed value
+    ]
+});
+// Clicking buttons triggers automatic UI rebuild
 ```
 
-Run stress mode (repeated full matrix runs):
-
-```shell
-./scripts/run_parity_stress.sh 20
+#### Conditional Views
+```rust
+when(is_premium, || text("Premium").style(StylePreset::Pill))
+when_else(logged_in, || profile_view(), || login_view())
+for_each(&items, |item| text(item))
+for_each_enumerated(&items, |i, item| text(&format!("{i}. {item}")))
 ```
 
-Stress mode now varies randomized probe seeds per run. Tune randomized coverage with:
+#### Navigation
+```rust
+#[derive(Clone, PartialEq)]
+enum Screen { Home, Detail(i32), Settings }
 
-```shell
-FUZZ_CASES=128 ./scripts/run_parity_stress.sh 20
+app("Nav", 400.0, 600.0, |cx| {
+    let screen = cx.state(Screen::Home);
+    navigator(&screen, |s| match s {
+        Screen::Home => vstack![
+            text("Home").style(StylePreset::Title),
+            nav_button("Settings", &screen, Screen::Settings),
+            nav_button("Item 1", &screen, Screen::Detail(1)),
+        ],
+        Screen::Detail(id) => vstack![
+            back_button(&screen, Screen::Home),
+            text(&format!("Detail #{id}")).size(24.0),
+        ],
+        Screen::Settings => vstack![
+            back_button(&screen, Screen::Home),
+            toggle("Notifications", true),
+        ],
+    }).style(StylePreset::Page)
+});
 ```
 
-Optional fail-fast mode:
-
-```shell
-STOP_ON_FAIL=1 ./scripts/run_parity_stress.sh 100
+#### Colors
+```rust
+Color::RED                    // Named constants
+Color::rgb(0.2, 0.4, 0.8)   // RGB
+Color::rgba(1.0, 0.0, 0.0, 0.5)  // RGBA
+rgb(0.2, 0.4, 0.8)          // Shorthand
+hex(0x3366CC)                // Hex
 ```
 
-Run isolated protocol-dispatch ABI matrix (one variant per process):
+### `swift-bridge-gen`
 
-```shell
-./scripts/run_protocol_dispatch_matrix.sh
+Auto-generate Rust↔Swift bridge code from any Apple framework:
+
+```bash
+# Dump the API
+xcrun swift-api-digester -dump-sdk -module Foundation \
+  -target arm64-apple-macosx15.0 \
+  -sdk $(xcrun -sdk macosx --show-sdk-path) \
+  -o foundation_api.json
+
+# Generate bridge code
+cargo run -p swift-bridge-gen -- foundation_api.json --types URL,UUID,Date
 ```
 
-Artifact:
+Generates:
+- `FoundationBridge.swift` — `@_cdecl` wrappers for constructors, getters, methods
+- `foundation.rs` — `extern "C"` FFI + RAII `Owned` wrapper + typed structs
 
-- `target/runtime-probe/protocol-dispatch-matrix.md`
+## Platform Support
 
-The parity pipeline now runs the crate example binary `runtime_raw_probe`
-through Cargo, so probe/parity/debug paths all exercise `RuntimeFactory`.
+|  | macOS | iOS Simulator | iOS Device |
+|--|-------|--------------|------------|
+| SwiftUI views | ✅ | ✅ (needs Xcode) | ✅ (needs Xcode) |
+| Reactive state | ✅ | ✅ | ✅ |
+| Pixel parity tests | ✅ | ✅ | — |
+| Runtime bindings | ✅ | ✅ | ✅ |
 
-## Parity Scope (v7-phase-p-foundation)
-
-This repository's parity claim is scoped and versioned. "100% parity" means
-all items marked as required in this scope pass on supported environments.
-
-**Current scope: v7-phase-p-foundation** (Phase O required gates plus Phase P Foundation bridging gates P.1-P.6)
-
-### Scope Definition
-- **Phase C gates** (C.1-C.9): All required (ownership hardening, existentials, enums, closures, optimizer, lowering, safety, reliability, promotion)
-- **Phase O gates** (O.1, O.2, O.3, O.4, O.5): All required (RemoteMirror, concurrency ABI, typed throws, parameter packs, ownership/ARC)
-- **Phase O.8**: Now required (Rust-owned executor bridge with deterministic FIFO work-stealing scheduling)
-- **Phase O.10**: Required (Observation runtime surface)
-- **Phase P gates** (P.1-P.6): Required (String, URL, Codable/serialization, collections, temporal, number formatting)
-- **Phase P signoff**: Required (`scripts/run_phase_p_signoff.sh`)
-- **Parity matrix**: 141/141 checks required to pass
-- **Phase O.9**: Experimental/not-promoted (Distributed actor surface blocked on runtime library availability)
-
-### Promotion Status
-- **v5-phase-o-o10**: Completed with 3-cycle O11 history window (O.8 experimental/not-promoted, O.9 experimental/not-promoted)
-- **v6-phase-o-o8-required**: Completed (Wave O12 promotion: O.8 elevated from experimental to required)
-- **v7-phase-p-foundation**: Current (P.1-P.6 all implemented and phase-p signoff enforced in full-plan verification)
-- **Foundation Promotion Evidence**: P.1-P.6 gates PASS in debug+release with consolidated `phase-p-signoff` PASS and no parity regressions
-
-Supported parity matrix cells:
-
-- GitHub Actions `macos-14` (arm64 runner image)
-- GitHub Actions `macos-15` (arm64 runner image)
-
-Version-conditional tracking:
-
-- Parity artifacts are uploaded per CI cell and named with runner identity.
-- Any cell-specific deviations must be documented before parity claims are updated.
-- A parity claim for v7 scope requires all supported cells to pass required gates: Phase C signoff + Phase O signoff + Phase P signoff.
-
-Support-matrix deviation ledger (v7-phase-p-foundation scope):
-
-- `macos-14`: no known required-scope deviations.
-- `macos-15`: no known required-scope deviations.
-
-If a deviation appears, this section must be updated with:
-
-- affected cell(s)
-- affected check key(s)
-- expected/accepted behavior and rationale
-- mitigation or promotion plan
-
-Required (v7-phase-p-foundation):
-
-- `scripts/run_parity_matrix.sh` reports full pass count (`N/N PASS`).
-- `scripts/run_parity_stress.sh` gate passes at configured CI budget.
-- `scripts/run_protocol_dispatch_matrix.sh` completes and publishes matrix output.
-- `scripts/run_o8_rust_executor_gate.sh` passes in both debug and release modes (6/6 tests).
-- `scripts/run_p1_string_gate.sh` through `scripts/run_p6_formatting_gate.sh` all pass in both debug and release modes.
-- `scripts/run_phase_p_signoff.sh` passes and emits `target/runtime-probe/phase-p-signoff/phase-p-signoff.{json,md}`.
-- CI uploads parity/stress/protocol/o8-executor artifacts for each run.
-- All protocol dispatch variants (x20, x0, x20x0, x0x1, x20x1, existential) pass with semantic parity (Phase A.1).
-- CI support-matrix signoff job validates parity artifacts from all required cells.
-- Multi-version compatibility gate (`scripts/run_multiversion_compat.sh`) passes for Swift 6.1+ on required CI cells (Phase B.5).
-- Phase O.8 gate validates Rust executor integration, FIFO scheduling fairness, work queue cancellation, and Swift task bridge transparency.
-
-## Multi-Version Support (Phase B — v3-dynamic scope)
-
-The v3-dynamic scope extends parity from a single pinned Swift version to a supported version range (Swift 6.1+):
-
-- **Phase B.1** — Runtime metadata-header parser discovers struct/class field offsets dynamically without hardcoded version-specific offsets.
-- **Phase B.2** — Witness table dynamic resolver scans `__swift_conformances` section; locates protocol conformances at runtime without pre-registered lookups.
-- **Phase B.3** — Cross-version ABI compatibility shim: detects Swift version at runtime and auto-selects an adapter profile with correct field offsets and witness slot patterns for the running version.
-- **Phase B.4** — Graceful degradation: 12-feature capability registry with `b4_is_feature_supported()` for runtime negotiation; `b4_unsupported_operation()` prevents memory corruption on unknown versions; `b4_debug_dump()` prints version + features for troubleshooting.
-- **Phase B.5** — Multi-version CI matrix: `macos-14 × macos-15 × {debug, release}` cells; version pin loosened from `6.2.4` to `>=6.1`; same Rust binary works across all supported Swift versions without recompilation.
-
-### Supported Swift Versions
-
-| Swift | macOS 14 | macOS 15 | Notes |
-|-------|----------|----------|-------|
-| 6.1.x | ✅ | ✅ | Minimum supported version |
-| 6.2.x | ✅ | ✅ | Current development target |
-| 6.3+ | ⏳ | ⏳ | Will be adopted after full gate convergence (AP.7 policy) |
-
-### Graceful Degradation Policy
-
-When running against an unsupported Swift version or unknown conformance:
-1. `b4_is_feature_supported()` returns `false` — no crash.
-2. `b4_unsupported_operation()` returns a structured `RuntimeContractError::VersionDetectionFailed` with version and reason.
-3. The adapter layer falls back to the closest compatible profile rather than attempting unsound memory access.
-4. Debug dump (`b4_debug_dump()`) prints current version and feature list for diagnostics.
-
-
-Optional:
-
-- Additional deterministic domains beyond required parity scope.
-- Expanded stress budgets for release hardening.
-- Extra OS/Swift version cells beyond the required support matrix.
-
-Experimental (excluded from 100% claim):
-
-- Raw runtime-only integration paths documented as research mode.
-
-Protocol dispatch matrix notes:
-
-- All six variants (x20, x0, x20x0, x0x1, x20x1, existential) are now required and enforced by `run_protocol_dispatch_matrix.sh`.
-- Fixed in Wave 14: All variants now use indirect-self ABI (x20 = &obj_slot) for stable Swift witness thunk compatibility.
-- You can override required variants locally with `RUNTIME_PROTOCOL_REQUIRED_VARIANTS` (e.g., for testing earlier phases).
-
-Claim policy:
-
-- We only claim parity against required scope items.
-- Experimental features are tracked but do not block required parity unless promoted.
-- Scope changes must be documented here before parity percentages are reinterpreted.
-
-Promotion policy for compiler-feature-dependent paths:
-
-- Promotion from `optional` to `required` requires green support-matrix cells and
-	zero undocumented deviations in the ledger above.
-- Pull requests enforce a policy smoke gate with `PROMOTION_HISTORY_WINDOW=1`.
-- Main branch currently enforces `PROMOTION_HISTORY_WINDOW=1` in CI; stricter windows
-	(e.g. `PROMOTION_HISTORY_WINDOW=2`) are supported by the same script for promotion
-	signoff workflows that aggregate multiple historical snapshots.
-- Promotion evidence is published as `target/runtime-probe/promotion-policy-signoff.md`.
-- Plan completion evidence is published as `target/runtime-probe/plan-completion-signoff.md`.
-
-### Full parity verification (local and CI-equivalent)
-
-Fast path (full closure stack):
-
-```shell
-./scripts/run_absolute_parity_verification.sh
+```bash
+swift_helper/build.sh macos     # Default
+swift_helper/build.sh ios-sim   # Needs Xcode
+swift_helper/build.sh ios       # Needs Xcode
+swift_helper/build.sh all       # All platforms
 ```
 
-Primary final signoff artifact:
+The SwiftUI DSL code is identical across platforms. Only window hosting differs (NSWindow vs UIWindow), handled by `Platform.swift`.
 
-- `target/runtime-probe/absolute-parity-signoff.md`
+## Tests
 
-Local required gate sequence:
+```bash
+# All tests (91 total)
+cargo test --workspace -- --test-threads=1
 
-```shell
-./scripts/run_parity_matrix.sh
-FUZZ_CASES=64 STOP_ON_FAIL=1 ./scripts/run_parity_stress.sh 3
-./scripts/run_protocol_dispatch_matrix.sh
+# Runtime FFI tests (66)
+cargo test -p swift-runtime-sys -- --test-threads=1
+
+# Safe API tests (13)
+cargo test -p swift-runtime -- --test-threads=1
+
+# Pixel parity tests (6) — 100% match
+cargo test -p swiftui --test pixel_parity -- --test-threads=1
+
+# Benchmark: hand-written vs auto-generated (6)
+cargo test -p swiftui --test benchmark_gen_vs_handwritten -- --test-threads=1
 ```
 
-One-command host verification (includes contract and signoff validators):
+## Examples
 
-```shell
-./scripts/run_full_plan_verification.sh
+```bash
+# Reactive counter (+1/-1/reset with live UI updates)
+cargo run -p swiftui --example reactive_counter
+
+# TODO app with progress bar and state
+cargo run -p swiftui --example reactive_todo
+
+# Full showcase: navigation, styles, conditionals
+cargo run -p swiftui --example showcase
+
+# Complete widget catalog
+cargo run -p swiftui --example full_demo
+
+# DSL syntax demo
+cargo run -p swiftui --example dsl_demo
 ```
 
-One-command closure verification (AP.6 + AP.7):
+## Architecture
 
-```shell
-./scripts/run_absolute_parity_verification.sh
 ```
-
-This command runs:
-
-- full required parity gate stack and claim validator (AP.6)
-- signed claim evidence bundle generation (`manifest.sha256` + bundle digest)
-- tracked upstream ref conformance checks (`swift-6.2.4-RELEASE`, `main`)
-- upstream promotion convergence signoff (all tracked refs must be green)
-
-CI-equivalent budgets used in `.github/workflows/parity.yml`:
-
-- Pull requests: `FUZZ_CASES=64 ./scripts/run_parity_stress.sh 3`
-- Pushes to `main`: `FUZZ_CASES=128 ./scripts/run_parity_stress.sh 10`
-
-A parity claim is valid only when all required gates above pass and artifacts are
-generated for matrix, stress, protocol-dispatch, and Phase O required signoff;
-optional tracks (O.8/O.9) must publish explicit classification artifacts.
-
-CI support-matrix signoff artifact:
-
-- `target/runtime-probe/support-matrix-signoff.md`
-
-AP.6/AP.7 signoff artifacts:
-
-- `target/runtime-probe/parity-claim-signoff.md`
-- `target/runtime-probe/repro-inputs.json`
-- `target/runtime-probe/claim-bundle/claim-evidence-bundle-*.tar.gz`
-- `target/runtime-probe/claim-bundle/claim-evidence-bundle-*.tar.gz.sha256`
-- `target/runtime-probe/upstream-conformance/current/*.json`
-- `target/runtime-probe/upstream-promotion-signoff.md`
-- `target/runtime-probe/absolute-parity-signoff.md`
-
-Phase O signoff artifacts:
-
-- `target/runtime-probe/phase-o-signoff/phase-o-signoff.md`
-- `target/runtime-probe/phase-o-signoff/phase-o-signoff.json`
-- `target/runtime-probe/o10-observation/o10-observation-summary.md`
-- `target/runtime-probe/o10-observation/o10-observation-summary.json`
-
-Phase O optional-track classification artifacts (O.8/O.9):
-
-- `target/runtime-probe/phase-o-optional/phase-o-optional-signoff.md`
-- `target/runtime-probe/phase-o-optional/phase-o-optional-signoff.json`
-
-Final claim publication criteria:
-
-- Both parity matrix cells (`macos-14`, `macos-15`) are green in CI.
-- Stress and protocol-dispatch jobs are green in the same CI run.
-- Artifacts exist for each required job and are retained.
-- This README deviation ledger reflects current expected behavior.
-
-Artifacts:
-
-- `target/runtime-probe/probe.log`
-- `target/runtime-probe/lldb_tmux.log`
-- `target/runtime-probe/parity-report.json`
-- `target/runtime-probe/parity-report.md`
-- `target/runtime-probe/history/*.json`
-- `target/runtime-probe/stress/stress-summary-*.md`
-- `target/runtime-probe/stress/run-*.log`
-
-The parity report now also tracks:
-
-- direct class-field memory write/read parity (`Counter.value` offset test)
-- protocol witness table resolution parity (non-null witness pointer)
-- global Swift variable storage parity (direct symbol-address read/write)
-- probe constructor evidence plus clean LLDB exit without `EXC_BAD_ACCESS`
-- protocol witness slot inspection parity (detects requirement thunk symbol in witness table)
-- raw `swift_allocObject` header parity (object header metadata pointer equals accessor metadata)
-- keypath synthesis parity (`read/write/appending(path:)` flag checks)
-- property-wrapper synthesis parity (default/memberwise init, clamp, projected value checks)
-- result-builder synthesis parity (branch/optional/loop lowering flag checks)
-- opaque return-type parity (opaque producer/consumer and stable underlying-type checks)
-- task-local runtime parity (outside/inside/nested/restored context value checks)
-- dynamic-replacement parity (direct and function-reference replacement dispatch checks)
-- sendable concurrency parity (payload transfer across detached and child tasks)
-- checked-continuation parity (async callback, synchronous inline, and throwing continuation paths)
-- task-group concurrency parity (sum aggregation, throwing group, and max reduction across child tasks)
-- `AsyncStream` parity (producer yields 5 values; consumer checks count, sum, and clean termination)
-- unsafe memory layout parity (`withUnsafeBytes` field reads at known offsets; `withUnsafeMutablePointer` write+read roundtrip)
-- protocol composition existential parity (`any P & Q` dispatch through both witness tables; cast-back to concrete)
-- enum raw-value synthesis parity (`Int32`-backed `RawRepresentable`; round-trip, `init(rawValue:)` success/nil, auto-increment)
-- `OptionSet` synthesis parity (`contains`, `union`, `intersection`, and `rawValue` round-trip checks)
-- `CaseIterable` synthesis parity (`allCases` count/order/endpoints and raw-value aggregate checks)
-- set algebra parity (`union`, `intersection`, `subtracting`, and symmetric-difference invariants)
-- dictionary semantics parity (lookup, `default:` insertion, update old-value return, and removal/count invariants)
-- comparable synthesis parity (sorted order plus `<`, `>`, and `==` invariants)
-- result semantics parity (`get` success/failure, `map`, and `mapError` invariants)
-- data semantics parity (count/sum/append invariants plus first-byte raw buffer validation)
-- UUID semantics parity (parse/normalize/byte-width validation and invalid-input rejection)
-- character set semantics parity (digit/non-digit and vowel/non-vowel scalar membership invariants)
-- URLComponents semantics parity (scheme/host, port/path, query-item, and fragment parsing invariants)
-- calendar semantics parity (UTC Gregorian date construction/decomposition, weekday identity, and leap-year month-day range)
-- IndexSet semantics parity (membership, range insertion, removal, and first/last bounds invariants)
-- time zone semantics parity (GMT and Asia/Kolkata offset/identifier invariants)
-- measurement semantics parity (length/temperature/mass/speed unit conversion invariants)
-- date formatter semantics parity (`DateFormatter` fixed-locale round-trip and ISO8601 rendering/parse invariants)
-- scanner semantics parity (`Scanner` int/double/token scan progression and end-of-input invariant)
-- locale semantics parity (canonical identifier normalization, decimal separator, and language/country component invariants)
-- number formatter semantics parity (decimal rendering/parsing, half-up rounding, and invalid-input rejection invariants)
-- URL semantics parity (scheme/host/path, query/fragment, absolute-string, and relative-resolution invariants)
-- decimal semantics parity (`Decimal` add/multiply/round and invalid-parse rejection invariants)
-- URLRequest semantics parity (URL/method/header/timeout/body invariants)
-- data base64 semantics parity (encode/decode, ignore-unknown decode, and invalid-input rejection invariants)
-- HTTPURLResponse semantics parity (status code, header extraction, URL preservation, content-type parsing)
-- JSONEncoder/JSONDecoder semantics parity (encode, decode, nested structures, null-value handling)
-- PropertyListEncoder/PropertyListDecoder semantics parity (XML and binary format encoding/decoding invariants)
-- Range semantics parity (containment checks, exclusion validation, isEmpty, and count operations)
-- URLQueryItem semantics parity (name/value property access, encoding invariants, nil-value handling)
-- ClosedRange semantics parity (containment checks, bound access, isEmpty, and count operations)
-- DateInterval semantics parity (duration, containment, overlap/intersection, and bound invariants)
-- IndexPath semantics parity (count/index access, append behavior, and ordering comparison invariants)
-- ISO8601DateFormatter semantics parity (basic/fractional formatting and parse round-trip invariants)
-- URL percent-encoding semantics parity (encode/decode, reserved-character escaping, invalid-percent rejection)
-- seeded randomized parity fuzz checks (`fuzz parity => ...`) validating add/divide/throw invariants
-
-Note: protocol witness dispatch check is currently an experimental callability
-signal (non-crashing dispatch through a witness entry), not yet strict semantic
-equality against direct class method results for all ABI shapes.
-
-The parity report now includes both:
-
-- protocol witness dispatch callability
-- protocol witness dispatch semantic parity (target value comparison)
-
-Dispatch probing currently tests multiple arm64 register shapes, including
-variants that carry witness table in `x1`.
-
-`x1` witness-carrying variants are currently opt-in experimental probes
-(`RUNTIME_TRY_WITNESS_X1=1`) because they may crash depending on ABI shape.
-
-LLDB command script used by the capture:
-
-- [scripts/lldb_runtime_cmds.txt](scripts/lldb_runtime_cmds.txt)
-
-Captured output path:
-
-- [target/runtime-probe/lldb.log](target/runtime-probe/lldb.log)
+┌─────────────────────────────────────────────────┐
+│  Your Rust App                                   │
+│  use swiftui::prelude::*;                        │
+│  app("Title", w, h, |cx| { ... })               │
+└──────────────┬──────────────────────────────────┘
+               │ DSL calls
+┌──────────────▼──────────────────────────────────┐
+│  swiftui crate                                   │
+│  Views, modifiers, state, navigation, styles     │
+└──────────────┬──────────────────────────────────┘
+               │ swiftui-sys function pointers
+┌──────────────▼──────────────────────────────────┐
+│  Swift Helper (SwiftUIHelper.swift, ~400 lines)  │
+│  @_cdecl wrappers: C types → SwiftUI types       │
+└──────────────┬──────────────────────────────────┘
+               │
+┌──────────────▼──────────────────────────────────┐
+│  SwiftUI.framework + AttributeGraph              │
+│  Native rendering on macOS / iOS                 │
+└─────────────────────────────────────────────────┘
+```
 
 ## License
 
-[Apache 2.0](/LICENSE)
+Apache-2.0
