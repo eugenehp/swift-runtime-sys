@@ -83,15 +83,31 @@ fn compile_helper(dir: &Path, sources: &[&str]) {
         return;
     };
 
-    // Determine target triple
-    let target = std::env::var("TARGET").unwrap_or_else(|_| "arm64-apple-macosx15.0".into());
-    let swift_target = if target.contains("aarch64-apple-darwin") || target.contains("arm64") {
-        "arm64-apple-macosx15.0"
-    } else if target.contains("x86_64-apple-darwin") {
-        "x86_64-apple-macosx15.0"
+    // Determine deployment targets from features or auto-detect
+    let detected = detect_macos_version();
+    let macos_ver = option_env!("SWIFTUI_MACOS_VERSION").unwrap_or(if cfg!(feature = "macos-26") {
+        "26.0"
+    } else if cfg!(feature = "macos-15") {
+        "15.0"
     } else {
-        "arm64-apple-macosx15.0"
+        &detected
+    });
+
+    let target = std::env::var("TARGET").unwrap_or_default();
+    let swift_target = if target.contains("aarch64-apple-darwin") || target.contains("arm64") {
+        format!("arm64-apple-macosx{macos_ver}")
+    } else if target.contains("x86_64-apple-darwin") {
+        format!("x86_64-apple-macosx{macos_ver}")
+    } else if target.contains("aarch64-apple-ios-sim") {
+        let ios_ver = ios_version();
+        format!("arm64-apple-ios{ios_ver}-simulator")
+    } else if target.contains("aarch64-apple-ios") {
+        let ios_ver = ios_version();
+        format!("arm64-apple-ios{ios_ver}")
+    } else {
+        format!("arm64-apple-macosx{macos_ver}")
     };
+    let swift_target = swift_target.as_str();
 
     // Collect source files that exist
     let source_paths: Vec<PathBuf> = sources
@@ -140,4 +156,51 @@ fn compile_helper(dir: &Path, sources: &[&str]) {
             println!("cargo:warning=Failed to run swiftc: {e}");
         }
     }
+}
+
+fn detect_macos_version() -> String {
+    // Try to get SDK version
+    Command::new("xcrun")
+        .args(["--sdk", "macosx", "--show-sdk-version"])
+        .output()
+        .ok()
+        .and_then(|o| String::from_utf8(o.stdout).ok())
+        .map(|s| {
+            let v = s.trim().to_string();
+            // Use major version only: "26.2" → "26.0"
+            if let Some(dot) = v.find('.') {
+                format!("{}.0", &v[..dot])
+            } else {
+                format!("{v}.0")
+            }
+        })
+        .unwrap_or_else(|| "15.0".to_string())
+}
+
+fn ios_version() -> String {
+    option_env!("SWIFTUI_IOS_VERSION")
+        .map(|s| s.to_string())
+        .unwrap_or_else(|| {
+            if cfg!(feature = "ios-26") {
+                "26.0".to_string()
+            } else if cfg!(feature = "ios-18") {
+                "18.0".to_string()
+            } else {
+                // Try to detect from SDK
+                Command::new("xcrun")
+                    .args(["--sdk", "iphoneos", "--show-sdk-version"])
+                    .output()
+                    .ok()
+                    .and_then(|o| String::from_utf8(o.stdout).ok())
+                    .map(|s| {
+                        let v = s.trim().to_string();
+                        if let Some(dot) = v.find('.') {
+                            format!("{}.0", &v[..dot])
+                        } else {
+                            format!("{v}.0")
+                        }
+                    })
+                    .unwrap_or_else(|| "18.0".to_string())
+            }
+        })
 }

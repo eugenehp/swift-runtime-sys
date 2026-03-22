@@ -10,6 +10,15 @@ keywords = ["swift", "swiftui", "gui", "macos", "ui"]
 [lib]
 name = "swiftui"
 
+[features]
+default = []
+# macOS deployment target
+macos-15 = []
+macos-26 = []
+# iOS deployment target
+ios-18 = []
+ios-26 = []
+
 [dependencies]
 swift-runtime-sys = { path = "../swift-runtime-sys" }
 swift-runtime = { path = "../swift-runtime" }
