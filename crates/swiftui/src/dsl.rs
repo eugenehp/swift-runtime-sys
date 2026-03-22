@@ -113,6 +113,27 @@ impl TextView {
     pub fn clip_circle(self) -> View {
         self.build().clip_circle()
     }
+    pub fn font(self, size: f32, weight: crate::view::FontWeight) -> View {
+        self.build().font(size, weight)
+    }
+    pub fn border(self, c: Color, width: f32) -> View {
+        self.build().border(c, width)
+    }
+    pub fn overlay(self, other: View) -> View {
+        self.build().overlay(other)
+    }
+    pub fn scroll(self) -> View {
+        self.build().scroll()
+    }
+    pub fn frame_max(self) -> View {
+        self.build().frame_max()
+    }
+    pub fn hidden(self) -> View {
+        self.build().hidden()
+    }
+    pub fn disabled(self, d: bool) -> View {
+        self.build().disabled(d)
+    }
 }
 
 /// Convert `TextView` to `View` — allows using it directly in stacks.

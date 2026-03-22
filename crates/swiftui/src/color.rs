@@ -46,3 +46,17 @@ pub const fn hex(v: u32) -> Color {
         (v & 0xFF) as f32 / 255.0,
     )
 }
+
+// ── Standalone constants — `use swiftui::prelude::*` brings these in ──
+
+pub const WHITE: Color = Color::WHITE;
+pub const BLACK: Color = Color::BLACK;
+pub const RED: Color = Color::RED;
+pub const GREEN: Color = Color::GREEN;
+pub const BLUE: Color = Color::BLUE;
+pub const YELLOW: Color = Color::YELLOW;
+pub const PURPLE: Color = Color::PURPLE;
+pub const GRAY: Color = Color::GRAY;
+pub const DARK: Color = Color::DARK;
+pub const DARKER: Color = Color::DARKER;
+pub const CLEAR: Color = Color::CLEAR;
