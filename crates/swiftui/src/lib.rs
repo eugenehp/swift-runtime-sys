@@ -21,6 +21,7 @@ mod color;
 mod context;
 pub mod dsl;
 mod handle;
+pub mod prelude;
 pub mod state;
 mod view;
 mod views;

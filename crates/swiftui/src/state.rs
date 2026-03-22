@@ -1,19 +1,15 @@
-//! Reactive state management for SwiftUI views.
+//! Reactive state for SwiftUI views.
 //!
 //! ```ignore
-//! use swiftui::state::*;
+//! use swiftui::prelude::*;
 //!
-//! let store = Store::new();
-//! let count = store.create(0i32);
-//! let name = store.create(String::from("World"));
+//! app("Counter", 400.0, 300.0, |cx| {
+//!     let count = cx.state(0i32);
 //!
-//! reactive_window("Counter", 300.0, 200.0, &store, move |ctx| {
-//!     let n = ctx.get(&count);
-//!     let who = ctx.get(&name);
 //!     vstack![
-//!         text(&format!("Hello, {who}! Count: {n}")).bold().size(24.0),
-//!         button("Increment", move || ctx.update(&count, |n| n + 1)),
-//!         button("Reset", move || ctx.set(&count, 0)),
+//!         text(&format!("Count: {}", count.get())).bold().size(48.0),
+//!         button("+1", count.bind(|n| n + 1)),
+//!         button("Reset", count.set_to(0)),
 //!     ]
 //! });
 //! ```
@@ -22,152 +18,242 @@ use core::ffi::c_void;
 use std::any::Any;
 use std::sync::{Arc, Mutex};
 
-/// An opaque key to a state value.
-#[derive(Clone, Copy)]
-pub struct StateKey {
-    index: usize,
+// ═══════════════════════════════════════════════════════════════════════════
+// Internal store
+// ═══════════════════════════════════════════════════════════════════════════
+
+struct StoreInner {
+    values: Vec<Box<dyn Any + Send>>,
+    trigger: Option<*mut c_void>,
 }
 
-/// Thread-safe state store holding all reactive values.
-pub struct Store {
-    values: Arc<Mutex<Vec<Box<dyn Any + Send>>>>,
-    trigger: Mutex<Option<*mut c_void>>, // model handle for swiftui_trigger_rebuild
-}
+// SAFETY: trigger pointer is only used via DispatchQueue.main in Swift
+unsafe impl Send for StoreInner {}
 
-// SAFETY: the trigger pointer is only used from the main thread via DispatchQueue.main
-unsafe impl Send for Store {}
-unsafe impl Sync for Store {}
+#[derive(Clone)]
+pub(crate) struct Store(Arc<Mutex<StoreInner>>);
 
 impl Store {
-    pub fn new() -> Arc<Self> {
-        Arc::new(Self {
-            values: Arc::new(Mutex::new(Vec::new())),
-            trigger: Mutex::new(None),
-        })
+    fn new() -> Self {
+        Self(Arc::new(Mutex::new(StoreInner {
+            values: Vec::new(),
+            trigger: None,
+        })))
     }
 
-    /// Create a new state value, returns a key to access it.
-    pub fn create<T: Any + Send + Clone + 'static>(self: &Arc<Self>, initial: T) -> StateKey {
-        let mut vals = self.values.lock().unwrap();
-        let index = vals.len();
-        vals.push(Box::new(initial));
-        StateKey { index }
+    fn create<T: Any + Send + Clone + 'static>(&self, initial: T) -> usize {
+        let mut inner = self.0.lock().unwrap();
+        let idx = inner.values.len();
+        inner.values.push(Box::new(initial));
+        idx
     }
 
-    /// Get a clone of the current value.
-    pub fn get<T: Any + Send + Clone + 'static>(&self, key: &StateKey) -> T {
-        let vals = self.values.lock().unwrap();
-        vals[key.index].downcast_ref::<T>().unwrap().clone()
+    fn get<T: Any + Send + Clone + 'static>(&self, idx: usize) -> T {
+        let inner = self.0.lock().unwrap();
+        inner.values[idx].downcast_ref::<T>().unwrap().clone()
     }
 
-    /// Set a new value and trigger UI rebuild.
-    pub fn set<T: Any + Send + Clone + 'static>(&self, key: &StateKey, value: T) {
-        {
-            let mut vals = self.values.lock().unwrap();
-            vals[key.index] = Box::new(value);
+    fn set_raw(&self, idx: usize, val: Box<dyn Any + Send>) {
+        let mut inner = self.0.lock().unwrap();
+        inner.values[idx] = val;
+        let trigger = inner.trigger;
+        drop(inner);
+        if let Some(h) = trigger {
+            trigger_swift(h);
         }
-        self.trigger_rebuild();
     }
 
-    /// Update a value with a function and trigger UI rebuild.
-    pub fn update<T: Any + Send + Clone + 'static>(&self, key: &StateKey, f: impl FnOnce(&T) -> T) {
-        {
-            let mut vals = self.values.lock().unwrap();
-            let old = vals[key.index].downcast_ref::<T>().unwrap();
-            let new = f(old);
-            vals[key.index] = Box::new(new);
+    fn set_trigger(&self, handle: *mut c_void) {
+        self.0.lock().unwrap().trigger = Some(handle);
+    }
+}
+
+fn trigger_swift(handle: *mut c_void) {
+    unsafe {
+        use core::ffi::c_char;
+        unsafe extern "C" {
+            fn dlsym(h: *mut c_void, s: *const c_char) -> *mut c_void;
         }
-        self.trigger_rebuild();
-    }
-
-    /// Store the Swift model handle (called by the build trampoline).
-    pub(crate) fn set_trigger(&self, handle: *mut c_void) {
-        *self.trigger.lock().unwrap() = Some(handle);
-    }
-
-    /// Trigger a SwiftUI rebuild via the Swift model.
-    fn trigger_rebuild(&self) {
-        let handle = *self.trigger.lock().unwrap();
-        if let Some(h) = handle {
-            // Resolve swiftui_trigger_rebuild via dlsym
-            unsafe {
-                use core::ffi::c_char;
-                unsafe extern "C" {
-                    fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
-                }
-                let trigger = dlsym(
-                    (-2isize) as *mut c_void,
-                    c"swiftui_trigger_rebuild".as_ptr(),
-                );
-                if !trigger.is_null() {
-                    type TriggerFn = unsafe extern "C" fn(*mut c_void);
-                    let f: TriggerFn = std::mem::transmute(trigger);
-                    f(h);
-                }
-            }
+        let f = dlsym(
+            (-2isize) as *mut c_void,
+            c"swiftui_trigger_rebuild".as_ptr(),
+        );
+        if !f.is_null() {
+            type F = unsafe extern "C" fn(*mut c_void);
+            (std::mem::transmute::<_, F>(f))(handle);
         }
     }
 }
 
-/// Context passed to the reactive build function.
-/// Provides read access to state and the ability to create update closures.
-pub struct BuildContext {
-    pub store: Arc<Store>,
-}
+// ═══════════════════════════════════════════════════════════════════════════
+// State<T> — a handle to a reactive value
+// ═══════════════════════════════════════════════════════════════════════════
 
-impl BuildContext {
-    /// Get the current value of a state key.
-    pub fn get<T: Any + Send + Clone + 'static>(&self, key: &StateKey) -> T {
-        self.store.get(key)
-    }
-}
-
-/// Open a reactive window. The `build` function is called on every state change.
+/// A handle to a reactive state value. Cheap to clone (just index + Arc).
 ///
 /// ```ignore
-/// let store = Store::new();
-/// let count = store.create(0);
+/// let count = cx.state(0i32);
+/// count.get()               // read
+/// count.set(42)             // write + rebuild
+/// count.update(|n| n + 1)   // mutate + rebuild
+/// count.bind(|n| n + 1)     // closure for button callbacks
+/// count.set_to(0)           // closure that sets to a fixed value
+/// ```
+pub struct State<T: Any + Send + Clone + 'static> {
+    idx: usize,
+    store: Store,
+    _phantom: std::marker::PhantomData<T>,
+}
+
+impl<T: Any + Send + Clone + 'static> Clone for State<T> {
+    fn clone(&self) -> Self {
+        Self {
+            idx: self.idx,
+            store: self.store.clone(),
+            _phantom: std::marker::PhantomData,
+        }
+    }
+}
+
+impl<T: Any + Send + Clone + 'static> State<T> {
+    /// Get the current value.
+    pub fn get(&self) -> T {
+        self.store.get::<T>(self.idx)
+    }
+
+    /// Set a new value. Triggers UI rebuild.
+    pub fn set(&self, value: T) {
+        self.store.set_raw(self.idx, Box::new(value));
+    }
+
+    /// Update the value with a function. Triggers UI rebuild.
+    pub fn update(&self, f: impl FnOnce(&T) -> T) {
+        let old = self.get();
+        let new = f(&old);
+        self.set(new);
+    }
+
+    /// Create a callback closure that updates the value.
+    /// Use with `button(label, count.bind(|n| n + 1))`.
+    pub fn bind(&self, f: impl Fn(&T) -> T + 'static) -> impl Fn() + 'static {
+        let s = self.clone();
+        move || s.update(&f)
+    }
+
+    /// Create a callback closure that sets to a fixed value.
+    /// Use with `button(label, count.set_to(0))`.
+    pub fn set_to(&self, value: T) -> impl Fn() + 'static
+    where
+        T: Clone,
+    {
+        let s = self.clone();
+        move || s.set(value.clone())
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Cx — build context passed to the reactive build function
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// Build context — provides state creation and access.
+pub struct Cx {
+    store: Store,
+    next_idx: std::cell::Cell<usize>,
+}
+
+impl Cx {
+    /// Create or access a state value. On first build, creates with `initial`.
+    /// On subsequent builds, returns the existing value (ignores `initial`).
+    pub fn state<T: Any + Send + Clone + 'static>(&self, initial: T) -> State<T> {
+        let idx = self.next_idx.get();
+        self.next_idx.set(idx + 1);
+
+        // Create on first call, skip on rebuild
+        {
+            let inner = self.store.0.lock().unwrap();
+            if idx >= inner.values.len() {
+                drop(inner);
+                self.store.create(initial);
+            }
+        }
+
+        State {
+            idx,
+            store: self.store.clone(),
+            _phantom: std::marker::PhantomData,
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// button() that works with state closures
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// Create a button that triggers a state update on click.
 ///
-/// reactive_window("App", 400.0, 300.0, &store, move |ctx| {
-///     let n = ctx.get(&count);
+/// ```ignore
+/// button("+1", count.bind(|n| n + 1))
+/// button("Reset", count.set_to(0))
+/// button("Custom", || println!("clicked"))
+/// ```
+pub fn button(label: &str, action: impl Fn() + 'static) -> crate::View {
+    let boxed: Box<Box<dyn Fn()>> = Box::new(Box::new(action));
+    let ptr = Box::into_raw(boxed) as *mut c_void;
+
+    crate::dsl::with_ui(|ui| crate::View::new(ui.button_raw(label, trampoline, ptr)))
+}
+
+unsafe extern "C" fn trampoline(ptr: *mut c_void) {
+    let action = &*(ptr as *const Box<dyn Fn()>);
+    action();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// app() — the main entry point
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// Launch a reactive SwiftUI app.
+///
+/// ```ignore
+/// use swiftui::prelude::*;
+///
+/// app("My App", 400.0, 300.0, |cx| {
+///     let count = cx.state(0i32);
 ///     vstack![
-///         text(&format!("Count: {n}")).bold().size(24.0),
-///         button("+1", {
-///             let store = ctx.store.clone();
-///             let count = count;
-///             move || store.update(&count, |n| n + 1)
-///         }),
+///         text(&format!("{}", count.get())).size(48.0),
+///         button("+1", count.bind(|n| n + 1)),
 ///     ]
 /// });
 /// ```
-pub fn reactive_window(
-    title: &str,
-    width: f32,
-    height: f32,
-    store: &Arc<Store>,
-    build: impl Fn(&BuildContext) -> crate::View + 'static,
-) {
+pub fn app(title: &str, width: f32, height: f32, build: impl Fn(&Cx) -> crate::View + 'static) {
     crate::app::init_app();
     if !crate::context::is_initialized() {
-        crate::init("swift_helper/libSwiftUIHelper.dylib");
+        // Try common paths
+        let paths = [
+            "swift_helper/libSwiftUIHelper.dylib",
+            "../../swift_helper/libSwiftUIHelper.dylib",
+        ];
+        for p in paths {
+            if std::path::Path::new(p).exists() {
+                crate::init(p);
+                break;
+            }
+        }
     }
 
-    // Box the build closure and store into a struct the trampoline can access
-    let data = Box::new(TrampolineData {
+    let store = Store::new();
+    let data = Box::new(AppData {
         store: store.clone(),
         build: Box::new(build),
     });
     let data_ptr = Box::into_raw(data) as *mut c_void;
 
-    // Resolve the reactive window function
     unsafe {
         use core::ffi::c_char;
         unsafe extern "C" {
-            fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
-            fn dlopen(path: *const c_char, mode: i32) -> *mut c_void;
+            fn dlsym(h: *mut c_void, s: *const c_char) -> *mut c_void;
+            fn dlopen(p: *const c_char, m: i32) -> *mut c_void;
         }
-
-        // Ensure helper is loaded
         let paths = [
             c"swift_helper/libSwiftUIHelper.dylib".as_ptr(),
             c"../../swift_helper/libSwiftUIHelper.dylib".as_ptr(),
@@ -176,13 +262,16 @@ pub fn reactive_window(
             dlopen(p, 2);
         }
 
-        let reactive_win = dlsym(
+        let f = dlsym(
             (-2isize) as *mut c_void,
             c"swiftui_reactive_window".as_ptr(),
         );
-        assert!(!reactive_win.is_null(), "swiftui_reactive_window not found");
+        assert!(
+            !f.is_null(),
+            "swiftui_reactive_window not found — build the helper"
+        );
 
-        type ReactiveWindowFn = unsafe extern "C" fn(
+        type WinFn = unsafe extern "C" fn(
             *const u8,
             usize,
             f32,
@@ -190,56 +279,35 @@ pub fn reactive_window(
             unsafe extern "C" fn(*mut c_void, *mut c_void) -> *mut c_void,
             *mut c_void,
         );
-        let f: ReactiveWindowFn = std::mem::transmute(reactive_win);
-        f(
+        let win: WinFn = std::mem::transmute(f);
+        win(
             title.as_ptr(),
             title.len(),
             width,
             height,
-            build_trampoline,
+            app_trampoline,
             data_ptr,
         );
     }
 }
 
-struct TrampolineData {
-    store: Arc<Store>,
-    build: Box<dyn Fn(&BuildContext) -> crate::View>,
+struct AppData {
+    store: Store,
+    build: Box<dyn Fn(&Cx) -> crate::View>,
 }
 
-/// Called by Swift on every rebuild. Returns a ViewHandle.
-unsafe extern "C" fn build_trampoline(
-    user_data: *mut c_void,
-    model_handle: *mut c_void,
-) -> *mut c_void {
-    let data = &*(user_data as *const TrampolineData);
+unsafe extern "C" fn app_trampoline(user_data: *mut c_void, model: *mut c_void) -> *mut c_void {
+    let data = &*(user_data as *const AppData);
+    data.store.set_trigger(model);
 
-    // Store the model handle so state changes can trigger rebuilds
-    data.store.set_trigger(model_handle);
-
-    let ctx = BuildContext {
+    let cx = Cx {
         store: data.store.clone(),
+        next_idx: std::cell::Cell::new(0),
     };
 
-    let view = (data.build)(&ctx);
-
-    // The view handle needs to be "leaked" to Swift — don't drop it
+    let view = (data.build)(&cx);
     let handle = view.into_handle();
     let raw = handle.as_raw();
     std::mem::forget(handle);
     raw
-}
-
-/// Button helper that captures a closure for state updates.
-pub fn state_button(label: &str, action: impl Fn() + 'static) -> crate::View {
-    // Store the closure in a leaked box, pass pointer as userdata
-    let boxed: Box<Box<dyn Fn()>> = Box::new(Box::new(action));
-    let ptr = Box::into_raw(boxed) as *mut c_void;
-
-    crate::dsl::with_ui(|ui| crate::View::new(ui.button_raw(label, invoke_state_action, ptr)))
-}
-
-unsafe extern "C" fn invoke_state_action(ptr: *mut c_void) {
-    let action = &*(ptr as *const Box<dyn Fn()>);
-    action();
 }
