@@ -13,4 +13,5 @@ name = "swiftui"
 [dependencies]
 swift-runtime-sys = { path = "../swift-runtime-sys" }
 swift-runtime = { path = "../swift-runtime" }
+swiftui-sys = { path = "../swiftui-sys" }
 libc = "0.2"

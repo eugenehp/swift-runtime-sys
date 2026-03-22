@@ -52,23 +52,38 @@ static mut CMP: Option<CmpFn> = None;
 fn init() {
     INIT.call_once(|| unsafe {
         NSApplicationLoad();
-        dlopen(c"/System/Library/Frameworks/SwiftUI.framework/SwiftUI".as_ptr(), 1);
+        dlopen(
+            c"/System/Library/Frameworks/SwiftUI.framework/SwiftUI".as_ptr(),
+            1,
+        );
 
         let paths = [
             c"swift_helper/libSwiftUIHelper.dylib".as_ptr(),
             c"../../swift_helper/libSwiftUIHelper.dylib".as_ptr(),
         ];
         let mut hh = std::ptr::null_mut();
-        for p in paths { hh = dlopen(p, 2); if !hh.is_null() { break; } }
+        for p in paths {
+            hh = dlopen(p, 2);
+            if !hh.is_null() {
+                break;
+            }
+        }
 
         let paths_g = [
             c"generated/swiftui_gen/libSwiftUIGen.dylib".as_ptr(),
             c"../../generated/swiftui_gen/libSwiftUIGen.dylib".as_ptr(),
         ];
         let mut gh = std::ptr::null_mut();
-        for p in paths_g { gh = dlopen(p, 2); if !gh.is_null() { break; } }
+        for p in paths_g {
+            gh = dlopen(p, 2);
+            if !gh.is_null() {
+                break;
+            }
+        }
 
-        if hh.is_null() || gh.is_null() { return; }
+        if hh.is_null() || gh.is_null() {
+            return;
+        }
 
         HAND = Some(Helper {
             text: std::mem::transmute(dlsym(hh, c"swiftui_text".as_ptr())),
@@ -100,12 +115,19 @@ fn init() {
             release: std::mem::transmute(dlsym(gh, c"gen_release".as_ptr())),
         });
 
-        CMP = Some(std::mem::transmute(dlsym(hh, c"compare_png_bytes".as_ptr())));
+        CMP = Some(std::mem::transmute(dlsym(
+            hh,
+            c"compare_png_bytes".as_ptr(),
+        )));
     });
 }
 
-fn hand() -> &'static Helper { unsafe { HAND.as_ref().expect("Init failed — build both helpers") } }
-fn gen() -> &'static Helper { unsafe { GEN.as_ref().expect("Init failed — build gen helper") } }
+fn hand() -> &'static Helper {
+    unsafe { HAND.as_ref().expect("Init failed — build both helpers") }
+}
+fn gen() -> &'static Helper {
+    unsafe { GEN.as_ref().expect("Init failed — build gen helper") }
+}
 
 fn build_simple(h: &Helper) -> V {
     unsafe {
@@ -156,9 +178,17 @@ fn compare(a: &[u8], b: &[u8]) -> f32 {
     }
 }
 
-fn bench_construction(name: &str, h: &Helper, builder: fn(&Helper) -> V, iterations: usize) -> std::time::Duration {
+fn bench_construction(
+    name: &str,
+    h: &Helper,
+    builder: fn(&Helper) -> V,
+    iterations: usize,
+) -> std::time::Duration {
     // Warmup
-    for _ in 0..5 { let v = builder(h); unsafe { (h.release)(v) }; }
+    for _ in 0..5 {
+        let v = builder(h);
+        unsafe { (h.release)(v) };
+    }
 
     let start = Instant::now();
     for _ in 0..iterations {

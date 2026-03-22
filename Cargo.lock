@@ -393,7 +393,12 @@ dependencies = [
  "libc",
  "swift-runtime",
  "swift-runtime-sys",
+ "swiftui-sys",
 ]
+
+[[package]]
+name = "swiftui-sys"
+version = "0.0.1"
 
 [[package]]
 name = "syn"

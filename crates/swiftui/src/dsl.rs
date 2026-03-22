@@ -129,8 +129,8 @@ pub fn vstack(children: Vec<View>) -> View {
     with_ui(|ui| {
         let handles: Vec<_> = children.iter().map(|v| v.handle()).collect();
         let ptrs: Vec<_> = handles.iter().map(|h| h.as_raw()).collect();
-        let raw = unsafe { (ui.vstack_fn)(ptrs.as_ptr(), ptrs.len()) };
-        View::new(crate::handle::ViewHandle::new(raw, ui.release_fn))
+        let raw = unsafe { (ui.fns.vstack)(ptrs.as_ptr(), ptrs.len()) };
+        View::new(crate::handle::ViewHandle::new(raw, ui.fns.release))
     })
 }
 
@@ -139,8 +139,8 @@ pub fn hstack(children: Vec<View>) -> View {
     with_ui(|ui| {
         let handles: Vec<_> = children.iter().map(|v| v.handle()).collect();
         let ptrs: Vec<_> = handles.iter().map(|h| h.as_raw()).collect();
-        let raw = unsafe { (ui.hstack_fn)(ptrs.as_ptr(), ptrs.len()) };
-        View::new(crate::handle::ViewHandle::new(raw, ui.release_fn))
+        let raw = unsafe { (ui.fns.hstack)(ptrs.as_ptr(), ptrs.len()) };
+        View::new(crate::handle::ViewHandle::new(raw, ui.fns.release))
     })
 }
 
@@ -149,8 +149,8 @@ pub fn zstack(children: Vec<View>) -> View {
     with_ui(|ui| {
         let handles: Vec<_> = children.iter().map(|v| v.handle()).collect();
         let ptrs: Vec<_> = handles.iter().map(|h| h.as_raw()).collect();
-        let raw = unsafe { (ui.zstack_fn)(ptrs.as_ptr(), ptrs.len()) };
-        View::new(crate::handle::ViewHandle::new(raw, ui.release_fn))
+        let raw = unsafe { (ui.fns.zstack)(ptrs.as_ptr(), ptrs.len()) };
+        View::new(crate::handle::ViewHandle::new(raw, ui.fns.release))
     })
 }
 
