@@ -1,0 +1,9 @@
+[package]
+name = "realitykit-sys"
+description = "Raw FFI bindings to RealityKit via @_cdecl bridge"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "realitykit_sys"

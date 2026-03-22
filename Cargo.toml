@@ -6,5 +6,7 @@ members = [
     "crates/swiftui-sys",
     "crates/swiftui-macros",
     "crates/swiftui",
+    "crates/realitykit-sys",
+    "crates/realitykit",
     "crates/swift-bridge-gen",
 ]

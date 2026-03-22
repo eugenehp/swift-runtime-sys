@@ -1,0 +1,12 @@
+[package]
+name = "realitykit"
+description = "Ergonomic RealityKit 3D scene builder from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "realitykit"
+
+[dependencies]
+realitykit-sys = { path = "../realitykit-sys" }
