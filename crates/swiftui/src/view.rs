@@ -1010,6 +1010,37 @@ impl View {
         })
     }
 
+    // ── Custom bezier / Keyframes ──
+
+    /// Custom cubic bezier timing curve.
+    pub fn bezier(self, x1: f32, y1: f32, x2: f32, y2: f32, duration: f32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe {
+                    (ui.fns.animation_bezier)(self.handle.as_raw(), x1, y1, x2, y2, duration)
+                },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    /// Keyframe animation. Each keyframe: [duration, offsetX, offsetY, scale, rotation, opacity].
+    pub fn keyframe(self, keyframes: &[f32], trigger: bool) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe {
+                    (ui.fns.keyframe_animation)(
+                        self.handle.as_raw(),
+                        keyframes.as_ptr(),
+                        keyframes.len(),
+                        trigger,
+                    )
+                },
+                ui.fns.release,
+            ))
+        })
+    }
+
     // ── Navigation ──
 
     pub fn navigation_stack(self) -> Self {

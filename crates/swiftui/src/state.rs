@@ -681,3 +681,106 @@ pub fn app_storage_set_bool(key: &str, value: bool) {
         unsafe { (ui.fns.app_storage_set_bool)(key.as_ptr(), key.len(), value) };
     });
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FocusState — manage keyboard focus from Rust
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// A focus manager — controls which field has keyboard focus.
+pub struct FocusManager {
+    ptr: *mut c_void,
+}
+
+impl FocusManager {
+    /// Create a new focus manager.
+    pub fn new() -> Self {
+        crate::dsl::with_ui(|ui| Self {
+            ptr: unsafe { (ui.fns.focus_model_create)() },
+        })
+    }
+
+    /// Focus a specific field by ID.
+    pub fn focus(&self, field_id: &str) {
+        crate::dsl::with_ui(|ui| {
+            unsafe { (ui.fns.focus_model_set)(self.ptr, field_id.as_ptr(), field_id.len()) };
+        });
+    }
+
+    /// Clear focus (dismiss keyboard).
+    pub fn clear(&self) {
+        crate::dsl::with_ui(|ui| {
+            unsafe { (ui.fns.focus_model_clear)(self.ptr) };
+        });
+    }
+
+    /// Get the raw pointer (for passing to focusable_textfield).
+    pub fn raw(&self) -> *mut c_void {
+        self.ptr
+    }
+}
+
+/// A text field that participates in focus management.
+pub fn focusable_textfield(
+    placeholder: &str,
+    state: &State<String>,
+    field_id: &str,
+    focus: &FocusManager,
+) -> crate::View {
+    let s = state.clone();
+    let boxed: Box<Box<dyn Fn(*const u8, usize)>> = Box::new(Box::new(move |ptr, len| {
+        let new =
+            unsafe { String::from_utf8_lossy(std::slice::from_raw_parts(ptr, len)).into_owned() };
+        s.set(new);
+    }));
+    let ud = Box::into_raw(boxed) as *mut c_void;
+    unsafe extern "C" fn tramp(ptr: *const u8, len: usize, ud: *mut c_void) {
+        let f = &*(ud as *const Box<dyn Fn(*const u8, usize)>);
+        f(ptr, len);
+    }
+    let val = state.get();
+    crate::dsl::with_ui(|ui| {
+        crate::View::new(crate::handle::ViewHandle::new(
+            unsafe {
+                (ui.fns.focusable_textfield)(
+                    placeholder.as_ptr(),
+                    placeholder.len(),
+                    val.as_ptr(),
+                    val.len(),
+                    field_id.as_ptr(),
+                    field_id.len(),
+                    tramp,
+                    ud,
+                    focus.raw(),
+                )
+            },
+            ui.fns.release,
+        ))
+    })
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ScrollTo — programmatic scrolling
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// A scroll controller — wraps content in ScrollViewReader and allows scrollTo.
+pub struct ScrollController {
+    handle: *mut c_void,
+}
+
+impl ScrollController {
+    /// Wrap content in a ScrollViewReader.
+    pub fn wrap(content: crate::View) -> (crate::View, Self) {
+        crate::dsl::with_ui(|ui| {
+            let h = unsafe { (ui.fns.scroll_reader_create)(content.handle().as_raw()) };
+            let view = crate::View::new(crate::handle::ViewHandle::new(h, ui.fns.release));
+            (view, Self { handle: h })
+        })
+    }
+
+    /// Scroll to a view with the given ID.
+    pub fn scroll_to(&self, id: &str) {
+        crate::dsl::with_ui(|ui| {
+            unsafe { (ui.fns.scroll_to)(self.handle, id.as_ptr(), id.len()) };
+        });
+    }
+}

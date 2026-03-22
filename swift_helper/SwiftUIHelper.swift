@@ -1794,3 +1794,250 @@ public func swiftuiPhaseAnimationScale(_ h: ViewHandle, _ scales: UnsafePointer<
         content.scaleEffect(phase)
     })
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Custom bezier timing curve
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_animation_bezier")
+public func swiftuiAnimationBezier(_ h: ViewHandle, _ x1: Float, _ y1: Float, _ x2: Float, _ y2: Float, _ duration: Float) -> ViewHandle {
+    let curve = UnitCurve.bezier(startControlPoint: UnitPoint(x: Double(x1), y: Double(y1)), endControlPoint: UnitPoint(x: Double(x2), y: Double(y2)))
+    return boxView(unboxView(h).animation(.timingCurve(curve, duration: Double(duration)), value: true))
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// KeyframeAnimator — offset/scale/rotation keyframes
+// ═══════════════════════════════════════════════════════════════════════════
+
+struct KFState {
+    var offsetX: CGFloat = 0; var offsetY: CGFloat = 0
+    var scale: CGFloat = 1; var rotation: CGFloat = 0; var opacity: CGFloat = 1
+}
+
+@_cdecl("swiftui_keyframe_animation")
+public func swiftuiKeyframeAnimation(
+    _ h: ViewHandle,
+    _ keyframes: UnsafePointer<Float>, _ count: Int, _ trigger: Bool
+) -> ViewHandle {
+    // Keyframe format: [duration, offsetX, offsetY, scale, rotation, opacity] × N
+    let stride = 6
+    let kfCount = count / stride
+    var kfs: [(Double, CGFloat, CGFloat, CGFloat, CGFloat, CGFloat)] = []
+    for i in 0..<kfCount {
+        let base = i * stride
+        kfs.append((
+            Double(keyframes[base]),
+            CGFloat(keyframes[base+1]), CGFloat(keyframes[base+2]),
+            CGFloat(keyframes[base+3]), CGFloat(keyframes[base+4]),
+            CGFloat(keyframes[base+5])
+        ))
+    }
+    
+    struct KFView: View {
+        let content: AnyView; let kfs: [(Double, CGFloat, CGFloat, CGFloat, CGFloat, CGFloat)]; let trigger: Bool
+        var body: some View {
+            content.keyframeAnimator(initialValue: KFState(), trigger: trigger) { view, value in
+                view.offset(x: value.offsetX, y: value.offsetY)
+                    .scaleEffect(value.scale)
+                    .rotationEffect(.degrees(value.rotation))
+                    .opacity(value.opacity)
+            } keyframes: { _ in
+                KeyframeTrack(\.offsetX) {
+                    for kf in kfs { CubicKeyframe(kf.1, duration: kf.0) }
+                }
+                KeyframeTrack(\.offsetY) {
+                    for kf in kfs { CubicKeyframe(kf.2, duration: kf.0) }
+                }
+                KeyframeTrack(\.scale) {
+                    for kf in kfs { CubicKeyframe(kf.3, duration: kf.0) }
+                }
+                KeyframeTrack(\.rotation) {
+                    for kf in kfs { CubicKeyframe(kf.4, duration: kf.0) }
+                }
+                KeyframeTrack(\.opacity) {
+                    for kf in kfs { CubicKeyframe(kf.5, duration: kf.0) }
+                }
+            }
+        }
+    }
+    return boxView(KFView(content: unboxView(h), kfs: kfs, trigger: trigger))
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ScrollViewReader.scrollTo
+// ═══════════════════════════════════════════════════════════════════════════
+
+class ScrollProxyHolder: ObservableObject {
+    var proxy: ScrollViewProxy?
+    var pendingScroll: String?
+}
+
+struct ScrollReaderWrapper: View {
+    let content: AnyView
+    @ObservedObject var holder: ScrollProxyHolder
+    var body: some View {
+        ScrollViewReader { proxy in
+            content.onAppear {
+                holder.proxy = proxy
+                if let id = holder.pendingScroll {
+                    proxy.scrollTo(id, anchor: .top)
+                    holder.pendingScroll = nil
+                }
+            }
+        }
+    }
+}
+
+@_cdecl("swiftui_scroll_reader_create")
+public func swiftuiScrollReaderCreate(_ content: ViewHandle) -> ViewHandle {
+    let holder = ScrollProxyHolder()
+    let wrapper = ScrollReaderWrapper(content: unboxView(content), holder: holder)
+    let handle = boxView(wrapper)
+    // Store holder reference for scrollTo calls
+    scrollProxyStore[handle] = holder
+    return handle
+}
+
+@_cdecl("swiftui_scroll_to")
+public func swiftuiScrollTo(_ readerHandle: ViewHandle, _ idPtr: UnsafePointer<UInt8>, _ idLen: Int) {
+    let id = String(bytes: UnsafeBufferPointer(start: idPtr, count: idLen), encoding: .utf8) ?? ""
+    if let holder = scrollProxyStore[readerHandle] {
+        if let proxy = holder.proxy {
+            DispatchQueue.main.async { proxy.scrollTo(id, anchor: .top) }
+        } else {
+            holder.pendingScroll = id
+        }
+    }
+}
+
+private var scrollProxyStore: [ViewHandle: ScrollProxyHolder] = [:]
+
+// ═══════════════════════════════════════════════════════════════════════════
+// @FocusState
+// ═══════════════════════════════════════════════════════════════════════════
+
+class FocusModel: ObservableObject {
+    @Published var focusedField: String? = nil
+}
+
+struct FocusableTextField: View {
+    let placeholder: String
+    @ObservedObject var model: BindableString
+    let fieldId: String
+    @ObservedObject var focusModel: FocusModel
+    @FocusState private var isFocused: Bool
+    
+    var body: some View {
+        TextField(placeholder, text: $model.value)
+            .textFieldStyle(.roundedBorder)
+            .focused($isFocused)
+            .onChange(of: focusModel.focusedField) { _, newValue in
+                isFocused = (newValue == fieldId)
+            }
+            .onChange(of: isFocused) { _, newValue in
+                if newValue { focusModel.focusedField = fieldId }
+            }
+    }
+}
+
+@_cdecl("swiftui_focusable_textfield")
+public func swiftuiFocusableTextField(
+    _ placeholderPtr: UnsafePointer<UInt8>, _ placeholderLen: Int,
+    _ valuePtr: UnsafePointer<UInt8>, _ valueLen: Int,
+    _ fieldIdPtr: UnsafePointer<UInt8>, _ fieldIdLen: Int,
+    _ onChangeCb: @convention(c) (UnsafePointer<UInt8>, Int, UnsafeMutableRawPointer?) -> Void,
+    _ userData: UnsafeMutableRawPointer?,
+    _ focusModelPtr: UnsafeMutableRawPointer?
+) -> ViewHandle {
+    let placeholder = String(bytes: UnsafeBufferPointer(start: placeholderPtr, count: placeholderLen), encoding: .utf8) ?? ""
+    let value = String(bytes: UnsafeBufferPointer(start: valuePtr, count: valueLen), encoding: .utf8) ?? ""
+    let fieldId = String(bytes: UnsafeBufferPointer(start: fieldIdPtr, count: fieldIdLen), encoding: .utf8) ?? ""
+    let cb = onChangeCb; let ud = userData
+    let stringModel = BindableString(value) { newVal in
+        newVal.withCString { ptr in cb(UnsafePointer(OpaquePointer(ptr)), newVal.utf8.count, ud) }
+    }
+    let focusModel: FocusModel
+    if let ptr = focusModelPtr {
+        focusModel = Unmanaged<FocusModel>.fromOpaque(ptr).takeUnretainedValue()
+    } else {
+        focusModel = FocusModel()
+    }
+    return boxView(FocusableTextField(placeholder: placeholder, model: stringModel, fieldId: fieldId, focusModel: focusModel))
+}
+
+@_cdecl("swiftui_focus_model_create")
+public func swiftuiFocusModelCreate() -> UnsafeMutableRawPointer {
+    Unmanaged.passRetained(FocusModel()).toOpaque()
+}
+
+@_cdecl("swiftui_focus_model_set")
+public func swiftuiFocusModelSet(_ ptr: UnsafeMutableRawPointer, _ idPtr: UnsafePointer<UInt8>, _ idLen: Int) {
+    let model = Unmanaged<FocusModel>.fromOpaque(ptr).takeUnretainedValue()
+    let id = String(bytes: UnsafeBufferPointer(start: idPtr, count: idLen), encoding: .utf8) ?? ""
+    DispatchQueue.main.async { model.focusedField = id }
+}
+
+@_cdecl("swiftui_focus_model_clear")
+public func swiftuiFocusModelClear(_ ptr: UnsafeMutableRawPointer) {
+    let model = Unmanaged<FocusModel>.fromOpaque(ptr).takeUnretainedValue()
+    DispatchQueue.main.async { model.focusedField = nil }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Typed Table (macOS)
+// ═══════════════════════════════════════════════════════════════════════════
+
+#if os(macOS)
+struct SimpleTableRow: Identifiable {
+    let id: Int
+    let columns: [String]
+}
+
+@_cdecl("swiftui_typed_table")
+public func swiftuiTypedTable(
+    _ headerPtrs: UnsafePointer<UnsafePointer<UInt8>>,
+    _ headerLens: UnsafePointer<Int>,
+    _ headerCount: Int,
+    _ cellPtrs: UnsafePointer<UnsafePointer<UInt8>>,
+    _ cellLens: UnsafePointer<Int>,
+    _ rowCount: Int
+) -> ViewHandle {
+    let headers = (0..<headerCount).map {
+        String(bytes: UnsafeBufferPointer(start: headerPtrs[$0], count: headerLens[$0]), encoding: .utf8) ?? ""
+    }
+    let colCount = headerCount
+    var rows: [SimpleTableRow] = []
+    for r in 0..<rowCount {
+        var cols: [String] = []
+        for c in 0..<colCount {
+            let idx = r * colCount + c
+            if idx < rowCount * colCount {
+                cols.append(String(bytes: UnsafeBufferPointer(start: cellPtrs[idx], count: cellLens[idx]), encoding: .utf8) ?? "")
+            }
+        }
+        rows.append(SimpleTableRow(id: r, columns: cols))
+    }
+    
+    // Build a Table with dynamic columns
+    // SwiftUI Table requires static column count, so we use a List with HStack
+    return boxView(
+        VStack(alignment: .leading, spacing: 0) {
+            // Header
+            HStack {
+                ForEach(headers.indices, id: \.self) { i in
+                    Text(headers[i]).bold().frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }.padding(.horizontal, 8).padding(.vertical, 4).background(Color.gray.opacity(0.2))
+            Divider()
+            // Rows
+            List(rows) { row in
+                HStack {
+                    ForEach(row.columns.indices, id: \.self) { i in
+                        Text(row.columns[i]).frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+            }
+        }
+    )
+}
+#endif

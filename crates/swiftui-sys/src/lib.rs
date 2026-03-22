@@ -282,6 +282,26 @@ pub struct Fns {
     pub phase_animation: unsafe extern "C" fn(Handle, i32) -> Handle,
     pub phase_animation_scale: unsafe extern "C" fn(Handle, *const f32, usize) -> Handle,
 
+    // Custom bezier / Keyframes / ScrollTo / FocusState / Table
+    pub animation_bezier: unsafe extern "C" fn(Handle, f32, f32, f32, f32, f32) -> Handle,
+    pub keyframe_animation: unsafe extern "C" fn(Handle, *const f32, usize, bool) -> Handle,
+    pub scroll_reader_create: unsafe extern "C" fn(Handle) -> Handle,
+    pub scroll_to: unsafe extern "C" fn(Handle, *const u8, usize),
+    pub focus_model_create: unsafe extern "C" fn() -> *mut c_void,
+    pub focus_model_set: unsafe extern "C" fn(*mut c_void, *const u8, usize),
+    pub focus_model_clear: unsafe extern "C" fn(*mut c_void),
+    pub focusable_textfield: unsafe extern "C" fn(
+        *const u8,
+        usize,
+        *const u8,
+        usize,
+        *const u8,
+        usize,
+        unsafe extern "C" fn(*const u8, usize, *mut c_void),
+        *mut c_void,
+        *mut c_void,
+    ) -> Handle,
+
     // Symbol effects
     pub symbol_effect_bounce: unsafe extern "C" fn(Handle) -> Handle,
     pub symbol_effect_pulse: unsafe extern "C" fn(Handle) -> Handle,
@@ -446,6 +466,14 @@ pub fn load(path: &str) -> Result<Fns, String> {
             canvas_commands: std::mem::transmute(sym(h, c"swiftui_canvas_commands")),
             phase_animation: std::mem::transmute(sym(h, c"swiftui_phase_animation")),
             phase_animation_scale: std::mem::transmute(sym(h, c"swiftui_phase_animation_scale")),
+            animation_bezier: std::mem::transmute(sym(h, c"swiftui_animation_bezier")),
+            keyframe_animation: std::mem::transmute(sym(h, c"swiftui_keyframe_animation")),
+            scroll_reader_create: std::mem::transmute(sym(h, c"swiftui_scroll_reader_create")),
+            scroll_to: std::mem::transmute(sym(h, c"swiftui_scroll_to")),
+            focus_model_create: std::mem::transmute(sym(h, c"swiftui_focus_model_create")),
+            focus_model_set: std::mem::transmute(sym(h, c"swiftui_focus_model_set")),
+            focus_model_clear: std::mem::transmute(sym(h, c"swiftui_focus_model_clear")),
+            focusable_textfield: std::mem::transmute(sym(h, c"swiftui_focusable_textfield")),
             symbol_effect_bounce: std::mem::transmute(sym(h, c"swiftui_symbol_effect_bounce")),
             symbol_effect_pulse: std::mem::transmute(sym(h, c"swiftui_symbol_effect_pulse")),
             symbol_effect_variable_color: std::mem::transmute(sym(

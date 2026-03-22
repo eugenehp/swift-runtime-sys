@@ -21,8 +21,8 @@ pub use crate::scene::SceneApp;
 pub use crate::state::{
     action, animate, animate_spring, app, app_storage_get, app_storage_get_bool,
     app_storage_get_int, app_storage_set, app_storage_set_bool, app_storage_set_int, bound_picker,
-    bound_slider, bound_textfield, bound_toggle, button, tabview, with_animation, AnimCurve, Cx,
-    State, Tab,
+    bound_slider, bound_textfield, bound_toggle, button, focusable_textfield, tabview,
+    with_animation, AnimCurve, Cx, FocusManager, ScrollController, State, Tab,
 };
 pub use crate::style::{MultiStyled, StylePreset, Styled};
 pub use crate::view::{FontWeight, View};
