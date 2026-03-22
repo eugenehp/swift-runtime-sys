@@ -619,3 +619,34 @@ pub fn navigation_link(label: &str, destination: View) -> View {
         ))
     })
 }
+
+/// Load an image from URL.
+pub fn async_image(url: &str) -> View {
+    with_ui(|ui| {
+        View::new(ViewHandle::new(
+            unsafe { (ui.fns.async_image)(url.as_ptr(), url.len()) },
+            ui.fns.release,
+        ))
+    })
+}
+
+/// An empty view (takes no space).
+pub fn empty_view() -> View {
+    with_ui(|ui| {
+        View::new(ViewHandle::new(
+            unsafe { (ui.fns.empty_view)() },
+            ui.fns.release,
+        ))
+    })
+}
+
+/// A horizontal grid.
+pub fn hgrid(rows: i32, children: Vec<View>) -> View {
+    with_ui(|ui| {
+        let ptrs: Vec<_> = children.iter().map(|v| v.handle().as_raw()).collect();
+        View::new(ViewHandle::new(
+            unsafe { (ui.fns.lazy_hgrid)(ptrs.as_ptr(), ptrs.len(), rows) },
+            ui.fns.release,
+        ))
+    })
+}

@@ -2041,3 +2041,178 @@ public func swiftuiTypedTable(
     )
 }
 #endif
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Missing views: AsyncImage, ColorPicker, DatePicker, EditButton,
+// EmptyView, GridRow, LazyHGrid, Table (real), PasteButton, RenameButton
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_async_image")
+public func swiftuiAsyncImage(_ urlPtr: UnsafePointer<UInt8>, _ urlLen: Int) -> ViewHandle {
+    let s = String(bytes: UnsafeBufferPointer(start: urlPtr, count: urlLen), encoding: .utf8) ?? ""
+    if let url = URL(string: s) {
+        return boxView(AsyncImage(url: url))
+    }
+    return boxView(Text("Invalid URL"))
+}
+
+@_cdecl("swiftui_color_picker_bound")
+public func swiftuiColorPickerBound(
+    _ labelPtr: UnsafePointer<UInt8>, _ labelLen: Int,
+    _ r: Float, _ g: Float, _ b: Float,
+    _ cb: @convention(c) (Float, Float, Float, UnsafeMutableRawPointer?) -> Void,
+    _ ud: UnsafeMutableRawPointer?
+) -> ViewHandle {
+    let label = String(bytes: UnsafeBufferPointer(start: labelPtr, count: labelLen), encoding: .utf8) ?? ""
+    let callback = cb; let userData = ud
+    class CM: ObservableObject {
+        @Published var color: Color { didSet { onChange?(color) } }
+        var onChange: ((Color) -> Void)?
+        init(_ c: Color, _ cb: ((Color) -> Void)?) { self.color = c; self.onChange = cb }
+    }
+    let model = CM(Color(red: Double(r), green: Double(g), blue: Double(b))) { c in
+        // Extract RGB — approximate via NSColor
+        #if os(macOS)
+        if let ns = NSColor(c).usingColorSpace(.deviceRGB) {
+            callback(Float(ns.redComponent), Float(ns.greenComponent), Float(ns.blueComponent), userData)
+        }
+        #endif
+    }
+    struct BCP: View {
+        let label: String; @ObservedObject var model: CM
+        var body: some View { ColorPicker(label, selection: $model.color) }
+    }
+    return boxView(BCP(label: label, model: model))
+}
+
+@_cdecl("swiftui_date_picker_bound")
+public func swiftuiDatePickerBound(
+    _ labelPtr: UnsafePointer<UInt8>, _ labelLen: Int,
+    _ timestamp: Double,
+    _ cb: @convention(c) (Double, UnsafeMutableRawPointer?) -> Void,
+    _ ud: UnsafeMutableRawPointer?
+) -> ViewHandle {
+    let label = String(bytes: UnsafeBufferPointer(start: labelPtr, count: labelLen), encoding: .utf8) ?? ""
+    let callback = cb; let userData = ud
+    class DM: ObservableObject {
+        @Published var date: Date { didSet { onChange?(date) } }
+        var onChange: ((Date) -> Void)?
+        init(_ d: Date, _ cb: ((Date) -> Void)?) { self.date = d; self.onChange = cb }
+    }
+    let model = DM(Date(timeIntervalSince1970: timestamp)) { d in
+        callback(d.timeIntervalSince1970, userData)
+    }
+    struct BDP: View {
+        let label: String; @ObservedObject var model: DM
+        var body: some View { DatePicker(label, selection: $model.date) }
+    }
+    return boxView(BDP(label: label, model: model))
+}
+
+@_cdecl("swiftui_empty_view")
+public func swiftuiEmptyView() -> ViewHandle { boxView(EmptyView()) }
+
+@_cdecl("swiftui_lazy_hgrid")
+public func swiftuiLazyHGrid(_ children: UnsafePointer<ViewHandle>, _ count: Int, _ rows: Int32) -> ViewHandle {
+    let views = (0..<count).map { unboxView(children[$0]) }
+    let r = Array(repeating: GridItem(.flexible()), count: Int(rows))
+    return boxView(LazyHGrid(rows: r, spacing: 8) { ForEach(views.indices, id: \.self) { views[$0] } })
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Timer — periodic Rust callback
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_timer_start")
+public func swiftuiTimerStart(
+    _ intervalSeconds: Float,
+    _ cb: @convention(c) (UnsafeMutableRawPointer?) -> Void,
+    _ ud: UnsafeMutableRawPointer?
+) -> UnsafeMutableRawPointer {
+    let callback = cb; let userData = ud
+    let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(intervalSeconds), repeats: true) { _ in
+        callback(userData)
+    }
+    return Unmanaged.passRetained(timer as AnyObject).toOpaque()
+}
+
+@_cdecl("swiftui_timer_stop")
+public func swiftuiTimerStop(_ timerPtr: UnsafeMutableRawPointer) {
+    let timer = Unmanaged<AnyObject>.fromOpaque(timerPtr).takeRetainedValue() as! Timer
+    timer.invalidate()
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Final missing views
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_any_view")
+public func swiftuiAnyView(_ h: ViewHandle) -> ViewHandle { h } // already AnyView
+
+#if os(iOS)
+@_cdecl("swiftui_edit_button")
+public func swiftuiEditButton() -> ViewHandle { boxView(EditButton()) }
+#endif
+
+@_cdecl("swiftui_grid_row")
+public func swiftuiGridRow(_ children: UnsafePointer<ViewHandle>, _ count: Int) -> ViewHandle {
+    let views = (0..<count).map { unboxView(children[$0]) }
+    return boxView(GridRow { ForEach(views.indices, id: \.self) { views[$0] } })
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// @Environment — read common environment values
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_env_color_scheme")
+public func swiftuiEnvColorScheme(_ h: ViewHandle, _ cb: @convention(c) (Bool, UnsafeMutableRawPointer?) -> Void, _ ud: UnsafeMutableRawPointer?) -> ViewHandle {
+    let callback = cb; let userData = ud
+    struct EnvReader: View {
+        let content: AnyView
+        let cb: @convention(c) (Bool, UnsafeMutableRawPointer?) -> Void
+        let ud: UnsafeMutableRawPointer?
+        @Environment(\.colorScheme) var colorScheme
+        var body: some View {
+            content.onAppear { cb(colorScheme == .dark, ud) }
+        }
+    }
+    return boxView(EnvReader(content: unboxView(h), cb: callback, ud: userData))
+}
+
+@_cdecl("swiftui_env_locale")
+public func swiftuiEnvLocale(_ h: ViewHandle, _ cb: @convention(c) (UnsafePointer<UInt8>, Int, UnsafeMutableRawPointer?) -> Void, _ ud: UnsafeMutableRawPointer?) -> ViewHandle {
+    let callback = cb; let userData = ud
+    struct LocaleReader: View {
+        let content: AnyView
+        let cb: @convention(c) (UnsafePointer<UInt8>, Int, UnsafeMutableRawPointer?) -> Void
+        let ud: UnsafeMutableRawPointer?
+        @Environment(\.locale) var locale
+        var body: some View {
+            content.onAppear {
+                let id = locale.identifier
+                id.withCString { ptr in cb(UnsafePointer(OpaquePointer(ptr)), id.utf8.count, ud) }
+            }
+        }
+    }
+    return boxView(LocaleReader(content: unboxView(h), cb: callback, ud: userData))
+}
+
+#if os(macOS)
+@_cdecl("swiftui_paste_button")
+public func swiftuiPasteButton(
+    _ cb: @convention(c) (UnsafePointer<UInt8>, Int, UnsafeMutableRawPointer?) -> Void,
+    _ ud: UnsafeMutableRawPointer?
+) -> ViewHandle {
+    let callback = cb; let userData = ud
+    return boxView(PasteButton(payloadType: String.self) { strings in
+        for s in strings {
+            s.withCString { ptr in callback(UnsafePointer(OpaquePointer(ptr)), s.utf8.count, userData) }
+        }
+    })
+}
+#endif
+
+@_cdecl("swiftui_rename_button")
+public func swiftuiRenameButton() -> ViewHandle {
+    boxView(RenameButton())
+}

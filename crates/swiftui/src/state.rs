@@ -784,3 +784,100 @@ impl ScrollController {
         });
     }
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Timer — periodic updates from Rust
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// A repeating timer that calls a Rust closure.
+pub struct RustTimer {
+    ptr: *mut core::ffi::c_void,
+}
+
+impl RustTimer {
+    /// Start a timer that fires every `interval` seconds.
+    pub fn start(interval: f32, action: impl Fn() + 'static) -> Self {
+        let boxed: Box<Box<dyn Fn()>> = Box::new(Box::new(action));
+        let ud = Box::into_raw(boxed) as *mut core::ffi::c_void;
+        unsafe extern "C" fn tramp(p: *mut core::ffi::c_void) {
+            let f = &*(p as *const Box<dyn Fn()>);
+            f();
+        }
+        let ptr = crate::dsl::with_ui(|ui| unsafe { (ui.fns.timer_start)(interval, tramp, ud) });
+        Self { ptr }
+    }
+
+    /// Stop the timer.
+    pub fn stop(&self) {
+        crate::dsl::with_ui(|ui| unsafe { (ui.fns.timer_stop)(self.ptr) });
+    }
+}
+
+impl Drop for RustTimer {
+    fn drop(&mut self) {
+        self.stop();
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Bound ColorPicker / DatePicker
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// A color picker that writes back RGB to state.
+pub fn bound_color_picker(
+    label: &str,
+    r: &State<f32>,
+    g: &State<f32>,
+    b: &State<f32>,
+) -> crate::View {
+    let rs = r.clone();
+    let gs = g.clone();
+    let bs = b.clone();
+    let boxed: Box<Box<dyn Fn(f32, f32, f32)>> = Box::new(Box::new(move |nr, ng, nb| {
+        rs.set(nr);
+        gs.set(ng);
+        bs.set(nb);
+    }));
+    let ud = Box::into_raw(boxed) as *mut core::ffi::c_void;
+    unsafe extern "C" fn tramp(nr: f32, ng: f32, nb: f32, ud: *mut core::ffi::c_void) {
+        let f = &*(ud as *const Box<dyn Fn(f32, f32, f32)>);
+        f(nr, ng, nb);
+    }
+    crate::dsl::with_ui(|ui| {
+        crate::View::new(crate::handle::ViewHandle::new(
+            unsafe {
+                (ui.fns.color_picker_bound)(
+                    label.as_ptr(),
+                    label.len(),
+                    r.get(),
+                    g.get(),
+                    b.get(),
+                    tramp,
+                    ud,
+                )
+            },
+            ui.fns.release,
+        ))
+    })
+}
+
+/// A date picker that writes back timestamp to state.
+pub fn bound_date_picker(label: &str, timestamp: &State<f64>) -> crate::View {
+    let ts = timestamp.clone();
+    let boxed: Box<Box<dyn Fn(f64)>> = Box::new(Box::new(move |t| {
+        ts.set(t);
+    }));
+    let ud = Box::into_raw(boxed) as *mut core::ffi::c_void;
+    unsafe extern "C" fn tramp(t: f64, ud: *mut core::ffi::c_void) {
+        let f = &*(ud as *const Box<dyn Fn(f64)>);
+        f(t);
+    }
+    crate::dsl::with_ui(|ui| {
+        crate::View::new(crate::handle::ViewHandle::new(
+            unsafe {
+                (ui.fns.date_picker_bound)(label.as_ptr(), label.len(), timestamp.get(), tramp, ud)
+            },
+            ui.fns.release,
+        ))
+    })
+}

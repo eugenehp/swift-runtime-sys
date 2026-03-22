@@ -315,6 +315,30 @@ pub struct Fns {
         unsafe extern "C" fn(*const u8, usize, *const u8, usize, *const u8, usize) -> Handle,
     pub share_link: unsafe extern "C" fn(*const u8, usize, *const u8, usize) -> Handle,
 
+    // Missing views
+    pub async_image: unsafe extern "C" fn(*const u8, usize) -> Handle,
+    pub color_picker_bound: unsafe extern "C" fn(
+        *const u8,
+        usize,
+        f32,
+        f32,
+        f32,
+        unsafe extern "C" fn(f32, f32, f32, *mut c_void),
+        *mut c_void,
+    ) -> Handle,
+    pub date_picker_bound: unsafe extern "C" fn(
+        *const u8,
+        usize,
+        f64,
+        unsafe extern "C" fn(f64, *mut c_void),
+        *mut c_void,
+    ) -> Handle,
+    pub empty_view: unsafe extern "C" fn() -> Handle,
+    pub lazy_hgrid: unsafe extern "C" fn(*const Handle, usize, i32) -> Handle,
+    pub timer_start:
+        unsafe extern "C" fn(f32, unsafe extern "C" fn(*mut c_void), *mut c_void) -> *mut c_void,
+    pub timer_stop: unsafe extern "C" fn(*mut c_void),
+
     // Lifecycle
     pub release: unsafe extern "C" fn(Handle),
     pub retain: unsafe extern "C" fn(Handle),
@@ -474,6 +498,13 @@ pub fn load(path: &str) -> Result<Fns, String> {
             focus_model_set: std::mem::transmute(sym(h, c"swiftui_focus_model_set")),
             focus_model_clear: std::mem::transmute(sym(h, c"swiftui_focus_model_clear")),
             focusable_textfield: std::mem::transmute(sym(h, c"swiftui_focusable_textfield")),
+            async_image: std::mem::transmute(sym(h, c"swiftui_async_image")),
+            color_picker_bound: std::mem::transmute(sym(h, c"swiftui_color_picker_bound")),
+            date_picker_bound: std::mem::transmute(sym(h, c"swiftui_date_picker_bound")),
+            empty_view: std::mem::transmute(sym(h, c"swiftui_empty_view")),
+            lazy_hgrid: std::mem::transmute(sym(h, c"swiftui_lazy_hgrid")),
+            timer_start: std::mem::transmute(sym(h, c"swiftui_timer_start")),
+            timer_stop: std::mem::transmute(sym(h, c"swiftui_timer_stop")),
             symbol_effect_bounce: std::mem::transmute(sym(h, c"swiftui_symbol_effect_bounce")),
             symbol_effect_pulse: std::mem::transmute(sym(h, c"swiftui_symbol_effect_pulse")),
             symbol_effect_variable_color: std::mem::transmute(sym(
