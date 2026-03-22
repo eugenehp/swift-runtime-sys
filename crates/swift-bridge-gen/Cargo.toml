@@ -1,0 +1,15 @@
+[package]
+name = "swift-bridge-gen"
+description = "Generate Rust↔Swift bridge code from Swift module API dumps"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[[bin]]
+name = "swift-bridge-gen"
+path = "src/main.rs"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+clap = { version = "4", features = ["derive"] }

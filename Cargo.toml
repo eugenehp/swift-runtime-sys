@@ -4,4 +4,5 @@ members = [
     "crates/swift-runtime-sys",
     "crates/swift-runtime",
     "crates/swiftui",
+    "crates/swift-bridge-gen",
 ]
