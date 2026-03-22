@@ -10,6 +10,7 @@ pub use crate::dsl::{
     color, divider, image, label, link, progress, slider, spacer, text, textfield, toggle,
     IntoView, TextView,
 };
+pub use crate::host::{App, BackgroundMaterial, WindowStyle};
 pub use crate::nav::{back_button, nav_button, navigator};
 pub use crate::state::{app, button, Cx, State};
 pub use crate::style::{StylePreset, Styled};
