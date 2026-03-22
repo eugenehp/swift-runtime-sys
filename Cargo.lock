@@ -397,6 +397,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "swift-charts"
+version = "0.0.1"
+
+[[package]]
 name = "swift-data"
 version = "0.0.1"
 dependencies = [

@@ -81,7 +81,7 @@ public func appintentsAvailable() -> Bool { true }
 // ActivityKit
 // ═══════════════════════════════════════════════════════════════════════════
 
-#if canImport(ActivityKit)
+#if canImport(ActivityKit) && os(iOS)
 import ActivityKit
 
 @_cdecl("activitykit_available")

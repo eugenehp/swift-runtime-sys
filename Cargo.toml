@@ -15,5 +15,6 @@ members = [
     "crates/widgetkit",
     "crates/appintents",
     "crates/activitykit",
+    "crates/charts",
     "crates/swift-bridge-gen",
 ]
