@@ -34,9 +34,9 @@ pub struct SwiftUI {
     image_fn: ImageFn,
     spacer_fn: VoidToViewFn,
     divider_fn: VoidToViewFn,
-    vstack_fn: StackFn,
-    hstack_fn: StackFn,
-    zstack_fn: StackFn,
+    pub(crate) vstack_fn: StackFn,
+    pub(crate) hstack_fn: StackFn,
+    pub(crate) zstack_fn: StackFn,
     padding_fn: ModF32Fn,
     frame_fn: FrameFn,
     bg_color_fn: ColorModFn,
@@ -50,7 +50,7 @@ pub struct SwiftUI {
     color_fn: ColorFn,
     textfield_fn: TextFieldFn,
     show_fn: ShowFn,
-    release_fn: ReleaseFn,
+    pub(crate) release_fn: ReleaseFn,
 }
 
 fn resolve(h: *mut c_void, name: &[u8]) -> *mut c_void {

@@ -1,30 +1,38 @@
 //! Build and display SwiftUI views from Rust.
 //!
-//! This crate provides an ergonomic API for constructing SwiftUI view trees
-//! and displaying them in macOS windows, driven entirely from Rust.
+//! # Quick start
 //!
-//! Requires a small Swift helper dylib (`libSwiftUIHelper.dylib`) for calling
-//! convention bridging. See `swift_helper/SwiftUIHelper.swift`.
-//!
-//! # Example
 //! ```ignore
-//! use swiftui::*;
+//! use swiftui::dsl::*;
 //!
-//! let ui = SwiftUI::load("swift_helper/libSwiftUIHelper.dylib").unwrap();
+//! swiftui::init("swift_helper/libSwiftUIHelper.dylib");
 //!
-//! let view = ui.vstack(&[
-//!     ui.text("Hello from Rust! 🦀").bold().font_size(24.0),
-//!     ui.spacer(),
-//!     ui.button("Click me", || println!("clicked!")),
-//! ]);
-//!
-//! ui.show_window(view, "My App", 400.0, 300.0);
+//! window("My App", 400.0, 300.0,
+//!     vstack![
+//!         text("Hello from Rust!").bold().size(24),
+//!         spacer(),
+//!         button("Click me", || println!("clicked!")),
+//!     ].padding(16).bg(Color::DARKER)
+//! );
 //! ```
 
 mod handle;
 mod views;
 mod app;
+mod color;
+mod view;
+mod context;
+pub mod dsl;
 
 pub use handle::ViewHandle;
 pub use views::SwiftUI;
 pub use app::show_window;
+// Color is re-exported via dsl::Color
+pub use view::View;
+
+/// Initialize SwiftUI with the helper dylib path.
+/// Must be called before using any DSL functions.
+pub fn init(helper_path: &str) {
+    app::init_app();
+    context::init(helper_path);
+}
