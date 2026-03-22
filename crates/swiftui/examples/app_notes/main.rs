@@ -1,13 +1,4 @@
 //! Notes App — multi-file, deeply nested, composable views.
-//!
-//! Structure:
-//!   main.rs        — app entry, navigation
-//!   views/mod.rs   — re-exports
-//!   views/sidebar.rs    — note list
-//!   views/editor.rs     — note editor
-//!   views/toolbar.rs    — action bar
-//!   views/components.rs — reusable small components
-//!   model.rs       — data model
 
 mod model;
 mod views;
@@ -27,20 +18,19 @@ fn main() {
         let is_editing = editing.get();
 
         hstack![
-            // Sidebar — note list
-            sidebar(&note_list, sel, &selected, &notes).frame(220.0, -1.0),
+            sidebar(&note_list, &selected, &notes).frame(220.0, -1.0),
             divider(),
-            // Main area
             vstack![
-                toolbar(&note_list, sel, is_editing, &editing, &notes, &selected,),
+                toolbar(&note_list, sel, is_editing, &editing, &notes, &selected),
                 divider(),
-                if is_editing {
-                    editor(&note_list, sel)
-                } else {
-                    note_detail(&note_list, sel)
-                },
+                // view_if — no .into() needed, auto-converts both branches
+                view_if(
+                    is_editing,
+                    || editor(&note_list, sel),
+                    || note_detail(&note_list, sel),
+                ),
             ],
         ]
-        .bg(Color::DARKER)
+        .bg(DARKER)
     });
 }

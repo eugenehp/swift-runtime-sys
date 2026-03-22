@@ -161,6 +161,41 @@ impl IntoView for TextView {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// Conditional helpers that auto-convert TextView → View
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// `if/else` that auto-converts both branches to View.
+/// No more `.into()` needed:
+/// ```ignore
+/// // Before: if x { text("a").into() } else { text("b").into() }
+/// // After:
+/// view_if(x, || text("a"), || text("b"))
+/// ```
+pub fn view_if<A: IntoView, B: IntoView>(
+    cond: bool,
+    if_true: impl FnOnce() -> A,
+    if_false: impl FnOnce() -> B,
+) -> View {
+    if cond {
+        if_true().into_view()
+    } else {
+        if_false().into_view()
+    }
+}
+
+/// `if` with no else — returns empty spacer when false.
+/// ```ignore
+/// show_if(is_premium, || text("Premium"))
+/// ```
+pub fn show_if<A: IntoView>(cond: bool, view: impl FnOnce() -> A) -> View {
+    if cond {
+        view().into_view()
+    } else {
+        spacer()
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // Stacks — accept any IntoView
 // ═══════════════════════════════════════════════════════════════════════════
 

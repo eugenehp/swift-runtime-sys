@@ -6,7 +6,6 @@ use swiftui::prelude::*;
 
 pub fn sidebar(
     notes: &[Note],
-    selected: usize,
     selected_state: &State<usize>,
     notes_state: &State<Vec<Note>>,
 ) -> View {
@@ -18,32 +17,27 @@ pub fn sidebar(
         .collect();
 
     vstack![
-        // Search bar
         textfield("Search notes...", "").padding(8.0),
         // Pinned section
-        when(!pinned.is_empty(), || {
+        show_if(!pinned.is_empty(), || {
             vstack![
                 section_header("📌 Pinned"),
                 for_each(&pinned, |(idx, note)| {
-                    let i = *idx;
-                    let ss = selected_state.clone();
-                    button(&note.title, move || ss.set(i)).padding(2.0)
+                    button(&note.title, selected_state.set_to(*idx)).padding(2.0)
                 }),
             ]
         }),
-        // All notes section
+        // All notes
         section_header("All Notes"),
         for_each(&unpinned, |(idx, note)| {
-            let i = *idx;
-            let ss = selected_state.clone();
-            button(&note.title, move || ss.set(i)).padding(2.0)
+            button(&note.title, selected_state.set_to(*idx)).padding(2.0)
         }),
         spacer(),
         // Add button
         button("+ New Note", {
             let ns = notes_state.clone();
             let ss = selected_state.clone();
-            move || {
+            action(move || {
                 ns.update(|notes| {
                     let mut new = notes.clone();
                     new.push(Note {
@@ -56,10 +50,10 @@ pub fn sidebar(
                 });
                 let len = ns.get().len();
                 ss.set(len - 1);
-            }
+            })
         })
         .padding(8.0),
     ]
     .padding(4.0)
-    .bg(Color::rgb(0.08, 0.08, 0.1))
+    .bg(rgb(0.08, 0.08, 0.1))
 }

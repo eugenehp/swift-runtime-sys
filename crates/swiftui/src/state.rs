@@ -149,6 +149,76 @@ impl<T: Any + Send + Clone + 'static> State<T> {
         let s = self.clone();
         move || s.set(value.clone())
     }
+
+    /// Derive a value from the current state (read-only transform).
+    /// ```ignore
+    /// let count = cx.state(5i32);
+    /// let label = count.map(|n| format!("Count: {n}"));
+    /// text(&label) // "Count: 5"
+    /// ```
+    pub fn map<U>(&self, f: impl FnOnce(&T) -> U) -> U {
+        let val = self.get();
+        f(&val)
+    }
+
+    /// Create a closure that runs an arbitrary action with access to current value.
+    /// Avoids manual `.clone()` boilerplate:
+    /// ```ignore
+    /// // Before:
+    /// let ns = notes.clone();
+    /// let ss = selected.clone();
+    /// button("Add", move || { ns.update(|n| ...); ss.set(0); })
+    ///
+    /// // After:
+    /// button("Add", action(&[&notes, &selected], || { ... }))
+    /// ```
+    pub fn with<F, R>(&self, f: F) -> R
+    where
+        F: FnOnce(&State<T>) -> R,
+    {
+        f(self)
+    }
+}
+
+impl State<bool> {
+    /// Toggle a boolean state. Use with `button("Toggle", flag.toggle())`.
+    pub fn toggle(&self) -> impl Fn() + 'static {
+        self.bind(|b| !b)
+    }
+}
+
+impl State<i32> {
+    /// Increment by 1.
+    pub fn increment(&self) -> impl Fn() + 'static {
+        self.bind(|n| n + 1)
+    }
+    /// Decrement by 1.
+    pub fn decrement(&self) -> impl Fn() + 'static {
+        self.bind(|n| n - 1)
+    }
+}
+
+impl State<String> {
+    /// Get as &str via map.
+    pub fn as_str(&self) -> String {
+        self.get()
+    }
+}
+
+/// Create a closure that captures multiple states. Avoids manual cloning:
+/// ```ignore
+/// // Before:
+/// let ns = notes.clone();
+/// let ss = selected.clone();
+/// button("Act", move || { ns.update(...); ss.set(0); })
+///
+/// // After:
+/// let ns = notes.clone();
+/// let ss = selected.clone();
+/// button("Act", action(move || { ns.update(...); ss.set(0); }))
+/// ```
+pub fn action(f: impl Fn() + 'static) -> impl Fn() + 'static {
+    f
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
