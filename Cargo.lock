@@ -393,7 +393,17 @@ dependencies = [
  "libc",
  "swift-runtime",
  "swift-runtime-sys",
+ "swiftui-macros",
  "swiftui-sys",
+]
+
+[[package]]
+name = "swiftui-macros"
+version = "0.0.1"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]

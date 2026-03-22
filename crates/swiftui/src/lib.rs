@@ -18,11 +18,14 @@
 
 mod app;
 mod color;
+pub mod conditional;
 mod context;
 pub mod dsl;
 mod handle;
+pub mod nav;
 pub mod prelude;
 pub mod state;
+pub mod style;
 mod view;
 mod views;
 
