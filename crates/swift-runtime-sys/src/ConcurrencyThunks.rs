@@ -87,22 +87,6 @@ macro_rules! define_thunk_ptr {
     };
 }
 
-macro_rules! define_thunk_pair {
-    ($name:ident, $sym:literal $(, $arg:ident : $ty:ty)*) => {
-        pub unsafe fn $name($($arg: $ty),*) -> Result<(*mut c_void, *mut c_void), ThunkError> {
-            let f = resolve(unsafe { CStr::from_bytes_with_nul_unchecked($sym) })?;
-            #[cfg(target_arch = "aarch64")] {
-                Ok(_call_pair(f $(, $arg as usize)*))
-            }
-            #[cfg(target_arch = "x86_64")] {
-                #[repr(C)] struct P(*mut c_void, *mut c_void);
-                type F = unsafe extern "C" fn($($ty),*) -> P;
-                let p = (core::mem::transmute::<_,F>(f))($($arg),*);
-                Ok((p.0, p.1))
-            }
-        }
-    };
-}
 
 macro_rules! define_thunk_bool {
     ($name:ident, $sym:literal $(, $arg:ident : $ty:ty)*) => {
@@ -119,20 +103,6 @@ macro_rules! define_thunk_bool {
     };
 }
 
-macro_rules! define_thunk_u32 {
-    ($name:ident, $sym:literal $(, $arg:ident : $ty:ty)*) => {
-        pub unsafe fn $name($($arg: $ty),*) -> Result<u32, ThunkError> {
-            let f = resolve(unsafe { CStr::from_bytes_with_nul_unchecked($sym) })?;
-            #[cfg(target_arch = "aarch64")] {
-                Ok(_call_usize(f $(, $arg as usize)*) as u32)
-            }
-            #[cfg(target_arch = "x86_64")] {
-                type F = unsafe extern "C" fn($($ty),*) -> u32;
-                Ok((core::mem::transmute::<_,F>(f))($($arg),*))
-            }
-        }
-    };
-}
 
 // ── Arm64 asm primitives ──
 

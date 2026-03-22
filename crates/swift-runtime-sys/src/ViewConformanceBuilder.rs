@@ -346,7 +346,7 @@ unsafe extern "C" fn body_conformance_accessor_trampoline(
 ///
 /// # Safety
 /// `result` must point to a buffer of at least `text_value_size()` bytes.
-pub unsafe fn create_text(result: *mut c_void, string: &str) -> bool {
+pub unsafe fn create_text(_result: *mut c_void, _string: &str) -> bool {
     // Resolve Text.init(_:tableName:bundle:comment:)
     let text_init = sym(
         c"$s7SwiftUI4TextV_9tableName6bundle7commentAcA18LocalizedStringKeyV_SSSgSo8NSBundleCSgs06StaticI0VSgtcfC"
@@ -366,14 +366,14 @@ pub unsafe fn create_text(result: *mut c_void, string: &str) -> bool {
     type StringInitFn = unsafe extern "C" fn(*const u8, usize, bool, *const c_void) -> [u8; 16];
     let make_string: StringInitFn = core::mem::transmute(string_init);
     let string_metatype = sym(c"$sSSN");
-    let swift_string = make_string(string.as_ptr(), string.len(), string.is_ascii(), string_metatype);
+    let swift_string = make_string(_string.as_ptr(), _string.len(), _string.is_ascii(), string_metatype);
 
     // Step 2: Create LocalizedStringKey from string
     type LskInitFn = unsafe extern "C" fn([u8; 16], *const c_void) -> [u8; 24]; // LSK is ~24 bytes
     let make_lsk: LskInitFn = core::mem::transmute(lsk_init);
     let lsk_metatype = sym(c"$s7SwiftUI18LocalizedStringKeyVN");
     if lsk_metatype.is_null() { return false; }
-    let lsk = make_lsk(swift_string, lsk_metatype);
+    let _lsk = make_lsk(swift_string, lsk_metatype);
 
     // Step 3: Create Text from LSK
     // Text.init(_:tableName:bundle:comment:)
