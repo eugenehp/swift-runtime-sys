@@ -497,3 +497,83 @@ pub fn bound_slider(state: &State<f32>, min: f32, max: f32) -> crate::View {
         ))
     })
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TabView / Picker — need callbacks for state binding
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// Tab entry for tabview.
+pub struct Tab {
+    pub view: crate::View,
+    pub label: String,
+    pub icon: String,
+}
+
+impl Tab {
+    pub fn new(label: &str, icon: &str, view: crate::View) -> Self {
+        Self {
+            view,
+            label: label.into(),
+            icon: icon.into(),
+        }
+    }
+}
+
+/// Create a TabView.
+pub fn tabview(tabs: Vec<Tab>) -> crate::View {
+    crate::dsl::with_ui(|ui| {
+        let handles: Vec<_> = tabs.iter().map(|t| t.view.handle().as_raw()).collect();
+        let label_ptrs: Vec<_> = tabs.iter().map(|t| t.label.as_ptr()).collect();
+        let label_lens: Vec<_> = tabs.iter().map(|t| t.label.len()).collect();
+        let icon_ptrs: Vec<_> = tabs.iter().map(|t| t.icon.as_ptr()).collect();
+        let icon_lens: Vec<_> = tabs.iter().map(|t| t.icon.len()).collect();
+
+        crate::View::new(crate::handle::ViewHandle::new(
+            unsafe {
+                (ui.fns.tabview)(
+                    handles.as_ptr(),
+                    label_ptrs.as_ptr(),
+                    label_lens.as_ptr(),
+                    icon_ptrs.as_ptr(),
+                    icon_lens.as_ptr(),
+                    tabs.len(),
+                )
+            },
+            ui.fns.release,
+        ))
+    })
+}
+
+/// Create a bound Picker that writes back to State<i32>.
+pub fn bound_picker(label: &str, options: &[&str], state: &State<i32>) -> crate::View {
+    let s = state.clone();
+    let boxed: Box<Box<dyn Fn(i32)>> = Box::new(Box::new(move |val| {
+        s.set(val);
+    }));
+    let ud = Box::into_raw(boxed) as *mut c_void;
+    unsafe extern "C" fn tramp(val: i32, ud: *mut c_void) {
+        let f = &*(ud as *const Box<dyn Fn(i32)>);
+        f(val);
+    }
+
+    let opt_ptrs: Vec<_> = options.iter().map(|s| s.as_ptr()).collect();
+    let opt_lens: Vec<_> = options.iter().map(|s| s.len()).collect();
+
+    crate::dsl::with_ui(|ui| {
+        crate::View::new(crate::handle::ViewHandle::new(
+            unsafe {
+                (ui.fns.bound_picker)(
+                    label.as_ptr(),
+                    label.len(),
+                    opt_ptrs.as_ptr(),
+                    opt_lens.as_ptr(),
+                    options.len(),
+                    state.get(),
+                    tramp,
+                    ud,
+                )
+            },
+            ui.fns.release,
+        ))
+    })
+}

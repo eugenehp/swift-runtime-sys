@@ -731,3 +731,187 @@ public func swiftuiDatePicker(_ labelPtr: UnsafePointer<UInt8>, _ labelLen: Int)
     return boxView(DatePicker(label, selection: .constant(Date())))
 }
 #endif
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TabView
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_tabview")
+public func swiftuiTabView(
+    _ tabs: UnsafePointer<ViewHandle>,
+    _ labels: UnsafePointer<UnsafePointer<UInt8>>,
+    _ labelLens: UnsafePointer<Int>,
+    _ icons: UnsafePointer<UnsafePointer<UInt8>>,
+    _ iconLens: UnsafePointer<Int>,
+    _ count: Int
+) -> ViewHandle {
+    let entries: [(AnyView, String, String)] = (0..<count).map { i in
+        let view = unboxView(tabs[i])
+        let lbl = String(bytes: UnsafeBufferPointer(start: labels[i], count: labelLens[i]), encoding: .utf8) ?? ""
+        let ico = String(bytes: UnsafeBufferPointer(start: icons[i], count: iconLens[i]), encoding: .utf8) ?? ""
+        return (view, lbl, ico)
+    }
+    return boxView(
+        TabView {
+            ForEach(entries.indices, id: \.self) { i in
+                entries[i].0.tabItem {
+                    Label(entries[i].1, systemImage: entries[i].2)
+                }
+            }
+        }
+    )
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Picker
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_bound_picker")
+public func swiftuiBoundPicker(
+    _ labelPtr: UnsafePointer<UInt8>, _ labelLen: Int,
+    _ optPtrs: UnsafePointer<UnsafePointer<UInt8>>,
+    _ optLens: UnsafePointer<Int>,
+    _ optCount: Int,
+    _ selected: Int32,
+    _ callback: @convention(c) (Int32, UnsafeMutableRawPointer?) -> Void,
+    _ userData: UnsafeMutableRawPointer?
+) -> ViewHandle {
+    let label = String(bytes: UnsafeBufferPointer(start: labelPtr, count: labelLen), encoding: .utf8) ?? ""
+    let options = (0..<optCount).map {
+        String(bytes: UnsafeBufferPointer(start: optPtrs[$0], count: optLens[$0]), encoding: .utf8) ?? ""
+    }
+    let cb = callback; let ud = userData
+    
+    class PickerModel: ObservableObject {
+        @Published var selection: Int { didSet { onChange?(Int32(selection)) } }
+        var onChange: ((Int32) -> Void)?
+        init(_ sel: Int, onChange: ((Int32) -> Void)?) { self.selection = sel; self.onChange = onChange }
+    }
+    
+    let model = PickerModel(Int(selected)) { val in cb(val, ud) }
+    
+    struct BoundPicker: View {
+        @ObservedObject var model: PickerModel
+        let label: String; let options: [String]
+        var body: some View {
+            Picker(label, selection: $model.selection) {
+                ForEach(options.indices, id: \.self) { Text(options[$0]).tag($0) }
+            }
+        }
+    }
+    return boxView(BoundPicker(model: model, label: label, options: options))
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Menu / ContextMenu
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_menu")
+public func swiftuiMenu(_ labelPtr: UnsafePointer<UInt8>, _ labelLen: Int, _ content: ViewHandle) -> ViewHandle {
+    let label = String(bytes: UnsafeBufferPointer(start: labelPtr, count: labelLen), encoding: .utf8) ?? ""
+    return boxView(Menu(label) { unboxView(content) })
+}
+
+@_cdecl("swiftui_context_menu")
+public func swiftuiContextMenu(_ handle: ViewHandle, _ menuContent: ViewHandle) -> ViewHandle {
+    boxView(unboxView(handle).contextMenu { unboxView(menuContent) })
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Toolbar / NavigationTitle / Searchable
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_navigation_title")
+public func swiftuiNavigationTitle(_ handle: ViewHandle, _ titlePtr: UnsafePointer<UInt8>, _ titleLen: Int) -> ViewHandle {
+    let title = String(bytes: UnsafeBufferPointer(start: titlePtr, count: titleLen), encoding: .utf8) ?? ""
+    return boxView(NavigationStack { unboxView(handle).navigationTitle(title) })
+}
+
+@_cdecl("swiftui_toolbar")
+public func swiftuiToolbar(_ handle: ViewHandle, _ toolbarContent: ViewHandle) -> ViewHandle {
+    boxView(unboxView(handle).toolbar { unboxView(toolbarContent) })
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Grid
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_grid")
+public func swiftuiGrid(_ children: UnsafePointer<ViewHandle>, _ count: Int, _ columns: Int32) -> ViewHandle {
+    let views = (0..<count).map { unboxView(children[$0]) }
+    let cols = Array(repeating: GridItem(.flexible()), count: Int(columns))
+    return boxView(
+        LazyVGrid(columns: cols, spacing: 8) {
+            ForEach(views.indices, id: \.self) { views[$0] }
+        }
+    )
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Form / Section
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_form")
+public func swiftuiForm(_ children: UnsafePointer<ViewHandle>, _ count: Int) -> ViewHandle {
+    let views = (0..<count).map { unboxView(children[$0]) }
+    return boxView(Form { ForEach(views.indices, id: \.self) { views[$0] } })
+}
+
+@_cdecl("swiftui_section")
+public func swiftuiSection(_ titlePtr: UnsafePointer<UInt8>, _ titleLen: Int, _ children: UnsafePointer<ViewHandle>, _ count: Int) -> ViewHandle {
+    let title = String(bytes: UnsafeBufferPointer(start: titlePtr, count: titleLen), encoding: .utf8) ?? ""
+    let views = (0..<count).map { unboxView(children[$0]) }
+    return boxView(Section(title) { ForEach(views.indices, id: \.self) { views[$0] } })
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Per-view lifecycle
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_on_appear")
+public func swiftuiOnAppear(_ handle: ViewHandle, _ cb: @convention(c) (UnsafeMutableRawPointer?) -> Void, _ ud: UnsafeMutableRawPointer?) -> ViewHandle {
+    let callback = cb; let userData = ud
+    return boxView(unboxView(handle).onAppear { callback(userData) })
+}
+
+@_cdecl("swiftui_on_disappear")
+public func swiftuiOnDisappear(_ handle: ViewHandle, _ cb: @convention(c) (UnsafeMutableRawPointer?) -> Void, _ ud: UnsafeMutableRawPointer?) -> ViewHandle {
+    let callback = cb; let userData = ud
+    return boxView(unboxView(handle).onDisappear { callback(userData) })
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Bold / Italic on any view
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_bold")
+public func swiftuiBold(_ handle: ViewHandle) -> ViewHandle {
+    boxView(unboxView(handle).bold())
+}
+
+@_cdecl("swiftui_italic")
+public func swiftuiItalic(_ handle: ViewHandle) -> ViewHandle {
+    boxView(unboxView(handle).italic())
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Confirmation dialog / Popover
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_popover")
+public func swiftuiPopover(_ handle: ViewHandle, _ content: ViewHandle, _ isPresented: Bool) -> ViewHandle {
+    let model = SheetModel(); model.isPresented = isPresented
+    struct PopoverWrapper: View {
+        let base: AnyView; let content: AnyView; @ObservedObject var model: SheetModel
+        var body: some View { base.popover(isPresented: $model.isPresented) { content } }
+    }
+    return boxView(PopoverWrapper(base: unboxView(handle), content: unboxView(content), model: model))
+}
+
+#if os(macOS)
+@_cdecl("swiftui_color_picker")
+public func swiftuiColorPicker(_ labelPtr: UnsafePointer<UInt8>, _ labelLen: Int) -> ViewHandle {
+    let label = String(bytes: UnsafeBufferPointer(start: labelPtr, count: labelLen), encoding: .utf8) ?? ""
+    return boxView(ColorPicker(label, selection: .constant(.blue)))
+}
+#endif

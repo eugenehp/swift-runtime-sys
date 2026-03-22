@@ -378,6 +378,100 @@ impl View {
         })
     }
 
+    // ── Navigation / Toolbar ──
+
+    pub fn navigation_title(self, title: &str) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe {
+                    (ui.fns.navigation_title)(self.handle.as_raw(), title.as_ptr(), title.len())
+                },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn toolbar(self, content: View) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.toolbar)(self.handle.as_raw(), content.handle.as_raw()) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn context_menu(self, content: View) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.context_menu)(self.handle.as_raw(), content.handle.as_raw()) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn popover(self, content: View, is_presented: bool) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe {
+                    (ui.fns.popover)(self.handle.as_raw(), content.handle.as_raw(), is_presented)
+                },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    // ── Typography ──
+
+    pub fn bold_mod(self) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.bold_mod)(self.handle.as_raw()) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn italic_mod(self) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.italic_mod)(self.handle.as_raw()) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    // ── Lifecycle ──
+
+    pub fn on_appear(self, action: impl Fn() + 'static) -> Self {
+        let boxed: Box<Box<dyn Fn()>> = Box::new(Box::new(action));
+        let ptr = Box::into_raw(boxed) as *mut core::ffi::c_void;
+        unsafe extern "C" fn tramp(p: *mut core::ffi::c_void) {
+            let f = &*(p as *const Box<dyn Fn()>);
+            f();
+        }
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.on_appear)(self.handle.as_raw(), tramp, ptr) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn on_disappear(self, action: impl Fn() + 'static) -> Self {
+        let boxed: Box<Box<dyn Fn()>> = Box::new(Box::new(action));
+        let ptr = Box::into_raw(boxed) as *mut core::ffi::c_void;
+        unsafe extern "C" fn tramp(p: *mut core::ffi::c_void) {
+            let f = &*(p as *const Box<dyn Fn()>);
+            f();
+        }
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.on_disappear)(self.handle.as_raw(), tramp, ptr) },
+                ui.fns.release,
+            ))
+        })
+    }
+
     // ── Container modifiers ──
 
     pub fn scroll(self) -> Self {

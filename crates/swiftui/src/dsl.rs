@@ -317,6 +317,49 @@ pub fn button(label: &str, action: fn()) -> View {
     with_ui(|ui| View::new(ui.button(label, action)))
 }
 
+/// Create a menu with a label and content.
+pub fn menu(label: &str, content: View) -> View {
+    with_ui(|ui| {
+        View::new(ViewHandle::new(
+            unsafe { (ui.fns.menu)(label.as_ptr(), label.len(), content.handle().as_raw()) },
+            ui.fns.release,
+        ))
+    })
+}
+
+/// Create a grid layout.
+pub fn grid(columns: i32, children: Vec<View>) -> View {
+    with_ui(|ui| {
+        let ptrs: Vec<_> = children.iter().map(|v| v.handle().as_raw()).collect();
+        View::new(ViewHandle::new(
+            unsafe { (ui.fns.grid)(ptrs.as_ptr(), ptrs.len(), columns) },
+            ui.fns.release,
+        ))
+    })
+}
+
+/// Create a Form.
+pub fn form(children: Vec<View>) -> View {
+    with_ui(|ui| {
+        let ptrs: Vec<_> = children.iter().map(|v| v.handle().as_raw()).collect();
+        View::new(ViewHandle::new(
+            unsafe { (ui.fns.form)(ptrs.as_ptr(), ptrs.len()) },
+            ui.fns.release,
+        ))
+    })
+}
+
+/// Create a Section with a title.
+pub fn section(title: &str, children: Vec<View>) -> View {
+    with_ui(|ui| {
+        let ptrs: Vec<_> = children.iter().map(|v| v.handle().as_raw()).collect();
+        View::new(ViewHandle::new(
+            unsafe { (ui.fns.section)(title.as_ptr(), title.len(), ptrs.as_ptr(), ptrs.len()) },
+            ui.fns.release,
+        ))
+    })
+}
+
 /// Create a real SwiftUI List.
 pub fn list(children: Vec<View>) -> View {
     with_ui(|ui| {

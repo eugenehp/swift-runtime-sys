@@ -127,6 +127,48 @@ pub struct Fns {
     pub stepper: unsafe extern "C" fn(*const u8, usize, i32, i32, i32) -> Handle,
     pub group_box: unsafe extern "C" fn(*const u8, usize, Handle) -> Handle,
 
+    // TabView / Picker / Menu
+    pub tabview: unsafe extern "C" fn(
+        *const Handle,
+        *const *const u8,
+        *const usize,
+        *const *const u8,
+        *const usize,
+        usize,
+    ) -> Handle,
+    pub bound_picker: unsafe extern "C" fn(
+        *const u8,
+        usize,
+        *const *const u8,
+        *const usize,
+        usize,
+        i32,
+        unsafe extern "C" fn(i32, *mut c_void),
+        *mut c_void,
+    ) -> Handle,
+    pub menu: unsafe extern "C" fn(*const u8, usize, Handle) -> Handle,
+    pub context_menu: unsafe extern "C" fn(Handle, Handle) -> Handle,
+
+    // Nav / Toolbar / Grid / Form
+    pub navigation_title: unsafe extern "C" fn(Handle, *const u8, usize) -> Handle,
+    pub toolbar: unsafe extern "C" fn(Handle, Handle) -> Handle,
+    pub grid: unsafe extern "C" fn(*const Handle, usize, i32) -> Handle,
+    pub form: unsafe extern "C" fn(*const Handle, usize) -> Handle,
+    pub section: unsafe extern "C" fn(*const u8, usize, *const Handle, usize) -> Handle,
+
+    // Per-view lifecycle
+    pub on_appear:
+        unsafe extern "C" fn(Handle, unsafe extern "C" fn(*mut c_void), *mut c_void) -> Handle,
+    pub on_disappear:
+        unsafe extern "C" fn(Handle, unsafe extern "C" fn(*mut c_void), *mut c_void) -> Handle,
+
+    // Bold / Italic on any view
+    pub bold_mod: unsafe extern "C" fn(Handle) -> Handle,
+    pub italic_mod: unsafe extern "C" fn(Handle) -> Handle,
+
+    // Popover
+    pub popover: unsafe extern "C" fn(Handle, Handle, bool) -> Handle,
+
     // Lifecycle
     pub release: unsafe extern "C" fn(Handle),
     pub retain: unsafe extern "C" fn(Handle),
@@ -219,6 +261,20 @@ pub fn load(path: &str) -> Result<Fns, String> {
             text_editor: std::mem::transmute(sym(h, c"swiftui_text_editor")),
             stepper: std::mem::transmute(sym(h, c"swiftui_stepper")),
             group_box: std::mem::transmute(sym(h, c"swiftui_group_box")),
+            tabview: std::mem::transmute(sym(h, c"swiftui_tabview")),
+            bound_picker: std::mem::transmute(sym(h, c"swiftui_bound_picker")),
+            menu: std::mem::transmute(sym(h, c"swiftui_menu")),
+            context_menu: std::mem::transmute(sym(h, c"swiftui_context_menu")),
+            navigation_title: std::mem::transmute(sym(h, c"swiftui_navigation_title")),
+            toolbar: std::mem::transmute(sym(h, c"swiftui_toolbar")),
+            grid: std::mem::transmute(sym(h, c"swiftui_grid")),
+            form: std::mem::transmute(sym(h, c"swiftui_form")),
+            section: std::mem::transmute(sym(h, c"swiftui_section")),
+            on_appear: std::mem::transmute(sym(h, c"swiftui_on_appear")),
+            on_disappear: std::mem::transmute(sym(h, c"swiftui_on_disappear")),
+            bold_mod: std::mem::transmute(sym(h, c"swiftui_bold")),
+            italic_mod: std::mem::transmute(sym(h, c"swiftui_italic")),
+            popover: std::mem::transmute(sym(h, c"swiftui_popover")),
             release: std::mem::transmute(sym(h, c"swiftui_release")),
             retain: std::mem::transmute(sym(h, c"swiftui_retain")),
             show_window: std::mem::transmute(sym(h, c"swiftui_show_window")),
