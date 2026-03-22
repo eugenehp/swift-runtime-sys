@@ -243,6 +243,38 @@ pub struct Fns {
         unsafe extern "C" fn(Handle, unsafe extern "C" fn(*mut c_void), *mut c_void) -> Handle,
     pub swipe_actions_custom: unsafe extern "C" fn(Handle, Handle, i32) -> Handle,
 
+    // Batch modifiers
+    pub blend_mode: unsafe extern "C" fn(Handle, i32) -> Handle,
+    pub mask: unsafe extern "C" fn(Handle, Handle) -> Handle,
+    pub drawing_group: unsafe extern "C" fn(Handle) -> Handle,
+    pub allows_hit_testing: unsafe extern "C" fn(Handle, bool) -> Handle,
+    pub content_shape: unsafe extern "C" fn(Handle, i32) -> Handle,
+    pub safe_area_inset_bottom: unsafe extern "C" fn(Handle, Handle) -> Handle,
+    pub safe_area_inset_top: unsafe extern "C" fn(Handle, Handle) -> Handle,
+    pub list_row_background: unsafe extern "C" fn(Handle, Handle) -> Handle,
+    pub list_row_separator: unsafe extern "C" fn(Handle, bool) -> Handle,
+    pub overlay_aligned: unsafe extern "C" fn(Handle, Handle, i32) -> Handle,
+    pub background_aligned: unsafe extern "C" fn(Handle, Handle, i32) -> Handle,
+    pub preferred_color_scheme: unsafe extern "C" fn(Handle, bool) -> Handle,
+
+    // AppStorage
+    pub app_storage_get_string:
+        unsafe extern "C" fn(*const u8, usize, *mut *mut c_void, *mut usize) -> bool,
+    pub app_storage_set_string: unsafe extern "C" fn(*const u8, usize, *const u8, usize),
+    pub app_storage_get_int: unsafe extern "C" fn(*const u8, usize) -> isize,
+    pub app_storage_set_int: unsafe extern "C" fn(*const u8, usize, isize),
+    pub app_storage_get_bool: unsafe extern "C" fn(*const u8, usize) -> bool,
+    pub app_storage_set_bool: unsafe extern "C" fn(*const u8, usize, bool),
+
+    // NavigationStack / NavigationLink
+    pub navigation_stack: unsafe extern "C" fn(Handle) -> Handle,
+    pub navigation_link: unsafe extern "C" fn(*const u8, usize, Handle) -> Handle,
+
+    // Symbol effects
+    pub symbol_effect_bounce: unsafe extern "C" fn(Handle) -> Handle,
+    pub symbol_effect_pulse: unsafe extern "C" fn(Handle) -> Handle,
+    pub symbol_effect_variable_color: unsafe extern "C" fn(Handle) -> Handle,
+
     // Remaining views
     pub disclosure_group: unsafe extern "C" fn(*const u8, usize, Handle) -> Handle,
     pub labeled_content: unsafe extern "C" fn(*const u8, usize, Handle) -> Handle,
@@ -374,6 +406,32 @@ pub fn load(path: &str) -> Result<Fns, String> {
             navigation_split_view: std::mem::transmute(sym(h, c"swiftui_navigation_split_view")),
             content_unavailable: std::mem::transmute(sym(h, c"swiftui_content_unavailable")),
             share_link: std::mem::transmute(sym(h, c"swiftui_share_link")),
+            blend_mode: std::mem::transmute(sym(h, c"swiftui_blend_mode")),
+            mask: std::mem::transmute(sym(h, c"swiftui_mask")),
+            drawing_group: std::mem::transmute(sym(h, c"swiftui_drawing_group")),
+            allows_hit_testing: std::mem::transmute(sym(h, c"swiftui_allows_hit_testing")),
+            content_shape: std::mem::transmute(sym(h, c"swiftui_content_shape")),
+            safe_area_inset_bottom: std::mem::transmute(sym(h, c"swiftui_safe_area_inset_bottom")),
+            safe_area_inset_top: std::mem::transmute(sym(h, c"swiftui_safe_area_inset_top")),
+            list_row_background: std::mem::transmute(sym(h, c"swiftui_list_row_background")),
+            list_row_separator: std::mem::transmute(sym(h, c"swiftui_list_row_separator")),
+            overlay_aligned: std::mem::transmute(sym(h, c"swiftui_overlay_aligned")),
+            background_aligned: std::mem::transmute(sym(h, c"swiftui_background_aligned")),
+            preferred_color_scheme: std::mem::transmute(sym(h, c"swiftui_preferred_color_scheme")),
+            app_storage_get_string: std::mem::transmute(sym(h, c"swiftui_app_storage_get_string")),
+            app_storage_set_string: std::mem::transmute(sym(h, c"swiftui_app_storage_set_string")),
+            app_storage_get_int: std::mem::transmute(sym(h, c"swiftui_app_storage_get_int")),
+            app_storage_set_int: std::mem::transmute(sym(h, c"swiftui_app_storage_set_int")),
+            app_storage_get_bool: std::mem::transmute(sym(h, c"swiftui_app_storage_get_bool")),
+            app_storage_set_bool: std::mem::transmute(sym(h, c"swiftui_app_storage_set_bool")),
+            navigation_stack: std::mem::transmute(sym(h, c"swiftui_navigation_stack")),
+            navigation_link: std::mem::transmute(sym(h, c"swiftui_navigation_link")),
+            symbol_effect_bounce: std::mem::transmute(sym(h, c"swiftui_symbol_effect_bounce")),
+            symbol_effect_pulse: std::mem::transmute(sym(h, c"swiftui_symbol_effect_pulse")),
+            symbol_effect_variable_color: std::mem::transmute(sym(
+                h,
+                c"swiftui_symbol_effect_variable_color",
+            )),
             animation_duration: std::mem::transmute(sym(h, c"swiftui_animation_duration")),
             animation_spring_params: std::mem::transmute(sym(
                 h,

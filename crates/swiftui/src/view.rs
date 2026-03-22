@@ -827,6 +827,162 @@ impl View {
         })
     }
 
+    // ── Blend / Mask / Drawing ──
+
+    /// 0=normal,1=multiply,2=screen,3=overlay,4=darken,5=lighten,6=colorDodge,7=colorBurn,8=softLight,9=hardLight,10=difference,11=exclusion
+    pub fn blend_mode(self, mode: i32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.blend_mode)(self.handle.as_raw(), mode) },
+                ui.fns.release,
+            ))
+        })
+    }
+    pub fn mask(self, mask_view: View) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.mask)(self.handle.as_raw(), mask_view.handle.as_raw()) },
+                ui.fns.release,
+            ))
+        })
+    }
+    pub fn drawing_group(self) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.drawing_group)(self.handle.as_raw()) },
+                ui.fns.release,
+            ))
+        })
+    }
+    pub fn allows_hit_testing(self, enabled: bool) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.allows_hit_testing)(self.handle.as_raw(), enabled) },
+                ui.fns.release,
+            ))
+        })
+    }
+    /// 0=rectangle, 1=circle, 2=capsule
+    pub fn content_shape(self, shape: i32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.content_shape)(self.handle.as_raw(), shape) },
+                ui.fns.release,
+            ))
+        })
+    }
+    pub fn safe_area_inset_bottom(self, content: View) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe {
+                    (ui.fns.safe_area_inset_bottom)(self.handle.as_raw(), content.handle.as_raw())
+                },
+                ui.fns.release,
+            ))
+        })
+    }
+    pub fn safe_area_inset_top(self, content: View) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe {
+                    (ui.fns.safe_area_inset_top)(self.handle.as_raw(), content.handle.as_raw())
+                },
+                ui.fns.release,
+            ))
+        })
+    }
+    pub fn list_row_background(self, bg: View) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.list_row_background)(self.handle.as_raw(), bg.handle.as_raw()) },
+                ui.fns.release,
+            ))
+        })
+    }
+    pub fn list_row_separator(self, visible: bool) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.list_row_separator)(self.handle.as_raw(), visible) },
+                ui.fns.release,
+            ))
+        })
+    }
+    /// alignment: 1=topLeading..9=bottomTrailing (3x3 grid, row-major)
+    pub fn overlay_aligned(self, content: View, alignment: i32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe {
+                    (ui.fns.overlay_aligned)(
+                        self.handle.as_raw(),
+                        content.handle.as_raw(),
+                        alignment,
+                    )
+                },
+                ui.fns.release,
+            ))
+        })
+    }
+    pub fn background_aligned(self, content: View, alignment: i32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe {
+                    (ui.fns.background_aligned)(
+                        self.handle.as_raw(),
+                        content.handle.as_raw(),
+                        alignment,
+                    )
+                },
+                ui.fns.release,
+            ))
+        })
+    }
+    pub fn preferred_color_scheme(self, dark: bool) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.preferred_color_scheme)(self.handle.as_raw(), dark) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    // ── Symbol effects ──
+
+    pub fn symbol_bounce(self) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.symbol_effect_bounce)(self.handle.as_raw()) },
+                ui.fns.release,
+            ))
+        })
+    }
+    pub fn symbol_pulse(self) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.symbol_effect_pulse)(self.handle.as_raw()) },
+                ui.fns.release,
+            ))
+        })
+    }
+    pub fn symbol_variable_color(self) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.symbol_effect_variable_color)(self.handle.as_raw()) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    // ── Navigation ──
+
+    pub fn navigation_stack(self) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.navigation_stack)(self.handle.as_raw()) },
+                ui.fns.release,
+            ))
+        })
+    }
+
     // ── Container modifiers ──
 
     pub fn scroll(self) -> Self {

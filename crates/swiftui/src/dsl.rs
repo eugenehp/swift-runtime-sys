@@ -607,3 +607,15 @@ macro_rules! v {
         $crate::dsl::IntoView::into_view($e)
     };
 }
+
+/// Create a NavigationLink.
+pub fn navigation_link(label: &str, destination: View) -> View {
+    with_ui(|ui| {
+        View::new(ViewHandle::new(
+            unsafe {
+                (ui.fns.navigation_link)(label.as_ptr(), label.len(), destination.handle().as_raw())
+            },
+            ui.fns.release,
+        ))
+    })
+}

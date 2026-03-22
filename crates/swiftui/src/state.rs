@@ -624,3 +624,60 @@ pub fn animate(f: impl FnOnce()) {
 pub fn animate_spring(f: impl FnOnce()) {
     with_animation(AnimCurve::Spring, 0.5, f);
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// AppStorage — UserDefaults persistence
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// Read a string from UserDefaults.
+pub fn app_storage_get(key: &str) -> Option<String> {
+    crate::dsl::with_ui(|ui| {
+        let mut ptr: *mut core::ffi::c_void = core::ptr::null_mut();
+        let mut len: usize = 0;
+        let ok =
+            unsafe { (ui.fns.app_storage_get_string)(key.as_ptr(), key.len(), &mut ptr, &mut len) };
+        if ok && !ptr.is_null() && len > 0 {
+            let s = unsafe {
+                String::from_utf8_lossy(std::slice::from_raw_parts(ptr as *const u8, len))
+                    .into_owned()
+            };
+            unsafe { libc::free(ptr) };
+            Some(s)
+        } else {
+            None
+        }
+    })
+}
+
+/// Write a string to UserDefaults.
+pub fn app_storage_set(key: &str, value: &str) {
+    crate::dsl::with_ui(|ui| {
+        unsafe {
+            (ui.fns.app_storage_set_string)(key.as_ptr(), key.len(), value.as_ptr(), value.len())
+        };
+    });
+}
+
+/// Read an int from UserDefaults.
+pub fn app_storage_get_int(key: &str) -> isize {
+    crate::dsl::with_ui(|ui| unsafe { (ui.fns.app_storage_get_int)(key.as_ptr(), key.len()) })
+}
+
+/// Write an int to UserDefaults.
+pub fn app_storage_set_int(key: &str, value: isize) {
+    crate::dsl::with_ui(|ui| {
+        unsafe { (ui.fns.app_storage_set_int)(key.as_ptr(), key.len(), value) };
+    });
+}
+
+/// Read a bool from UserDefaults.
+pub fn app_storage_get_bool(key: &str) -> bool {
+    crate::dsl::with_ui(|ui| unsafe { (ui.fns.app_storage_get_bool)(key.as_ptr(), key.len()) })
+}
+
+/// Write a bool to UserDefaults.
+pub fn app_storage_set_bool(key: &str, value: bool) {
+    crate::dsl::with_ui(|ui| {
+        unsafe { (ui.fns.app_storage_set_bool)(key.as_ptr(), key.len(), value) };
+    });
+}

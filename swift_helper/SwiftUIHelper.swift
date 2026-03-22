@@ -1477,3 +1477,196 @@ public func swiftuiPhotosPicker(
     }
     return boxView(PhotoPickerWrapper(label: label, model: model))
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Missing modifiers batch
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_blend_mode")
+public func swiftuiBlendMode(_ h: ViewHandle, _ mode: Int32) -> ViewHandle {
+    let m: BlendMode = switch mode {
+    case 1: .multiply; case 2: .screen; case 3: .overlay
+    case 4: .darken; case 5: .lighten; case 6: .colorDodge
+    case 7: .colorBurn; case 8: .softLight; case 9: .hardLight
+    case 10: .difference; case 11: .exclusion
+    default: .normal
+    }
+    return boxView(unboxView(h).blendMode(m))
+}
+
+@_cdecl("swiftui_mask")
+public func swiftuiMask(_ h: ViewHandle, _ mask: ViewHandle) -> ViewHandle {
+    boxView(unboxView(h).mask { unboxView(mask) })
+}
+
+@_cdecl("swiftui_drawing_group")
+public func swiftuiDrawingGroup(_ h: ViewHandle) -> ViewHandle {
+    boxView(unboxView(h).drawingGroup())
+}
+
+@_cdecl("swiftui_allows_hit_testing")
+public func swiftuiAllowsHitTesting(_ h: ViewHandle, _ enabled: Bool) -> ViewHandle {
+    boxView(unboxView(h).allowsHitTesting(enabled))
+}
+
+@_cdecl("swiftui_content_shape")
+public func swiftuiContentShape(_ h: ViewHandle, _ shape: Int32) -> ViewHandle {
+    switch shape {
+    case 1: return boxView(unboxView(h).contentShape(Circle()))
+    case 2: return boxView(unboxView(h).contentShape(Capsule()))
+    default: return boxView(unboxView(h).contentShape(Rectangle()))
+    }
+}
+
+@_cdecl("swiftui_safe_area_inset_bottom")
+public func swiftuiSafeAreaInsetBottom(_ h: ViewHandle, _ content: ViewHandle) -> ViewHandle {
+    boxView(unboxView(h).safeAreaInset(edge: .bottom) { unboxView(content) })
+}
+
+@_cdecl("swiftui_safe_area_inset_top")
+public func swiftuiSafeAreaInsetTop(_ h: ViewHandle, _ content: ViewHandle) -> ViewHandle {
+    boxView(unboxView(h).safeAreaInset(edge: .top) { unboxView(content) })
+}
+
+@_cdecl("swiftui_list_row_background")
+public func swiftuiListRowBackground(_ h: ViewHandle, _ bg: ViewHandle) -> ViewHandle {
+    boxView(unboxView(h).listRowBackground(unboxView(bg)))
+}
+
+@_cdecl("swiftui_list_row_separator")
+public func swiftuiListRowSeparator(_ h: ViewHandle, _ visible: Bool) -> ViewHandle {
+    boxView(unboxView(h).listRowSeparator(visible ? .visible : .hidden))
+}
+
+@_cdecl("swiftui_overlay_aligned")
+public func swiftuiOverlayAligned(_ h: ViewHandle, _ content: ViewHandle, _ align: Int32) -> ViewHandle {
+    let a: Alignment = switch align {
+    case 1: .topLeading; case 2: .top; case 3: .topTrailing
+    case 4: .leading; case 5: .center; case 6: .trailing
+    case 7: .bottomLeading; case 8: .bottom; case 9: .bottomTrailing
+    default: .center
+    }
+    return boxView(unboxView(h).overlay(alignment: a) { unboxView(content) })
+}
+
+@_cdecl("swiftui_background_aligned")
+public func swiftuiBackgroundAligned(_ h: ViewHandle, _ content: ViewHandle, _ align: Int32) -> ViewHandle {
+    let a: Alignment = switch align {
+    case 1: .topLeading; case 2: .top; case 3: .topTrailing
+    case 4: .leading; case 5: .center; case 6: .trailing
+    case 7: .bottomLeading; case 8: .bottom; case 9: .bottomTrailing
+    default: .center
+    }
+    return boxView(unboxView(h).background(alignment: a) { unboxView(content) })
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// @Environment / @AppStorage / Timer
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_preferred_color_scheme")
+public func swiftuiPreferredColorScheme(_ h: ViewHandle, _ dark: Bool) -> ViewHandle {
+    boxView(unboxView(h).preferredColorScheme(dark ? .dark : .light))
+}
+
+@_cdecl("swiftui_environment_dismiss")
+public func swiftuiEnvironmentDismiss(_ h: ViewHandle) -> ViewHandle {
+    // Wrap in a view that can dismiss itself
+    struct Dismissable: View {
+        let content: AnyView
+        @Environment(\.dismiss) var dismiss
+        var body: some View { content }
+    }
+    return boxView(Dismissable(content: unboxView(h)))
+}
+
+// AppStorage bridge: read/write UserDefaults
+@_cdecl("swiftui_app_storage_get_string")
+public func swiftuiAppStorageGetString(_ keyPtr: UnsafePointer<UInt8>, _ keyLen: Int, _ outPtr: UnsafeMutablePointer<UnsafeMutableRawPointer?>, _ outLen: UnsafeMutablePointer<Int>) -> Bool {
+    let key = String(bytes: UnsafeBufferPointer(start: keyPtr, count: keyLen), encoding: .utf8) ?? ""
+    guard let val = UserDefaults.standard.string(forKey: key) else { return false }
+    let buf = UnsafeMutableRawPointer.allocate(byteCount: val.utf8.count, alignment: 1)
+    val.withCString { ptr in buf.copyMemory(from: ptr, byteCount: val.utf8.count) }
+    outPtr.pointee = buf; outLen.pointee = val.utf8.count
+    return true
+}
+
+@_cdecl("swiftui_app_storage_set_string")
+public func swiftuiAppStorageSetString(_ keyPtr: UnsafePointer<UInt8>, _ keyLen: Int, _ valPtr: UnsafePointer<UInt8>, _ valLen: Int) {
+    let key = String(bytes: UnsafeBufferPointer(start: keyPtr, count: keyLen), encoding: .utf8) ?? ""
+    let val = String(bytes: UnsafeBufferPointer(start: valPtr, count: valLen), encoding: .utf8) ?? ""
+    UserDefaults.standard.set(val, forKey: key)
+}
+
+@_cdecl("swiftui_app_storage_get_int")
+public func swiftuiAppStorageGetInt(_ keyPtr: UnsafePointer<UInt8>, _ keyLen: Int) -> Int {
+    let key = String(bytes: UnsafeBufferPointer(start: keyPtr, count: keyLen), encoding: .utf8) ?? ""
+    return UserDefaults.standard.integer(forKey: key)
+}
+
+@_cdecl("swiftui_app_storage_set_int")
+public func swiftuiAppStorageSetInt(_ keyPtr: UnsafePointer<UInt8>, _ keyLen: Int, _ val: Int) {
+    let key = String(bytes: UnsafeBufferPointer(start: keyPtr, count: keyLen), encoding: .utf8) ?? ""
+    UserDefaults.standard.set(val, forKey: key)
+}
+
+@_cdecl("swiftui_app_storage_get_bool")
+public func swiftuiAppStorageGetBool(_ keyPtr: UnsafePointer<UInt8>, _ keyLen: Int) -> Bool {
+    let key = String(bytes: UnsafeBufferPointer(start: keyPtr, count: keyLen), encoding: .utf8) ?? ""
+    return UserDefaults.standard.bool(forKey: key)
+}
+
+@_cdecl("swiftui_app_storage_set_bool")
+public func swiftuiAppStorageSetBool(_ keyPtr: UnsafePointer<UInt8>, _ keyLen: Int, _ val: Bool) {
+    let key = String(bytes: UnsafeBufferPointer(start: keyPtr, count: keyLen), encoding: .utf8) ?? ""
+    UserDefaults.standard.set(val, forKey: key)
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// NavigationStack with path
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_navigation_stack")
+public func swiftuiNavigationStack(_ content: ViewHandle) -> ViewHandle {
+    boxView(NavigationStack { unboxView(content) })
+}
+
+@_cdecl("swiftui_navigation_link")
+public func swiftuiNavigationLink(
+    _ labelPtr: UnsafePointer<UInt8>, _ labelLen: Int,
+    _ destination: ViewHandle
+) -> ViewHandle {
+    let label = String(bytes: UnsafeBufferPointer(start: labelPtr, count: labelLen), encoding: .utf8) ?? ""
+    return boxView(NavigationLink(label) { unboxView(destination) })
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Symbol effects (iOS 17+ / macOS 14+)
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_symbol_effect_bounce")
+public func swiftuiSymbolEffectBounce(_ h: ViewHandle) -> ViewHandle {
+    boxView(unboxView(h).symbolEffect(.bounce))
+}
+
+@_cdecl("swiftui_symbol_effect_pulse")
+public func swiftuiSymbolEffectPulse(_ h: ViewHandle) -> ViewHandle {
+    boxView(unboxView(h).symbolEffect(.pulse))
+}
+
+@_cdecl("swiftui_symbol_effect_variable_color")
+public func swiftuiSymbolEffectVariableColor(_ h: ViewHandle) -> ViewHandle {
+    boxView(unboxView(h).symbolEffect(.variableColor))
+}
+
+#if os(iOS)
+@_cdecl("swiftui_sensory_feedback")
+public func swiftuiSensoryFeedback(_ h: ViewHandle, _ type: Int32, _ trigger: Bool) -> ViewHandle {
+    let f: SensoryFeedback = switch type {
+    case 1: .success; case 2: .warning; case 3: .error
+    case 4: .selection; case 5: .impact
+    default: .success
+    }
+    return boxView(unboxView(h).sensoryFeedback(f, trigger: trigger))
+}
+#endif
