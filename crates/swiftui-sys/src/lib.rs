@@ -185,6 +185,35 @@ pub struct Fns {
     pub accessibility_hidden: unsafe extern "C" fn(Handle, bool) -> Handle,
     pub accessibility_value: unsafe extern "C" fn(Handle, *const u8, usize) -> Handle,
 
+    // Animation extended
+    pub animation_duration: unsafe extern "C" fn(Handle, i32, f32) -> Handle,
+    pub animation_spring_params: unsafe extern "C" fn(Handle, f32, f32) -> Handle,
+    pub transition: unsafe extern "C" fn(Handle, i32) -> Handle,
+
+    // Gestures
+    pub on_drag: unsafe extern "C" fn(
+        Handle,
+        unsafe extern "C" fn(f32, f32, *mut c_void),
+        *mut c_void,
+    ) -> Handle,
+    pub on_magnify:
+        unsafe extern "C" fn(Handle, unsafe extern "C" fn(f32, *mut c_void), *mut c_void) -> Handle,
+    pub on_rotate:
+        unsafe extern "C" fn(Handle, unsafe extern "C" fn(f32, *mut c_void), *mut c_void) -> Handle,
+
+    // Canvas / Geometry / ScrollViewReader / Timeline
+    pub geometry_reader: unsafe extern "C" fn(
+        unsafe extern "C" fn(f32, f32, *mut c_void) -> Handle,
+        *mut c_void,
+    ) -> Handle,
+    pub scroll_view_reader: unsafe extern "C" fn(Handle) -> Handle,
+    pub scrollable_id: unsafe extern "C" fn(Handle, *const u8, usize) -> Handle,
+    pub timeline_view: unsafe extern "C" fn(
+        f32,
+        unsafe extern "C" fn(f32, *mut c_void) -> Handle,
+        *mut c_void,
+    ) -> Handle,
+
     // Remaining views
     pub disclosure_group: unsafe extern "C" fn(*const u8, usize, Handle) -> Handle,
     pub labeled_content: unsafe extern "C" fn(*const u8, usize, Handle) -> Handle,
@@ -316,6 +345,19 @@ pub fn load(path: &str) -> Result<Fns, String> {
             navigation_split_view: std::mem::transmute(sym(h, c"swiftui_navigation_split_view")),
             content_unavailable: std::mem::transmute(sym(h, c"swiftui_content_unavailable")),
             share_link: std::mem::transmute(sym(h, c"swiftui_share_link")),
+            animation_duration: std::mem::transmute(sym(h, c"swiftui_animation_duration")),
+            animation_spring_params: std::mem::transmute(sym(
+                h,
+                c"swiftui_animation_spring_params",
+            )),
+            transition: std::mem::transmute(sym(h, c"swiftui_transition")),
+            on_drag: std::mem::transmute(sym(h, c"swiftui_on_drag")),
+            on_magnify: std::mem::transmute(sym(h, c"swiftui_on_magnify")),
+            on_rotate: std::mem::transmute(sym(h, c"swiftui_on_rotate")),
+            geometry_reader: std::mem::transmute(sym(h, c"swiftui_geometry_reader")),
+            scroll_view_reader: std::mem::transmute(sym(h, c"swiftui_scroll_view_reader")),
+            scrollable_id: std::mem::transmute(sym(h, c"swiftui_scrollable_id")),
+            timeline_view: std::mem::transmute(sym(h, c"swiftui_timeline_view")),
             release: std::mem::transmute(sym(h, c"swiftui_release")),
             retain: std::mem::transmute(sym(h, c"swiftui_retain")),
             show_window: std::mem::transmute(sym(h, c"swiftui_show_window")),

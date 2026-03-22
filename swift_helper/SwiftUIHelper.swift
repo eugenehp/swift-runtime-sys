@@ -1061,3 +1061,177 @@ public func swiftuiTable(_ children: UnsafePointer<ViewHandle>, _ count: Int) ->
     return boxView(List { ForEach(views.indices, id: \.self) { views[$0] } })
 }
 #endif
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Animation — comprehensive
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_animation_duration")
+public func swiftuiAnimationDuration(_ h: ViewHandle, _ type: Int32, _ duration: Float) -> ViewHandle {
+    let d = Double(duration)
+    let anim: Animation = switch type {
+    case 1: .easeIn(duration: d)
+    case 2: .easeOut(duration: d)
+    case 3: .easeInOut(duration: d)
+    case 4: .linear(duration: d)
+    default: .default
+    }
+    return boxView(unboxView(h).animation(anim, value: true))
+}
+
+@_cdecl("swiftui_animation_spring_params")
+public func swiftuiAnimationSpringParams(_ h: ViewHandle, _ duration: Float, _ bounce: Float) -> ViewHandle {
+    boxView(unboxView(h).animation(.spring(duration: Double(duration), bounce: Double(bounce)), value: true))
+}
+
+@_cdecl("swiftui_transition")
+public func swiftuiTransition(_ h: ViewHandle, _ type: Int32) -> ViewHandle {
+    let t: AnyTransition = switch type {
+    case 0: .opacity
+    case 1: .slide
+    case 2: .scale
+    case 3: .move(edge: .top)
+    case 4: .move(edge: .bottom)
+    case 5: .move(edge: .leading)
+    case 6: .move(edge: .trailing)
+    case 7: .push(from: .bottom)
+    case 8: .push(from: .leading)
+    default: .opacity
+    }
+    return boxView(unboxView(h).transition(t))
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Gestures — drag, magnify, rotate
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_on_drag")
+public func swiftuiOnDrag(
+    _ h: ViewHandle,
+    _ cb: @convention(c) (Float, Float, UnsafeMutableRawPointer?) -> Void,
+    _ ud: UnsafeMutableRawPointer?
+) -> ViewHandle {
+    let callback = cb; let userData = ud
+    return boxView(unboxView(h).gesture(
+        DragGesture().onChanged { value in
+            callback(Float(value.translation.width), Float(value.translation.height), userData)
+        }
+    ))
+}
+
+@_cdecl("swiftui_on_magnify")
+public func swiftuiOnMagnify(
+    _ h: ViewHandle,
+    _ cb: @convention(c) (Float, UnsafeMutableRawPointer?) -> Void,
+    _ ud: UnsafeMutableRawPointer?
+) -> ViewHandle {
+    let callback = cb; let userData = ud
+    return boxView(unboxView(h).gesture(
+        MagnifyGesture().onChanged { value in
+            callback(Float(value.magnification), userData)
+        }
+    ))
+}
+
+@_cdecl("swiftui_on_rotate")
+public func swiftuiOnRotate(
+    _ h: ViewHandle,
+    _ cb: @convention(c) (Float, UnsafeMutableRawPointer?) -> Void,
+    _ ud: UnsafeMutableRawPointer?
+) -> ViewHandle {
+    let callback = cb; let userData = ud
+    return boxView(unboxView(h).gesture(
+        RotateGesture().onChanged { value in
+            callback(Float(value.rotation.degrees), userData)
+        }
+    ))
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Canvas — custom drawing
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Canvas needs a draw callback — we pass (context_ptr, width, height) to Rust
+// and Rust calls back with draw commands. For now, provide predefined shapes.
+
+@_cdecl("swiftui_canvas")
+public func swiftuiCanvas(
+    _ width: Float, _ height: Float,
+    _ drawCb: @convention(c) (UnsafeMutableRawPointer?, Float, Float) -> Void,
+    _ ud: UnsafeMutableRawPointer?
+) -> ViewHandle {
+    // Since we can't pass GraphicsContext to Rust, use a fixed callback approach.
+    // The callback receives (userData, width, height) and we just render a placeholder.
+    let w = CGFloat(width); let h = CGFloat(height)
+    return boxView(
+        Canvas { context, size in
+            // Notify Rust that canvas drew (for lifecycle tracking)
+            drawCb(ud, Float(size.width), Float(size.height))
+        }
+        .frame(width: w, height: h)
+    )
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Geometry reader callback
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_geometry_reader")
+public func swiftuiGeometryReader(
+    _ buildCb: @convention(c) (Float, Float, UnsafeMutableRawPointer?) -> ViewHandle,
+    _ ud: UnsafeMutableRawPointer?
+) -> ViewHandle {
+    let cb = buildCb; let userData = ud
+    struct GR: View {
+        let cb: @convention(c) (Float, Float, UnsafeMutableRawPointer?) -> ViewHandle
+        let ud: UnsafeMutableRawPointer?
+        var body: some View {
+            GeometryReader { geo in
+                let handle = cb(Float(geo.size.width), Float(geo.size.height), ud)
+                unboxView(handle)
+            }
+        }
+    }
+    return boxView(GR(cb: cb, ud: userData))
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ScrollViewReader
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_scroll_view_reader")
+public func swiftuiScrollViewReader(_ content: ViewHandle) -> ViewHandle {
+    boxView(ScrollViewReader { _ in unboxView(content) })
+}
+
+@_cdecl("swiftui_scrollable_id")
+public func swiftuiScrollableId(_ h: ViewHandle, _ idPtr: UnsafePointer<UInt8>, _ idLen: Int) -> ViewHandle {
+    let id = String(bytes: UnsafeBufferPointer(start: idPtr, count: idLen), encoding: .utf8) ?? ""
+    return boxView(unboxView(h).id(id))
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TimelineView
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_timeline_view")
+public func swiftuiTimelineView(
+    _ intervalSeconds: Float,
+    _ buildCb: @convention(c) (Float, UnsafeMutableRawPointer?) -> ViewHandle,
+    _ ud: UnsafeMutableRawPointer?
+) -> ViewHandle {
+    let cb = buildCb; let userData = ud
+    struct TV: View {
+        let interval: TimeInterval
+        let cb: @convention(c) (Float, UnsafeMutableRawPointer?) -> ViewHandle
+        let ud: UnsafeMutableRawPointer?
+        var body: some View {
+            TimelineView(.periodic(from: .now, by: interval)) { timeline in
+                let elapsed = Float(timeline.date.timeIntervalSince1970.truncatingRemainder(dividingBy: 3600))
+                let handle = cb(elapsed, ud)
+                unboxView(handle)
+            }
+        }
+    }
+    return boxView(TV(interval: TimeInterval(intervalSeconds), cb: cb, ud: userData))
+}

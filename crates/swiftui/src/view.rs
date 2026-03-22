@@ -602,6 +602,139 @@ impl View {
         })
     }
 
+    // ── Animation extended ──
+
+    /// Animate with duration. type: 1=easeIn, 2=easeOut, 3=easeInOut, 4=linear
+    pub fn ease_in(self, duration: f32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.animation_duration)(self.handle.as_raw(), 1, duration) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn ease_out(self, duration: f32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.animation_duration)(self.handle.as_raw(), 2, duration) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn ease_in_out(self, duration: f32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.animation_duration)(self.handle.as_raw(), 3, duration) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn linear(self, duration: f32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.animation_duration)(self.handle.as_raw(), 4, duration) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn spring_params(self, duration: f32, bounce: f32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.animation_spring_params)(self.handle.as_raw(), duration, bounce) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    /// Transition. 0=opacity, 1=slide, 2=scale, 3..6=move(edge), 7..8=push
+    pub fn transition_opacity(self) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.transition)(self.handle.as_raw(), 0) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn transition_slide(self) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.transition)(self.handle.as_raw(), 1) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn transition_scale(self) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.transition)(self.handle.as_raw(), 2) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    // ── Gestures extended ──
+
+    pub fn on_drag(self, action: impl Fn(f32, f32) + 'static) -> Self {
+        let boxed: Box<Box<dyn Fn(f32, f32)>> = Box::new(Box::new(action));
+        let ptr = Box::into_raw(boxed) as *mut core::ffi::c_void;
+        unsafe extern "C" fn tramp(x: f32, y: f32, p: *mut core::ffi::c_void) {
+            let f = &*(p as *const Box<dyn Fn(f32, f32)>);
+            f(x, y);
+        }
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.on_drag)(self.handle.as_raw(), tramp, ptr) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn on_magnify(self, action: impl Fn(f32) + 'static) -> Self {
+        let boxed: Box<Box<dyn Fn(f32)>> = Box::new(Box::new(action));
+        let ptr = Box::into_raw(boxed) as *mut core::ffi::c_void;
+        unsafe extern "C" fn tramp(v: f32, p: *mut core::ffi::c_void) {
+            let f = &*(p as *const Box<dyn Fn(f32)>);
+            f(v);
+        }
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.on_magnify)(self.handle.as_raw(), tramp, ptr) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn on_rotate(self, action: impl Fn(f32) + 'static) -> Self {
+        let boxed: Box<Box<dyn Fn(f32)>> = Box::new(Box::new(action));
+        let ptr = Box::into_raw(boxed) as *mut core::ffi::c_void;
+        unsafe extern "C" fn tramp(v: f32, p: *mut core::ffi::c_void) {
+            let f = &*(p as *const Box<dyn Fn(f32)>);
+            f(v);
+        }
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.on_rotate)(self.handle.as_raw(), tramp, ptr) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    /// Set an ID for ScrollViewReader targeting.
+    pub fn scroll_id(self, id: &str) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.scrollable_id)(self.handle.as_raw(), id.as_ptr(), id.len()) },
+                ui.fns.release,
+            ))
+        })
+    }
+
     // ── Container modifiers ──
 
     pub fn scroll(self) -> Self {
