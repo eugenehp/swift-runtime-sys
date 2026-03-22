@@ -472,6 +472,136 @@ impl View {
         })
     }
 
+    // ── Remaining modifiers ──
+
+    pub fn color_invert(self) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.color_invert)(self.handle.as_raw()) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn ignores_safe_area(self) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.ignores_safe_area)(self.handle.as_raw()) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn confirmation_dialog(self, title: &str, is_presented: bool, actions: View) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe {
+                    (ui.fns.confirmation_dialog)(
+                        self.handle.as_raw(),
+                        title.as_ptr(),
+                        title.len(),
+                        is_presented,
+                        actions.handle.as_raw(),
+                    )
+                },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn keyboard_shortcut(self, key: &str) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe {
+                    (ui.fns.keyboard_shortcut)(self.handle.as_raw(), key.as_ptr(), key.len())
+                },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn focusable(self) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.focusable)(self.handle.as_raw()) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    /// 0=tail, 1=middle, 2=head
+    pub fn truncation_mode(self, mode: i32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.truncation_mode)(self.handle.as_raw(), mode) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    /// 0=leading, 1=center, 2=trailing
+    pub fn multiline_alignment(self, align: i32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.multiline_alignment)(self.handle.as_raw(), align) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn minimum_scale_factor(self, factor: f32) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.minimum_scale_factor)(self.handle.as_raw(), factor) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    // ── Accessibility ──
+
+    pub fn accessibility_label(self, label: &str) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe {
+                    (ui.fns.accessibility_label)(self.handle.as_raw(), label.as_ptr(), label.len())
+                },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn accessibility_hint(self, hint: &str) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe {
+                    (ui.fns.accessibility_hint)(self.handle.as_raw(), hint.as_ptr(), hint.len())
+                },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn accessibility_hidden(self, hidden: bool) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe { (ui.fns.accessibility_hidden)(self.handle.as_raw(), hidden) },
+                ui.fns.release,
+            ))
+        })
+    }
+
+    pub fn accessibility_value(self, value: &str) -> Self {
+        with_ui(|ui| {
+            Self::new(ViewHandle::new(
+                unsafe {
+                    (ui.fns.accessibility_value)(self.handle.as_raw(), value.as_ptr(), value.len())
+                },
+                ui.fns.release,
+            ))
+        })
+    }
+
     // ── Container modifiers ──
 
     pub fn scroll(self) -> Self {

@@ -416,6 +416,71 @@ pub fn stepper(label: &str, value: i32, min: i32, max: i32) -> View {
     })
 }
 
+/// Create a disclosure group (expandable section).
+pub fn disclosure_group(title: &str, content: View) -> View {
+    with_ui(|ui| {
+        View::new(ViewHandle::new(
+            unsafe {
+                (ui.fns.disclosure_group)(title.as_ptr(), title.len(), content.handle().as_raw())
+            },
+            ui.fns.release,
+        ))
+    })
+}
+
+/// Create a labeled content row.
+pub fn labeled_content(label: &str, content: View) -> View {
+    with_ui(|ui| {
+        View::new(ViewHandle::new(
+            unsafe {
+                (ui.fns.labeled_content)(label.as_ptr(), label.len(), content.handle().as_raw())
+            },
+            ui.fns.release,
+        ))
+    })
+}
+
+/// Create a NavigationSplitView with sidebar and detail.
+pub fn navigation_split_view(sidebar: View, detail: View) -> View {
+    with_ui(|ui| {
+        View::new(ViewHandle::new(
+            unsafe {
+                (ui.fns.navigation_split_view)(sidebar.handle().as_raw(), detail.handle().as_raw())
+            },
+            ui.fns.release,
+        ))
+    })
+}
+
+/// Create a ContentUnavailableView.
+pub fn content_unavailable(title: &str, description: &str, system_image: &str) -> View {
+    with_ui(|ui| {
+        View::new(ViewHandle::new(
+            unsafe {
+                (ui.fns.content_unavailable)(
+                    title.as_ptr(),
+                    title.len(),
+                    description.as_ptr(),
+                    description.len(),
+                    system_image.as_ptr(),
+                    system_image.len(),
+                )
+            },
+            ui.fns.release,
+        ))
+    })
+}
+
+/// Create a ShareLink.
+pub fn share_link(text: &str, url: &str) -> View {
+    with_ui(|ui| {
+        View::new(ViewHandle::new(
+            unsafe { (ui.fns.share_link)(text.as_ptr(), text.len(), url.as_ptr(), url.len()) },
+            ui.fns.release,
+        ))
+    })
+}
+
 /// Create a group box with title.
 pub fn group_box(title: &str, content: View) -> View {
     with_ui(|ui| {

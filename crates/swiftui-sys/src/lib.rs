@@ -169,6 +169,30 @@ pub struct Fns {
     // Popover
     pub popover: unsafe extern "C" fn(Handle, Handle, bool) -> Handle,
 
+    // Remaining modifiers
+    pub color_invert: unsafe extern "C" fn(Handle) -> Handle,
+    pub ignores_safe_area: unsafe extern "C" fn(Handle) -> Handle,
+    pub confirmation_dialog: unsafe extern "C" fn(Handle, *const u8, usize, bool, Handle) -> Handle,
+    pub keyboard_shortcut: unsafe extern "C" fn(Handle, *const u8, usize) -> Handle,
+    pub focusable: unsafe extern "C" fn(Handle) -> Handle,
+    pub truncation_mode: unsafe extern "C" fn(Handle, i32) -> Handle,
+    pub multiline_alignment: unsafe extern "C" fn(Handle, i32) -> Handle,
+    pub minimum_scale_factor: unsafe extern "C" fn(Handle, f32) -> Handle,
+
+    // Accessibility
+    pub accessibility_label: unsafe extern "C" fn(Handle, *const u8, usize) -> Handle,
+    pub accessibility_hint: unsafe extern "C" fn(Handle, *const u8, usize) -> Handle,
+    pub accessibility_hidden: unsafe extern "C" fn(Handle, bool) -> Handle,
+    pub accessibility_value: unsafe extern "C" fn(Handle, *const u8, usize) -> Handle,
+
+    // Remaining views
+    pub disclosure_group: unsafe extern "C" fn(*const u8, usize, Handle) -> Handle,
+    pub labeled_content: unsafe extern "C" fn(*const u8, usize, Handle) -> Handle,
+    pub navigation_split_view: unsafe extern "C" fn(Handle, Handle) -> Handle,
+    pub content_unavailable:
+        unsafe extern "C" fn(*const u8, usize, *const u8, usize, *const u8, usize) -> Handle,
+    pub share_link: unsafe extern "C" fn(*const u8, usize, *const u8, usize) -> Handle,
+
     // Lifecycle
     pub release: unsafe extern "C" fn(Handle),
     pub retain: unsafe extern "C" fn(Handle),
@@ -275,6 +299,23 @@ pub fn load(path: &str) -> Result<Fns, String> {
             bold_mod: std::mem::transmute(sym(h, c"swiftui_bold")),
             italic_mod: std::mem::transmute(sym(h, c"swiftui_italic")),
             popover: std::mem::transmute(sym(h, c"swiftui_popover")),
+            color_invert: std::mem::transmute(sym(h, c"swiftui_color_invert")),
+            ignores_safe_area: std::mem::transmute(sym(h, c"swiftui_ignores_safe_area")),
+            confirmation_dialog: std::mem::transmute(sym(h, c"swiftui_confirmation_dialog")),
+            keyboard_shortcut: std::mem::transmute(sym(h, c"swiftui_keyboard_shortcut")),
+            focusable: std::mem::transmute(sym(h, c"swiftui_focusable")),
+            truncation_mode: std::mem::transmute(sym(h, c"swiftui_truncation_mode")),
+            multiline_alignment: std::mem::transmute(sym(h, c"swiftui_multiline_alignment")),
+            minimum_scale_factor: std::mem::transmute(sym(h, c"swiftui_minimum_scale_factor")),
+            accessibility_label: std::mem::transmute(sym(h, c"swiftui_accessibility_label")),
+            accessibility_hint: std::mem::transmute(sym(h, c"swiftui_accessibility_hint")),
+            accessibility_hidden: std::mem::transmute(sym(h, c"swiftui_accessibility_hidden")),
+            accessibility_value: std::mem::transmute(sym(h, c"swiftui_accessibility_value")),
+            disclosure_group: std::mem::transmute(sym(h, c"swiftui_disclosure_group")),
+            labeled_content: std::mem::transmute(sym(h, c"swiftui_labeled_content")),
+            navigation_split_view: std::mem::transmute(sym(h, c"swiftui_navigation_split_view")),
+            content_unavailable: std::mem::transmute(sym(h, c"swiftui_content_unavailable")),
+            share_link: std::mem::transmute(sym(h, c"swiftui_share_link")),
             release: std::mem::transmute(sym(h, c"swiftui_release")),
             retain: std::mem::transmute(sym(h, c"swiftui_retain")),
             show_window: std::mem::transmute(sym(h, c"swiftui_show_window")),

@@ -915,3 +915,149 @@ public func swiftuiColorPicker(_ labelPtr: UnsafePointer<UInt8>, _ labelLen: Int
     return boxView(ColorPicker(label, selection: .constant(.blue)))
 }
 #endif
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Remaining modifiers
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_color_invert")
+public func swiftuiColorInvert(_ h: ViewHandle) -> ViewHandle { boxView(unboxView(h).colorInvert()) }
+
+@_cdecl("swiftui_ignores_safe_area")
+public func swiftuiIgnoresSafeArea(_ h: ViewHandle) -> ViewHandle { boxView(unboxView(h).ignoresSafeArea()) }
+
+#if os(iOS)
+@_cdecl("swiftui_full_screen_cover")
+public func swiftuiFullScreenCover(_ h: ViewHandle, _ content: ViewHandle, _ shown: Bool) -> ViewHandle {
+    let model = SheetModel(); model.isPresented = shown
+    struct FSC: View {
+        let base: AnyView; let content: AnyView; @ObservedObject var model: SheetModel
+        var body: some View { base.fullScreenCover(isPresented: $model.isPresented) { content } }
+    }
+    return boxView(FSC(base: unboxView(h), content: unboxView(content), model: model))
+}
+#endif
+
+@_cdecl("swiftui_confirmation_dialog")
+public func swiftuiConfirmationDialog(
+    _ h: ViewHandle,
+    _ titlePtr: UnsafePointer<UInt8>, _ titleLen: Int,
+    _ shown: Bool,
+    _ actions: ViewHandle
+) -> ViewHandle {
+    let title = String(bytes: UnsafeBufferPointer(start: titlePtr, count: titleLen), encoding: .utf8) ?? ""
+    let model = SheetModel(); model.isPresented = shown
+    struct CD: View {
+        let base: AnyView; let title: String; let actions: AnyView; @ObservedObject var model: SheetModel
+        var body: some View { base.confirmationDialog(title, isPresented: $model.isPresented) { actions } }
+    }
+    return boxView(CD(base: unboxView(h), title: title, actions: unboxView(actions), model: model))
+}
+
+@_cdecl("swiftui_keyboard_shortcut")
+public func swiftuiKeyboardShortcut(_ h: ViewHandle, _ keyPtr: UnsafePointer<UInt8>, _ keyLen: Int) -> ViewHandle {
+    let key = String(bytes: UnsafeBufferPointer(start: keyPtr, count: keyLen), encoding: .utf8) ?? ""
+    if let char = key.first {
+        return boxView(unboxView(h).keyboardShortcut(KeyEquivalent(char)))
+    }
+    return h
+}
+
+@_cdecl("swiftui_focusable")
+public func swiftuiFocusable(_ h: ViewHandle) -> ViewHandle { boxView(unboxView(h).focusable()) }
+
+@_cdecl("swiftui_truncation_mode")
+public func swiftuiTruncationMode(_ h: ViewHandle, _ mode: Int32) -> ViewHandle {
+    let m: Text.TruncationMode = switch mode { case 1: .middle; case 2: .head; default: .tail }
+    return boxView(unboxView(h).truncationMode(m))
+}
+
+@_cdecl("swiftui_multiline_alignment")
+public func swiftuiMultilineAlignment(_ h: ViewHandle, _ align: Int32) -> ViewHandle {
+    let a: TextAlignment = switch align { case 1: .center; case 2: .trailing; default: .leading }
+    return boxView(unboxView(h).multilineTextAlignment(a))
+}
+
+@_cdecl("swiftui_minimum_scale_factor")
+public func swiftuiMinimumScaleFactor(_ h: ViewHandle, _ factor: Float) -> ViewHandle {
+    boxView(unboxView(h).minimumScaleFactor(CGFloat(factor)))
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Accessibility
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_accessibility_label")
+public func swiftuiAccessibilityLabel(_ h: ViewHandle, _ ptr: UnsafePointer<UInt8>, _ len: Int) -> ViewHandle {
+    let s = String(bytes: UnsafeBufferPointer(start: ptr, count: len), encoding: .utf8) ?? ""
+    return boxView(unboxView(h).accessibilityLabel(s))
+}
+
+@_cdecl("swiftui_accessibility_hint")
+public func swiftuiAccessibilityHint(_ h: ViewHandle, _ ptr: UnsafePointer<UInt8>, _ len: Int) -> ViewHandle {
+    let s = String(bytes: UnsafeBufferPointer(start: ptr, count: len), encoding: .utf8) ?? ""
+    return boxView(unboxView(h).accessibilityHint(s))
+}
+
+@_cdecl("swiftui_accessibility_hidden")
+public func swiftuiAccessibilityHidden(_ h: ViewHandle, _ hidden: Bool) -> ViewHandle {
+    boxView(unboxView(h).accessibilityHidden(hidden))
+}
+
+@_cdecl("swiftui_accessibility_value")
+public func swiftuiAccessibilityValue(_ h: ViewHandle, _ ptr: UnsafePointer<UInt8>, _ len: Int) -> ViewHandle {
+    let s = String(bytes: UnsafeBufferPointer(start: ptr, count: len), encoding: .utf8) ?? ""
+    return boxView(unboxView(h).accessibilityValue(s))
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Remaining views
+// ═══════════════════════════════════════════════════════════════════════════
+
+@_cdecl("swiftui_disclosure_group")
+public func swiftuiDisclosureGroup(_ titlePtr: UnsafePointer<UInt8>, _ titleLen: Int, _ content: ViewHandle) -> ViewHandle {
+    let title = String(bytes: UnsafeBufferPointer(start: titlePtr, count: titleLen), encoding: .utf8) ?? ""
+    return boxView(DisclosureGroup(title) { unboxView(content) })
+}
+
+@_cdecl("swiftui_labeled_content")
+public func swiftuiLabeledContent(_ labelPtr: UnsafePointer<UInt8>, _ labelLen: Int, _ content: ViewHandle) -> ViewHandle {
+    let label = String(bytes: UnsafeBufferPointer(start: labelPtr, count: labelLen), encoding: .utf8) ?? ""
+    return boxView(LabeledContent(label) { unboxView(content) })
+}
+
+@_cdecl("swiftui_navigation_split_view")
+public func swiftuiNavigationSplitView(_ sidebar: ViewHandle, _ detail: ViewHandle) -> ViewHandle {
+    boxView(NavigationSplitView { unboxView(sidebar) } detail: { unboxView(detail) })
+}
+
+@_cdecl("swiftui_content_unavailable")
+public func swiftuiContentUnavailable(
+    _ titlePtr: UnsafePointer<UInt8>, _ titleLen: Int,
+    _ descPtr: UnsafePointer<UInt8>, _ descLen: Int,
+    _ imagePtr: UnsafePointer<UInt8>, _ imageLen: Int
+) -> ViewHandle {
+    let title = String(bytes: UnsafeBufferPointer(start: titlePtr, count: titleLen), encoding: .utf8) ?? ""
+    let desc = String(bytes: UnsafeBufferPointer(start: descPtr, count: descLen), encoding: .utf8) ?? ""
+    let image = String(bytes: UnsafeBufferPointer(start: imagePtr, count: imageLen), encoding: .utf8) ?? ""
+    return boxView(ContentUnavailableView(title, systemImage: image, description: Text(desc)))
+}
+
+@_cdecl("swiftui_share_link")
+public func swiftuiShareLink(_ textPtr: UnsafePointer<UInt8>, _ textLen: Int, _ urlPtr: UnsafePointer<UInt8>, _ urlLen: Int) -> ViewHandle {
+    let text = String(bytes: UnsafeBufferPointer(start: textPtr, count: textLen), encoding: .utf8) ?? ""
+    let url = String(bytes: UnsafeBufferPointer(start: urlPtr, count: urlLen), encoding: .utf8) ?? ""
+    if let u = URL(string: url) {
+        return boxView(ShareLink(item: u, subject: Text(text)))
+    }
+    return boxView(Text("Invalid URL"))
+}
+
+#if os(macOS)
+@_cdecl("swiftui_table")
+public func swiftuiTable(_ children: UnsafePointer<ViewHandle>, _ count: Int) -> ViewHandle {
+    // Simple table as List with columns — real Table needs typed data
+    let views = (0..<count).map { unboxView(children[$0]) }
+    return boxView(List { ForEach(views.indices, id: \.self) { views[$0] } })
+}
+#endif
