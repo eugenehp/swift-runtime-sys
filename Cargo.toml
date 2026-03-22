@@ -12,5 +12,8 @@ members = [
     "crates/swift-data",
     "crates/spatial",
     "crates/translation",
+    "crates/widgetkit",
+    "crates/appintents",
+    "crates/activitykit",
     "crates/swift-bridge-gen",
 ]

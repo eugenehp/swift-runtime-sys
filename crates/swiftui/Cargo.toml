@@ -18,6 +18,13 @@ macos-26 = []
 # iOS deployment target
 ios-18 = []
 ios-26 = []
+# Framework features — all compile via #if canImport in Swift
+spatial = []
+translation = []
+widgetkit = []
+appintents = []
+activitykit = []
+all-frameworks = ["spatial", "translation", "widgetkit", "appintents", "activitykit"]
 
 [dependencies]
 swift-runtime-sys = { path = "../swift-runtime-sys" }

@@ -8,13 +8,19 @@ fn main() {
     let helper_dir = find_helper_dir();
     if let Some(dir) = helper_dir {
         let dylib = dir.join("libSwiftUIHelper.dylib");
-        let sources = [
+        let mut sources = vec![
             "SwiftUIHelper.swift",
             "SnapshotHelper.swift",
             "Platform.swift",
             "AppHost.swift",
             "RealityKitHelper.swift",
+            "DataHelper.swift",
+            "FrameworkHelpers.swift",
         ];
+
+        // Feature-gated sources are always compiled — the Swift side
+        // uses #if canImport() to conditionally include framework code.
+        // No extra sources needed; FrameworkHelpers.swift handles all.
 
         // Tell cargo to rerun if any Swift source changes
         for src in &sources {
