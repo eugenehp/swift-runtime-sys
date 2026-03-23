@@ -1,5 +1,5 @@
 [package]
-name = "apple-matter"
+name = "rswift-matter"
 description = "Apple Matter — smart home connectivity from Rust"
 version = "0.0.1"
 edition = "2021"

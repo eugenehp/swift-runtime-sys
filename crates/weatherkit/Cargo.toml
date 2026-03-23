@@ -1,5 +1,5 @@
 [package]
-name = "apple-weatherkit"
+name = "rswift-weatherkit"
 description = "Apple WeatherKit — weather data from Rust"
 version = "0.0.1"
 edition = "2021"

@@ -1,5 +1,5 @@
 [package]
-name = "apple-localauthentication"
+name = "rswift-localauthentication"
 description = "Apple LocalAuthentication — biometric auth from Rust"
 version = "0.0.1"
 edition = "2021"

@@ -1,5 +1,5 @@
 [package]
-name = "apple-spatial"
+name = "rswift-spatial"
 description = "Apple Spatial framework — 3D math types from Rust"
 version = "0.0.1"
 edition = "2021"

@@ -1,5 +1,5 @@
 [package]
-name = "apple-coreml"
+name = "rswift-coreml"
 description = "Apple Core ML — on-device machine learning from Rust"
 version = "0.0.1"
 edition = "2021"

@@ -1,5 +1,5 @@
 [package]
-name = "apple-clockkit"
+name = "rswift-clockkit"
 description = "Apple ClockKit — watchOS complications from Rust (deprecated)"
 version = "0.0.1"
 edition = "2021"

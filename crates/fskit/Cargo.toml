@@ -1,5 +1,5 @@
 [package]
-name = "apple-fskit"
+name = "rswift-fskit"
 description = "Apple FSKit — file system extensions from Rust"
 version = "0.0.1"
 edition = "2021"

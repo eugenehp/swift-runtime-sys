@@ -1,5 +1,5 @@
 [package]
-name = "apple-coremotion"
+name = "rswift-coremotion"
 description = "Apple Core Motion — accelerometer and gyroscope from Rust"
 version = "0.0.1"
 edition = "2021"

@@ -1,5 +1,5 @@
 [package]
-name = "apple-photos"
+name = "rswift-photos"
 description = "Apple Photos — photo library access from Rust"
 version = "0.0.1"
 edition = "2021"

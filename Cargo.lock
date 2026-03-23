@@ -118,205 +118,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "apple-accessibility"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-avfoundation"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-clockkit"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-combine"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-corebluetooth"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-coreml"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-coremotion"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-devicecheck"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-eventkit"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-fskit"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-gamekit"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-homekit"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-localauthentication"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-matter"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-messages"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-metal"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
- "libc",
-]
-
-[[package]]
-name = "apple-metalkit"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-network"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-oslog"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-passkit"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-photos"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-screencapturekit"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-spatial"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-symbols"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
 name = "apple-sys-helpers"
 version = "0.0.1"
-
-[[package]]
-name = "apple-translation"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-virtualization"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-vision"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
-
-[[package]]
-name = "apple-weatherkit"
-version = "0.0.1"
-dependencies = [
- "apple-sys-helpers",
-]
 
 [[package]]
 name = "appmigrationkit"
@@ -1293,6 +1096,203 @@ dependencies = [
 
 [[package]]
 name = "roomplan"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-accessibility"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-avfoundation"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-clockkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-combine"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-corebluetooth"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-coreml"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-coremotion"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-devicecheck"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-eventkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-fskit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-gamekit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-homekit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-localauthentication"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-matter"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-messages"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-metal"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+ "libc",
+]
+
+[[package]]
+name = "rswift-metalkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-network"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-oslog"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-passkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-photos"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-screencapturekit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-spatial"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-symbols"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-translation"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-virtualization"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-vision"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-weatherkit"
 version = "0.0.1"
 dependencies = [
  "apple-sys-helpers",

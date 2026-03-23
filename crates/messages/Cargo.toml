@@ -1,5 +1,5 @@
 [package]
-name = "apple-messages"
+name = "rswift-messages"
 description = "Apple Messages — iMessage app extensions from Rust"
 version = "0.0.1"
 edition = "2021"

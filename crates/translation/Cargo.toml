@@ -1,5 +1,5 @@
 [package]
-name = "apple-translation"
+name = "rswift-translation"
 description = "Apple Translation framework — on-device text translation from Rust"
 version = "0.0.1"
 edition = "2021"

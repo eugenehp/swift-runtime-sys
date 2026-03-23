@@ -1,5 +1,5 @@
 [package]
-name = "apple-network"
+name = "rswift-network"
 description = "Apple Network framework — modern networking from Rust"
 version = "0.0.1"
 edition = "2021"

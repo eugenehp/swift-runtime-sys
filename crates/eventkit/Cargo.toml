@@ -1,5 +1,5 @@
 [package]
-name = "apple-eventkit"
+name = "rswift-eventkit"
 description = "Apple EventKit — calendar and reminders from Rust"
 version = "0.0.1"
 edition = "2021"

@@ -1,5 +1,5 @@
 [package]
-name = "apple-corebluetooth"
+name = "rswift-corebluetooth"
 description = "Apple Core Bluetooth — BLE from Rust"
 version = "0.0.1"
 edition = "2021"

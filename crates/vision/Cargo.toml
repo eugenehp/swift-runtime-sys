@@ -1,5 +1,5 @@
 [package]
-name = "apple-vision"
+name = "rswift-vision"
 description = "Apple Vision framework — image analysis and computer vision from Rust"
 version = "0.0.1"
 edition = "2021"

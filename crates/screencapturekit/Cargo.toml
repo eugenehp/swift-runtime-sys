@@ -1,5 +1,5 @@
 [package]
-name = "apple-screencapturekit"
+name = "rswift-screencapturekit"
 description = "Apple ScreenCaptureKit — screen recording from Rust"
 version = "0.0.1"
 edition = "2021"

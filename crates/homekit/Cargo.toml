@@ -1,5 +1,5 @@
 [package]
-name = "apple-homekit"
+name = "rswift-homekit"
 description = "Apple HomeKit — smart home control from Rust"
 version = "0.0.1"
 edition = "2021"

@@ -1,5 +1,5 @@
 [package]
-name = "apple-combine"
+name = "rswift-combine"
 description = "Combine publisher/subscriber bridge from Rust"
 version = "0.0.1"
 edition = "2021"

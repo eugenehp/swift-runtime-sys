@@ -1,5 +1,5 @@
 [package]
-name = "apple-accessibility"
+name = "rswift-accessibility"
 description = "Apple Accessibility — assistive technology support from Rust"
 version = "0.0.1"
 edition = "2021"

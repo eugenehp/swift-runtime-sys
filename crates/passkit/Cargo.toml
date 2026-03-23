@@ -1,5 +1,5 @@
 [package]
-name = "apple-passkit"
+name = "rswift-passkit"
 description = "Apple PassKit — Wallet and Apple Pay from Rust"
 version = "0.0.1"
 edition = "2021"
