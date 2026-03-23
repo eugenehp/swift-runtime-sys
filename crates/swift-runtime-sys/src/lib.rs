@@ -1,10 +1,14 @@
 #![allow(
+    non_snake_case,
     rustdoc::bare_urls,
     rustdoc::invalid_html_tags,
-    rustdoc::broken_intra_doc_links
+    rustdoc::broken_intra_doc_links,
 )]
 
-// ── Auto-generated bindgen modules (from Swift runtime headers) ──
+// ═══════════════════════════════════════════════════════════════════════════
+// Auto-generated bindgen modules (from Swift runtime C/C++ headers)
+// ═══════════════════════════════════════════════════════════════════════════
+
 pub mod Atomic;
 pub mod Backtrace;
 pub mod Config;
@@ -23,176 +27,133 @@ pub mod SwiftDtoa;
 pub mod TracingCommon;
 pub mod VoucherShims;
 
-// ── Hand-written higher-level modules ──
-#[allow(non_snake_case)]
-pub mod ConcurrencyAbi;
-#[allow(non_snake_case)]
-pub mod RemoteMirror;
-#[allow(non_snake_case)]
-pub mod RuntimeContract;
-#[allow(non_snake_case)]
-pub mod RuntimeFactory;
-#[allow(non_snake_case)]
-pub mod RuntimeRaw;
-#[allow(non_snake_case)]
-pub mod RustExecutorInterop;
-#[allow(non_snake_case)]
-pub mod SymbolDemangler;
+// ═══════════════════════════════════════════════════════════════════════════
+// ABI layout & calling convention
+// ═══════════════════════════════════════════════════════════════════════════
 
-// ── New comprehensive runtime bindings ──
-
-/// P0: Dynamic casting (`as?`, `as!`, `is`)
-#[allow(non_snake_case)]
-pub mod DynamicCast;
-
-/// P0: Error handling (alloc, inspect, throw)
-#[allow(non_snake_case)]
-pub mod ErrorHandling;
-
-/// P0: Metadata introspection (types, functions, tuples, existentials)
-#[allow(non_snake_case)]
-pub mod MetadataIntrospection;
-
-/// P0: Concurrency runtime (tasks, actors, executors, groups, async let)
-#[allow(non_snake_case)]
-pub mod ConcurrencyRuntime;
-
-/// P1: Enum operations (tag manipulation, metadata init)
-#[allow(non_snake_case)]
-pub mod EnumOps;
-
-/// P1: Box and existential allocation
-#[allow(non_snake_case)]
-pub mod BoxExistential;
-
-/// P1: Unowned reference operations
-#[allow(non_snake_case)]
-pub mod UnownedRef;
-
-/// P1: Unknown object (ObjC-bridged) retain/release
-#[allow(non_snake_case)]
-pub mod UnknownObject;
-
-/// P1: In-process reflection mirror
-#[allow(non_snake_case)]
-pub mod ReflectionMirrorInProcess;
-
-/// P1: Witness tables and protocol conformance
-#[allow(non_snake_case)]
-pub mod WitnessTable;
-
-/// P1: Bridge object retain/release
-#[allow(non_snake_case)]
-pub mod BridgeObject;
-
-/// P1: Nonatomic reference counting variants
-#[allow(non_snake_case)]
-pub mod NonatomicRefCounting;
-
-/// P2: Debugging and diagnostics hooks
-#[allow(non_snake_case)]
-pub mod DebugHooks;
-
-/// P2: KeyPath runtime
-#[allow(non_snake_case)]
-pub mod KeyPathRuntime;
-
-/// P2: Function replacement and dynamic dispatch
-#[allow(non_snake_case)]
-pub mod FunctionReplacementExt;
-
-/// P2: Class and struct metadata initialization
-#[allow(non_snake_case)]
-pub mod ClassMetadataInit;
-
-/// P2: Memory and allocation primitives
-#[allow(non_snake_case)]
-pub mod MemoryAlloc;
-
-/// P2: Array value-witness operations
-#[allow(non_snake_case)]
-pub mod ArrayValueWitness;
-
-/// P2: Generic value-witness operations
-#[allow(non_snake_case)]
-pub mod GenericValueWitness;
-
-/// P2: POD operations
-#[allow(non_snake_case)]
-pub mod PodOps;
-
-/// P2: Numeric and string conversion
-#[allow(non_snake_case)]
-pub mod NumericConversion;
-
-/// P2: Stdlib utilities
-#[allow(non_snake_case)]
-pub mod StdlibUtils;
-
-/// P2: ObjC bridge utilities
-#[allow(non_snake_case)]
-pub mod ObjCBridge;
-
-/// P2: AutoDiff runtime
-#[allow(non_snake_case)]
-pub mod AutoDiff;
-
-/// P2: Opaque type runtime
-#[allow(non_snake_case)]
-pub mod OpaqueTypes;
-
-/// P2: Coroutine support
-#[allow(non_snake_case)]
-pub mod Coroutine;
-
-/// P2: Runtime path queries
-#[allow(non_snake_case)]
-pub mod RuntimePaths;
-
-/// P2: Debug variables
-#[allow(non_snake_case)]
-pub mod DebugVars;
-
-/// P2: Instrumentation
-#[allow(non_snake_case)]
-pub mod InstrumentationExt;
-
-/// ABI struct layouts (HeapObject, ValueWitnessTable, Metadata, etc.)
-#[allow(non_snake_case)]
+/// ABI struct layouts: `HeapObject`, `ValueWitnessTable`, `Metadata`, etc.
 pub mod SwiftABI;
-
-/// Concurrency executor hooks (global function pointers for custom executors)
-#[allow(non_snake_case)]
-pub mod ConcurrencyHooks;
-
-/// Calling convention documentation and safety notes
-#[allow(non_snake_case)]
+/// Calling-convention documentation and safety notes.
 pub mod SwiftCallingConvention;
-
-/// Safe thunks for Swift-CC functions (arm64 inline assembly)
-#[allow(non_snake_case)]
+/// Safe thunks for Swift-CC functions (arm64 inline assembly).
 pub mod SwiftCCThunks;
-
-/// Swift stdlib type metadata helpers
-#[allow(non_snake_case)]
-pub mod StdlibTypes;
-
-/// Runtime dlsym resolution of SPI symbols
-#[allow(non_snake_case)]
-pub mod DlsymStdlib;
-
-/// Arm64 asm thunks for all concurrency + error Swift-CC/swiftasync-CC functions
-#[allow(non_snake_case)]
+/// Arm64 asm thunks for concurrency + error Swift-CC/swiftasync-CC functions.
 pub mod ConcurrencyThunks;
 
-/// Dynamic SwiftUI View conformance builder (approach 3 — experimental)
-#[allow(non_snake_case)]
-pub mod ViewConformanceBuilder;
+// ═══════════════════════════════════════════════════════════════════════════
+// Core runtime bindings (P0 — critical path)
+// ═══════════════════════════════════════════════════════════════════════════
 
-/// SwiftUI bridge — construct and display SwiftUI views from Rust
-#[allow(non_snake_case)]
+/// Dynamic casting (`as?`, `as!`, `is`).
+pub mod DynamicCast;
+/// Error handling (alloc, inspect, throw).
+pub mod ErrorHandling;
+/// Metadata introspection (types, functions, tuples, existentials).
+pub mod MetadataIntrospection;
+/// Concurrency runtime (tasks, actors, executors, groups, async let).
+pub mod ConcurrencyRuntime;
+/// Concurrency ABI types and layouts.
+pub mod ConcurrencyAbi;
+/// Concurrency executor hooks (global function pointers for custom executors).
+pub mod ConcurrencyHooks;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Runtime bindings (P1 — important)
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// Enum tag manipulation and metadata init.
+pub mod EnumOps;
+/// Box and existential allocation.
+pub mod BoxExistential;
+/// Unowned reference operations.
+pub mod UnownedRef;
+/// Unknown-object (ObjC-bridged) retain/release.
+pub mod UnknownObject;
+/// In-process reflection mirror.
+pub mod ReflectionMirrorInProcess;
+/// Witness tables and protocol conformance.
+pub mod WitnessTable;
+/// Bridge-object retain/release.
+pub mod BridgeObject;
+/// Nonatomic reference counting variants.
+pub mod NonatomicRefCounting;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Runtime bindings (P2 — supplementary)
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// Debugging and diagnostics hooks.
+pub mod DebugHooks;
+/// Debug variables.
+pub mod DebugVars;
+/// KeyPath runtime.
+pub mod KeyPathRuntime;
+/// Function replacement and dynamic dispatch.
+pub mod FunctionReplacementExt;
+/// Class and struct metadata initialization.
+pub mod ClassMetadataInit;
+/// Memory and allocation primitives.
+pub mod MemoryAlloc;
+/// Array value-witness operations.
+pub mod ArrayValueWitness;
+/// Generic value-witness operations.
+pub mod GenericValueWitness;
+/// POD operations.
+pub mod PodOps;
+/// Numeric and string conversion.
+pub mod NumericConversion;
+/// Stdlib utilities.
+pub mod StdlibUtils;
+/// ObjC bridge utilities.
+pub mod ObjCBridge;
+/// AutoDiff runtime.
+pub mod AutoDiff;
+/// Opaque type runtime.
+pub mod OpaqueTypes;
+/// Coroutine support.
+pub mod Coroutine;
+/// Runtime path queries.
+pub mod RuntimePaths;
+/// Instrumentation.
+pub mod InstrumentationExt;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Higher-level runtime helpers
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// Remote mirror (out-of-process reflection).
+pub mod RemoteMirror;
+/// Runtime contract helpers.
+pub mod RuntimeContract;
+/// Runtime factory (convenience constructors).
+pub mod RuntimeFactory;
+/// Raw runtime function pointers.
+pub mod RuntimeRaw;
+/// Rust ↔ Swift executor interop.
+pub mod RustExecutorInterop;
+/// Swift symbol demangler.
+pub mod SymbolDemangler;
+/// Swift stdlib type metadata helpers.
+pub mod StdlibTypes;
+/// Runtime dlsym resolution of SPI symbols.
+pub mod DlsymStdlib;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SwiftUI bridge (experimental)
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// Dynamic SwiftUI `View` conformance builder (approach 3 — experimental).
+pub mod ViewConformanceBuilder;
+/// SwiftUI bridge — construct and display SwiftUI views from Rust.
 pub mod SwiftUIBridge;
 
-// ── Platform-specific ──
+// ═══════════════════════════════════════════════════════════════════════════
+// Platform
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// Platform detection, OS constants, and SDK path helpers.
+pub mod platform;
+
+/// Win32 compatibility shims.
 #[cfg(target_os = "windows")]
 pub mod Win32;

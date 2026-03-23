@@ -1,0 +1,15 @@
+[package]
+name = "mlcompute"
+description = "Apple MLCompute — ML compute operations from Rust (deprecated)"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "mlcompute"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

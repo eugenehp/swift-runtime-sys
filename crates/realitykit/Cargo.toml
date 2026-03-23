@@ -1,12 +1,21 @@
 [package]
 name = "realitykit"
-description = "Ergonomic RealityKit 3D scene builder from Rust"
+description = "Ergonomic RealityKit 3D scene builder from Rust (macOS, iOS, visionOS)"
 version = "0.0.1"
 edition = "2021"
 license = "Apache-2.0"
+keywords = ["swift", "realitykit", "3d", "ar", "visionos"]
 
 [lib]
 name = "realitykit"
 
+[features]
+default = []
+# visionOS-specific features (hand tracking, spatial anchors)
+visionos = []
+
 [dependencies]
 realitykit-sys = { path = "../realitykit-sys" }
+
+[lints]
+workspace = true

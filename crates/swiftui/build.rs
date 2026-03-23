@@ -8,7 +8,7 @@ fn main() {
     let helper_dir = find_helper_dir();
     if let Some(dir) = helper_dir {
         let dylib = dir.join("libSwiftUIHelper.dylib");
-        let mut sources = vec![
+        let sources = vec![
             "SwiftUIHelper.swift",
             "SnapshotHelper.swift",
             "Platform.swift",

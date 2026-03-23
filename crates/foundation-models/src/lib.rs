@@ -1,5 +1,7 @@
 //! Apple Intelligence on-device LLM from Rust.
 //!
+//! **Platform support:** macOS 26+, iOS 26+ (not available on tvOS, watchOS, or visionOS).
+//!
 //! Uses Apple's FoundationModels framework (macOS 26+) for private,
 //! on-device language model inference. No API keys, no network required.
 //!
@@ -18,19 +20,14 @@
 //! }
 //! ```
 
-use core::ffi::{c_char, c_void};
+// Note: FoundationModels is available on macOS 26+, iOS 26+.
+// On unsupported platforms, `is_available()` returns false.
 
-unsafe extern "C" {
-    fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
-}
-
-fn sym(name: &core::ffi::CStr) -> *const c_void {
-    unsafe { dlsym((-2isize) as *mut c_void, name.as_ptr()) as *const c_void }
-}
+use core::ffi::c_void;
 
 /// Check if Apple Intelligence / on-device LLM is available.
 pub fn is_available() -> bool {
-    let f = sym(c"fm_available");
+    let f = apple_sys_helpers::sym(c"fm_available");
     if f.is_null() {
         return false;
     }
@@ -47,7 +44,7 @@ impl Session {
     /// Create a new session, optionally with system instructions.
     pub fn new(instructions: Option<&str>) -> Self {
         type F = unsafe extern "C" fn(*const u8, usize) -> *mut c_void;
-        let f: F = unsafe { std::mem::transmute(sym(c"fm_session_create")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"fm_session_create")) };
         let ptr = match instructions {
             Some(inst) => unsafe { f(inst.as_ptr(), inst.len()) },
             None => unsafe { f(std::ptr::null(), 0) },
@@ -70,7 +67,7 @@ impl Session {
             *mut *mut c_void,
             *mut usize,
         ) -> bool;
-        let f: F = unsafe { std::mem::transmute(sym(c"fm_respond")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"fm_respond")) };
         let mut ptr: *mut c_void = std::ptr::null_mut();
         let mut len: usize = 0;
         let ok = unsafe { f(self.ptr, prompt.as_ptr(), prompt.len(), &mut ptr, &mut len) };
@@ -114,7 +111,7 @@ impl Session {
             unsafe extern "C" fn(*mut c_void),
             *mut c_void,
         );
-        let f: F = unsafe { std::mem::transmute(sym(c"fm_stream_respond")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"fm_stream_respond")) };
         unsafe {
             f(
                 self.ptr,
@@ -130,7 +127,7 @@ impl Session {
     /// Check if the session is currently generating a response.
     pub fn is_responding(&self) -> bool {
         type F = unsafe extern "C" fn(*mut c_void) -> bool;
-        let f: F = unsafe { std::mem::transmute(sym(c"fm_is_responding")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"fm_is_responding")) };
         unsafe { f(self.ptr) }
     }
 
@@ -149,7 +146,7 @@ impl Session {
                 *mut *mut c_void,
                 *mut usize,
             ) -> bool;
-            let f: F = std::mem::transmute(sym(c"fm_respond"));
+            let f: F = std::mem::transmute(apple_sys_helpers::sym(c"fm_respond"));
             let mut out_ptr: *mut c_void = std::ptr::null_mut();
             let mut out_len: usize = 0;
             let ok = f(
@@ -199,7 +196,7 @@ impl Session {
             unsafe extern "C" fn(*mut c_void),
             *mut c_void,
         );
-        let f: F = unsafe { std::mem::transmute(sym(c"fm_stream_respond")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"fm_stream_respond")) };
         unsafe {
             f(
                 self.ptr,
@@ -221,7 +218,7 @@ unsafe impl Sync for Session {}
 
 impl Drop for Session {
     fn drop(&mut self) {
-        let f = sym(c"fm_session_release");
+        let f = apple_sys_helpers::sym(c"fm_session_release");
         if !f.is_null() {
             type F = unsafe extern "C" fn(*mut c_void);
             unsafe { (std::mem::transmute::<_, F>(f))(self.ptr) };

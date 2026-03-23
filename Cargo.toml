@@ -1,13 +1,27 @@
 [workspace]
 resolver = "2"
 members = [
+    # ── Core runtime ──
     "crates/swift-runtime-sys",
     "crates/swift-runtime",
+
+    # ── SwiftUI ──
     "crates/swiftui-sys",
     "crates/swiftui-macros",
     "crates/swiftui",
+
+    # ── RealityKit ──
     "crates/realitykit-sys",
     "crates/realitykit",
+    "crates/realityfoundation",
+
+    # ── Shared helpers ──
+    "crates/apple-sys-helpers",
+
+    # ── Code generation ──
+    "crates/swift-bridge-gen",
+
+    # ── Previously existing framework crates ──
     "crates/combine",
     "crates/swift-data",
     "crates/spatial",
@@ -17,5 +31,262 @@ members = [
     "crates/activitykit",
     "crates/charts",
     "crates/foundation-models",
-    "crates/swift-bridge-gen",
+
+    # ── Media & AV ──
+    "crates/avfaudio",
+    "crates/avfoundation",
+    "crates/avkit",
+    "crates/mediaplayer",
+    "crates/musickit",
+    "crates/cinematic",
+    "crates/mediaaccessibility",
+    "crates/mediaextension",
+
+    # ── Vision, ML & AI ──
+    "crates/coreml",
+    "crates/vision",
+    "crates/visionkit",
+    "crates/createml",
+    "crates/naturallanguage",
+    "crates/soundanalysis",
+    "crates/speech",
+    "crates/imageplayground",
+    "crates/sensitivecontentanalysis",
+    "crates/visualintelligence",
+    "crates/metalperformanceshadersgraph",
+    "crates/mlcompute",
+
+    # ── Data & Cloud ──
+    "crates/cloudkit",
+    "crates/coredata",
+    "crates/swiftdata",
+    "crates/tabulardata",
+
+    # ── UI, Graphics & Rendering ──
+    "crates/coregraphics",
+    "crates/coreimage",
+    "crates/metal",
+    "crates/metalkit",
+    "crates/scenekit",
+    "crates/spritekit",
+    "crates/modelio",
+    "crates/pencilkit",
+    "crates/pdfkit",
+    "crates/coretext",
+    "crates/symbols",
+    "crates/paperkit",
+    "crates/stickerkit",
+
+    # ── Networking & Communication ──
+    "crates/network",
+    "crates/networkextension",
+    "crates/multipeerconnectivity",
+    "crates/nearbyinteraction",
+    "crates/pushkit",
+    "crates/callkit",
+    "crates/livecommunicationkit",
+    "crates/telephonymessagingkit",
+    "crates/wifiaware",
+    "crates/wifiinfrastructure",
+    "crates/wirelessinsights",
+
+    # ── Security & Authentication ──
+    "crates/cryptokit",
+    "crates/cryptotokenkit",
+    "crates/localauthentication",
+    "crates/authenticationservices",
+    "crates/secureelementcredential",
+
+    # ── Location & Maps ──
+    "crates/corelocation",
+    "crates/mapkit",
+    "crates/geotoolbox",
+
+    # ── Contacts & Calendar ──
+    "crates/contacts",
+    "crates/contactprovider",
+    "crates/eventkit",
+
+    # ── Photos ──
+    "crates/photos",
+    "crates/photosui",
+
+    # ── Games ──
+    "crates/gamecontroller",
+    "crates/gamekit",
+    "crates/gameplaykit",
+    "crates/gamesave",
+
+    # ── Health & Fitness ──
+    "crates/healthkit",
+    "crates/workoutkit",
+
+    # ── Payments & Commerce ──
+    "crates/storekit",
+    "crates/passkit",
+    "crates/financekit",
+    "crates/marketplacekit",
+
+    # ── Notifications ──
+    "crates/usernotifications",
+
+    # ── Sharing & Social ──
+    "crates/groupactivities",
+    "crates/sharedwithyou",
+    "crates/linkpresentation",
+    "crates/messages",
+    "crates/messageui",
+
+    # ── Search & Spotlight ──
+    "crates/corespotlight",
+    "crates/relevancekit",
+
+    # ── Sensors & Motion ──
+    "crates/coremotion",
+    "crates/corehaptics",
+    "crates/sensorkit",
+    "crates/corehid",
+
+    # ── Bluetooth & Accessories ──
+    "crates/corebluetooth",
+    "crates/accessorysetupkit",
+    "crates/accessorytransportextension",
+    "crates/dockkit",
+
+    # ── NFC ──
+    "crates/corenfc",
+
+    # ── Text & Data Detection ──
+    "crates/datadetection",
+    "crates/identitylookup",
+
+    # ── Web & Browser ──
+    "crates/webkit",
+    "crates/safariservices",
+    "crates/browserenginecore",
+    "crates/browserenginekit",
+    "crates/browserkit",
+
+    # ── Background & Extensions ──
+    "crates/backgroundtasks",
+    "crates/backgroundassets",
+    "crates/extensionkit",
+
+    # ── File & Storage ──
+    "crates/fileprovider",
+    "crates/quicklook",
+    "crates/quicklookthumbnailing",
+    "crates/quicklookui",
+    "crates/uniformtypeidentifiers",
+    "crates/coretransferable",
+    "crates/fskit",
+
+    # ── Weather ──
+    "crates/weatherkit",
+
+    # ── AR & Immersive ──
+    "crates/arkit",
+    "crates/compositorservices",
+    "crates/immersivemediasupport",
+    "crates/roomplan",
+
+    # ── Accessibility ──
+    "crates/accessibility",
+
+    # ── Device Management ──
+    "crates/devicecheck",
+    "crates/deviceactivity",
+    "crates/devicediscoveryextension",
+    "crates/familycontrols",
+    "crates/managedsettings",
+    "crates/managedapp",
+    "crates/managedappdistribution",
+    "crates/automateddeviceenrollment",
+    "crates/declaredagerange",
+    "crates/permissionkit",
+
+    # ── Analytics & Logging ──
+    "crates/oslog",
+    "crates/metrickit",
+
+    # ── Tips & Onboarding ──
+    "crates/tipkit",
+
+    # ── Screen Capture ──
+    "crates/screencapturekit",
+    "crates/lockedcameracapture",
+
+    # ── Music Recognition ──
+    "crates/shazamkit",
+
+    # ── Virtualization ──
+    "crates/virtualization",
+
+    # ── Smart Home ──
+    "crates/matter",
+    "crates/homekit",
+
+    # ── Screen Recording ──
+    "crates/replaykit",
+
+    # ── Ad & Attribution ──
+    "crates/adservices",
+    "crates/adsupport",
+    "crates/apptrackingtransparency",
+    "crates/adattributionkit",
+
+    # ── Automotive ──
+    "crates/carkey",
+
+    # ── Intents & Siri ──
+    "crates/intents",
+
+    # ── Education ──
+    "crates/automaticassessmentconfiguration",
+    "crates/assignables",
+
+    # ── Journaling ──
+    "crates/journalingsuggestions",
+
+    # ── iTunes / Music Library ──
+    "crates/ituneslibrary",
+
+    # ── TV Provider ──
+    "crates/videosubscriberaccount",
+
+    # ── watchOS Legacy ──
+    "crates/clockkit",
+
+    # ── Energy ──
+    "crates/energykit",
+
+    # ── App Migration ──
+    "crates/appmigrationkit",
+
+    # ── Commerce & Payment ──
+    "crates/proximityreader",
+
+    # ── Account Linking ──
+    "crates/servicesaccountlinking",
+
+    # ── Deprecated ML ──
+    "crates/mlcompute",
+
+    # ── Wireless ──
+    "crates/alarmkit",
+
+    # ── Windowing ──
+    "crates/winit-swift",
+
+    # ── SwiftUI App Builder ──
+    "crates/swiftui-app",
 ]
+
+[workspace.lints.rust]
+unexpected_cfgs = { level = "allow", check-cfg = [
+    'cfg(target_os, values("xros", "tvos", "watchos"))',
+    'cfg(target_abi, values("sim"))',
+] }
+
+[workspace.dependencies]
+apple-sys-helpers = { path = "crates/apple-sys-helpers" }

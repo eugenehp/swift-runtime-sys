@@ -1,0 +1,15 @@
+[package]
+name = "browserenginekit"
+description = "Apple BrowserEngineKit — browser engine integration from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "browserenginekit"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

@@ -1,0 +1,15 @@
+[package]
+name = "sensitivecontentanalysis"
+description = "Apple SensitiveContentAnalysis — CSAM/nudity detection from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "sensitivecontentanalysis"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

@@ -1,5 +1,7 @@
 //! Persistent key-value store backed by UserDefaults.
 //!
+//! **Platform support:** macOS 10.15+, iOS 13+, tvOS 13+, visionOS 1+, watchOS 6+.
+//!
 //! ```ignore
 //! use swift_data::*;
 //!
@@ -17,15 +19,7 @@
 //! db.delete("users", "name");
 //! ```
 
-use core::ffi::{c_char, c_void};
-
-unsafe extern "C" {
-    fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
-}
-
-fn sym(name: &core::ffi::CStr) -> *const c_void {
-    unsafe { dlsym((-2isize) as *mut c_void, name.as_ptr()) as *const c_void }
-}
+use core::ffi::c_void;
 
 /// A persistent key-value store.
 pub struct Store {
@@ -36,7 +30,7 @@ impl Store {
     /// Create using standard UserDefaults.
     pub fn new() -> Self {
         type F = unsafe extern "C" fn(*const u8, usize) -> *mut c_void;
-        let f: F = unsafe { std::mem::transmute(sym(c"kv_store_create")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"kv_store_create")) };
         Self {
             ptr: unsafe { f(std::ptr::null(), 0) },
         }
@@ -45,7 +39,7 @@ impl Store {
     /// Create with a named suite (for app groups).
     pub fn suite(name: &str) -> Self {
         type F = unsafe extern "C" fn(*const u8, usize) -> *mut c_void;
-        let f: F = unsafe { std::mem::transmute(sym(c"kv_store_create")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"kv_store_create")) };
         Self {
             ptr: unsafe { f(name.as_ptr(), name.len()) },
         }
@@ -55,7 +49,7 @@ impl Store {
     pub fn set(&self, table: &str, key: &str, value: &str) {
         type F =
             unsafe extern "C" fn(*mut c_void, *const u8, usize, *const u8, usize, *const u8, usize);
-        let f: F = unsafe { std::mem::transmute(sym(c"kv_store_set_string")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"kv_store_set_string")) };
         unsafe {
             f(
                 self.ptr,
@@ -80,7 +74,7 @@ impl Store {
             *mut *mut c_void,
             *mut usize,
         ) -> bool;
-        let f: F = unsafe { std::mem::transmute(sym(c"kv_store_get_string")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"kv_store_get_string")) };
         let mut ptr: *mut c_void = std::ptr::null_mut();
         let mut len: usize = 0;
         let ok = unsafe {
@@ -109,7 +103,7 @@ impl Store {
     /// Set an integer value.
     pub fn set_int(&self, table: &str, key: &str, value: isize) {
         type F = unsafe extern "C" fn(*mut c_void, *const u8, usize, *const u8, usize, isize);
-        let f: F = unsafe { std::mem::transmute(sym(c"kv_store_set_int")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"kv_store_set_int")) };
         unsafe {
             f(
                 self.ptr,
@@ -125,7 +119,7 @@ impl Store {
     /// Get an integer value (returns 0 if not found).
     pub fn get_int(&self, table: &str, key: &str) -> isize {
         type F = unsafe extern "C" fn(*mut c_void, *const u8, usize, *const u8, usize) -> isize;
-        let f: F = unsafe { std::mem::transmute(sym(c"kv_store_get_int")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"kv_store_get_int")) };
         unsafe {
             f(
                 self.ptr,
@@ -140,7 +134,7 @@ impl Store {
     /// Set a boolean value.
     pub fn set_bool(&self, table: &str, key: &str, value: bool) {
         type F = unsafe extern "C" fn(*mut c_void, *const u8, usize, *const u8, usize, bool);
-        let f: F = unsafe { std::mem::transmute(sym(c"kv_store_set_bool")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"kv_store_set_bool")) };
         unsafe {
             f(
                 self.ptr,
@@ -156,7 +150,7 @@ impl Store {
     /// Get a boolean value.
     pub fn get_bool(&self, table: &str, key: &str) -> bool {
         type F = unsafe extern "C" fn(*mut c_void, *const u8, usize, *const u8, usize) -> bool;
-        let f: F = unsafe { std::mem::transmute(sym(c"kv_store_get_bool")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"kv_store_get_bool")) };
         unsafe {
             f(
                 self.ptr,
@@ -171,7 +165,7 @@ impl Store {
     /// Delete a key.
     pub fn delete(&self, table: &str, key: &str) {
         type F = unsafe extern "C" fn(*mut c_void, *const u8, usize, *const u8, usize);
-        let f: F = unsafe { std::mem::transmute(sym(c"kv_store_delete")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"kv_store_delete")) };
         unsafe {
             f(
                 self.ptr,
@@ -187,7 +181,7 @@ impl Store {
 impl Drop for Store {
     fn drop(&mut self) {
         type F = unsafe extern "C" fn(*mut c_void);
-        let f: F = unsafe { std::mem::transmute(sym(c"kv_store_release")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"kv_store_release")) };
         unsafe { f(self.ptr) };
     }
 }

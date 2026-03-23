@@ -9,6 +9,7 @@ license = "Apache-2.0"
 name = "foundation_models"
 
 [dependencies]
+apple-sys-helpers = { workspace = true }
 libc = "0.2"
 tokio = { version = "1", features = ["rt"], optional = true }
 
@@ -18,3 +19,6 @@ async = ["tokio"]
 
 [dev-dependencies]
 tokio = { version = "1", features = ["full"] }
+
+[lints]
+workspace = true

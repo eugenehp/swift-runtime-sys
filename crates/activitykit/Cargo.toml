@@ -1,5 +1,5 @@
 [package]
-name = "activitykit-rs"
+name = "activitykit"
 description = "Apple ActivityKit — Live Activities and Dynamic Island from Rust"
 version = "0.0.1"
 edition = "2021"
@@ -7,3 +7,9 @@ license = "Apache-2.0"
 
 [lib]
 name = "activitykit"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

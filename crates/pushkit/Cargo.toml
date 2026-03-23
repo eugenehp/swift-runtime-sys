@@ -1,0 +1,15 @@
+[package]
+name = "pushkit"
+description = "Apple PushKit — VoIP and complication push notifications from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "pushkit"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

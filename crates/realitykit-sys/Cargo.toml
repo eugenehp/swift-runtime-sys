@@ -7,3 +7,6 @@ license = "Apache-2.0"
 
 [lib]
 name = "realitykit_sys"
+
+[lints]
+workspace = true

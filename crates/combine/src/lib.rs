@@ -1,5 +1,7 @@
 //! Combine publisher/subscriber bridge from Rust.
 //!
+//! **Platform support:** macOS 10.15+, iOS 13+, tvOS 13+, visionOS 1+, watchOS 6+.
+//!
 //! Provides `Subject` (PassthroughSubject) and `CurrentValue` (CurrentValueSubject)
 //! for reactive event streams between Rust and Swift.
 //!
@@ -15,15 +17,7 @@
 //!
 //! Subscriptions auto-cancel on drop. Subjects auto-release on drop.
 
-use core::ffi::{c_char, c_void};
-
-unsafe extern "C" {
-    fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
-}
-
-fn sym(name: &core::ffi::CStr) -> *const c_void {
-    unsafe { dlsym((-2isize) as *mut c_void, name.as_ptr()) as *const c_void }
-}
+use core::ffi::c_void;
 
 /// A PassthroughSubject<Int> — sends values to subscribers.
 pub struct Subject {
@@ -33,7 +27,7 @@ pub struct Subject {
 impl Subject {
     pub fn new() -> Self {
         type F = unsafe extern "C" fn() -> *mut c_void;
-        let f: F = unsafe { std::mem::transmute(sym(c"combine_subject_create")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"combine_subject_create")) };
         Self {
             ptr: unsafe { f() },
         }
@@ -41,7 +35,7 @@ impl Subject {
 
     pub fn send(&self, value: isize) {
         type F = unsafe extern "C" fn(*mut c_void, isize);
-        let f: F = unsafe { std::mem::transmute(sym(c"combine_subject_send")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"combine_subject_send")) };
         unsafe { f(self.ptr, value) };
     }
 
@@ -57,7 +51,7 @@ impl Subject {
             unsafe extern "C" fn(isize, *mut c_void),
             *mut c_void,
         ) -> *mut c_void;
-        let f: F = unsafe { std::mem::transmute(sym(c"combine_subject_subscribe")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"combine_subject_subscribe")) };
         Subscription {
             ptr: unsafe { f(self.ptr, tramp, ud) },
         }
@@ -67,7 +61,7 @@ impl Subject {
 impl Drop for Subject {
     fn drop(&mut self) {
         type F = unsafe extern "C" fn(*mut c_void);
-        let f: F = unsafe { std::mem::transmute(sym(c"combine_release")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"combine_release")) };
         unsafe { f(self.ptr) };
     }
 }
@@ -80,7 +74,7 @@ pub struct CurrentValue {
 impl CurrentValue {
     pub fn new(initial: isize) -> Self {
         type F = unsafe extern "C" fn(isize) -> *mut c_void;
-        let f: F = unsafe { std::mem::transmute(sym(c"combine_current_value_create")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"combine_current_value_create")) };
         Self {
             ptr: unsafe { f(initial) },
         }
@@ -88,13 +82,13 @@ impl CurrentValue {
 
     pub fn get(&self) -> isize {
         type F = unsafe extern "C" fn(*mut c_void) -> isize;
-        let f: F = unsafe { std::mem::transmute(sym(c"combine_current_value_get")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"combine_current_value_get")) };
         unsafe { f(self.ptr) }
     }
 
     pub fn set(&self, value: isize) {
         type F = unsafe extern "C" fn(*mut c_void, isize);
-        let f: F = unsafe { std::mem::transmute(sym(c"combine_current_value_set")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"combine_current_value_set")) };
         unsafe { f(self.ptr, value) };
     }
 }
@@ -102,7 +96,7 @@ impl CurrentValue {
 impl Drop for CurrentValue {
     fn drop(&mut self) {
         type F = unsafe extern "C" fn(*mut c_void);
-        let f: F = unsafe { std::mem::transmute(sym(c"combine_release")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"combine_release")) };
         unsafe { f(self.ptr) };
     }
 }
@@ -115,7 +109,7 @@ pub struct Subscription {
 impl Drop for Subscription {
     fn drop(&mut self) {
         type F = unsafe extern "C" fn(*mut c_void);
-        let f: F = unsafe { std::mem::transmute(sym(c"combine_cancel")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"combine_cancel")) };
         unsafe { f(self.ptr) };
     }
 }

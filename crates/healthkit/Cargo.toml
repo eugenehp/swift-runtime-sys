@@ -1,0 +1,15 @@
+[package]
+name = "healthkit"
+description = "Apple HealthKit — health and fitness data from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "healthkit"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

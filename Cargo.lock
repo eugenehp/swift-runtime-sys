@@ -3,8 +3,46 @@
 version = 4
 
 [[package]]
-name = "activitykit-rs"
+name = "accessorysetupkit"
 version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "accessorytransportextension"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "activitykit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "adattributionkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "adservices"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "adsupport"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
 
 [[package]]
 name = "aho-corasick"
@@ -13,6 +51,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8e60d3430d3a69478ad0993f19238d2df97c507009a52b3c10addcd7f6bcb916"
 dependencies = [
  "memchr",
+]
+
+[[package]]
+name = "alarmkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
 ]
 
 [[package]]
@@ -66,8 +111,289 @@ dependencies = [
 ]
 
 [[package]]
-name = "appintents-rs"
+name = "appintents"
 version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-accessibility"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-avfoundation"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-clockkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-combine"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-corebluetooth"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-coreml"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-coremotion"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-devicecheck"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-eventkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-fskit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-gamekit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-homekit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-localauthentication"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-matter"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-messages"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-metal"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+ "libc",
+]
+
+[[package]]
+name = "apple-metalkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-network"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-oslog"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-passkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-photos"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-screencapturekit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-spatial"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-symbols"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-sys-helpers"
+version = "0.0.1"
+
+[[package]]
+name = "apple-translation"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-virtualization"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-vision"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apple-weatherkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "appmigrationkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "apptrackingtransparency"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "arkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "assignables"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "authenticationservices"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "automateddeviceenrollment"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "automaticassessmentconfiguration"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "avfaudio"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "avkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "backgroundassets"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "backgroundtasks"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
 
 [[package]]
 name = "bindgen"
@@ -95,10 +421,45 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b048fb63fd8b5923fc5aa7b340d8e156aec7ec02f0c78fa8a6ddc2613f6f71de"
 
 [[package]]
+name = "browserenginecore"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "browserenginekit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "browserkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
 name = "bytes"
 version = "1.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1e748733b7cbc798e1434b6ac524f0c1ff2ab456fe201501e6497c8417a4fc33"
+
+[[package]]
+name = "callkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "carkey"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
 
 [[package]]
 name = "cexpr"
@@ -114,6 +475,13 @@ name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
+
+[[package]]
+name = "cinematic"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
 
 [[package]]
 name = "clang-sys"
@@ -167,20 +535,177 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c8d4a3bb8b1e0c1050499d1815f5ab16d04f0959b233085fb31653fbfc9d98f9"
 
 [[package]]
+name = "cloudkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
 name = "colorchoice"
 version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1d07550c9036bf2ae0c684c4297d503f838287c83c53686d05370d0e139ae570"
 
 [[package]]
-name = "combine-rs"
+name = "compositorservices"
 version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "contactprovider"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "contacts"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "coredata"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "coregraphics"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "corehaptics"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "corehid"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "coreimage"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "corelocation"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "corenfc"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "corespotlight"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "coretext"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "coretransferable"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "createml"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "cryptokit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "cryptotokenkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "datadetection"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "declaredagerange"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "deviceactivity"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "devicediscoveryextension"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "dockkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
 
 [[package]]
 name = "either"
 version = "1.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "60b1af1c220855b6ceac025d3f6ecdd2b7c4894bfe9cd9bda4fbb4bc7c0d4cf0"
+
+[[package]]
+name = "energykit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
 
 [[package]]
 name = "errno"
@@ -193,11 +718,68 @@ dependencies = [
 ]
 
 [[package]]
+name = "extensionkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "familycontrols"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "fileprovider"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "financekit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
 name = "foundation-models"
 version = "0.0.1"
 dependencies = [
+ "apple-sys-helpers",
  "libc",
  "tokio",
+]
+
+[[package]]
+name = "gamecontroller"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "gameplaykit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "gamesave"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "geotoolbox"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
 ]
 
 [[package]]
@@ -207,10 +789,52 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d2fabcfbdc87f4758337ca535fb41a6d701b65693ce38287d856d1674551ec9b"
 
 [[package]]
+name = "groupactivities"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "healthkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
 name = "heck"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
+
+[[package]]
+name = "identitylookup"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "imageplayground"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "immersivemediasupport"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "intents"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
 
 [[package]]
 name = "is_terminal_polyfill"
@@ -234,6 +858,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "92ecc6618181def0457392ccd0ee51198e065e016d1d527a7ac1b6dc7c1f09d2"
 
 [[package]]
+name = "ituneslibrary"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "journalingsuggestions"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
 name = "libc"
 version = "0.2.183"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -250,6 +888,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "linkpresentation"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "livecommunicationkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
 name = "lock_api"
 version = "0.4.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -259,16 +911,100 @@ dependencies = [
 ]
 
 [[package]]
+name = "lockedcameracapture"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
 name = "log"
 version = "0.4.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a7a70ba024b9dc04c27ea2f0c0548feb474ec5c54bba33a7f72f873a39d07b24"
 
 [[package]]
+name = "managedapp"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "managedappdistribution"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "managedsettings"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "mapkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "marketplacekit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "mediaaccessibility"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "mediaextension"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "mediaplayer"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
 name = "memchr"
 version = "2.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "78ca9ab1a0babb1e7d5695e3530886289c18cf2f87ec19a575a0abdce112e3a3"
+
+[[package]]
+name = "messageui"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "metalperformanceshadersgraph"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "metrickit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
 
 [[package]]
 name = "minimal-lexical"
@@ -288,6 +1024,55 @@ dependencies = [
 ]
 
 [[package]]
+name = "mlcompute"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "modelio"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "multipeerconnectivity"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "musickit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "naturallanguage"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "nearbyinteraction"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "networkextension"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
 name = "nom"
 version = "7.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -302,6 +1087,13 @@ name = "once_cell_polyfill"
 version = "1.70.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "384b8ab6d37215f3c5301a95a4accb5d64aa607f1fcb26a11b5303878451b4fe"
+
+[[package]]
+name = "paperkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
 
 [[package]]
 name = "parking_lot"
@@ -324,6 +1116,34 @@ dependencies = [
  "redox_syscall",
  "smallvec",
  "windows-link",
+]
+
+[[package]]
+name = "pdfkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "pencilkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "permissionkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "photosui"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
 ]
 
 [[package]]
@@ -352,12 +1172,60 @@ dependencies = [
 ]
 
 [[package]]
+name = "proximityreader"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "pushkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "quicklook"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "quicklookthumbnailing"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "quicklookui"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
 name = "quote"
 version = "1.0.36"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0fa76aaf39101c457836aec0ce2316dbdc3ab723cdda1c6bd4e6ad4208acaca7"
 dependencies = [
  "proc-macro2",
+]
+
+[[package]]
+name = "raw-window-handle"
+version = "0.6.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "20675572f6f24e9e76ef639bc5552774ed45f1c30e2951e1e99c59888861c539"
+
+[[package]]
+name = "realityfoundation"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
 ]
 
 [[package]]
@@ -410,6 +1278,27 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7a66a03ae7c801facd77a29370b4faec201768915ac14a721ba36f20bc9c209b"
 
 [[package]]
+name = "relevancekit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "replaykit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "roomplan"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
 name = "rustc-hash"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -422,10 +1311,45 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9774ba4a74de5f7b1c1451ed6cd5285a32eddb5cccb8cc655a4e50009e06477f"
 
 [[package]]
+name = "safariservices"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "scenekit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
 name = "scopeguard"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
+
+[[package]]
+name = "secureelementcredential"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "sensitivecontentanalysis"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "sensorkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
 
 [[package]]
 name = "serde"
@@ -457,6 +1381,27 @@ dependencies = [
  "memchr",
  "ryu",
  "serde",
+]
+
+[[package]]
+name = "servicesaccountlinking"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "sharedwithyou"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "shazamkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
 ]
 
 [[package]]
@@ -492,8 +1437,39 @@ dependencies = [
 ]
 
 [[package]]
-name = "spatial-rs"
+name = "soundanalysis"
 version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "speech"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "spritekit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "stickerkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "storekit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
 
 [[package]]
 name = "strsim"
@@ -513,24 +1489,28 @@ dependencies = [
 [[package]]
 name = "swift-charts"
 version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
 
 [[package]]
 name = "swift-data"
 version = "0.0.1"
 dependencies = [
+ "apple-sys-helpers",
  "libc",
 ]
 
 [[package]]
 name = "swift-runtime"
-version = "0.0.3"
+version = "0.0.1"
 dependencies = [
  "swift-runtime-sys",
 ]
 
 [[package]]
 name = "swift-runtime-sys"
-version = "0.0.3"
+version = "0.0.1"
 dependencies = [
  "bindgen",
  "libc",
@@ -539,14 +1519,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "swiftdata"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
 name = "swiftui"
-version = "0.0.3"
+version = "0.0.1"
 dependencies = [
  "libc",
  "swift-runtime",
  "swift-runtime-sys",
  "swiftui-macros",
  "swiftui-sys",
+]
+
+[[package]]
+name = "swiftui-app"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
 ]
 
 [[package]]
@@ -571,6 +1565,27 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "tabulardata"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "telephonymessagingkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "tipkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
 ]
 
 [[package]]
@@ -602,14 +1617,24 @@ dependencies = [
 ]
 
 [[package]]
-name = "translation-rs"
-version = "0.0.1"
-
-[[package]]
 name = "unicode-ident"
 version = "1.0.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3354b9ac3fae1ff6755cb6db53683adb661634f67557942dea4facebec0fee4b"
+
+[[package]]
+name = "uniformtypeidentifiers"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "usernotifications"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
 
 [[package]]
 name = "utf8parse"
@@ -618,14 +1643,59 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
 
 [[package]]
+name = "videosubscriberaccount"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "visionkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "visualintelligence"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
 name = "wasi"
 version = "0.11.1+wasi-snapshot-preview1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ccf3ec651a847eb01de73ccad15eb7d99f80485de043efb2f370cd654f4ea44b"
 
 [[package]]
-name = "widgetkit-rs"
+name = "webkit"
 version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "widgetkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "wifiaware"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "wifiinfrastructure"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
 
 [[package]]
 name = "windows-link"
@@ -705,3 +1775,26 @@ name = "windows_x86_64_msvc"
 version = "0.52.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "589f6da84c646204747d1270a2a5661ea66ed1cced2631d546fdfb155959f9ec"
+
+[[package]]
+name = "winit-swift"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+ "bitflags",
+ "raw-window-handle",
+]
+
+[[package]]
+name = "wirelessinsights"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]
+
+[[package]]
+name = "workoutkit"
+version = "0.0.1"
+dependencies = [
+ "apple-sys-helpers",
+]

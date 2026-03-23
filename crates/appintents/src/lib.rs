@@ -1,5 +1,7 @@
 //! Apple AppIntents — Siri shortcuts and Spotlight integration from Rust.
 //!
+//! **Platform support:** macOS 13+, iOS 16+, tvOS 16+, visionOS 1+, watchOS 9+.
+//!
 //! ```ignore
 //! assert!(appintents::is_available());
 //! ```
@@ -8,22 +10,4 @@
 //! which needs compiler macro support. This crate provides availability
 //! checking and will be extended as the bridge generator supports protocols.
 
-use core::ffi::{c_char, c_void};
-
-unsafe extern "C" {
-    fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
-}
-
-fn sym(name: &core::ffi::CStr) -> *const c_void {
-    unsafe { dlsym((-2isize) as *mut c_void, name.as_ptr()) as *const c_void }
-}
-
-/// Check if AppIntents framework is available.
-pub fn is_available() -> bool {
-    let f = sym(c"appintents_available");
-    if f.is_null() {
-        return false;
-    }
-    type F = unsafe extern "C" fn() -> bool;
-    unsafe { (std::mem::transmute::<_, F>(f))() }
-}
+apple_sys_helpers::apple_framework!(c"appintents_available");

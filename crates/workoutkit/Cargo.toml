@@ -1,0 +1,15 @@
+[package]
+name = "workoutkit"
+description = "Apple WorkoutKit — workout composition from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "workoutkit"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

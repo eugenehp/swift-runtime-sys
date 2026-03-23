@@ -1,0 +1,15 @@
+[package]
+name = "corenfc"
+description = "Apple Core NFC — NFC tag reading and writing from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "corenfc"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

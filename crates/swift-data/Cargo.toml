@@ -9,4 +9,8 @@ license = "Apache-2.0"
 name = "swift_data"
 
 [dependencies]
+apple-sys-helpers = { workspace = true }
 libc = "0.2"
+
+[lints]
+workspace = true

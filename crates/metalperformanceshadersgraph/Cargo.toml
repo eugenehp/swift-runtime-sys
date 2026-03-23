@@ -1,0 +1,15 @@
+[package]
+name = "metalperformanceshadersgraph"
+description = "Apple MPS Graph — GPU machine learning graph operations from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "metalperformanceshadersgraph"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

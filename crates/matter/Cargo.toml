@@ -1,0 +1,15 @@
+[package]
+name = "apple-matter"
+description = "Apple Matter — smart home connectivity from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "matter"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

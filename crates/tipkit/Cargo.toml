@@ -1,0 +1,15 @@
+[package]
+name = "tipkit"
+description = "Apple TipKit — in-app tips and hints from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "tipkit"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

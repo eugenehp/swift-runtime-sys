@@ -1,0 +1,15 @@
+[package]
+name = "apple-oslog"
+description = "Apple OSLog — unified logging from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "oslog"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

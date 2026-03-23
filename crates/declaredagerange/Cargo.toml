@@ -1,0 +1,15 @@
+[package]
+name = "declaredagerange"
+description = "Apple DeclaredAgeRange — age range declaration from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "declaredagerange"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

@@ -1,0 +1,15 @@
+[package]
+name = "livecommunicationkit"
+description = "Apple LiveCommunicationKit — live calling from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "livecommunicationkit"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

@@ -41,6 +41,11 @@ struct Cli {
     /// Skip types matching these prefixes
     #[arg(long)]
     skip_prefix: Option<String>,
+
+    /// Target platform for the API dump (macos, ios, tvos, xros).
+    /// Controls which SDK and triple to use with swift-api-digester.
+    #[arg(long, default_value = "macos")]
+    platform: String,
 }
 
 fn main() {
@@ -96,12 +101,33 @@ fn main() {
         })
         .collect();
 
-    println!("Generating for {} types", filtered.len());
+    println!("Generating for {} types (platform: {})", filtered.len(), cli.platform);
 
     std::fs::create_dir_all(&cli.output_dir).unwrap();
 
     let swift_code = swift_gen::generate_swift(module_name, &filtered);
     let rust_code = rust_gen::generate_rust(module_name, &filtered);
+
+    // Generate platform cfg guard for the Rust module
+    let platform_cfg = match cli.platform.as_str() {
+        "ios" => format!(
+            "// This module was generated for iOS.\n\
+             #[cfg(not(any(target_os = \"ios\", target_os = \"macos\")))]\n\
+             compile_error!(\"This generated module targets iOS.\");\n\n"
+        ),
+        "tvos" => format!(
+            "// This module was generated for tvOS.\n\
+             #[cfg(not(target_os = \"tvos\"))]\n\
+             compile_error!(\"This generated module targets tvOS.\");\n\n"
+        ),
+        "xros" | "visionos" => format!(
+            "// This module was generated for visionOS.\n\
+             #[cfg(not(target_os = \"xros\"))]\n\
+             compile_error!(\"This generated module targets visionOS.\");\n\n"
+        ),
+        _ => String::new(), // macOS is the default, no guard needed
+    };
+    let rust_code = format!("{platform_cfg}{rust_code}");
 
     let swift_path = cli.output_dir.join(format!("{module_name}Bridge.swift"));
     let rust_path = cli

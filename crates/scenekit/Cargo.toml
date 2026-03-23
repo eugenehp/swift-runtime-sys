@@ -1,0 +1,15 @@
+[package]
+name = "scenekit"
+description = "Apple SceneKit — 3D rendering from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "scenekit"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

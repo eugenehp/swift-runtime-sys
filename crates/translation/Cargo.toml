@@ -1,5 +1,5 @@
 [package]
-name = "translation-rs"
+name = "apple-translation"
 description = "Apple Translation framework — on-device text translation from Rust"
 version = "0.0.1"
 edition = "2021"
@@ -7,3 +7,9 @@ license = "Apache-2.0"
 
 [lib]
 name = "translation"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

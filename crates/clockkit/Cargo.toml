@@ -1,0 +1,15 @@
+[package]
+name = "apple-clockkit"
+description = "Apple ClockKit — watchOS complications from Rust (deprecated)"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "clockkit"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

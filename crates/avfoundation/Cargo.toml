@@ -1,0 +1,15 @@
+[package]
+name = "apple-avfoundation"
+description = "Apple AVFoundation — media capture, playback, and editing from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "avfoundation"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

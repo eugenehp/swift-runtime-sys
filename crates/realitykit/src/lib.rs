@@ -1,5 +1,7 @@
 //! Ergonomic RealityKit 3D scene builder from Rust.
 //!
+//! **Platform support:** macOS 12+, iOS 15+, visionOS 1+ (not available on tvOS or watchOS).
+//!
 //! ```ignore
 //! use realitykit::prelude::*;
 //!
@@ -24,6 +26,9 @@
 //!     .add(&floor)
 //!     .add(&light);
 //! ```
+
+// Note: RealityKit is available on macOS 12+, iOS 15+, visionOS 1+.
+// On tvOS/watchOS, loading will fail at runtime.
 
 use core::ffi::c_void;
 use std::rc::Rc;

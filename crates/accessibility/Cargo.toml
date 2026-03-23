@@ -1,0 +1,15 @@
+[package]
+name = "apple-accessibility"
+description = "Apple Accessibility — assistive technology support from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "accessibility"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

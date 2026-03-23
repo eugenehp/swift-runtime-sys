@@ -1,0 +1,15 @@
+[package]
+name = "quicklookui"
+description = "Apple QuickLookUI — QuickLook preview panel from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "quicklookui"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

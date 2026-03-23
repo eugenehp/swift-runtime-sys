@@ -1,0 +1,15 @@
+[package]
+name = "visionkit"
+description = "Apple VisionKit — document scanning and visual lookup from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "visionkit"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

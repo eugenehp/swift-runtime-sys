@@ -1,0 +1,15 @@
+[package]
+name = "speech"
+description = "Apple Speech — speech recognition from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "speech"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

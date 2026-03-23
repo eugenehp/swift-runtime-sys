@@ -1,4 +1,4 @@
-//! App initialization helpers — cross-platform (macOS + iOS).
+//! App initialization helpers — cross-platform (macOS, iOS, tvOS, visionOS).
 
 #[cfg(target_os = "macos")]
 #[link(name = "AppKit", kind = "framework")]
@@ -10,9 +10,17 @@ unsafe extern "C" {
 #[link(name = "UIKit", kind = "framework")]
 extern "C" {}
 
+#[cfg(target_os = "tvos")]
+#[link(name = "UIKit", kind = "framework")]
+extern "C" {}
+
+#[cfg(target_os = "xros")]
+#[link(name = "UIKit", kind = "framework")]
+extern "C" {}
+
 /// Initialize the platform app runtime.
 /// - macOS: calls `NSApplicationLoad()`
-/// - iOS: no-op (UIKit manages the lifecycle)
+/// - iOS/tvOS/visionOS: no-op (UIKit manages the lifecycle)
 pub fn init_app() {
     #[cfg(target_os = "macos")]
     unsafe {

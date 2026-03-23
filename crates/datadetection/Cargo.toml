@@ -1,0 +1,15 @@
+[package]
+name = "datadetection"
+description = "Apple DataDetection — structured data extraction from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "datadetection"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

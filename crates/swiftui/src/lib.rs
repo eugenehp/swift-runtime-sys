@@ -1,5 +1,7 @@
 //! Build and display SwiftUI views from Rust.
 //!
+//! **Platform support:** macOS 14+, iOS 17+, tvOS 17+, visionOS 1+.
+//!
 //! # Quick start
 //!
 //! ```ignore
@@ -15,6 +17,17 @@
 //!     ].padding(16).bg(Color::DARKER)
 //! );
 //! ```
+//!
+//! # Platform notes
+//!
+//! - **macOS**: Uses `NSApplicationLoad()` for initialization, supports
+//!   titlebar customization, dock icon hiding, and vibrancy materials.
+//! - **iOS**: UIKit manages the app lifecycle; use in an Xcode project
+//!   with a Swift `@main` entry point that delegates to Rust.
+//! - **tvOS**: Focus-based navigation; `button()` and `list()` respond
+//!   to the Siri Remote. Touch gestures are not available.
+//! - **visionOS**: Supports volumetric windows and immersive spaces via
+//!   `WindowStyle::Volumetric` and `WindowStyle::ImmersiveSpace`.
 
 mod app;
 pub mod canvas;

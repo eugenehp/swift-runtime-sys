@@ -1,0 +1,21 @@
+[package]
+name = "apple-metal"
+description = "Apple Metal — GPU programming from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+keywords = ["metal", "gpu", "compute", "graphics", "apple"]
+
+[lib]
+name = "metal"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+libc = "0.2"
+
+[[example]]
+name = "gpu_compute"
+path = "examples/gpu_compute.rs"
+
+[lints]
+workspace = true

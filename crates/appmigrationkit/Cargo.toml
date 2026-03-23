@@ -1,0 +1,15 @@
+[package]
+name = "appmigrationkit"
+description = "Apple AppMigrationKit — app migration utilities from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "appmigrationkit"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

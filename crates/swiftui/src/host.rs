@@ -1,6 +1,11 @@
 //! Host container configuration.
 //!
-//! Configure the app window before launching.
+//! **Platform support:** macOS, iOS, tvOS, visionOS.
+//!
+//! Configure the app window before launching. Some options are
+//! macOS-only (titlebar, dock icon, vibrancy) and are gated with
+//! `#[cfg(target_os = "macos")]`. On visionOS, windows are volumetric
+//! by default; use `window_style(WindowStyle::Volumetric)` for 3D content.
 //!
 //! ```ignore
 //! use swiftui::prelude::*;
@@ -36,10 +41,14 @@ pub enum WindowStyle {
     Borderless = 1,
     /// Full screen.
     Fullscreen = 2,
-    /// Floating above other windows.
+    /// Floating above other windows (macOS only).
     Floating = 3,
     /// Transparent background, no chrome.
     Transparent = 4,
+    /// Volumetric window for 3D content (visionOS only).
+    Volumetric = 5,
+    /// Immersive space (visionOS only — full immersion).
+    ImmersiveSpace = 6,
 }
 
 /// Background material (macOS vibrancy).

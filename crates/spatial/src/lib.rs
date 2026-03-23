@@ -1,5 +1,7 @@
 //! Apple Spatial framework — 3D math types from Rust.
 //!
+//! **Platform support:** visionOS 1+, macOS 15+, iOS 18+ (not available on tvOS or watchOS).
+//!
 //! Provides Point3D, Rotation3D, Pose3D, Ray3D, and AffineTransform3D
 //! backed by Apple's Spatial framework for visionOS-compatible math.
 //!
@@ -14,15 +16,10 @@
 //! let pose = Pose3D::new(a, rot);
 //! ```
 
-use core::ffi::{c_char, c_void};
+// Note: The Apple Spatial framework is available on macOS 15+, iOS 18+, visionOS 1+.
+// On tvOS/watchOS, the pure Rust math types still work but FFI calls to the
+// framework will return fallback values.
 
-unsafe extern "C" {
-    fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
-}
-
-fn sym(name: &core::ffi::CStr) -> *const c_void {
-    unsafe { dlsym((-2isize) as *mut c_void, name.as_ptr()) as *const c_void }
-}
 
 /// A 3D point.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -41,7 +38,7 @@ impl Point3D {
     }
     pub fn distance_to(&self, other: &Point3D) -> f64 {
         type F = unsafe extern "C" fn(f64, f64, f64, f64, f64, f64) -> f64;
-        let f: F = unsafe { std::mem::transmute(sym(c"spatial_point3d_distance")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"spatial_point3d_distance")) };
         unsafe { f(self.x, self.y, self.z, other.x, other.y, other.z) }
     }
 }
@@ -67,7 +64,7 @@ impl Rotation3D {
 
     pub fn from_axis_angle(ax: f64, ay: f64, az: f64, angle_radians: f64) -> Self {
         type F = unsafe extern "C" fn(f64, f64, f64, f64, *mut f64);
-        let f: F = unsafe { std::mem::transmute(sym(c"spatial_rotation3d_from_axis_angle")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"spatial_rotation3d_from_axis_angle")) };
         let mut out = [0.0f64; 4];
         unsafe { f(ax, ay, az, angle_radians, out.as_mut_ptr()) };
         Self {
@@ -80,7 +77,7 @@ impl Rotation3D {
 
     pub fn from_euler(pitch: f64, yaw: f64, roll: f64) -> Self {
         type F = unsafe extern "C" fn(f64, f64, f64, *mut f64);
-        let f: F = unsafe { std::mem::transmute(sym(c"spatial_rotation3d_from_euler")) };
+        let f: F = unsafe { std::mem::transmute(apple_sys_helpers::sym(c"spatial_rotation3d_from_euler")) };
         let mut out = [0.0f64; 4];
         unsafe { f(pitch, yaw, roll, out.as_mut_ptr()) };
         Self {

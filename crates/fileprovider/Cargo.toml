@@ -1,0 +1,15 @@
+[package]
+name = "fileprovider"
+description = "Apple FileProvider — file sync from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "fileprovider"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

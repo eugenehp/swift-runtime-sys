@@ -1,5 +1,7 @@
 //! Swift Charts — data visualization from Rust.
 //!
+//! **Platform support:** macOS 13+, iOS 16+, tvOS 16+, visionOS 1+, watchOS 9+.
+//!
 //! ```ignore
 //! use swift_charts::*;
 //!
@@ -11,17 +13,9 @@
 //!
 //! Returns SwiftUI `ViewHandle`s — embed in any SwiftUI layout.
 
-use core::ffi::{c_char, c_void};
+use core::ffi::c_void;
 
 pub type Handle = *mut c_void;
-
-unsafe extern "C" {
-    fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
-}
-
-fn sym(name: &core::ffi::CStr) -> *const c_void {
-    unsafe { dlsym((-2isize) as *mut c_void, name.as_ptr()) as *const c_void }
-}
 
 /// A chart view that can be modified with size, labels, etc.
 pub struct Chart {
@@ -31,7 +25,7 @@ pub struct Chart {
 impl Chart {
     /// Set chart frame size.
     pub fn size(self, width: f32, height: f32) -> Self {
-        let f = sym(c"charts_frame");
+        let f = apple_sys_helpers::sym(c"charts_frame");
         if f.is_null() {
             return self;
         }
@@ -43,7 +37,7 @@ impl Chart {
 
     /// Set X axis label.
     pub fn x_label(self, label: &str) -> Self {
-        let f = sym(c"charts_x_label");
+        let f = apple_sys_helpers::sym(c"charts_x_label");
         if f.is_null() {
             return self;
         }
@@ -57,7 +51,7 @@ impl Chart {
 
     /// Set Y axis label.
     pub fn y_label(self, label: &str) -> Self {
-        let f = sym(c"charts_y_label");
+        let f = apple_sys_helpers::sym(c"charts_y_label");
         if f.is_null() {
             return self;
         }
@@ -76,7 +70,7 @@ impl Chart {
 }
 
 fn build_chart(sym_name: &core::ffi::CStr, data: &[(&str, f64)]) -> Chart {
-    let f = sym(sym_name);
+    let f = apple_sys_helpers::sym(sym_name);
     assert!(!f.is_null(), "Charts framework not available");
     let labels: Vec<*const u8> = data.iter().map(|(l, _)| l.as_ptr()).collect();
     let lens: Vec<usize> = data.iter().map(|(l, _)| l.len()).collect();
@@ -115,7 +109,7 @@ pub fn point_chart(data: &[(&str, f64)]) -> Chart {
 
 /// Create a pie chart (or donut with inner_radius > 0).
 pub fn pie_chart(data: &[(&str, f64)], inner_radius: f32) -> Chart {
-    let f = sym(c"charts_pie");
+    let f = apple_sys_helpers::sym(c"charts_pie");
     assert!(!f.is_null(), "Charts framework not available");
     let labels: Vec<*const u8> = data.iter().map(|(l, _)| l.as_ptr()).collect();
     let lens: Vec<usize> = data.iter().map(|(l, _)| l.len()).collect();

@@ -1,0 +1,50 @@
+[package]
+name = "winit-swift"
+description = "Drop-in winit replacement with full Apple platform support — visionOS, Metal, RealityKit, haptics, accessibility"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+keywords = ["winit", "window", "metal", "visionos", "realitykit"]
+
+[lib]
+name = "winit_swift"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+raw-window-handle = "0.6"
+bitflags = "2"
+
+[[example]]
+name = "window"
+path = "examples/window.rs"
+
+[[example]]
+name = "metal_triangle"
+path = "examples/metal_triangle.rs"
+
+[[example]]
+name = "visionos_immersive"
+path = "examples/visionos_immersive.rs"
+
+[[example]]
+name = "realitykit_scene"
+path = "examples/realitykit_scene.rs"
+
+[[example]]
+name = "haptics"
+path = "examples/haptics.rs"
+
+[[example]]
+name = "winit_compat"
+path = "examples/winit_compat.rs"
+
+[[example]]
+name = "visionos_app"
+path = "examples/visionos_app.rs"
+
+[[example]]
+name = "sil_app"
+path = "examples/sil_app.rs"
+
+[lints]
+workspace = true

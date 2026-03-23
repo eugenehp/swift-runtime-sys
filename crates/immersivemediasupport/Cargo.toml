@@ -1,0 +1,15 @@
+[package]
+name = "immersivemediasupport"
+description = "Apple ImmersiveMediaSupport — immersive media playback from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "immersivemediasupport"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

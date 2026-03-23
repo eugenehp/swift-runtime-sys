@@ -1,0 +1,15 @@
+[package]
+name = "extensionkit"
+description = "Apple ExtensionKit — app extensions from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "extensionkit"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

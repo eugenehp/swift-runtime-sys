@@ -1,13 +1,16 @@
 [package]
 name = "swift-runtime-sys"
 description = "Raw FFI bindings to the Swift Runtime"
-version = "0.0.3"
+version = "0.0.1"
 edition = "2021"
 license = "Apache-2.0"
 repository = "https://github.com/eugenehp/swift-runtime-sys"
 keywords = ["swift", "runtime", "sys", "bindings", "ffi"]
 readme = "../../README.md"
 exclude = ["swift"]
+
+[lints]
+workspace = true
 
 [lib]
 name = "swift_runtime_sys"

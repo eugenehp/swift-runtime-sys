@@ -1,5 +1,5 @@
 [package]
-name = "widgetkit-rs"
+name = "widgetkit"
 description = "Apple WidgetKit — reload widget timelines from Rust"
 version = "0.0.1"
 edition = "2021"
@@ -7,3 +7,9 @@ license = "Apache-2.0"
 
 [lib]
 name = "widgetkit"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

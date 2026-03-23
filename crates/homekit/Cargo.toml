@@ -1,0 +1,15 @@
+[package]
+name = "apple-homekit"
+description = "Apple HomeKit — smart home control from Rust"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "homekit"
+
+[dependencies]
+apple-sys-helpers = { workspace = true }
+
+[lints]
+workspace = true

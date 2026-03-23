@@ -1,6 +1,11 @@
 //! Raw FFI bindings to RealityKit via a Swift @_cdecl bridge.
+//!
+//! **Platform support:** macOS 12+, iOS 15+, visionOS 1+ (not available on tvOS or watchOS).
 
 #![allow(non_snake_case, dead_code)]
+
+// Note: RealityKit is available on macOS 12+, iOS 15+, visionOS 1+.
+// On tvOS/watchOS, all symbols will be null and operations will be no-ops.
 
 use core::ffi::{c_char, c_void};
 use std::ffi::CString;
