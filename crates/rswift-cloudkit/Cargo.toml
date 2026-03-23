@@ -1,0 +1,15 @@
+[package]
+name = "rswift-cloudkit"
+description = "Alias for cloudkit — re-exports the cloudkit crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_cloudkit"
+
+[dependencies]
+cloudkit = { path = "../cloudkit" }
+
+[lints]
+workspace = true

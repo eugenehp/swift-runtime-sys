@@ -1109,10 +1109,185 @@ dependencies = [
 ]
 
 [[package]]
+name = "rswift-accessorysetupkit"
+version = "0.0.1"
+dependencies = [
+ "accessorysetupkit",
+]
+
+[[package]]
+name = "rswift-accessorytransportextension"
+version = "0.0.1"
+dependencies = [
+ "accessorytransportextension",
+]
+
+[[package]]
+name = "rswift-activitykit"
+version = "0.0.1"
+dependencies = [
+ "activitykit",
+]
+
+[[package]]
+name = "rswift-adattributionkit"
+version = "0.0.1"
+dependencies = [
+ "adattributionkit",
+]
+
+[[package]]
+name = "rswift-adservices"
+version = "0.0.1"
+dependencies = [
+ "adservices",
+]
+
+[[package]]
+name = "rswift-adsupport"
+version = "0.0.1"
+dependencies = [
+ "adsupport",
+]
+
+[[package]]
+name = "rswift-alarmkit"
+version = "0.0.1"
+dependencies = [
+ "alarmkit",
+]
+
+[[package]]
+name = "rswift-appintents"
+version = "0.0.1"
+dependencies = [
+ "appintents",
+]
+
+[[package]]
+name = "rswift-appmigrationkit"
+version = "0.0.1"
+dependencies = [
+ "appmigrationkit",
+]
+
+[[package]]
+name = "rswift-apptrackingtransparency"
+version = "0.0.1"
+dependencies = [
+ "apptrackingtransparency",
+]
+
+[[package]]
+name = "rswift-arkit"
+version = "0.0.1"
+dependencies = [
+ "arkit",
+]
+
+[[package]]
+name = "rswift-assignables"
+version = "0.0.1"
+dependencies = [
+ "assignables",
+]
+
+[[package]]
+name = "rswift-authenticationservices"
+version = "0.0.1"
+dependencies = [
+ "authenticationservices",
+]
+
+[[package]]
+name = "rswift-automateddeviceenrollment"
+version = "0.0.1"
+dependencies = [
+ "automateddeviceenrollment",
+]
+
+[[package]]
+name = "rswift-automaticassessmentconfiguration"
+version = "0.0.1"
+dependencies = [
+ "automaticassessmentconfiguration",
+]
+
+[[package]]
+name = "rswift-avfaudio"
+version = "0.0.1"
+dependencies = [
+ "avfaudio",
+]
+
+[[package]]
 name = "rswift-avfoundation"
 version = "0.0.1"
 dependencies = [
  "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-avkit"
+version = "0.0.1"
+dependencies = [
+ "avkit",
+]
+
+[[package]]
+name = "rswift-backgroundassets"
+version = "0.0.1"
+dependencies = [
+ "backgroundassets",
+]
+
+[[package]]
+name = "rswift-backgroundtasks"
+version = "0.0.1"
+dependencies = [
+ "backgroundtasks",
+]
+
+[[package]]
+name = "rswift-browserenginecore"
+version = "0.0.1"
+dependencies = [
+ "browserenginecore",
+]
+
+[[package]]
+name = "rswift-browserenginekit"
+version = "0.0.1"
+dependencies = [
+ "browserenginekit",
+]
+
+[[package]]
+name = "rswift-browserkit"
+version = "0.0.1"
+dependencies = [
+ "browserkit",
+]
+
+[[package]]
+name = "rswift-callkit"
+version = "0.0.1"
+dependencies = [
+ "callkit",
+]
+
+[[package]]
+name = "rswift-carkey"
+version = "0.0.1"
+dependencies = [
+ "carkey",
+]
+
+[[package]]
+name = "rswift-cinematic"
+version = "0.0.1"
+dependencies = [
+ "cinematic",
 ]
 
 [[package]]
@@ -1123,6 +1298,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "rswift-cloudkit"
+version = "0.0.1"
+dependencies = [
+ "cloudkit",
+]
+
+[[package]]
 name = "rswift-combine"
 version = "0.0.1"
 dependencies = [
@@ -1130,10 +1312,73 @@ dependencies = [
 ]
 
 [[package]]
+name = "rswift-compositorservices"
+version = "0.0.1"
+dependencies = [
+ "compositorservices",
+]
+
+[[package]]
+name = "rswift-contactprovider"
+version = "0.0.1"
+dependencies = [
+ "contactprovider",
+]
+
+[[package]]
+name = "rswift-contacts"
+version = "0.0.1"
+dependencies = [
+ "contacts",
+]
+
+[[package]]
 name = "rswift-corebluetooth"
 version = "0.0.1"
 dependencies = [
  "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-coredata"
+version = "0.0.1"
+dependencies = [
+ "coredata",
+]
+
+[[package]]
+name = "rswift-coregraphics"
+version = "0.0.1"
+dependencies = [
+ "coregraphics",
+]
+
+[[package]]
+name = "rswift-corehaptics"
+version = "0.0.1"
+dependencies = [
+ "corehaptics",
+]
+
+[[package]]
+name = "rswift-corehid"
+version = "0.0.1"
+dependencies = [
+ "corehid",
+]
+
+[[package]]
+name = "rswift-coreimage"
+version = "0.0.1"
+dependencies = [
+ "coreimage",
+]
+
+[[package]]
+name = "rswift-corelocation"
+version = "0.0.1"
+dependencies = [
+ "corelocation",
 ]
 
 [[package]]
@@ -1151,10 +1396,101 @@ dependencies = [
 ]
 
 [[package]]
+name = "rswift-corenfc"
+version = "0.0.1"
+dependencies = [
+ "corenfc",
+]
+
+[[package]]
+name = "rswift-corespotlight"
+version = "0.0.1"
+dependencies = [
+ "corespotlight",
+]
+
+[[package]]
+name = "rswift-coretext"
+version = "0.0.1"
+dependencies = [
+ "coretext",
+]
+
+[[package]]
+name = "rswift-coretransferable"
+version = "0.0.1"
+dependencies = [
+ "coretransferable",
+]
+
+[[package]]
+name = "rswift-createml"
+version = "0.0.1"
+dependencies = [
+ "createml",
+]
+
+[[package]]
+name = "rswift-cryptokit"
+version = "0.0.1"
+dependencies = [
+ "cryptokit",
+]
+
+[[package]]
+name = "rswift-cryptotokenkit"
+version = "0.0.1"
+dependencies = [
+ "cryptotokenkit",
+]
+
+[[package]]
+name = "rswift-datadetection"
+version = "0.0.1"
+dependencies = [
+ "datadetection",
+]
+
+[[package]]
+name = "rswift-declaredagerange"
+version = "0.0.1"
+dependencies = [
+ "declaredagerange",
+]
+
+[[package]]
+name = "rswift-deviceactivity"
+version = "0.0.1"
+dependencies = [
+ "deviceactivity",
+]
+
+[[package]]
 name = "rswift-devicecheck"
 version = "0.0.1"
 dependencies = [
  "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-devicediscoveryextension"
+version = "0.0.1"
+dependencies = [
+ "devicediscoveryextension",
+]
+
+[[package]]
+name = "rswift-dockkit"
+version = "0.0.1"
+dependencies = [
+ "dockkit",
+]
+
+[[package]]
+name = "rswift-energykit"
+version = "0.0.1"
+dependencies = [
+ "energykit",
 ]
 
 [[package]]
@@ -1165,10 +1501,52 @@ dependencies = [
 ]
 
 [[package]]
+name = "rswift-extensionkit"
+version = "0.0.1"
+dependencies = [
+ "extensionkit",
+]
+
+[[package]]
+name = "rswift-familycontrols"
+version = "0.0.1"
+dependencies = [
+ "familycontrols",
+]
+
+[[package]]
+name = "rswift-fileprovider"
+version = "0.0.1"
+dependencies = [
+ "fileprovider",
+]
+
+[[package]]
+name = "rswift-financekit"
+version = "0.0.1"
+dependencies = [
+ "financekit",
+]
+
+[[package]]
+name = "rswift-foundation-models"
+version = "0.0.1"
+dependencies = [
+ "foundation-models",
+]
+
+[[package]]
 name = "rswift-fskit"
 version = "0.0.1"
 dependencies = [
  "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-gamecontroller"
+version = "0.0.1"
+dependencies = [
+ "gamecontroller",
 ]
 
 [[package]]
@@ -1179,10 +1557,101 @@ dependencies = [
 ]
 
 [[package]]
+name = "rswift-gameplaykit"
+version = "0.0.1"
+dependencies = [
+ "gameplaykit",
+]
+
+[[package]]
+name = "rswift-gamesave"
+version = "0.0.1"
+dependencies = [
+ "gamesave",
+]
+
+[[package]]
+name = "rswift-geotoolbox"
+version = "0.0.1"
+dependencies = [
+ "geotoolbox",
+]
+
+[[package]]
+name = "rswift-groupactivities"
+version = "0.0.1"
+dependencies = [
+ "groupactivities",
+]
+
+[[package]]
+name = "rswift-healthkit"
+version = "0.0.1"
+dependencies = [
+ "healthkit",
+]
+
+[[package]]
 name = "rswift-homekit"
 version = "0.0.1"
 dependencies = [
  "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-identitylookup"
+version = "0.0.1"
+dependencies = [
+ "identitylookup",
+]
+
+[[package]]
+name = "rswift-imageplayground"
+version = "0.0.1"
+dependencies = [
+ "imageplayground",
+]
+
+[[package]]
+name = "rswift-immersivemediasupport"
+version = "0.0.1"
+dependencies = [
+ "immersivemediasupport",
+]
+
+[[package]]
+name = "rswift-intents"
+version = "0.0.1"
+dependencies = [
+ "intents",
+]
+
+[[package]]
+name = "rswift-ituneslibrary"
+version = "0.0.1"
+dependencies = [
+ "ituneslibrary",
+]
+
+[[package]]
+name = "rswift-journalingsuggestions"
+version = "0.0.1"
+dependencies = [
+ "journalingsuggestions",
+]
+
+[[package]]
+name = "rswift-linkpresentation"
+version = "0.0.1"
+dependencies = [
+ "linkpresentation",
+]
+
+[[package]]
+name = "rswift-livecommunicationkit"
+version = "0.0.1"
+dependencies = [
+ "livecommunicationkit",
 ]
 
 [[package]]
@@ -1193,6 +1662,48 @@ dependencies = [
 ]
 
 [[package]]
+name = "rswift-lockedcameracapture"
+version = "0.0.1"
+dependencies = [
+ "lockedcameracapture",
+]
+
+[[package]]
+name = "rswift-managedapp"
+version = "0.0.1"
+dependencies = [
+ "managedapp",
+]
+
+[[package]]
+name = "rswift-managedappdistribution"
+version = "0.0.1"
+dependencies = [
+ "managedappdistribution",
+]
+
+[[package]]
+name = "rswift-managedsettings"
+version = "0.0.1"
+dependencies = [
+ "managedsettings",
+]
+
+[[package]]
+name = "rswift-mapkit"
+version = "0.0.1"
+dependencies = [
+ "mapkit",
+]
+
+[[package]]
+name = "rswift-marketplacekit"
+version = "0.0.1"
+dependencies = [
+ "marketplacekit",
+]
+
+[[package]]
 name = "rswift-matter"
 version = "0.0.1"
 dependencies = [
@@ -1200,10 +1711,38 @@ dependencies = [
 ]
 
 [[package]]
+name = "rswift-mediaaccessibility"
+version = "0.0.1"
+dependencies = [
+ "mediaaccessibility",
+]
+
+[[package]]
+name = "rswift-mediaextension"
+version = "0.0.1"
+dependencies = [
+ "mediaextension",
+]
+
+[[package]]
+name = "rswift-mediaplayer"
+version = "0.0.1"
+dependencies = [
+ "mediaplayer",
+]
+
+[[package]]
 name = "rswift-messages"
 version = "0.0.1"
 dependencies = [
  "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-messageui"
+version = "0.0.1"
+dependencies = [
+ "messageui",
 ]
 
 [[package]]
@@ -1222,10 +1761,73 @@ dependencies = [
 ]
 
 [[package]]
+name = "rswift-metalperformanceshadersgraph"
+version = "0.0.1"
+dependencies = [
+ "metalperformanceshadersgraph",
+]
+
+[[package]]
+name = "rswift-metrickit"
+version = "0.0.1"
+dependencies = [
+ "metrickit",
+]
+
+[[package]]
+name = "rswift-mlcompute"
+version = "0.0.1"
+dependencies = [
+ "mlcompute",
+]
+
+[[package]]
+name = "rswift-modelio"
+version = "0.0.1"
+dependencies = [
+ "modelio",
+]
+
+[[package]]
+name = "rswift-multipeerconnectivity"
+version = "0.0.1"
+dependencies = [
+ "multipeerconnectivity",
+]
+
+[[package]]
+name = "rswift-musickit"
+version = "0.0.1"
+dependencies = [
+ "musickit",
+]
+
+[[package]]
+name = "rswift-naturallanguage"
+version = "0.0.1"
+dependencies = [
+ "naturallanguage",
+]
+
+[[package]]
+name = "rswift-nearbyinteraction"
+version = "0.0.1"
+dependencies = [
+ "nearbyinteraction",
+]
+
+[[package]]
 name = "rswift-network"
 version = "0.0.1"
 dependencies = [
  "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-networkextension"
+version = "0.0.1"
+dependencies = [
+ "networkextension",
 ]
 
 [[package]]
@@ -1236,10 +1838,38 @@ dependencies = [
 ]
 
 [[package]]
+name = "rswift-paperkit"
+version = "0.0.1"
+dependencies = [
+ "paperkit",
+]
+
+[[package]]
 name = "rswift-passkit"
 version = "0.0.1"
 dependencies = [
  "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-pdfkit"
+version = "0.0.1"
+dependencies = [
+ "pdfkit",
+]
+
+[[package]]
+name = "rswift-pencilkit"
+version = "0.0.1"
+dependencies = [
+ "pencilkit",
+]
+
+[[package]]
+name = "rswift-permissionkit"
+version = "0.0.1"
+dependencies = [
+ "permissionkit",
 ]
 
 [[package]]
@@ -1250,10 +1880,157 @@ dependencies = [
 ]
 
 [[package]]
+name = "rswift-photosui"
+version = "0.0.1"
+dependencies = [
+ "photosui",
+]
+
+[[package]]
+name = "rswift-proximityreader"
+version = "0.0.1"
+dependencies = [
+ "proximityreader",
+]
+
+[[package]]
+name = "rswift-pushkit"
+version = "0.0.1"
+dependencies = [
+ "pushkit",
+]
+
+[[package]]
+name = "rswift-quicklook"
+version = "0.0.1"
+dependencies = [
+ "quicklook",
+]
+
+[[package]]
+name = "rswift-quicklookthumbnailing"
+version = "0.0.1"
+dependencies = [
+ "quicklookthumbnailing",
+]
+
+[[package]]
+name = "rswift-quicklookui"
+version = "0.0.1"
+dependencies = [
+ "quicklookui",
+]
+
+[[package]]
+name = "rswift-realityfoundation"
+version = "0.0.1"
+dependencies = [
+ "realityfoundation",
+]
+
+[[package]]
+name = "rswift-realitykit"
+version = "0.0.1"
+dependencies = [
+ "realitykit",
+]
+
+[[package]]
+name = "rswift-realitykit-sys"
+version = "0.0.1"
+dependencies = [
+ "realitykit-sys",
+]
+
+[[package]]
+name = "rswift-relevancekit"
+version = "0.0.1"
+dependencies = [
+ "relevancekit",
+]
+
+[[package]]
+name = "rswift-replaykit"
+version = "0.0.1"
+dependencies = [
+ "replaykit",
+]
+
+[[package]]
+name = "rswift-roomplan"
+version = "0.0.1"
+dependencies = [
+ "roomplan",
+]
+
+[[package]]
+name = "rswift-safariservices"
+version = "0.0.1"
+dependencies = [
+ "safariservices",
+]
+
+[[package]]
+name = "rswift-scenekit"
+version = "0.0.1"
+dependencies = [
+ "scenekit",
+]
+
+[[package]]
 name = "rswift-screencapturekit"
 version = "0.0.1"
 dependencies = [
  "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-secureelementcredential"
+version = "0.0.1"
+dependencies = [
+ "secureelementcredential",
+]
+
+[[package]]
+name = "rswift-sensitivecontentanalysis"
+version = "0.0.1"
+dependencies = [
+ "sensitivecontentanalysis",
+]
+
+[[package]]
+name = "rswift-sensorkit"
+version = "0.0.1"
+dependencies = [
+ "sensorkit",
+]
+
+[[package]]
+name = "rswift-servicesaccountlinking"
+version = "0.0.1"
+dependencies = [
+ "servicesaccountlinking",
+]
+
+[[package]]
+name = "rswift-sharedwithyou"
+version = "0.0.1"
+dependencies = [
+ "sharedwithyou",
+]
+
+[[package]]
+name = "rswift-shazamkit"
+version = "0.0.1"
+dependencies = [
+ "shazamkit",
+]
+
+[[package]]
+name = "rswift-soundanalysis"
+version = "0.0.1"
+dependencies = [
+ "soundanalysis",
 ]
 
 [[package]]
@@ -1264,6 +2041,97 @@ dependencies = [
 ]
 
 [[package]]
+name = "rswift-speech"
+version = "0.0.1"
+dependencies = [
+ "speech",
+]
+
+[[package]]
+name = "rswift-spritekit"
+version = "0.0.1"
+dependencies = [
+ "spritekit",
+]
+
+[[package]]
+name = "rswift-stickerkit"
+version = "0.0.1"
+dependencies = [
+ "stickerkit",
+]
+
+[[package]]
+name = "rswift-storekit"
+version = "0.0.1"
+dependencies = [
+ "storekit",
+]
+
+[[package]]
+name = "rswift-swift-charts"
+version = "0.0.1"
+dependencies = [
+ "swift-charts",
+]
+
+[[package]]
+name = "rswift-swift-data"
+version = "0.0.1"
+dependencies = [
+ "swift-data",
+]
+
+[[package]]
+name = "rswift-swift-runtime"
+version = "0.0.1"
+dependencies = [
+ "swift-runtime",
+]
+
+[[package]]
+name = "rswift-swift-runtime-sys"
+version = "0.0.1"
+dependencies = [
+ "swift-runtime-sys",
+]
+
+[[package]]
+name = "rswift-swiftdata"
+version = "0.0.1"
+dependencies = [
+ "swiftdata",
+]
+
+[[package]]
+name = "rswift-swiftui"
+version = "0.0.1"
+dependencies = [
+ "swiftui",
+]
+
+[[package]]
+name = "rswift-swiftui-app"
+version = "0.0.1"
+dependencies = [
+ "swiftui-app",
+]
+
+[[package]]
+name = "rswift-swiftui-macros"
+version = "0.0.1"
+dependencies = [
+ "swiftui-macros",
+]
+
+[[package]]
+name = "rswift-swiftui-sys"
+version = "0.0.1"
+dependencies = [
+ "swiftui-sys",
+]
+
+[[package]]
 name = "rswift-symbols"
 version = "0.0.1"
 dependencies = [
@@ -1271,10 +2139,52 @@ dependencies = [
 ]
 
 [[package]]
+name = "rswift-tabulardata"
+version = "0.0.1"
+dependencies = [
+ "tabulardata",
+]
+
+[[package]]
+name = "rswift-telephonymessagingkit"
+version = "0.0.1"
+dependencies = [
+ "telephonymessagingkit",
+]
+
+[[package]]
+name = "rswift-tipkit"
+version = "0.0.1"
+dependencies = [
+ "tipkit",
+]
+
+[[package]]
 name = "rswift-translation"
 version = "0.0.1"
 dependencies = [
  "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-uniformtypeidentifiers"
+version = "0.0.1"
+dependencies = [
+ "uniformtypeidentifiers",
+]
+
+[[package]]
+name = "rswift-usernotifications"
+version = "0.0.1"
+dependencies = [
+ "usernotifications",
+]
+
+[[package]]
+name = "rswift-videosubscriberaccount"
+version = "0.0.1"
+dependencies = [
+ "videosubscriberaccount",
 ]
 
 [[package]]
@@ -1292,10 +2202,73 @@ dependencies = [
 ]
 
 [[package]]
+name = "rswift-visionkit"
+version = "0.0.1"
+dependencies = [
+ "visionkit",
+]
+
+[[package]]
+name = "rswift-visualintelligence"
+version = "0.0.1"
+dependencies = [
+ "visualintelligence",
+]
+
+[[package]]
 name = "rswift-weatherkit"
 version = "0.0.1"
 dependencies = [
  "apple-sys-helpers",
+]
+
+[[package]]
+name = "rswift-webkit"
+version = "0.0.1"
+dependencies = [
+ "webkit",
+]
+
+[[package]]
+name = "rswift-widgetkit"
+version = "0.0.1"
+dependencies = [
+ "widgetkit",
+]
+
+[[package]]
+name = "rswift-wifiaware"
+version = "0.0.1"
+dependencies = [
+ "wifiaware",
+]
+
+[[package]]
+name = "rswift-wifiinfrastructure"
+version = "0.0.1"
+dependencies = [
+ "wifiinfrastructure",
+]
+
+[[package]]
+name = "rswift-winit-swift"
+version = "0.0.1"
+dependencies = [
+ "winit-swift",
+]
+
+[[package]]
+name = "rswift-wirelessinsights"
+version = "0.0.1"
+dependencies = [
+ "wirelessinsights",
+]
+
+[[package]]
+name = "rswift-workoutkit"
+version = "0.0.1"
+dependencies = [
+ "workoutkit",
 ]
 
 [[package]]

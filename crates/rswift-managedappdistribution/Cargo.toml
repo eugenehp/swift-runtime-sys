@@ -1,0 +1,15 @@
+[package]
+name = "rswift-managedappdistribution"
+description = "Alias for managedappdistribution — re-exports the managedappdistribution crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_managedappdistribution"
+
+[dependencies]
+managedappdistribution = { path = "../managedappdistribution" }
+
+[lints]
+workspace = true

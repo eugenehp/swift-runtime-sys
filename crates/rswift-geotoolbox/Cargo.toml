@@ -1,0 +1,15 @@
+[package]
+name = "rswift-geotoolbox"
+description = "Alias for geotoolbox — re-exports the geotoolbox crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_geotoolbox"
+
+[dependencies]
+geotoolbox = { path = "../geotoolbox" }
+
+[lints]
+workspace = true

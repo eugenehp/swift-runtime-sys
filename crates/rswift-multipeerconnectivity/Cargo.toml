@@ -1,0 +1,15 @@
+[package]
+name = "rswift-multipeerconnectivity"
+description = "Alias for multipeerconnectivity — re-exports the multipeerconnectivity crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_multipeerconnectivity"
+
+[dependencies]
+multipeerconnectivity = { path = "../multipeerconnectivity" }
+
+[lints]
+workspace = true

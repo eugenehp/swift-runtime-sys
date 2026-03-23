@@ -1,0 +1,15 @@
+[package]
+name = "rswift-gamecontroller"
+description = "Alias for gamecontroller — re-exports the gamecontroller crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_gamecontroller"
+
+[dependencies]
+gamecontroller = { path = "../gamecontroller" }
+
+[lints]
+workspace = true

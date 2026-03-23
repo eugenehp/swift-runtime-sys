@@ -1,0 +1,15 @@
+[package]
+name = "rswift-extensionkit"
+description = "Alias for extensionkit — re-exports the extensionkit crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_extensionkit"
+
+[dependencies]
+extensionkit = { path = "../extensionkit" }
+
+[lints]
+workspace = true

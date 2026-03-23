@@ -1,0 +1,15 @@
+[package]
+name = "rswift-browserkit"
+description = "Alias for browserkit — re-exports the browserkit crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_browserkit"
+
+[dependencies]
+browserkit = { path = "../browserkit" }
+
+[lints]
+workspace = true

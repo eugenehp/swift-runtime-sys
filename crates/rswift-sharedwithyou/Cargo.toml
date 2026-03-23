@@ -1,0 +1,15 @@
+[package]
+name = "rswift-sharedwithyou"
+description = "Alias for sharedwithyou — re-exports the sharedwithyou crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_sharedwithyou"
+
+[dependencies]
+sharedwithyou = { path = "../sharedwithyou" }
+
+[lints]
+workspace = true

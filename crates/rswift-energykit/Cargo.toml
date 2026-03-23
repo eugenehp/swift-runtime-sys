@@ -1,0 +1,15 @@
+[package]
+name = "rswift-energykit"
+description = "Alias for energykit — re-exports the energykit crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_energykit"
+
+[dependencies]
+energykit = { path = "../energykit" }
+
+[lints]
+workspace = true

@@ -1,0 +1,15 @@
+[package]
+name = "rswift-mapkit"
+description = "Alias for mapkit — re-exports the mapkit crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_mapkit"
+
+[dependencies]
+mapkit = { path = "../mapkit" }
+
+[lints]
+workspace = true

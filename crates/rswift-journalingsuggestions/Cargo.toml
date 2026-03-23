@@ -1,0 +1,15 @@
+[package]
+name = "rswift-journalingsuggestions"
+description = "Alias for journalingsuggestions — re-exports the journalingsuggestions crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_journalingsuggestions"
+
+[dependencies]
+journalingsuggestions = { path = "../journalingsuggestions" }
+
+[lints]
+workspace = true

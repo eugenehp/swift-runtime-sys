@@ -1,0 +1,15 @@
+[package]
+name = "rswift-createml"
+description = "Alias for createml — re-exports the createml crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_createml"
+
+[dependencies]
+createml = { path = "../createml" }
+
+[lints]
+workspace = true

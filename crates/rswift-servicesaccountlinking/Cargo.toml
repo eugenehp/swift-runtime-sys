@@ -1,0 +1,15 @@
+[package]
+name = "rswift-servicesaccountlinking"
+description = "Alias for servicesaccountlinking — re-exports the servicesaccountlinking crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_servicesaccountlinking"
+
+[dependencies]
+servicesaccountlinking = { path = "../servicesaccountlinking" }
+
+[lints]
+workspace = true

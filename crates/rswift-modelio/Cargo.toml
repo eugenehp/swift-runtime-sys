@@ -1,0 +1,15 @@
+[package]
+name = "rswift-modelio"
+description = "Alias for modelio — re-exports the modelio crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_modelio"
+
+[dependencies]
+modelio = { path = "../modelio" }
+
+[lints]
+workspace = true

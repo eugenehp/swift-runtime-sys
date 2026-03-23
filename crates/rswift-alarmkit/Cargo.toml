@@ -1,0 +1,15 @@
+[package]
+name = "rswift-alarmkit"
+description = "Alias for alarmkit — re-exports the alarmkit crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_alarmkit"
+
+[dependencies]
+alarmkit = { path = "../alarmkit" }
+
+[lints]
+workspace = true

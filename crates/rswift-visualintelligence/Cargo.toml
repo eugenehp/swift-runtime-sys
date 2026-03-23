@@ -1,0 +1,15 @@
+[package]
+name = "rswift-visualintelligence"
+description = "Alias for visualintelligence — re-exports the visualintelligence crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_visualintelligence"
+
+[dependencies]
+visualintelligence = { path = "../visualintelligence" }
+
+[lints]
+workspace = true

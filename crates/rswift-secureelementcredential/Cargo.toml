@@ -1,0 +1,15 @@
+[package]
+name = "rswift-secureelementcredential"
+description = "Alias for secureelementcredential — re-exports the secureelementcredential crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_secureelementcredential"
+
+[dependencies]
+secureelementcredential = { path = "../secureelementcredential" }
+
+[lints]
+workspace = true

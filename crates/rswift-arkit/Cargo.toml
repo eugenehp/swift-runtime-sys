@@ -1,0 +1,15 @@
+[package]
+name = "rswift-arkit"
+description = "Alias for arkit — re-exports the arkit crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_arkit"
+
+[dependencies]
+arkit = { path = "../arkit" }
+
+[lints]
+workspace = true

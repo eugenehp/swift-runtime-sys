@@ -1,0 +1,15 @@
+[package]
+name = "rswift-quicklookui"
+description = "Alias for quicklookui — re-exports the quicklookui crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_quicklookui"
+
+[dependencies]
+quicklookui = { path = "../quicklookui" }
+
+[lints]
+workspace = true

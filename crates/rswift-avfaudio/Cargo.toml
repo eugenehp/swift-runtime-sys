@@ -1,0 +1,15 @@
+[package]
+name = "rswift-avfaudio"
+description = "Alias for avfaudio — re-exports the avfaudio crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_avfaudio"
+
+[dependencies]
+avfaudio = { path = "../avfaudio" }
+
+[lints]
+workspace = true

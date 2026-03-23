@@ -1,0 +1,15 @@
+[package]
+name = "rswift-apptrackingtransparency"
+description = "Alias for apptrackingtransparency — re-exports the apptrackingtransparency crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_apptrackingtransparency"
+
+[dependencies]
+apptrackingtransparency = { path = "../apptrackingtransparency" }
+
+[lints]
+workspace = true

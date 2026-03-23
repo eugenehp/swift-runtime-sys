@@ -1,0 +1,15 @@
+[package]
+name = "rswift-foundation-models"
+description = "Alias for foundation-models — re-exports the foundation-models crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_foundation_models"
+
+[dependencies]
+foundation-models = { path = "../foundation-models" }
+
+[lints]
+workspace = true

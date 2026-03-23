@@ -1,0 +1,15 @@
+[package]
+name = "rswift-authenticationservices"
+description = "Alias for authenticationservices — re-exports the authenticationservices crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_authenticationservices"
+
+[dependencies]
+authenticationservices = { path = "../authenticationservices" }
+
+[lints]
+workspace = true

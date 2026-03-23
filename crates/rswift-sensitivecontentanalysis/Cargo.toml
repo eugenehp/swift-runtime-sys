@@ -1,0 +1,15 @@
+[package]
+name = "rswift-sensitivecontentanalysis"
+description = "Alias for sensitivecontentanalysis — re-exports the sensitivecontentanalysis crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_sensitivecontentanalysis"
+
+[dependencies]
+sensitivecontentanalysis = { path = "../sensitivecontentanalysis" }
+
+[lints]
+workspace = true

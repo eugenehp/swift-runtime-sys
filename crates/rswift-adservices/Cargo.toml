@@ -1,0 +1,15 @@
+[package]
+name = "rswift-adservices"
+description = "Alias for adservices — re-exports the adservices crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_adservices"
+
+[dependencies]
+adservices = { path = "../adservices" }
+
+[lints]
+workspace = true

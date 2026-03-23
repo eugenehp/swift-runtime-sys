@@ -1,0 +1,15 @@
+[package]
+name = "rswift-swift-runtime-sys"
+description = "Alias for swift-runtime-sys — re-exports the swift-runtime-sys crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_swift_runtime_sys"
+
+[dependencies]
+swift-runtime-sys = { path = "../swift-runtime-sys" }
+
+[lints]
+workspace = true

@@ -1,0 +1,15 @@
+[package]
+name = "rswift-intents"
+description = "Alias for intents — re-exports the intents crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_intents"
+
+[dependencies]
+intents = { path = "../intents" }
+
+[lints]
+workspace = true

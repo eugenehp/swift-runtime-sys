@@ -1,0 +1,15 @@
+[package]
+name = "rswift-swiftui-macros"
+description = "Alias for swiftui-macros — re-exports the swiftui-macros crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_swiftui_macros"
+
+[dependencies]
+swiftui-macros = { path = "../swiftui-macros" }
+
+[lints]
+workspace = true

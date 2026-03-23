@@ -1,0 +1,15 @@
+[package]
+name = "rswift-coregraphics"
+description = "Alias for coregraphics — re-exports the coregraphics crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_coregraphics"
+
+[dependencies]
+coregraphics = { path = "../coregraphics" }
+
+[lints]
+workspace = true

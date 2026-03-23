@@ -1,0 +1,15 @@
+[package]
+name = "rswift-naturallanguage"
+description = "Alias for naturallanguage — re-exports the naturallanguage crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_naturallanguage"
+
+[dependencies]
+naturallanguage = { path = "../naturallanguage" }
+
+[lints]
+workspace = true

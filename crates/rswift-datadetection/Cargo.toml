@@ -1,0 +1,15 @@
+[package]
+name = "rswift-datadetection"
+description = "Alias for datadetection — re-exports the datadetection crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_datadetection"
+
+[dependencies]
+datadetection = { path = "../datadetection" }
+
+[lints]
+workspace = true

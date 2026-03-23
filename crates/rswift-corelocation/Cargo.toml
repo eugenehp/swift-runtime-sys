@@ -1,0 +1,15 @@
+[package]
+name = "rswift-corelocation"
+description = "Alias for corelocation — re-exports the corelocation crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_corelocation"
+
+[dependencies]
+corelocation = { path = "../corelocation" }
+
+[lints]
+workspace = true

@@ -1,0 +1,15 @@
+[package]
+name = "rswift-accessorysetupkit"
+description = "Alias for accessorysetupkit — re-exports the accessorysetupkit crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_accessorysetupkit"
+
+[dependencies]
+accessorysetupkit = { path = "../accessorysetupkit" }
+
+[lints]
+workspace = true

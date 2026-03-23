@@ -1,0 +1,15 @@
+[package]
+name = "rswift-corespotlight"
+description = "Alias for corespotlight — re-exports the corespotlight crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_corespotlight"
+
+[dependencies]
+corespotlight = { path = "../corespotlight" }
+
+[lints]
+workspace = true

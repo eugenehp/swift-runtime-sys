@@ -1,0 +1,15 @@
+[package]
+name = "rswift-tabulardata"
+description = "Alias for tabulardata — re-exports the tabulardata crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_tabulardata"
+
+[dependencies]
+tabulardata = { path = "../tabulardata" }
+
+[lints]
+workspace = true

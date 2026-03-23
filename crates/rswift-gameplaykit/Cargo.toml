@@ -1,0 +1,15 @@
+[package]
+name = "rswift-gameplaykit"
+description = "Alias for gameplaykit — re-exports the gameplaykit crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_gameplaykit"
+
+[dependencies]
+gameplaykit = { path = "../gameplaykit" }
+
+[lints]
+workspace = true

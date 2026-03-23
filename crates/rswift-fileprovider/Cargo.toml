@@ -1,0 +1,15 @@
+[package]
+name = "rswift-fileprovider"
+description = "Alias for fileprovider — re-exports the fileprovider crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_fileprovider"
+
+[dependencies]
+fileprovider = { path = "../fileprovider" }
+
+[lints]
+workspace = true

@@ -1,0 +1,15 @@
+[package]
+name = "rswift-shazamkit"
+description = "Alias for shazamkit — re-exports the shazamkit crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_shazamkit"
+
+[dependencies]
+shazamkit = { path = "../shazamkit" }
+
+[lints]
+workspace = true

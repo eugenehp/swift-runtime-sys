@@ -1,0 +1,15 @@
+[package]
+name = "rswift-realityfoundation"
+description = "Alias for realityfoundation — re-exports the realityfoundation crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_realityfoundation"
+
+[dependencies]
+realityfoundation = { path = "../realityfoundation" }
+
+[lints]
+workspace = true

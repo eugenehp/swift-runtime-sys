@@ -1,0 +1,15 @@
+[package]
+name = "rswift-pushkit"
+description = "Alias for pushkit — re-exports the pushkit crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_pushkit"
+
+[dependencies]
+pushkit = { path = "../pushkit" }
+
+[lints]
+workspace = true

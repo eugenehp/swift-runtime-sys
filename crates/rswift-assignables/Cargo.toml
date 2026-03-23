@@ -1,0 +1,15 @@
+[package]
+name = "rswift-assignables"
+description = "Alias for assignables — re-exports the assignables crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_assignables"
+
+[dependencies]
+assignables = { path = "../assignables" }
+
+[lints]
+workspace = true

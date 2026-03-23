@@ -1,0 +1,15 @@
+[package]
+name = "rswift-spritekit"
+description = "Alias for spritekit — re-exports the spritekit crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_spritekit"
+
+[dependencies]
+spritekit = { path = "../spritekit" }
+
+[lints]
+workspace = true

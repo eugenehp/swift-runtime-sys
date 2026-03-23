@@ -1,0 +1,15 @@
+[package]
+name = "rswift-swift-data"
+description = "Alias for swift-data — re-exports the swift-data crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_swift_data"
+
+[dependencies]
+swift-data = { path = "../swift-data" }
+
+[lints]
+workspace = true

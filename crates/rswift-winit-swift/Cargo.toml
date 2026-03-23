@@ -1,0 +1,15 @@
+[package]
+name = "rswift-winit-swift"
+description = "Alias for winit-swift — re-exports the winit-swift crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_winit_swift"
+
+[dependencies]
+winit-swift = { path = "../winit-swift" }
+
+[lints]
+workspace = true

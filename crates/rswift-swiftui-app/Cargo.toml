@@ -1,0 +1,15 @@
+[package]
+name = "rswift-swiftui-app"
+description = "Alias for swiftui-app — re-exports the swiftui-app crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_swiftui_app"
+
+[dependencies]
+swiftui-app = { path = "../swiftui-app" }
+
+[lints]
+workspace = true

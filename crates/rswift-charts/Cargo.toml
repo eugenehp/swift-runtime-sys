@@ -1,0 +1,15 @@
+[package]
+name = "rswift-swift-charts"
+description = "Alias for swift-charts — re-exports the swift-charts crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_swift_charts"
+
+[dependencies]
+swift-charts = { path = "../charts" }
+
+[lints]
+workspace = true

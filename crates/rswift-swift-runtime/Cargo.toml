@@ -1,0 +1,15 @@
+[package]
+name = "rswift-swift-runtime"
+description = "Alias for swift-runtime — re-exports the swift-runtime crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_swift_runtime"
+
+[dependencies]
+swift-runtime = { path = "../swift-runtime" }
+
+[lints]
+workspace = true

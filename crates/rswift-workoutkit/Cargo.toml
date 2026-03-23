@@ -1,0 +1,15 @@
+[package]
+name = "rswift-workoutkit"
+description = "Alias for workoutkit — re-exports the workoutkit crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_workoutkit"
+
+[dependencies]
+workoutkit = { path = "../workoutkit" }
+
+[lints]
+workspace = true

@@ -1,0 +1,15 @@
+[package]
+name = "rswift-corenfc"
+description = "Alias for corenfc — re-exports the corenfc crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_corenfc"
+
+[dependencies]
+corenfc = { path = "../corenfc" }
+
+[lints]
+workspace = true

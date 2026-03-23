@@ -1,0 +1,15 @@
+[package]
+name = "rswift-coreimage"
+description = "Alias for coreimage — re-exports the coreimage crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_coreimage"
+
+[dependencies]
+coreimage = { path = "../coreimage" }
+
+[lints]
+workspace = true

@@ -1,0 +1,15 @@
+[package]
+name = "rswift-cryptokit"
+description = "Alias for cryptokit — re-exports the cryptokit crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_cryptokit"
+
+[dependencies]
+cryptokit = { path = "../cryptokit" }
+
+[lints]
+workspace = true

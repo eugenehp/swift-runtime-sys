@@ -1,0 +1,15 @@
+[package]
+name = "rswift-photosui"
+description = "Alias for photosui — re-exports the photosui crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_photosui"
+
+[dependencies]
+photosui = { path = "../photosui" }
+
+[lints]
+workspace = true

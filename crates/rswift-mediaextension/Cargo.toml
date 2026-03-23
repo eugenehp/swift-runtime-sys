@@ -1,0 +1,15 @@
+[package]
+name = "rswift-mediaextension"
+description = "Alias for mediaextension — re-exports the mediaextension crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_mediaextension"
+
+[dependencies]
+mediaextension = { path = "../mediaextension" }
+
+[lints]
+workspace = true

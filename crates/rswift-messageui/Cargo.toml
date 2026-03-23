@@ -1,0 +1,15 @@
+[package]
+name = "rswift-messageui"
+description = "Alias for messageui — re-exports the messageui crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_messageui"
+
+[dependencies]
+messageui = { path = "../messageui" }
+
+[lints]
+workspace = true

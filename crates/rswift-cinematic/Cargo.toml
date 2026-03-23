@@ -1,0 +1,15 @@
+[package]
+name = "rswift-cinematic"
+description = "Alias for cinematic — re-exports the cinematic crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_cinematic"
+
+[dependencies]
+cinematic = { path = "../cinematic" }
+
+[lints]
+workspace = true

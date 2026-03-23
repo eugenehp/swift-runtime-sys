@@ -1,0 +1,15 @@
+[package]
+name = "rswift-imageplayground"
+description = "Alias for imageplayground — re-exports the imageplayground crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_imageplayground"
+
+[dependencies]
+imageplayground = { path = "../imageplayground" }
+
+[lints]
+workspace = true

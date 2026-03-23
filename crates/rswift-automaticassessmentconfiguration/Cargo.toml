@@ -1,0 +1,15 @@
+[package]
+name = "rswift-automaticassessmentconfiguration"
+description = "Alias for automaticassessmentconfiguration — re-exports the automaticassessmentconfiguration crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_automaticassessmentconfiguration"
+
+[dependencies]
+automaticassessmentconfiguration = { path = "../automaticassessmentconfiguration" }
+
+[lints]
+workspace = true

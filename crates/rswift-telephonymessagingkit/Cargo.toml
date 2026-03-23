@@ -1,0 +1,15 @@
+[package]
+name = "rswift-telephonymessagingkit"
+description = "Alias for telephonymessagingkit — re-exports the telephonymessagingkit crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_telephonymessagingkit"
+
+[dependencies]
+telephonymessagingkit = { path = "../telephonymessagingkit" }
+
+[lints]
+workspace = true

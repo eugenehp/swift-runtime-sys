@@ -1,0 +1,15 @@
+[package]
+name = "rswift-nearbyinteraction"
+description = "Alias for nearbyinteraction — re-exports the nearbyinteraction crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_nearbyinteraction"
+
+[dependencies]
+nearbyinteraction = { path = "../nearbyinteraction" }
+
+[lints]
+workspace = true

@@ -1,0 +1,15 @@
+[package]
+name = "rswift-appintents"
+description = "Alias for appintents — re-exports the appintents crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_appintents"
+
+[dependencies]
+appintents = { path = "../appintents" }
+
+[lints]
+workspace = true

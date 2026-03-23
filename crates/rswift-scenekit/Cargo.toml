@@ -1,0 +1,15 @@
+[package]
+name = "rswift-scenekit"
+description = "Alias for scenekit — re-exports the scenekit crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_scenekit"
+
+[dependencies]
+scenekit = { path = "../scenekit" }
+
+[lints]
+workspace = true

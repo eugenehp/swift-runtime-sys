@@ -1,0 +1,15 @@
+[package]
+name = "rswift-soundanalysis"
+description = "Alias for soundanalysis — re-exports the soundanalysis crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_soundanalysis"
+
+[dependencies]
+soundanalysis = { path = "../soundanalysis" }
+
+[lints]
+workspace = true

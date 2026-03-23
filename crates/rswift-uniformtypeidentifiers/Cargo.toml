@@ -1,0 +1,15 @@
+[package]
+name = "rswift-uniformtypeidentifiers"
+description = "Alias for uniformtypeidentifiers — re-exports the uniformtypeidentifiers crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_uniformtypeidentifiers"
+
+[dependencies]
+uniformtypeidentifiers = { path = "../uniformtypeidentifiers" }
+
+[lints]
+workspace = true

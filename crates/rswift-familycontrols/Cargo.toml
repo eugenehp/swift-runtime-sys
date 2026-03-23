@@ -1,0 +1,15 @@
+[package]
+name = "rswift-familycontrols"
+description = "Alias for familycontrols — re-exports the familycontrols crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_familycontrols"
+
+[dependencies]
+familycontrols = { path = "../familycontrols" }
+
+[lints]
+workspace = true

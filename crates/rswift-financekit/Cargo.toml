@@ -1,0 +1,15 @@
+[package]
+name = "rswift-financekit"
+description = "Alias for financekit — re-exports the financekit crate under the rswift- namespace"
+version = "0.0.1"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+name = "rswift_financekit"
+
+[dependencies]
+financekit = { path = "../financekit" }
+
+[lints]
+workspace = true
